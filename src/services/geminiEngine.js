@@ -89,7 +89,8 @@ function summarizeForPrompt(existingQuestions = [], limit = 30) {
 
 /**
  * Gọi Gemini để sinh câu hỏi + rubric cho 1 mức độ cụ thể.
- * Model theo phân công: Nhận biết/Thông hiểu -> gemini-3.1-flash-lite (rẻ) | Vận dụng/Vận dụng cao -> gemini-3.1-pro-preview.
+ * Model: dùng chung gemini-3.5-flash cho mọi mức độ (xem giải thích trong promptTemplates.js) -
+ * vẫn giữ cấu trúc "levelConfig.model" để dễ tách lại nếu Google mở free tier cho Pro sau này.
  */
 export async function generateQuestionsForLevel({
   grade,

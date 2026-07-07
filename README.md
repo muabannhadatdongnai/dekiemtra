@@ -1,6 +1,7 @@
 # AI Exam Generator 🎓
 
-Nền tảng tạo đề kiểm tra Toán (Lớp 1–12) tự động bằng AI, chi phí duy trì **$0**.
+Nền tảng tạo đề kiểm tra tự động bằng AI cho 4 môn (Toán, Tiếng Việt, Tiếng Anh, Lịch sử),
+Lớp 1–12, chi phí duy trì **$0**.
 
 ## Bước 1: Cài đặt & cấu trúc thư mục
 
@@ -51,23 +52,35 @@ src/
 
 ## Bước 2: Chuẩn bị kho kiến thức GitHub (RAG)
 
-Repo kiến thức (có thể **public**) phải theo đúng cấu trúc:
+Repo kiến thức (có thể **public**) phải theo đúng cấu trúc. Mỗi môn có 1 slug riêng
+(tự động suy ra từ giá trị môn học, viết thường, gạch dưới):
+
+| Môn học | Slug thư mục |
+|---|---|
+| Toán | `toan` |
+| Tiếng Việt | `tieng_viet` |
+| Tiếng Anh | `tieng_anh` |
+| Lịch sử | `lich_su` |
 
 ```
 sach_giao_khoa/
-  lop_6/
+  lop_5/
     toan_t1/
       chuong_1.md
       chuong_2.md
     toan_t2/
       chuong_1.md
-      chuong_2.md
-      chuong_3.md
-  lop_7/
+    tieng_viet_t1/
+      chuong_1.md
+    tieng_anh_t1/
+      chuong_1.md
+    lich_su_t1/
+      chuong_1.md
+  lop_6/
     ...
 ```
 
-→ Tương ứng URL Raw: `https://raw.githubusercontent.com/USER/REPO/main/sach_giao_khoa/lop_6/toan_t2/chuong_3.md`
+→ Tương ứng URL Raw: `https://raw.githubusercontent.com/USER/REPO/main/sach_giao_khoa/lop_5/toan_t2/chuong_3.md`
 
 Mỗi file `.md` nên chứa định nghĩa, công thức LaTeX (`$...$`), ví dụ minh hoạ, và (nếu có)
 mục "Vận dụng cao" — Gemini Pro sẽ ưu tiên khai thác mục này cho câu khó/rất khó.
@@ -80,7 +93,9 @@ mục "Vận dụng cao" — Gemini Pro sẽ ưu tiên khai thác mục này cho
    tra) → chọn Môn → Lớp → Tập → Chương (tự tải qua GitHub API) → chỉnh ma trận 4 mức độ.
 3. Bấm **"🚀 TẠO ĐỀ THI NGAY"** → gọi `/api/generate`:
    - `githubService.fetchMarkdownFromGitHub` lấy nội dung các chương đã chọn.
-   - `geminiEngine` gọi Gemini Flash (Nhận biết/Thông hiểu) và Pro (Vận dụng/Vận dụng cao)
+   - `geminiEngine` gọi `gemini-3.5-flash` cho cả 4 mức độ (Google không có gói miễn phí cho
+     bất kỳ model Pro nào hiện tại; 3.5 Flash được Google mô tả là "gần bằng chất lượng Pro"
+     nên vẫn đủ dùng cho câu Vận dụng/Vận dụng cao mà không cần bật billing)
      song song, với `temperature: 0.75` + seed ngẫu nhiên mỗi lượt + yêu cầu random sampling
      phân vùng kiến thức → **Lớp chống trùng #1**.
    - Kết quả được hash + so khớp Jaccard similarity để loại câu trùng → **Lớp chống trùng #2 & #3**.

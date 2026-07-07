@@ -6,7 +6,12 @@ import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { getSession } from "@/services/authService";
 
 const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
-const SUBJECTS = [{ value: "Toan", label: "Toán" }]; // Mở rộng thêm môn khác trong tương lai
+const SUBJECTS = [
+  { value: "Toan", label: "Toán" },
+  { value: "Tieng_Viet", label: "Tiếng Việt" },
+  { value: "Tieng_Anh", label: "Tiếng Anh" },
+  { value: "Lich_Su", label: "Lịch sử" },
+];
 
 function Stepper({ label, sub, value, onChange, type, onTypeChange }) {
   return (
@@ -60,12 +65,12 @@ export default function ExamMatrixForm({ onGenerated }) {
   const [schoolName, setSchoolName] = useState("");
   const [className, setClassName] = useState("");
   const [duration, setDuration] = useState("45 phút");
-  const [academicYear, setAcademicYear] = useState("");
+  const [academicYear, setAcademicYear] = useState("2026-2027");
   const [examTitle, setExamTitle] = useState("Phiếu kiểm tra cuối học kì I");
 
   // ============ Chọn kiến thức ============
   const [subject, setSubject] = useState("Toan");
-  const [grade, setGrade] = useState(6);
+  const [grade, setGrade] = useState(5);
   const [volume, setVolume] = useState(1);
   const [availableChapters, setAvailableChapters] = useState([]);
   const [selectedChapters, setSelectedChapters] = useState([]);

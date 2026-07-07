@@ -1,4 +1,4 @@
-import { Document, Packer, Paragraph, TextRun, AlignmentType } from "docx";
+import { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } from "docx";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import temml from "temml";
@@ -117,6 +117,45 @@ function buildRunsWithMathPlaceholders(text, { bold = false, italics = false, si
   return { runs, equations };
 }
 
+const NO_BORDERS = {
+  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+};
+
+/**
+ * Xếp 4 đáp án A/B/C/D thành lưới 2x2 (A B / C D) bằng Table không viền, thay vì xếp
+ * dọc từng dòng - tiết kiệm giấy đáng kể, đúng cách trình bày phổ biến của đề thi VN.
+ */
+function buildOptionsTable(options, equationsAcc) {
+  const rows = [];
+  for (let i = 0; i < options.length; i += 2) {
+    const pair = options.slice(i, i + 2);
+    const cells = pair.map((opt) => {
+      const { runs, equations } = buildRunsWithMathPlaceholders(opt);
+      Object.assign(equationsAcc, equations);
+      return new TableCell({
+        children: [new Paragraph({ children: runs })],
+        width: { size: 50, type: WidthType.PERCENTAGE },
+        borders: NO_BORDERS,
+        margins: { top: 40, bottom: 40, left: 100, right: 100 },
+      });
+    });
+    if (cells.length === 1) {
+      cells.push(
+        new TableCell({
+          children: [new Paragraph("")],
+          width: { size: 50, type: WidthType.PERCENTAGE },
+          borders: NO_BORDERS,
+        })
+      );
+    }
+    rows.push(new TableRow({ children: cells }));
+  }
+  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows, borders: NO_BORDERS });
+}
+
 function buildQuestionParagraphs(question, index, equationsAcc) {
   const scoreLabel = question.score != null ? ` (${question.score}đ)` : "";
   const label = new TextRun({
@@ -129,19 +168,14 @@ function buildQuestionParagraphs(question, index, equationsAcc) {
   const { runs: contentRuns, equations: contentEq } = buildRunsWithMathPlaceholders(question.content);
   Object.assign(equationsAcc, contentEq);
 
-  const paragraphs = [
-    new Paragraph({ children: [label, ...contentRuns], spacing: { after: 100 } }),
-  ];
+  const elements = [new Paragraph({ children: [label, ...contentRuns], spacing: { after: 100 } })];
 
   if (question.options?.length) {
-    question.options.forEach((opt) => {
-      const { runs: optRuns, equations: optEq } = buildRunsWithMathPlaceholders(`     ${opt}`);
-      Object.assign(equationsAcc, optEq);
-      paragraphs.push(new Paragraph({ children: optRuns, spacing: { after: 60 } }));
-    });
+    elements.push(buildOptionsTable(question.options, equationsAcc));
+    elements.push(new Paragraph({ text: "", spacing: { after: 100 } })); // đệm khoảng cách sau bảng
   }
 
-  return paragraphs;
+  return elements;
 }
 
 function buildRubricParagraphs(teacherRubric, questions, equationsAcc) {
@@ -211,11 +245,21 @@ function buildRubricParagraphs(teacherRubric, questions, equationsAcc) {
   return paragraphs;
 }
 
-async function injectEquationsIntoDocx(buffer, equations) {
+/**
+ * ⚠️ Nhận vào BLOB (không phải Buffer) - Packer.toBuffer() chỉ dành cho Node.js, còn code
+ * này chạy phía browser (client-side export) nên PHẢI dùng Packer.toBlob(). Dùng nhầm
+ * toBuffer() ở browser từng khiến file .docx tải về bị hỏng, Word không mở được.
+ *
+ * Blob được chuyển thành ArrayBuffer trước khi đưa vào JSZip để đảm bảo tương thích
+ * tuyệt đối (JSZip nhận diện Blob không nhất quán giữa các môi trường/bundler khác nhau,
+ * còn ArrayBuffer thì luôn được hỗ trợ).
+ */
+async function injectEquationsIntoDocx(docxBlob, equations) {
   const ids = Object.keys(equations);
-  if (ids.length === 0) return buffer;
+  if (ids.length === 0) return docxBlob;
 
-  const zip = await JSZip.loadAsync(buffer);
+  const arrayBuffer = await docxBlob.arrayBuffer();
+  const zip = await JSZip.loadAsync(arrayBuffer);
   const docXmlPath = "word/document.xml";
   let xml = await zip.file(docXmlPath).async("string");
 
@@ -295,8 +339,14 @@ export async function exportToWord({
   }
 
   const doc = new Document({ sections });
-  const rawBuffer = await Packer.toBuffer(doc);
-  const finalBlob = await injectEquationsIntoDocx(rawBuffer, equations);
+
+  // Bước 1: dựng file .docx "thô" với placeholder text cho mỗi công thức
+  // ⚠️ PHẢI dùng toBlob() ở đây vì hàm này chạy trong browser - toBuffer() là API Node.js,
+  // dùng nhầm sẽ tạo ra file .docx bị hỏng (tải về được nhưng Word không mở nổi).
+  const rawBlob = await Packer.toBlob(doc);
+
+  // Bước 2: hậu xử lý XML, thay placeholder bằng OMML thật (Equation có thể sửa trong Word)
+  const finalBlob = await injectEquationsIntoDocx(rawBlob, equations);
 
   saveAs(finalBlob, `De-thi-${subject}-Lop${grade}-Ma${examCode}.docx`);
 }
