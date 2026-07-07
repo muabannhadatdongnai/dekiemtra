@@ -1,10 +1,18 @@
 /**
  * promptTemplates.js
  * Ma trận prompt theo 4 mức độ (thang Bloom rút gọn - chuẩn Bộ GD&ĐT):
- *  1. NHAN_BIET      (Dễ)         -> gemini-1.5-flash
- *  2. THONG_HIEU     (Trung bình) -> gemini-1.5-flash
- *  3. VAN_DUNG       (Khó)        -> gemini-1.5-pro
- *  4. VAN_DUNG_CAO   (Rất khó)    -> gemini-1.5-pro
+ *  1. NHAN_BIET      (Dễ)         -> gemini-3.1-flash-lite
+ *  2. THONG_HIEU     (Trung bình) -> gemini-3.1-flash-lite
+ *  3. VAN_DUNG       (Khó)        -> gemini-3.1-pro-preview
+ *  4. VAN_DUNG_CAO   (Rất khó)    -> gemini-3.1-pro-preview
+ *
+ * ⚠️ LƯU Ý QUAN TRỌNG VỀ VÒNG ĐỜI MODEL GEMINI:
+ * Google thường xuyên khai tử (shutdown) các model cũ - khi model bị shutdown, MỌI request
+ * gửi đến sẽ nhận lỗi 404, khiến toàn bộ đề bị tạo ra 0 câu ở mọi mức độ (không phải do
+ * trùng lặp như thông báo cảnh báo có thể gây hiểu lầm). Nếu sau này bạn gặp lại lỗi
+ * "chỉ tạo được 0/N câu" ở TẤT CẢ các mức độ cùng lúc, khả năng cao là do model đã bị
+ * Google khai tử -> kiểm tra https://ai.google.dev/gemini-api/docs/deprecations và cập
+ * nhật lại giá trị "model" bên dưới.
  *
  * Tích hợp sẵn 2/3 lớp chống trùng đề ở tầng prompt (lớp 3 - hash/similarity nằm ở geminiEngine.js):
  *  - Seed & Timestamp Injection: buộc AI "quên" pattern câu hỏi mặc định giữa các lần gọi.
@@ -15,28 +23,28 @@ export const DIFFICULTY_LEVELS = {
   NHAN_BIET: {
     key: "NHAN_BIET",
     label: "Nhận biết",
-    model: "gemini-1.5-flash",
+    model: "gemini-3.1-flash-lite",
     description:
       "Câu hỏi tái hiện trực tiếp định nghĩa, công thức, dữ liệu có sẵn trong tài liệu. Không yêu cầu suy luận nhiều bước.",
   },
   THONG_HIEU: {
     key: "THONG_HIEU",
     label: "Thông hiểu",
-    model: "gemini-1.5-flash",
+    model: "gemini-3.1-flash-lite",
     description:
       "Câu hỏi yêu cầu diễn giải, so sánh, áp dụng công thức ở mức đơn giản, 1-2 bước biến đổi.",
   },
   VAN_DUNG: {
     key: "VAN_DUNG",
     label: "Vận dụng",
-    model: "gemini-1.5-pro",
+    model: "gemini-3.1-pro-preview",
     description:
       "Câu hỏi yêu cầu kết hợp nhiều kiến thức, nhiều bước giải, có tình huống thực tế đơn giản.",
   },
   VAN_DUNG_CAO: {
     key: "VAN_DUNG_CAO",
     label: "Vận dụng cao",
-    model: "gemini-1.5-pro",
+    model: "gemini-3.1-pro-preview",
     description:
       "Câu hỏi phân hoá học sinh giỏi: tình huống phức tạp, nhiều bước lập luận, kết hợp liên chương, đòi hỏi sáng tạo. Ưu tiên khai thác phần 'Vận dụng cao' nếu tài liệu Markdown có đề cập.",
   },

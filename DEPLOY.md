@@ -100,3 +100,22 @@ bấm **Redeploy** ở bản mới nhất (biến môi trường chỉ áp dụn
    thư mục file `.md` (mục A3).
 4. Nếu báo lỗi liên quan Gemini → kiểm tra lại `GEMINI_API_KEY` còn hạn mức free hay không tại
    https://aistudio.google.com.
+
+## Các lỗi thường gặp đã từng xảy ra (và cách phát hiện lại nếu tái diễn)
+
+**"Chỉ tạo được 0/N câu" ở TẤT CẢ các mức độ cùng lúc:**
+Đây KHÔNG phải do trùng lặp (dù thông báo có ghi vậy) — gần như chắc chắn là do model Gemini
+đang dùng đã bị Google khai tử (shutdown), mọi request trả về lỗi 404 âm thầm bị bắt trong
+`try/catch` và tính là "thất bại, thử lại", đến hết lượt retry thì trả về 0 câu.
+→ Kiểm tra https://ai.google.dev/gemini-api/docs/deprecations, cập nhật lại giá trị `model`
+trong `src/data/promptTemplates.js` (biến `DIFFICULTY_LEVELS`).
+
+**Lỗi 404 khi liệt kê Chương/Bài học:**
+Kiểm tra `GITHUB_KNOWLEDGE_REPO` CHỈ được gồm đúng `owner/repo` (2 phần), KHÔNG thêm đường dẫn
+thư mục con vào biến này (thư mục con `sach_giao_khoa/...` đã được code tự động thêm sẵn).
+
+**KHÔNG BAO GIỜ commit file `.env.local` lên Git** (kể cả repo Private) — file này chứa API
+key thật. Luôn đặt key trực tiếp trong Vercel Environment Variables. Nếu lỡ commit và push lên
+GitHub rồi, phải coi như key đã bị lộ: vào Google AI Studio revoke key cũ và tạo key mới ngay,
+xoá file khỏi repo bằng `git rm --cached .env.local` KHÔNG đủ để bảo vệ key đã lộ (lịch sử
+commit vẫn còn), chỉ ngăn được rò rỉ tiếp theo.

@@ -1,10 +1,12 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { buildExamPrompt, DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { computeScores } from "./scoringUtils";
 import crypto from "crypto";
 
 // ⚠️ CHỖ CẦN THAY ĐỔI: đặt GEMINI_API_KEY trong .env.local (lấy free tại aistudio.google.com)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// ⚠️ Dùng SDK chính thức hiện hành @google/genai (SDK cũ @google/generative-ai đã bị Google
+// khai tử từ 31/8/2025, không còn được cập nhật hay hỗ trợ).
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 /**
  * ================== 3 LỚP CHỐNG TRÙNG ĐỀ ==================
@@ -87,7 +89,7 @@ function summarizeForPrompt(existingQuestions = [], limit = 30) {
 
 /**
  * Gọi Gemini để sinh câu hỏi + rubric cho 1 mức độ cụ thể.
- * Model theo phân công: Nhận biết/Thông hiểu -> flash (rẻ) | Vận dụng/Vận dụng cao -> pro.
+ * Model theo phân công: Nhận biết/Thông hiểu -> gemini-3.1-flash-lite (rẻ) | Vận dụng/Vận dụng cao -> gemini-3.1-pro-preview.
  */
 export async function generateQuestionsForLevel({
   grade,
@@ -106,14 +108,6 @@ export async function generateQuestionsForLevel({
   if (numberOfQuestions <= 0) {
     return { questions: [], rubric: [], requested: 0, fulfilled: 0 };
   }
-
-  const model = genAI.getGenerativeModel({
-    model: levelConfig.model,
-    generationConfig: {
-      temperature: 0.75,
-      responseMimeType: "application/json",
-    },
-  });
 
   let collectedPairs = [];
   let attempt = 0;
@@ -137,8 +131,15 @@ export async function generateQuestionsForLevel({
 
     let rawText;
     try {
-      const result = await model.generateContent(prompt);
-      rawText = result.response.text();
+      const result = await ai.models.generateContent({
+        model: levelConfig.model,
+        contents: prompt,
+        config: {
+          temperature: 0.75,
+          responseMimeType: "application/json",
+        },
+      });
+      rawText = result.text;
     } catch (err) {
       console.error(`[geminiEngine] Lỗi gọi API (${difficulty}, lần thử ${attempt + 1}):`, err.message);
       attempt++;

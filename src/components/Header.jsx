@@ -12,9 +12,9 @@ export default function Header({ user, onLogout }) {
           </div>
           <div>
             <p className="text-sm font-semibold leading-none text-slate-900">
-              Khoa Dịch Vụ Photocopy
+              AI Exam Generator
             </p>
-            <p className="text-xs text-slate-500">Quốc Lộ 20, Gần Trường Điểu Cải Zalo 0938364681</p>
+            <p className="text-xs text-slate-500">Tạo đề thi tự động miễn phí</p>
           </div>
         </div>
 
