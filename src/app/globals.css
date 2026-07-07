@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --a4-width: 210mm;
+  --a4-height: 297mm;
+}
+
+html,
+body {
+  background: #f1f5f9;
+}
+
+/* ===== Khung xem trước A4 ===== */
+.a4-page {
+  width: var(--a4-width);
+  min-height: var(--a4-height);
+  padding: 20mm 18mm;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+  font-family: "Times New Roman", Times, serif;
+  font-size: 13pt;
+  line-height: 1.5;
+  color: #111827;
+}
+
+.a4-page h1,
+.a4-page h2,
+.a4-page h3 {
+  font-family: "Times New Roman", Times, serif;
+}
+
+.exam-question {
+  margin-bottom: 10pt;
+  page-break-inside: avoid;
+}
+
+.exam-question .q-index {
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.exam-options {
+  list-style: none;
+  padding-left: 18pt;
+  margin-top: 4pt;
+}
+
+.exam-options li {
+  margin-bottom: 3pt;
+}
+
+/* ===== Header chuẩn Bộ GD&ĐT: bảng 30% / 70% ===== */
+.gdt-header-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10pt;
+}
+
+.gdt-header-table td {
+  border: 1pt solid #000;
+  vertical-align: top;
+  padding: 6pt 8pt;
+}
+
+.gdt-col-left {
+  width: 30%;
+}
+
+.gdt-col-right {
+  width: 70%;
+  text-align: center;
+}
+
+.gdt-score-box,
+.gdt-remark-box {
+  min-height: 40pt;
+  border-bottom: 1pt solid #000;
+  padding-bottom: 4pt;
+  margin-bottom: 4pt;
+}
+
+.gdt-remark-box {
+  border-bottom: none;
+  min-height: 60pt;
+}
+
+.gdt-cell-label {
+  font-size: 10pt;
+  font-style: italic;
+}
+
+.gdt-exam-title {
+  font-weight: 700;
+  font-size: 14pt;
+  margin-bottom: 4pt;
+}
+
+.gdt-exam-sub {
+  font-size: 12pt;
+  margin: 2pt 0;
+}
+
+.gdt-student-line {
+  margin-bottom: 4pt;
+  font-size: 13pt;
+}
+
+.gdt-dots {
+  border-bottom: 1pt dotted #000;
+}
+
+.gdt-exam-code {
+  text-align: right;
+  font-style: italic;
+  font-size: 11pt;
+  margin-bottom: 10pt;
+}
+
+.gdt-section-title {
+  font-weight: 700;
+  font-size: 13pt;
+  margin: 10pt 0 6pt;
+  text-transform: uppercase;
+}
+
+/* ===== Ngắt trang cho phần Rubric (chỉ khi in/PDF) ===== */
+@media print {
+  .page-break-before {
+    break-before: page;
+    page-break-before: always;
+  }
+}
+
+/* ===== In PDF chuẩn khổ A4 ===== */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .a4-page {
+    box-shadow: none;
+    margin: 0;
+    width: 100%;
+    min-height: auto;
+  }
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

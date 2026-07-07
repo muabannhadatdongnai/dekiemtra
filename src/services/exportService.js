@@ -1,0 +1,310 @@
+import { Document, Packer, Paragraph, TextRun, AlignmentType } from "docx";
+import { saveAs } from "file-saver";
+import JSZip from "jszip";
+import temml from "temml";
+import { mml2omml } from "mathml2omml";
+import { parseLatexSegments } from "./latexUtils";
+import { sumScores } from "./scoringUtils";
+
+/**
+ * exportService.js
+ * - "Tạo 4 Mã Đề (A,B,C,D)": xáo trộn câu hỏi trắc nghiệm từ đề GỐC, KHÔNG gọi lại AI API
+ *   -> tiết kiệm chi phí Gemini tối đa.
+ * - Xuất Word (.docx): công thức Toán là Equation OOXML thật (không phải ảnh/text thô).
+ *   Pipeline: LaTeX --(temml)--> MathML --(mathml2omml)--> OMML --(chèn thẳng vào
+ *   word/document.xml bằng JSZip sau khi Packer dựng file)--> .docx hoàn chỉnh.
+ * - Phần "Đáp án & Thang điểm (Rubric)" luôn ngắt sang trang mới ở cuối tài liệu.
+ * - Xuất PDF: CSS @media print (window.print()), tận dụng KaTeX đã render sẵn trên preview.
+ */
+
+// =========================== ĐẢO MÃ ĐỀ (A/B/C/D) ===========================
+
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+/** Xáo trộn 1 đề: đảo thứ tự câu hỏi trắc nghiệm + đảo thứ tự đáp án A/B/C/D, giữ đúng correctAnswer. */
+function shuffleSingleExam(questions, { shuffleOptions = true } = {}) {
+  return shuffleArray(questions).map((q) => {
+    // Chỉ đảo đáp án cho câu trắc nghiệm; câu tự luận giữ nguyên nội dung
+    if (!shuffleOptions || !q.options || q.options.length === 0) return q;
+
+    const letters = ["A", "B", "C", "D"];
+    const optionTexts = q.options.map((opt) => opt.replace(/^[A-D]\.\s*/, ""));
+    const correctIndex = letters.indexOf(q.correctAnswer);
+    const correctText = optionTexts[correctIndex];
+
+    const shuffledTexts = shuffleArray(optionTexts);
+    const newOptions = shuffledTexts.map((text, i) => `${letters[i]}. ${text}`);
+    const newCorrectAnswer = letters[shuffledTexts.indexOf(correctText)];
+
+    return { ...q, options: newOptions, correctAnswer: newCorrectAnswer };
+  });
+}
+
+/**
+ * Tạo 4 mã đề A, B, C, D từ 1 đề gốc bằng cách xáo trộn Front-end (không gọi lại Gemini).
+ * Trả về: [{ code: "A", examCode: "482A", questions: [...] }, ...]
+ */
+export function generateFourExamVariants(originalQuestions) {
+  const baseCode = Math.floor(100 + Math.random() * 900);
+  const labels = ["A", "B", "C", "D"];
+
+  return labels.map((label) => ({
+    code: label,
+    examCode: `${baseCode}${label}`,
+    questions: shuffleSingleExam(originalQuestions),
+  }));
+}
+
+/** Giữ tương thích: đảo 1 mã đề đơn (dùng cho nút "Đảo mã đề" đơn giản nếu cần). */
+export function shuffleExamCode(questions, options) {
+  const shuffled = shuffleSingleExam(questions, options);
+  const examCode = Math.floor(100 + Math.random() * 900);
+  return { examCode, questions: shuffled };
+}
+
+// ===================== LATEX -> MATHML -> OMML PIPELINE =====================
+
+let placeholderCounter = 0;
+function nextPlaceholderId() {
+  placeholderCounter += 1;
+  return `MATHEQN${Date.now().toString(36)}${placeholderCounter}`;
+}
+
+function latexToOMML(latex, display) {
+  try {
+    const mathml = temml.renderToString(latex, { displayMode: display });
+    const omml = mml2omml(mathml);
+    if (display) {
+      return `<m:oMathPara><m:oMathParaPr><m:jc m:val="center"/></m:oMathParaPr>${omml}</m:oMathPara>`;
+    }
+    return omml;
+  } catch (err) {
+    console.warn("[exportService] Lỗi convert LaTeX -> OMML:", latex, err.message);
+    return null;
+  }
+}
+
+function buildRunsWithMathPlaceholders(text, { bold = false, italics = false, size = 26 } = {}) {
+  const segments = parseLatexSegments(text);
+  const runs = [];
+  const equations = {};
+
+  for (const seg of segments) {
+    if (seg.type === "text") {
+      if (seg.content === "") continue;
+      runs.push(new TextRun({ text: seg.content, font: "Times New Roman", size, bold, italics }));
+      continue;
+    }
+
+    const omml = latexToOMML(seg.content, seg.display);
+    if (!omml) {
+      runs.push(new TextRun({ text: `$${seg.content}$`, font: "Cambria Math", size: 26 }));
+      continue;
+    }
+
+    const placeholderId = nextPlaceholderId();
+    equations[placeholderId] = omml;
+    runs.push(new TextRun({ text: placeholderId, font: "Times New Roman", size: 26 }));
+  }
+
+  return { runs, equations };
+}
+
+function buildQuestionParagraphs(question, index, equationsAcc) {
+  const scoreLabel = question.score != null ? ` (${question.score}đ)` : "";
+  const label = new TextRun({
+    text: `Câu ${index + 1}${scoreLabel}: `,
+    bold: true,
+    font: "Times New Roman",
+    size: 26,
+  });
+
+  const { runs: contentRuns, equations: contentEq } = buildRunsWithMathPlaceholders(question.content);
+  Object.assign(equationsAcc, contentEq);
+
+  const paragraphs = [
+    new Paragraph({ children: [label, ...contentRuns], spacing: { after: 100 } }),
+  ];
+
+  if (question.options?.length) {
+    question.options.forEach((opt) => {
+      const { runs: optRuns, equations: optEq } = buildRunsWithMathPlaceholders(`     ${opt}`);
+      Object.assign(equationsAcc, optEq);
+      paragraphs.push(new Paragraph({ children: optRuns, spacing: { after: 60 } }));
+    });
+  }
+
+  return paragraphs;
+}
+
+function buildRubricParagraphs(teacherRubric, questions, equationsAcc) {
+  const idToIndex = new Map(questions.map((q, i) => [q.id, i + 1]));
+
+  const paragraphs = [
+    new Paragraph({
+      pageBreakBefore: true,
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({ text: "ĐÁP ÁN & THANG ĐIỂM (RUBRIC)", bold: true, size: 28, font: "Times New Roman" }),
+      ],
+      spacing: { after: 200 },
+    }),
+  ];
+
+  teacherRubric.forEach((r) => {
+    const qNumber = idToIndex.get(r.questionId) ?? "?";
+    const question = questions.find((q) => q.id === r.questionId);
+    const scoreLabel = question?.score != null ? ` (${question.score}đ)` : "";
+
+    paragraphs.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `Câu ${qNumber}${scoreLabel} - Đáp án: ${r.correctAnswer}`,
+            bold: true,
+            font: "Times New Roman",
+            size: 26,
+          }),
+        ],
+        spacing: { before: 120 },
+      })
+    );
+
+    if (r.detailedSolution) {
+      const { runs, equations } = buildRunsWithMathPlaceholders(r.detailedSolution);
+      Object.assign(equationsAcc, equations);
+      paragraphs.push(new Paragraph({ children: runs, spacing: { after: 40 } }));
+    }
+
+    if (r.scoringGuide) {
+      const { runs, equations } = buildRunsWithMathPlaceholders(`Thang điểm: ${r.scoringGuide}`, {
+        italics: true,
+        size: 24,
+      });
+      Object.assign(equationsAcc, equations);
+      paragraphs.push(new Paragraph({ children: runs, spacing: { after: 40 } }));
+    }
+  });
+
+  paragraphs.push(
+    new Paragraph({
+      alignment: AlignmentType.RIGHT,
+      children: [
+        new TextRun({
+          text: `Tổng điểm: ${sumScores(questions)} / 10`,
+          bold: true,
+          font: "Times New Roman",
+          size: 26,
+        }),
+      ],
+      spacing: { before: 200 },
+    })
+  );
+
+  return paragraphs;
+}
+
+async function injectEquationsIntoDocx(buffer, equations) {
+  const ids = Object.keys(equations);
+  if (ids.length === 0) return buffer;
+
+  const zip = await JSZip.loadAsync(buffer);
+  const docXmlPath = "word/document.xml";
+  let xml = await zip.file(docXmlPath).async("string");
+
+  for (const id of ids) {
+    const runRegex = new RegExp(`<w:r>(?:(?!</w:r>)[\\s\\S])*?${id}[\\s\\S]*?</w:r>`);
+    xml = xml.replace(runRegex, equations[id]);
+  }
+
+  zip.file(docXmlPath, xml);
+  return zip.generateAsync({ type: "blob" });
+}
+
+/**
+ * Tạo và tải file .docx cho đề thi, kèm trang "Đáp án & Thang điểm" ngắt trang riêng ở cuối.
+ */
+export async function exportToWord({
+  title = "ĐỀ KIỂM TRA",
+  schoolName = "",
+  className = "",
+  grade,
+  subject = "Toán",
+  examCode,
+  duration = "45 phút",
+  academicYear = "",
+  questions,
+  teacherRubric = [],
+}) {
+  const equations = {};
+
+  const headerParagraphs = [
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({
+          text: schoolName || "TRƯỜNG ...........................",
+          bold: true,
+          size: 24,
+          font: "Times New Roman",
+        }),
+      ],
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [new TextRun({ text: title, bold: true, size: 32, font: "Times New Roman" })],
+      spacing: { before: 100 },
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({
+          text: `Năm học: ${academicYear || "................"}   |   Môn: ${subject} - Lớp ${grade}   |   Thời gian: ${duration}   |   Mã đề: ${examCode}`,
+          italics: true,
+          size: 24,
+          font: "Times New Roman",
+        }),
+      ],
+      spacing: { after: 150 },
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: `Họ và tên: .............................................................   Lớp: ${className || "........"}`,
+          font: "Times New Roman",
+          size: 24,
+        }),
+      ],
+      spacing: { after: 300 },
+    }),
+  ];
+
+  const questionParagraphs = questions.flatMap((q, i) => buildQuestionParagraphs(q, i, equations));
+
+  const sections = [{ properties: {}, children: [...headerParagraphs, ...questionParagraphs] }];
+
+  if (teacherRubric?.length) {
+    sections[0].children.push(...buildRubricParagraphs(teacherRubric, questions, equations));
+  }
+
+  const doc = new Document({ sections });
+  const rawBuffer = await Packer.toBuffer(doc);
+  const finalBlob = await injectEquationsIntoDocx(rawBuffer, equations);
+
+  saveAs(finalBlob, `De-thi-${subject}-Lop${grade}-Ma${examCode}.docx`);
+}
+
+/**
+ * Xuất PDF: window.print() trên vùng #print-area (CSS @media print đã ngắt trang rubric,
+ * đã render KaTeX sẵn trong A4LivePreview).
+ */
+export function exportToPDF() {
+  window.print();
+}

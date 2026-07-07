@@ -1,0 +1,12 @@
+{
+  "admin": {
+    "password": "khoadvinan0101",
+    "fullName": "Quản trị viên",
+    "role": "admin"
+  },
+  "gv.toan01": {
+    "password": "khoadvinan0102",
+    "fullName": "Giáo viên Toán 01",
+    "role": "teacher"
+  }
+}
