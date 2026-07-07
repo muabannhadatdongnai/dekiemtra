@@ -41,7 +41,7 @@ export default function LoginForm({ onLoginSuccess }) {
       >
         <h1 className="mb-1 text-xl font-semibold text-slate-900">Đăng nhập</h1>
         <p className="mb-6 text-sm text-slate-500">
-          Dành cho giáo viên đã được cấp tài khoản (xem src/data/users.json).
+          Dành cho giáo viên đã được cấp tài khoản. Nếu bạn chưa có tài khoản hãy liên hệ cho tôi qua Zalo 0938 364 681.
         </p>
 
         <label className="mb-1 block text-sm font-medium text-slate-700">Tên đăng nhập</label>
