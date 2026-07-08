@@ -1,5 +1,6 @@
 import { buildExamPrompt, DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { generateContentWithFailover } from "./geminiKeyPool";
+import { isValidVisualData, computeVisualAnswer } from "@/data/visualSchemas";
 import crypto from "crypto";
 
 // ⚠️ CHỖ CẦN THAY ĐỔI: đặt GEMINI_API_KEYS (nhiều key, phân tách dấu phẩy) hoặc GEMINI_API_KEY
@@ -88,6 +89,31 @@ function summarizeForPrompt(existingQuestions = [], limit = 30) {
 }
 
 /**
+ * Kiểm tra + "làm sạch" 1 câu hỏi có gắn visualType/visualData:
+ * - Nếu visualData không hợp lệ về mặt toán học (vd rows không cộng đúng tổng, tam giác sai
+ *   quan hệ cộng/trừ...) -> BỎ visualType/visualData, giữ lại câu hỏi dạng text thường
+ *   (an toàn hơn là hiển thị hình sai cho học sinh).
+ * - Nếu hợp lệ -> ghi đè correctAnswer bằng giá trị TỰ TÍNH (computeVisualAnswer), KHÔNG bao
+ *   giờ tin vào correctAnswer do AI tự tính cho các dạng có công thức xác định rõ ràng này.
+ */
+function sanitizeVisualQuestion(question, includeAnswers) {
+  if (!question.visualType || !question.visualData) return question;
+
+  if (!isValidVisualData(question.visualType, question.visualData)) {
+    console.warn(
+      `[geminiEngine] visualData không hợp lệ (${question.visualType}), bỏ visual, giữ câu hỏi dạng text.`
+    );
+    const { visualType, visualData, ...rest } = question;
+    return rest;
+  }
+
+  if (!includeAnswers) return question;
+
+  const computedAnswer = computeVisualAnswer(question.visualType, question.visualData);
+  return { ...question, correctAnswer: String(computedAnswer) };
+}
+
+/**
  * Gọi Gemini để sinh câu hỏi + rubric cho 1 mức độ cụ thể.
  * Model: dùng chung gemini-3.5-flash cho mọi mức độ (xem giải thích trong promptTemplates.js) -
  * vẫn giữ cấu trúc "levelConfig.model" để dễ tách lại nếu Google mở free tier cho Pro sau này.
@@ -101,6 +127,7 @@ export async function generateQuestionsForLevel({
   questionType,
   numberOfQuestions,
   includeAnswers = false,
+  useVisualQuestions = false,
   existingQuestions = [],
   maxRetries = 2,
 }) {
@@ -126,6 +153,7 @@ export async function generateQuestionsForLevel({
       questionType,
       numberOfQuestions: remaining,
       includeAnswers,
+      useVisualQuestions,
       excludeQuestionsSummary: summarizeForPrompt([
         ...poolExisting,
         ...collectedPairs.map((p) => p.question.content),
@@ -157,7 +185,9 @@ export async function generateQuestionsForLevel({
       continue; // JSON lỗi -> thử lại với seed mới ở vòng sau
     }
 
-    const batchQuestions = Array.isArray(parsed.questions) ? parsed.questions : [];
+    const batchQuestions = (Array.isArray(parsed.questions) ? parsed.questions : []).map((q) =>
+      sanitizeVisualQuestion(q, includeAnswers)
+    );
     const batchRubric = Array.isArray(parsed.teacher_rubric) ? parsed.teacher_rubric : [];
 
     const newPairs = pairAndFilterDuplicates(batchQuestions, batchRubric, [
@@ -214,6 +244,7 @@ export async function generateFullExam({
   matrix,
   typeByLevel = {},
   includeAnswers = false,
+  useVisualQuestions = false,
   existingQuestions = [],
 }) {
   const levels = Object.keys(matrix).filter((k) => matrix[k] > 0);
@@ -229,6 +260,7 @@ export async function generateFullExam({
         questionType: typeByLevel[difficulty] || "trac_nghiem",
         numberOfQuestions: matrix[difficulty],
         includeAnswers,
+        useVisualQuestions,
         existingQuestions,
       })
     )

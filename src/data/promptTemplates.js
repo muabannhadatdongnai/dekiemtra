@@ -25,6 +25,8 @@
  *  - Random Sampling Prompt: yêu cầu AI chọn ngẫu nhiên phân vùng kiến thức trong tài liệu.
  */
 
+import { VISUAL_TYPE_PROMPT_GUIDE } from "./visualSchemas";
+
 const FREE_TIER_MODEL = "gemini-3.5-flash";
 
 export const DIFFICULTY_LEVELS = {
@@ -98,6 +100,7 @@ export function buildExamPrompt({
   numberOfQuestions = 5,
   excludeQuestionsSummary = "",
   includeAnswers = false,
+  useVisualQuestions = false,
 }) {
   const level = DIFFICULTY_LEVELS[difficulty];
   if (!level) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
@@ -181,7 +184,12 @@ ${
     : ""
 }
 ${pairingRule}
-Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema):
+${useVisualQuestions ? VISUAL_TYPE_PROMPT_GUIDE : ""}
+Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema${
+    useVisualQuestions
+      ? '; RIÊNG "visualType", "visualData", và "needsScratchSpace" là các trường TUỲ CHỌN có thể thêm vào bất kỳ câu hỏi nào ở trên, theo đúng hướng dẫn phía trên'
+      : ""
+  }):
 ${outputSchema}
 `.trim();
 }

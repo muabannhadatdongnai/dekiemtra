@@ -37,6 +37,11 @@ body {
   page-break-inside: avoid;
 }
 
+.no-print-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
 .exam-question .q-index {
   font-weight: 700;
   margin-right: 4px;

@@ -15,6 +15,7 @@ export async function POST(request) {
       typeByLevel = {}, // { NHAN_BIET: "trac_nghiem"|"tu_luan", ... } - RIÊNG cho từng mức độ
       matrix, // { NHAN_BIET, THONG_HIEU, VAN_DUNG, VAN_DUNG_CAO }
       includeAnswers = false, // mặc định KHÔNG tạo đáp án để tiết kiệm credit AI
+      useVisualQuestions = false, // câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...) - đặc trưng Tiểu học
       existingQuestions = [],
     } = body;
 
@@ -39,6 +40,7 @@ export async function POST(request) {
       matrix,
       typeByLevel,
       includeAnswers,
+      useVisualQuestions,
       existingQuestions,
     });
 

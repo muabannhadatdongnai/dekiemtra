@@ -4,6 +4,13 @@ import JSZip from "jszip";
 import temml from "temml";
 import { mml2omml } from "mathml2omml";
 import { parseLatexSegments } from "./latexUtils";
+import {
+  buildVerticalArithmeticTable,
+  buildNumberTriangleTable,
+  buildBarModelTable,
+  buildVisualCountingParagraphs,
+  buildScratchGridTable,
+} from "./visualExportBuilders";
 
 /**
  * exportService.js
@@ -173,9 +180,45 @@ function buildQuestionParagraphs(question, index, equationsAcc) {
 
   const elements = [new Paragraph({ children: [label, ...contentRuns], spacing: { after: 100 } })];
 
+  // ============ Câu hỏi trực quan (đặt tính, tam giác, sơ đồ, hình đếm) ============
+  if (question.visualType && question.visualData) {
+    switch (question.visualType) {
+      case "vertical_arithmetic":
+        elements.push(buildVerticalArithmeticTable(question.visualData));
+        elements.push(new Paragraph({ text: "", spacing: { after: 80 } }));
+        break;
+      case "number_triangle":
+        elements.push(buildNumberTriangleTable(question.visualData));
+        elements.push(new Paragraph({ text: "", spacing: { after: 80 } }));
+        break;
+      case "bar_model": {
+        const { table, captionText } = buildBarModelTable(question.visualData);
+        elements.push(table);
+        elements.push(
+          new Paragraph({
+            children: [new TextRun({ text: captionText, italics: true, size: 22, font: "Times New Roman" })],
+            spacing: { before: 40, after: 80 },
+          })
+        );
+        break;
+      }
+      case "visual_counting":
+        elements.push(...buildVisualCountingParagraphs(question.visualData));
+        break;
+      default:
+        break;
+    }
+  }
+
   if (question.options?.length) {
     elements.push(buildOptionsTable(question.options, equationsAcc));
     elements.push(new Paragraph({ text: "", spacing: { after: 100 } })); // đệm khoảng cách sau bảng
+  }
+
+  // ============ Khung kẻ ô nháp (nếu AI yêu cầu, độc lập với visualType) ============
+  if (question.needsScratchSpace) {
+    elements.push(buildScratchGridTable());
+    elements.push(new Paragraph({ text: "", spacing: { after: 100 } }));
   }
 
   return elements;

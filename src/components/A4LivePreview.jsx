@@ -2,6 +2,7 @@
 
 import katex from "katex";
 import { parseLatexSegments } from "@/services/latexUtils";
+import QuestionVisual from "./visuals/QuestionVisual";
 
 /**
  * Render 1 chuỗi nội dung (có thể chứa $...$ hoặc $$...$$) thành React node,
@@ -81,6 +82,7 @@ function QuestionBlock({ question, index }) {
       <p>
         <span className="q-index">Câu {index + 1}:</span> <RichMathText text={question.content} />
       </p>
+      <QuestionVisual question={question} />
       {question.options?.length > 0 && (
         <ul className="exam-options">
           {question.options.map((opt, j) => (

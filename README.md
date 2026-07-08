@@ -123,6 +123,27 @@ mục "Vận dụng cao" — Gemini Pro sẽ ưu tiên khai thác mục này cho
 7. **In / Tải PDF**: `window.print()` trên vùng đã style `@media print` — ẩn toàn bộ UI,
    ép khổ A4, tự ngắt trang rubric.
 
+## Câu hỏi trực quan (Tiểu học Lớp 1-5)
+
+Hệ thống hỗ trợ 4 dạng câu hỏi trực quan đặc trưng Toán Tiểu học VN, cộng thêm khung kẻ ô nháp:
+
+| Dạng | Ví dụ | File liên quan |
+|---|---|---|
+| Đặt tính rồi tính | `37 + 56` dạng cột dọc | `visualSchemas.js`, `visuals/VerticalArithmetic.jsx` |
+| Cây số / tam giác quan hệ | Tam giác 3 đỉnh, 1 đỉnh ẩn | `visuals/NumberTriangle.jsx` |
+| Sơ đồ đoạn thẳng (so sánh hơn-kém) | "255 bao" chia 2 phần | `visuals/BarModel.jsx` |
+| Hình đếm trực quan (phân số) | Khoanh 1/4 số ngôi sao | `visuals/VisualCounting.jsx` |
+| Khung kẻ ô nháp | Không gian làm bài tay | `visuals/ScratchGrid.jsx` |
+
+**Nguyên tắc cốt lõi**: AI (Gemini) CHỈ sinh ra **số liệu** (vd 2 số cần cộng, 3 đỉnh tam giác),
+KHÔNG bao giờ được yêu cầu "vẽ" hình bằng text. Hệ thống tự vẽ hình từ số liệu đó (SVG cho
+preview/PDF trong `components/visuals/`, Table cho Word trong `services/visualExportBuilders.js`)
+— vừa đáng tin cậy tuyệt đối, vừa không tốn thêm token đáng kể. Toàn bộ `visualData` còn được
+CODE tự kiểm tra tính đúng đắn toán học (`isValidVisualData`) và tự tính đáp án chính xác
+(`computeVisualAnswer`) — không bao giờ tin vào phép tính của AI cho các dạng này.
+
+Bật/tắt qua checkbox "Cho phép câu hỏi trực quan" trong form (mặc định BẬT, phù hợp Lớp 1-5).
+
 ## Triển khai miễn phí lên Vercel
 
 ```bash

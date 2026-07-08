@@ -93,6 +93,9 @@ export default function ExamMatrixForm({ onGenerated }) {
   });
   // Mặc định KHÔNG tạo đáp án/lời giải - tiết kiệm credit AI đáng kể. Giáo viên tự bật khi cần.
   const [includeAnswers, setIncludeAnswers] = useState(false);
+  // Câu hỏi trực quan (đặt tính, tam giác số, sơ đồ đoạn thẳng, hình đếm) - đặc trưng Tiểu học,
+  // mặc định BẬT vì phần lớn giáo viên dùng hệ thống này dạy Lớp 1-5.
+  const [useVisualQuestions, setUseVisualQuestions] = useState(true);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -165,6 +168,7 @@ export default function ExamMatrixForm({ onGenerated }) {
           typeByLevel,
           matrix,
           includeAnswers,
+          useVisualQuestions,
         }),
       });
       const data = await res.json();
@@ -298,7 +302,26 @@ export default function ExamMatrixForm({ onGenerated }) {
         </p>
       </div>
 
-      {/* ============ TUỲ CHỌN ĐÁP ÁN ============ */}
+      {/* ============ TUỲ CHỌN ĐÁP ÁN & CÂU HỎI TRỰC QUAN ============ */}
+      <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
+        <input
+          type="checkbox"
+          checked={useVisualQuestions}
+          onChange={(e) => setUseVisualQuestions(e.target.checked)}
+          className="mt-0.5"
+        />
+        <span>
+          <span className="block text-sm font-medium text-slate-800">
+            Cho phép câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...)
+          </span>
+          <span className="block text-xs text-slate-500">
+            Phù hợp Tiểu học (Lớp 1-5): đặt tính rồi tính, cây số/tam giác quan hệ, sơ đồ đoạn thẳng,
+            hình đếm minh hoạ phân số. AI chỉ sinh số liệu, hệ thống tự vẽ hình - không tốn thêm
+            credit đáng kể. Tắt nếu ra đề cho Lớp 6 trở lên.
+          </span>
+        </span>
+      </label>
+
       <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
         <input
           type="checkbox"
