@@ -97,6 +97,7 @@ export function buildExamPrompt({
   questionType = "trac_nghiem",
   numberOfQuestions = 5,
   excludeQuestionsSummary = "",
+  includeAnswers = false,
 }) {
   const level = DIFFICULTY_LEVELS[difficulty];
   if (!level) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
@@ -104,16 +105,57 @@ export function buildExamPrompt({
   const seed = generateAntiDuplicationSeed();
   const isEssay = questionType === "tu_luan";
 
+  // ⚠️ Khi includeAnswers=false: KHÔNG yêu cầu correctAnswer lẫn teacher_rubric -
+  // giảm đáng kể số token output (phần tốn credit AI nhiều nhất), phù hợp mặc định
+  // "không tạo đáp án" để tiết kiệm chi phí. Bật includeAnswers=true khi giáo viên
+  // chủ động cần đáp án + lời giải chi tiết để chấm bài.
   const questionSchemaExample = isEssay
-    ? `{
+    ? includeAnswers
+      ? `{
       "content": "Đề bài tự luận, có thể chứa LaTeX",
       "correctAnswer": "Đáp số cuối cùng, ngắn gọn"
     }`
-    : `{
+      : `{
+      "content": "Đề bài tự luận, có thể chứa LaTeX"
+    }`
+    : includeAnswers
+      ? `{
       "content": "Đề bài câu hỏi, có thể chứa LaTeX",
       "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
       "correctAnswer": "A|B|C|D"
+    }`
+      : `{
+      "content": "Đề bài câu hỏi, có thể chứa LaTeX",
+      "options": ["A. ...", "B. ...", "C. ...", "D. ..."]
     }`;
+
+  const outputSchema = includeAnswers
+    ? `{
+  "questions": [
+    ${questionSchemaExample}
+  ],
+  "teacher_rubric": [
+    {
+      "correctAnswer": "đáp án đúng, lặp lại để tiện đối chiếu",
+      "detailedSolution": "Lời giải chi tiết từng bước, có thể chứa LaTeX",
+      "scoringGuide": "Thang điểm/barem chi tiết theo từng bước (đặc biệt quan trọng với câu tự luận)"
+    }
+  ]
+}`
+    : `{
+  "questions": [
+    ${questionSchemaExample}
+  ]
+}`;
+
+  const pairingRule = includeAnswers
+    ? `
+QUY TẮC GHÉP NỐI QUAN TRỌNG:
+- Mảng "teacher_rubric" PHẢI có ĐÚNG cùng số lượng phần tử và ĐÚNG cùng thứ tự với mảng "questions"
+  (phần tử thứ i của "teacher_rubric" luôn là đáp án/lời giải của phần tử thứ i trong "questions").
+  KHÔNG bỏ sót, KHÔNG đổi thứ tự, KHÔNG gộp nhiều câu vào 1 rubric.
+`
+    : "";
 
   return `
 ${BASE_RULES}
@@ -138,24 +180,8 @@ ${
     ? `CÁC CÂU HỎI ĐÃ TỒN TẠI TRONG NGÂN HÀNG ĐỀ (KHÔNG ĐƯỢC TẠO TRÙNG Ý TƯỞNG, TRÙNG SỐ LIỆU HOẶC TRÙNG CÁCH HỎI):\n${excludeQuestionsSummary}\n`
     : ""
 }
-
-QUY TẮC GHÉP NỐI QUAN TRỌNG:
-- Mảng "teacher_rubric" PHẢI có ĐÚNG cùng số lượng phần tử và ĐÚNG cùng thứ tự với mảng "questions"
-  (phần tử thứ i của "teacher_rubric" luôn là đáp án/lời giải của phần tử thứ i trong "questions").
-  KHÔNG bỏ sót, KHÔNG đổi thứ tự, KHÔNG gộp nhiều câu vào 1 rubric.
-
+${pairingRule}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema):
-{
-  "questions": [
-    ${questionSchemaExample}
-  ],
-  "teacher_rubric": [
-    {
-      "correctAnswer": "đáp án đúng, lặp lại để tiện đối chiếu",
-      "detailedSolution": "Lời giải chi tiết từng bước, có thể chứa LaTeX",
-      "scoringGuide": "Thang điểm/barem chi tiết theo từng bước (đặc biệt quan trọng với câu tự luận)"
-    }
-  ]
-}
+${outputSchema}
 `.trim();
 }

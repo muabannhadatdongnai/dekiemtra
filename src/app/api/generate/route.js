@@ -14,6 +14,7 @@ export async function POST(request) {
       chapters, // string[]
       typeByLevel = {}, // { NHAN_BIET: "trac_nghiem"|"tu_luan", ... } - RIÊNG cho từng mức độ
       matrix, // { NHAN_BIET, THONG_HIEU, VAN_DUNG, VAN_DUNG_CAO }
+      includeAnswers = false, // mặc định KHÔNG tạo đáp án để tiết kiệm credit AI
       existingQuestions = [],
     } = body;
 
@@ -37,6 +38,7 @@ export async function POST(request) {
       sourceMarkdown,
       matrix,
       typeByLevel,
+      includeAnswers,
       existingQuestions,
     });
 

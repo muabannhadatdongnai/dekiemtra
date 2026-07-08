@@ -1,5 +1,4 @@
 import { buildExamPrompt, DIFFICULTY_LEVELS } from "@/data/promptTemplates";
-import { computeScores } from "./scoringUtils";
 import { generateContentWithFailover } from "./geminiKeyPool";
 import crypto from "crypto";
 
@@ -101,6 +100,7 @@ export async function generateQuestionsForLevel({
   difficulty,
   questionType,
   numberOfQuestions,
+  includeAnswers = false,
   existingQuestions = [],
   maxRetries = 2,
 }) {
@@ -125,6 +125,7 @@ export async function generateQuestionsForLevel({
       difficulty,
       questionType,
       numberOfQuestions: remaining,
+      includeAnswers,
       excludeQuestionsSummary: summarizeForPrompt([
         ...poolExisting,
         ...collectedPairs.map((p) => p.question.content),
@@ -212,6 +213,7 @@ export async function generateFullExam({
   sourceMarkdown,
   matrix,
   typeByLevel = {},
+  includeAnswers = false,
   existingQuestions = [],
 }) {
   const levels = Object.keys(matrix).filter((k) => matrix[k] > 0);
@@ -226,6 +228,7 @@ export async function generateFullExam({
         difficulty,
         questionType: typeByLevel[difficulty] || "trac_nghiem",
         numberOfQuestions: matrix[difficulty],
+        includeAnswers,
         existingQuestions,
       })
     )
@@ -241,8 +244,8 @@ export async function generateFullExam({
       return `Mức "${level?.label}" chỉ tạo được ${r.fulfilled}/${r.requested} câu (do trùng lặp nhiều hoặc lỗi API). Vui lòng thử tạo thêm hoặc bổ sung chương kiến thức.`;
     });
 
-  // Gán điểm số cho từng câu theo trọng số độ khó, tổng luôn = 10 điểm
-  const scoredQuestions = computeScores(questions);
+  // (Đã bỏ tính năng tự động gán điểm/thang điểm theo yêu cầu giáo viên - xem scoringUtils.js
+  // nếu muốn bật lại trong tương lai, chỉ cần gọi computeScores(questions) ở đây.)
 
-  return { questions: scoredQuestions, teacherRubric, warnings };
+  return { questions, teacherRubric, warnings };
 }

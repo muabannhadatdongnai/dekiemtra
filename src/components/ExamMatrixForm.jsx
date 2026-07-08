@@ -18,7 +18,7 @@ function Stepper({ label, sub, value, onChange, type, onTypeChange }) {
     <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
       <div>
         <p className="text-sm font-medium text-slate-800">{label}</p>
-        <p className="text-xs text-slate-500">{sub}</p>
+        {sub && <p className="text-xs text-slate-500">{sub}</p>}
       </div>
       <div className="flex items-center gap-3">
         <select
@@ -91,6 +91,8 @@ export default function ExamMatrixForm({ onGenerated }) {
     VAN_DUNG: 1,
     VAN_DUNG_CAO: 1,
   });
+  // Mặc định KHÔNG tạo đáp án/lời giải - tiết kiệm credit AI đáng kể. Giáo viên tự bật khi cần.
+  const [includeAnswers, setIncludeAnswers] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -162,6 +164,7 @@ export default function ExamMatrixForm({ onGenerated }) {
           chapters: selectedChapters,
           typeByLevel,
           matrix,
+          includeAnswers,
         }),
       });
       const data = await res.json();
@@ -284,7 +287,6 @@ export default function ExamMatrixForm({ onGenerated }) {
           <Stepper
             key={level.key}
             label={`${level.label}${level.label === "Nhận biết" ? " (Dễ)" : level.label === "Thông hiểu" ? " (Trung bình)" : level.label === "Vận dụng" ? " (Khó)" : " (Rất khó)"}`}
-            sub={`Model: ${level.model}`}
             value={matrix[level.key]}
             onChange={(v) => setMatrix((m) => ({ ...m, [level.key]: v }))}
             type={typeByLevel[level.key]}
@@ -295,6 +297,25 @@ export default function ExamMatrixForm({ onGenerated }) {
           Tổng số câu: <span className="font-semibold">{totalQuestions}</span>
         </p>
       </div>
+
+      {/* ============ TUỲ CHỌN ĐÁP ÁN ============ */}
+      <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
+        <input
+          type="checkbox"
+          checked={includeAnswers}
+          onChange={(e) => setIncludeAnswers(e.target.checked)}
+          className="mt-0.5"
+        />
+        <span>
+          <span className="block text-sm font-medium text-slate-800">
+            Tạo đáp án + lời giải chi tiết
+          </span>
+          <span className="block text-xs text-slate-500">
+            Mặc định TẮT để tiết kiệm credit AI. Bật lên nếu cần đáp án đúng và lời giải để chấm bài
+            (đề vẫn tạo bình thường khi tắt, chỉ là không kèm đáp án).
+          </span>
+        </span>
+      </label>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 

@@ -4,7 +4,6 @@ import JSZip from "jszip";
 import temml from "temml";
 import { mml2omml } from "mathml2omml";
 import { parseLatexSegments } from "./latexUtils";
-import { sumScores } from "./scoringUtils";
 
 /**
  * exportService.js
@@ -36,12 +35,17 @@ function shuffleSingleExam(questions, { shuffleOptions = true } = {}) {
 
     const letters = ["A", "B", "C", "D"];
     const optionTexts = q.options.map((opt) => opt.replace(/^[A-D]\.\s*/, ""));
-    const correctIndex = letters.indexOf(q.correctAnswer);
-    const correctText = optionTexts[correctIndex];
-
     const shuffledTexts = shuffleArray(optionTexts);
     const newOptions = shuffledTexts.map((text, i) => `${letters[i]}. ${text}`);
-    const newCorrectAnswer = letters[shuffledTexts.indexOf(correctText)];
+
+    // ⚠️ correctAnswer có thể KHÔNG tồn tại (khi tạo đề với tuỳ chọn "không tạo đáp án") -
+    // vẫn đảo options bình thường, chỉ bỏ qua việc theo dõi đáp án đúng nếu không có.
+    let newCorrectAnswer = q.correctAnswer;
+    if (q.correctAnswer) {
+      const correctIndex = letters.indexOf(q.correctAnswer);
+      const correctText = optionTexts[correctIndex];
+      newCorrectAnswer = letters[shuffledTexts.indexOf(correctText)];
+    }
 
     return { ...q, options: newOptions, correctAnswer: newCorrectAnswer };
   });
@@ -157,9 +161,8 @@ function buildOptionsTable(options, equationsAcc) {
 }
 
 function buildQuestionParagraphs(question, index, equationsAcc) {
-  const scoreLabel = question.score != null ? ` (${question.score}đ)` : "";
   const label = new TextRun({
-    text: `Câu ${index + 1}${scoreLabel}: `,
+    text: `Câu ${index + 1}: `,
     bold: true,
     font: "Times New Roman",
     size: 26,
@@ -186,7 +189,7 @@ function buildRubricParagraphs(teacherRubric, questions, equationsAcc) {
       pageBreakBefore: true,
       alignment: AlignmentType.CENTER,
       children: [
-        new TextRun({ text: "ĐÁP ÁN & THANG ĐIỂM (RUBRIC)", bold: true, size: 28, font: "Times New Roman" }),
+        new TextRun({ text: "ĐÁP ÁN & LỜI GIẢI", bold: true, size: 28, font: "Times New Roman" }),
       ],
       spacing: { after: 200 },
     }),
@@ -194,14 +197,12 @@ function buildRubricParagraphs(teacherRubric, questions, equationsAcc) {
 
   teacherRubric.forEach((r) => {
     const qNumber = idToIndex.get(r.questionId) ?? "?";
-    const question = questions.find((q) => q.id === r.questionId);
-    const scoreLabel = question?.score != null ? ` (${question.score}đ)` : "";
 
     paragraphs.push(
       new Paragraph({
         children: [
           new TextRun({
-            text: `Câu ${qNumber}${scoreLabel} - Đáp án: ${r.correctAnswer}`,
+            text: `Câu ${qNumber} - Đáp án: ${r.correctAnswer}`,
             bold: true,
             font: "Times New Roman",
             size: 26,
@@ -226,21 +227,6 @@ function buildRubricParagraphs(teacherRubric, questions, equationsAcc) {
       paragraphs.push(new Paragraph({ children: runs, spacing: { after: 40 } }));
     }
   });
-
-  paragraphs.push(
-    new Paragraph({
-      alignment: AlignmentType.RIGHT,
-      children: [
-        new TextRun({
-          text: `Tổng điểm: ${sumScores(questions)} / 10`,
-          bold: true,
-          font: "Times New Roman",
-          size: 26,
-        }),
-      ],
-      spacing: { before: 200 },
-    })
-  );
 
   return paragraphs;
 }
@@ -321,7 +307,7 @@ export async function exportToWord({
     new Paragraph({
       children: [
         new TextRun({
-          text: `Họ và tên: .............................................................   Lớp: ${className || "........"}`,
+          text: `Họ và tên: .............................................................   Lớp: ${className || "........"}   Trường: ${schoolName || "........"}`,
           font: "Times New Roman",
           size: 24,
         }),
