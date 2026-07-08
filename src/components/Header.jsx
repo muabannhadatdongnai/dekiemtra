@@ -12,7 +12,7 @@ export default function Header({ user, onLogout }) {
           </div>
           <div>
             <p className="text-sm font-semibold leading-none text-slate-900">
-              Tạo đề kiểm tra tự động miễn phí
+              Tạo đề thi tự động miễn phí
             </p>
             <p className="text-xs text-slate-500">Khoa dịch vụ in ấn - Zalo 0938 364 681</p>
           </div>

@@ -61,7 +61,8 @@ Trong màn hình "Configure Project", mở mục **Environment Variables** và t
 
 | Key | Value | Ghi chú |
 |---|---|---|
-| `GEMINI_API_KEY` | (dán API key của bạn) | Lấy free tại https://aistudio.google.com/app/apikey |
+| `GEMINI_API_KEY` | (dán API key của bạn) | Dùng khi chỉ có 1 key. Lấy free tại https://aistudio.google.com/app/apikey |
+| `GEMINI_API_KEYS` | `key1,key2,key3` | **Khuyến nghị**: nhiều key từ nhiều tài khoản Google khác nhau, phân tách dấu phẩy, KHÔNG khoảng trắng. Nếu đặt biến này, nó được ưu tiên dùng thay `GEMINI_API_KEY`. Hệ thống tự xoay vòng ngẫu nhiên + tự chuyển key khi 1 key hết hạn mức. |
 | `GITHUB_KNOWLEDGE_REPO` | `username/mon-toan-sgk` | Repo kho kiến thức ở Phần A3 |
 | `GITHUB_BRANCH` | `main` | |
 | `GITHUB_TOKEN` | (tuỳ chọn) | Chỉ cần nếu repo kiến thức để Private, hoặc muốn tăng rate-limit |

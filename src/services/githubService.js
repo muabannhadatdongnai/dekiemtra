@@ -12,7 +12,14 @@
  * Ví dụ thực tế:
  *   sach_giao_khoa/lop_6/toan_t2/chuong_3.md
  *   -> https://raw.githubusercontent.com/USERNAME/REPO/main/sach_giao_khoa/lop_6/toan_t2/chuong_3.md
+ *
+ * SÁCH NÂNG CAO (dành cho học sinh giỏi, KHÔNG chia chương, dùng chung cả năm - không
+ * phụ thuộc Tập 1/2) đặt tại:
+ *   sach_giao_khoa/lop_{grade}/{subject}_nang_cao.md
+ * Ví dụ: sach_giao_khoa/lop_5/toan_nang_cao.md
  */
+
+import { ADVANCED_BOOK_MARKER } from "@/data/constants";
 
 const REPO = process.env.GITHUB_KNOWLEDGE_REPO; // "owner/repo" - THAY TẠI .env.local
 const BRANCH = process.env.GITHUB_BRANCH || "main";
@@ -52,6 +59,12 @@ function buildKnowledgePath({ grade, subject, volume, chapter }) {
   return `sach_giao_khoa/lop_${grade}/${subjectSlug}_t${volume}/chuong_${chapter}.md`;
 }
 
+/** Đường dẫn sách nâng cao: sach_giao_khoa/lop_{grade}/{subject}_nang_cao.md (không có Tập, không có chương). */
+function buildAdvancedBookPath({ grade, subject }) {
+  const subjectSlug = slugSubject(subject);
+  return `sach_giao_khoa/lop_${grade}/${subjectSlug}_nang_cao.md`;
+}
+
 /**
  * Hàm chính theo đúng yêu cầu: fetchMarkdownFromGitHub(grade, subject, volume, chapter)
  * Tải nội dung Markdown của 1 chương -> dùng làm "Context" gửi cho Gemini.
@@ -76,9 +89,44 @@ export async function fetchMarkdownFromGitHub(grade, subject, volume, chapter) {
   return res.text();
 }
 
+/** Tải nguyên văn file sách nâng cao (không chia chương) cho 1 Lớp + Môn. */
+export async function fetchAdvancedBook(grade, subject) {
+  if (!REPO) {
+    throw new Error(
+      "Chưa cấu hình GITHUB_KNOWLEDGE_REPO trong .env.local (dạng USERNAME/REPO)."
+    );
+  }
+
+  const path = buildAdvancedBookPath({ grade, subject });
+  const url = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
+
+  const res = await fetch(url, { headers: buildRawHeaders(), cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(
+      `Không thể tải sách nâng cao tại "${path}" (HTTP ${res.status}). ` +
+        `Kiểm tra lại tên file (phải đặt đúng "${slugSubject(subject)}_nang_cao.md", nằm ngay trong lop_${grade}/).`
+    );
+  }
+  return res.text();
+}
+
+/** Kiểm tra sách nâng cao có tồn tại không (dùng GitHub Contents API, chỉ cần biết có/không). */
+async function checkAdvancedBookExists({ grade, subject }) {
+  if (!REPO) return false;
+  const path = buildAdvancedBookPath({ grade, subject });
+  const url = `https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
+  try {
+    const res = await fetch(url, { headers: buildApiHeaders(), cache: "no-store" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Liệt kê các chương (file .md) có sẵn cho 1 Lớp + Môn + Tập, dùng GitHub Contents API
- * để đổ vào Select Box "Chọn Chương/Bài học" trên UI.
+ * để đổ vào Select Box "Chọn Chương/Bài học" trên UI. Nếu có sách nâng cao cho Lớp + Môn
+ * này, thêm 1 mục đặc biệt "Sách nâng cao (toàn bộ)" vào cuối danh sách.
  */
 export async function listChapters({ grade, subject, volume }) {
   if (!REPO) {
@@ -97,7 +145,7 @@ export async function listChapters({ grade, subject, volume }) {
   }
 
   const files = await res.json();
-  return files
+  const chapters = files
     .filter((f) => f.type === "file" && f.name.endsWith(".md"))
     .map((f) => {
       const chapterMatch = f.name.match(/chuong_(.+)\.md$/);
@@ -105,22 +153,40 @@ export async function listChapters({ grade, subject, volume }) {
         chapter: chapterMatch ? chapterMatch[1] : f.name.replace(/\.md$/, ""),
         fileName: f.name,
         downloadUrl: f.download_url,
+        isAdvancedBook: false,
       };
     });
+
+  const hasAdvancedBook = await checkAdvancedBookExists({ grade, subject });
+  if (hasAdvancedBook) {
+    chapters.push({
+      chapter: ADVANCED_BOOK_MARKER,
+      fileName: `${subjectSlug}_nang_cao.md`,
+      isAdvancedBook: true,
+    });
+  }
+
+  return chapters;
 }
 
 /**
- * Ghép nhiều chương lại thành 1 nguồn tài liệu tổng hợp cho đề kiểm tra bao quát
- * nhiều chủ đề (ví dụ đề kiểm tra giữa kỳ / cuối kỳ chọn nhiều chương cùng lúc).
+ * Ghép nhiều chương (và/hoặc sách nâng cao) lại thành 1 nguồn tài liệu tổng hợp cho đề
+ * kiểm tra bao quát nhiều chủ đề (ví dụ đề kiểm tra giữa kỳ / cuối kỳ chọn nhiều chương cùng lúc).
  */
 export async function fetchMultipleChapters({ grade, subject, volume, chapters }) {
   const contents = await Promise.all(
-    chapters.map((chapter) =>
-      fetchMarkdownFromGitHub(grade, subject, volume, chapter).then((md) => ({
-        chapter,
+    chapters.map((chapter) => {
+      if (chapter === ADVANCED_BOOK_MARKER) {
+        return fetchAdvancedBook(grade, subject).then((md) => ({
+          heading: "Sách nâng cao (toàn bộ - dành cho học sinh giỏi)",
+          md,
+        }));
+      }
+      return fetchMarkdownFromGitHub(grade, subject, volume, chapter).then((md) => ({
+        heading: `Chương ${chapter}`,
         md,
-      }))
-    )
+      }));
+    })
   );
-  return contents.map((c) => `## Chương ${c.chapter}\n\n${c.md}`).join("\n\n---\n\n");
+  return contents.map((c) => `## ${c.heading}\n\n${c.md}`).join("\n\n---\n\n");
 }

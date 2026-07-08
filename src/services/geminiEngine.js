@@ -1,12 +1,13 @@
-import { GoogleGenAI } from "@google/genai";
 import { buildExamPrompt, DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { computeScores } from "./scoringUtils";
+import { generateContentWithFailover } from "./geminiKeyPool";
 import crypto from "crypto";
 
-// ⚠️ CHỖ CẦN THAY ĐỔI: đặt GEMINI_API_KEY trong .env.local (lấy free tại aistudio.google.com)
+// ⚠️ CHỖ CẦN THAY ĐỔI: đặt GEMINI_API_KEYS (nhiều key, phân tách dấu phẩy) hoặc GEMINI_API_KEY
+// (1 key) trong .env.local - lấy free tại aistudio.google.com. Xem chi tiết cơ chế xoay vòng
+// nhiều key trong geminiKeyPool.js.
 // ⚠️ Dùng SDK chính thức hiện hành @google/genai (SDK cũ @google/generative-ai đã bị Google
 // khai tử từ 31/8/2025, không còn được cập nhật hay hỗ trợ).
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 /**
  * ================== 3 LỚP CHỐNG TRÙNG ĐỀ ==================
@@ -132,7 +133,7 @@ export async function generateQuestionsForLevel({
 
     let rawText;
     try {
-      const result = await ai.models.generateContent({
+      const result = await generateContentWithFailover({
         model: levelConfig.model,
         contents: prompt,
         config: {

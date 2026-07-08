@@ -82,6 +82,19 @@ sach_giao_khoa/
 
 → Tương ứng URL Raw: `https://raw.githubusercontent.com/USER/REPO/main/sach_giao_khoa/lop_5/toan_t2/chuong_3.md`
 
+**Sách nâng cao (dành cho học sinh giỏi):** đặt NGUYÊN VĂN cả cuốn trong 1 file duy nhất,
+KHÔNG chia theo chương, KHÔNG phụ thuộc Tập (dùng chung cả năm học):
+
+```
+sach_giao_khoa/
+  lop_5/
+    toan_nang_cao.md   <- nguyên cả cuốn, không tách chương
+```
+
+Khi file này tồn tại, giao diện sẽ tự hiện thêm 1 lựa chọn riêng "📘 Sách nâng cao (toàn bộ)"
+bên cạnh danh sách chương thường, giáo viên có thể chọn để AI khai thác thêm nguồn nâng cao
+này (đặc biệt hữu ích cho câu Vận dụng cao).
+
 Mỗi file `.md` nên chứa định nghĩa, công thức LaTeX (`$...$`), ví dụ minh hoạ, và (nếu có)
 mục "Vận dụng cao" — Gemini Pro sẽ ưu tiên khai thác mục này cho câu khó/rất khó.
 

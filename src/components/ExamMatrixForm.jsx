@@ -252,20 +252,27 @@ export default function ExamMatrixForm({ onGenerated }) {
             </p>
           )}
           <div className="flex flex-wrap gap-2">
-            {availableChapters.map((c) => (
-              <button
-                key={c.chapter}
-                type="button"
-                onClick={() => toggleChapter(c.chapter)}
-                className={`rounded-full border px-3 py-1 text-xs transition ${
-                  selectedChapters.includes(c.chapter)
-                    ? "border-brand-600 bg-brand-50 text-brand-700"
-                    : "border-slate-300 text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                Chương {c.chapter}
-              </button>
-            ))}
+            {availableChapters.map((c) => {
+              const isAdvanced = c.isAdvancedBook;
+              const selected = selectedChapters.includes(c.chapter);
+              return (
+                <button
+                  key={c.chapter}
+                  type="button"
+                  onClick={() => toggleChapter(c.chapter)}
+                  className={`rounded-full border px-3 py-1 text-xs transition ${
+                    selected
+                      ? isAdvanced
+                        ? "border-amber-500 bg-amber-50 text-amber-700"
+                        : "border-brand-600 bg-brand-50 text-brand-700"
+                      : "border-slate-300 text-slate-600 hover:bg-slate-50"
+                  }`}
+                  title={isAdvanced ? "Lấy nguyên văn cả cuốn sách nâng cao, không chia chương" : undefined}
+                >
+                  {isAdvanced ? "📘 Sách nâng cao (toàn bộ)" : `Chương ${c.chapter}`}
+                </button>
+              );
+            })}
           </div>
         </Field>
       </div>

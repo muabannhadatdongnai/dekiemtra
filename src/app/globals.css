@@ -158,10 +158,16 @@ body {
     margin: 0;
     width: 100%;
     min-height: auto;
+    /* ⚠️ QUAN TRỌNG: bỏ padding riêng của .a4-page khi in - để @page margin bên dưới
+       lo phần lề, áp dụng ĐỀU cho MỌI trang vật lý (kể cả khi nội dung tràn sang trang 2, 3...).
+       Trước đây padding chỉ nằm ở đầu khối nội dung -> khi nội dung tràn sang trang sau,
+       trang đó không có lề trên -> chữ sát mép, máy in dễ cắt mất chữ. */
+    padding: 0;
   }
   @page {
     size: A4;
-    margin: 0;
+    /* Lề in an toàn, áp dụng cho TẤT CẢ các trang vật lý khi nội dung tràn nhiều trang */
+    margin: 15mm 16mm;
   }
   .no-print {
     display: none !important;
