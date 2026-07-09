@@ -54,6 +54,7 @@ function ExamHeaderTable({ meta }) {
           </td>
           <td className="gdt-col-right">
             <p className="gdt-exam-title">{meta?.title || "PHIẾU KIỂM TRA"}</p>
+            {meta?.schoolName && <p className="gdt-exam-school">Trường: {meta.schoolName}</p>}
             <p className="gdt-exam-sub">Năm học: {meta?.academicYear || "................."}</p>
             <p className="gdt-exam-sub">
               Môn: {meta?.subject || "Toán"} &nbsp;-&nbsp; Lớp {meta?.grade || "..."} &nbsp;-&nbsp; Mã đề: {meta?.examCode}
@@ -71,7 +72,6 @@ function StudentInfoLine({ meta }) {
     <p className="gdt-student-line">
       Họ và tên: <span className="gdt-dots gdt-dots-name">&nbsp;</span>
       &nbsp;&nbsp;Lớp: <span className="gdt-dots gdt-dots-short">{meta?.className || "\u00A0"}</span>
-      &nbsp;&nbsp;Trường: <span className="gdt-dots gdt-dots-long">{meta?.schoolName || "\u00A0"}</span>
     </p>
   );
 }

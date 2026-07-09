@@ -321,20 +321,19 @@ export async function exportToWord({
   const headerParagraphs = [
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [
-        new TextRun({
-          text: schoolName || "TRƯỜNG ...........................",
-          bold: true,
-          size: 24,
-          font: "Times New Roman",
-        }),
-      ],
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: title, bold: true, size: 32, font: "Times New Roman" })],
-      spacing: { before: 100 },
     }),
+    ...(schoolName
+      ? [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({ text: `Trường: ${schoolName}`, bold: true, size: 24, font: "Times New Roman" }),
+            ],
+            spacing: { before: 60 },
+          }),
+        ]
+      : []),
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [
@@ -345,12 +344,12 @@ export async function exportToWord({
           font: "Times New Roman",
         }),
       ],
-      spacing: { after: 150 },
+      spacing: { before: 100, after: 150 },
     }),
     new Paragraph({
       children: [
         new TextRun({
-          text: `Họ và tên: .............................................................   Lớp: ${className || "........"}   Trường: ${schoolName || "........"}`,
+          text: `Họ và tên: .............................................................   Lớp: ${className || "........"}`,
           font: "Times New Roman",
           size: 24,
         }),

@@ -107,6 +107,12 @@ body {
   margin-bottom: 4pt;
 }
 
+.gdt-exam-school {
+  font-size: 12pt;
+  font-weight: 600;
+  margin: 2pt 0 6pt;
+}
+
 .gdt-exam-sub {
   font-size: 12pt;
   margin: 2pt 0;
@@ -129,10 +135,6 @@ body {
 
 .gdt-dots-short {
   min-width: 45pt;
-}
-
-.gdt-dots-long {
-  min-width: 160pt;
 }
 
 .gdt-exam-code {
