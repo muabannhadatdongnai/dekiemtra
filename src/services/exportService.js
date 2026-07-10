@@ -215,8 +215,12 @@ function buildQuestionParagraphs(question, index, equationsAcc) {
     elements.push(new Paragraph({ text: "", spacing: { after: 100 } })); // đệm khoảng cách sau bảng
   }
 
-  // ============ Khung kẻ ô nháp (nếu AI yêu cầu, độc lập với visualType) ============
-  if (question.needsScratchSpace) {
+  // ============ Khung kẻ ô nháp ============
+  // ⚠️ KHÔNG chỉ dựa vào AI (needsScratchSpace) - tự động thêm cho MỌI câu tự luận, trừ khi
+  // đã có sẵn chỗ tính toán riêng (vertical_arithmetic đã có hàng trống để đặt tính).
+  const autoScratchForEssay =
+    question.type === "tu_luan" && question.visualType !== "vertical_arithmetic";
+  if (question.needsScratchSpace || autoScratchForEssay) {
     elements.push(buildScratchGridTable());
     elements.push(new Paragraph({ text: "", spacing: { after: 100 } }));
   }
