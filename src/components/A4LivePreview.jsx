@@ -3,6 +3,10 @@
 import katex from "katex";
 import { parseLatexSegments } from "@/services/latexUtils";
 import QuestionVisual from "./visuals/QuestionVisual";
+import { computeExamMatrix, computeSpecificationRows } from "@/services/specificationBuilder";
+import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
+
+const TYPE_ABBR = { trac_nghiem: "TN", tu_luan: "TL" };
 
 /**
  * Render 1 chuỗi nội dung (có thể chứa $...$ hoặc $$...$$) thành React node,
@@ -96,6 +100,96 @@ function QuestionBlock({ question, index }) {
   );
 }
 
+/** Giai đoạn 2: Ma trận đề thi - chuẩn Thông tư 22 (Chương x Mức độ, kèm Điểm, tự tính từ questions đã tạo). */
+function MatrixPage({ matrix }) {
+  if (!matrix || matrix.rows.length === 0) return null;
+  const { levelKeys, rows, columnCountTotals, columnPointTotals, grandCount, grandPoints, typeByLevel } = matrix;
+
+  return (
+    <div className="a4-page page-break-before">
+      <h2 className="text-center text-base font-bold uppercase">Ma trận đề kiểm tra</h2>
+      <table className="spec-table">
+        <thead>
+          <tr>
+            <th>Chương/Chủ đề</th>
+            {levelKeys.map((lvl) => (
+              <th key={lvl}>
+                {DIFFICULTY_LEVELS[lvl].label}
+                <br />({TYPE_ABBR[typeByLevel[lvl]] || "TN"})
+              </th>
+            ))}
+            <th>Tổng số câu</th>
+            <th>Điểm</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.chapterId}>
+              <td>{r.label}</td>
+              {levelKeys.map((lvl) => (
+                <td key={lvl} className="text-center">
+                  {r.counts[lvl] || ""}
+                </td>
+              ))}
+              <td className="text-center font-semibold">{r.rowCount}</td>
+              <td className="text-center font-semibold">{r.rowPoints}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td className="font-semibold">Tổng</td>
+            {levelKeys.map((lvl) => (
+              <td key={lvl} className="text-center font-semibold">
+                {columnCountTotals[lvl]}
+              </td>
+            ))}
+            <td className="text-center font-semibold">{grandCount}</td>
+            <td className="text-center font-semibold">{grandPoints}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+}
+
+/** Giai đoạn 2: Bản đặc tả - mô tả yêu cầu cần đạt cho từng (chương, mức độ), kèm số câu tương ứng trong đề. */
+function SpecificationPage({ specRows }) {
+  if (!specRows?.length) return null;
+
+  return (
+    <div className="a4-page page-break-before">
+      <h2 className="text-center text-base font-bold uppercase">Bản đặc tả đề kiểm tra</h2>
+      <table className="spec-table">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Chương/Chủ đề</th>
+            <th>Mức độ</th>
+            <th>Loại câu</th>
+            <th>Yêu cầu cần đạt</th>
+            <th>Số câu</th>
+            <th>Câu số</th>
+          </tr>
+        </thead>
+        <tbody>
+          {specRows.map((row) => (
+            <tr key={row.stt}>
+              <td className="text-center">{row.stt}</td>
+              <td>{row.chapterLabel}</td>
+              <td>{row.levelLabel}</td>
+              <td className="text-center">{row.typeLabel}</td>
+              <td>{row.requirement}</td>
+              <td className="text-center">{row.count}</td>
+              <td className="text-center">{row.questionNumbers}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function RubricPage({ teacherRubric, questions }) {
   if (!teacherRubric?.length) return null;
   const idToIndex = new Map(questions.map((q, i) => [q.id, i + 1]));
@@ -125,7 +219,7 @@ function RubricPage({ teacherRubric, questions }) {
   );
 }
 
-export default function A4LivePreview({ examMeta, questions, teacherRubric = [] }) {
+export default function A4LivePreview({ examMeta, questions, teacherRubric = [], chaptersInfo = [], typeByLevel = {} }) {
   if (!questions?.length) {
     return (
       <div className="flex h-full min-h-[400px] items-center justify-center rounded-lg border border-dashed border-slate-300 text-sm text-slate-400">
@@ -137,9 +231,15 @@ export default function A4LivePreview({ examMeta, questions, teacherRubric = [] 
   const tracNghiem = questions.filter((q) => q.type !== "tu_luan");
   const tuLuan = questions.filter((q) => q.type === "tu_luan");
 
+  const matrix = chaptersInfo.length > 0 ? computeExamMatrix(questions, chaptersInfo, typeByLevel) : null;
+  const specRows = chaptersInfo.length > 0 ? computeSpecificationRows(questions, chaptersInfo, typeByLevel) : [];
+
   return (
     <div id="print-area">
-      <div className="a4-page">
+      <MatrixPage matrix={matrix} />
+      <SpecificationPage specRows={specRows} />
+
+      <div className={`a4-page ${matrix || specRows.length ? "page-break-before" : ""}`}>
         <ExamHeaderTable meta={examMeta} />
         <StudentInfoLine meta={examMeta} />
 

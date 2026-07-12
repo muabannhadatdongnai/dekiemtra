@@ -16,6 +16,10 @@ export default function HomePage() {
   const [teacherRubric, setTeacherRubric] = useState([]);
   const [examMeta, setExamMeta] = useState(null);
   const [warnings, setWarnings] = useState([]);
+  // Giai đoạn 2: cần để dựng Ma trận đề thi + Bản đặc tả (đã có sẵn từ response /api/generate,
+  // không cần gọi thêm AI)
+  const [chaptersInfo, setChaptersInfo] = useState([]);
+  const [typeByLevel, setTypeByLevel] = useState({});
 
   // Tạo 4 Mã Đề (A, B, C, D) - xáo trộn front-end, không gọi lại AI
   const [variants, setVariants] = useState([]);
@@ -35,6 +39,8 @@ export default function HomePage() {
     setExamMeta(null);
     setVariants([]);
     setWarnings([]);
+    setChaptersInfo([]);
+    setTypeByLevel({});
   }
 
   function handleGenerated(data) {
@@ -44,6 +50,8 @@ export default function HomePage() {
     setVariants([]);
     setActiveVariantIndex(0);
     setWarnings(data.warnings || []);
+    setChaptersInfo(data.chaptersInfo || []);
+    setTypeByLevel(data.typeByLevel || {});
   }
 
   function handleVariantsGenerated(newVariants) {
@@ -87,6 +95,8 @@ export default function HomePage() {
               examMeta={examMeta}
               questions={questions}
               teacherRubric={teacherRubric}
+              chaptersInfo={chaptersInfo}
+              typeByLevel={typeByLevel}
               variants={variants}
               activeVariantIndex={activeVariantIndex}
               onVariantsGenerated={handleVariantsGenerated}
@@ -97,6 +107,8 @@ export default function HomePage() {
                 examMeta={{ ...examMeta, examCode: displayedExamCode }}
                 questions={displayedQuestions}
                 teacherRubric={teacherRubric}
+                chaptersInfo={chaptersInfo}
+                typeByLevel={typeByLevel}
               />
             </div>
           </section>

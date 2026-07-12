@@ -114,18 +114,21 @@ function sanitizeVisualQuestion(question, includeAnswers) {
 }
 
 /**
- * Gọi Gemini để sinh câu hỏi + rubric cho 1 mức độ cụ thể.
+ * Gọi Gemini để sinh câu hỏi + rubric cho 1 mức độ cụ thể, với số câu PHÂN BỔ RIÊNG cho
+ * từng chương (Giai đoạn 1: Ma trận theo Chương).
  * Model: dùng chung gemini-3.5-flash cho mọi mức độ (xem giải thích trong promptTemplates.js) -
  * vẫn giữ cấu trúc "levelConfig.model" để dễ tách lại nếu Google mở free tier cho Pro sau này.
+ *
+ * @param chaptersInfo  [{ chapterId, label, markdown }] - nội dung riêng từng chương
+ * @param chapterCounts { [chapterId]: count } - số câu cần cho TỪNG chương ở mức độ này
  */
 export async function generateQuestionsForLevel({
   grade,
   subject,
-  chapter,
-  sourceMarkdown,
+  chaptersInfo,
+  chapterCounts,
   difficulty,
   questionType,
-  numberOfQuestions,
   includeAnswers = false,
   useVisualQuestions = false,
   existingQuestions = [],
@@ -134,24 +137,29 @@ export async function generateQuestionsForLevel({
   const levelConfig = DIFFICULTY_LEVELS[difficulty];
   if (!levelConfig) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
 
-  if (numberOfQuestions <= 0) {
-    return { questions: [], rubric: [], requested: 0, fulfilled: 0 };
+  const totalRequested = Object.values(chapterCounts).reduce((a, b) => a + b, 0);
+  if (totalRequested <= 0) {
+    return { questions: [], rubric: [], perChapterRequested: {}, perChapterFulfilled: {} };
   }
 
+  const validChapterIds = new Set(chaptersInfo.map((c) => c.chapterId));
+  // Số câu CÒN THIẾU cho từng chương - giảm dần sau mỗi vòng, retry chỉ hỏi phần còn thiếu
+  const remainingCounts = { ...chapterCounts };
   let collectedPairs = [];
   let attempt = 0;
   const poolExisting = existingQuestions.map((q) => q.content || q);
 
-  while (collectedPairs.length < numberOfQuestions && attempt <= maxRetries) {
-    const remaining = numberOfQuestions - collectedPairs.length;
+  while (Object.values(remainingCounts).some((c) => c > 0) && attempt <= maxRetries) {
+    const chaptersBreakdown = chaptersInfo
+      .filter((c) => remainingCounts[c.chapterId] > 0)
+      .map((c) => ({ ...c, count: remainingCounts[c.chapterId] }));
+
     const prompt = buildExamPrompt({
       grade,
       subject,
-      chapter,
-      sourceMarkdown,
+      chaptersBreakdown,
       difficulty,
       questionType,
-      numberOfQuestions: remaining,
       includeAnswers,
       useVisualQuestions,
       excludeQuestionsSummary: summarizeForPrompt([
@@ -195,18 +203,29 @@ export async function generateQuestionsForLevel({
       ...collectedPairs.map((p) => p.question.content),
     ]);
 
-    collectedPairs = [...collectedPairs, ...newPairs];
+    // ⚠️ Chỉ giữ câu có chapterRef hợp lệ VÀ chương đó vẫn còn cần thêm câu - đảm bảo
+    // đúng số lượng phân bổ theo Ma trận, không dồn câu thừa vào 1 chương.
+    const singleChapterId = chaptersBreakdown.length === 1 ? chaptersBreakdown[0].chapterId : null;
+    for (const pair of newPairs) {
+      const rawRef = pair.question.chapterRef;
+      const resolvedRef = validChapterIds.has(rawRef) ? rawRef : singleChapterId;
+
+      if (!resolvedRef || !(remainingCounts[resolvedRef] > 0)) continue; // không rõ chương hoặc chương đã đủ
+
+      pair.question.chapterRef = resolvedRef; // chuẩn hoá lại (phòng khi dùng fallback single-chapter)
+      collectedPairs.push(pair);
+      remainingCounts[resolvedRef] -= 1;
+    }
+
     attempt++;
   }
-
-  const finalPairs = collectedPairs.slice(0, numberOfQuestions);
 
   // ⚠️ Tự sinh ID nội bộ (KHÔNG dựa vào id do AI trả về) để đảm bảo liên kết
   // question <-> rubric luôn đúng 1-1, tuyệt đối không lệch.
   const finalQuestions = [];
   const finalRubric = [];
 
-  finalPairs.forEach(({ question, rubric }) => {
+  collectedPairs.forEach(({ question, rubric }) => {
     const internalId = crypto.randomUUID();
     finalQuestions.push({
       ...question,
@@ -220,61 +239,79 @@ export async function generateQuestionsForLevel({
     }
   });
 
+  const perChapterFulfilled = {};
+  Object.keys(chapterCounts).forEach((chapterId) => {
+    perChapterFulfilled[chapterId] = chapterCounts[chapterId] - remainingCounts[chapterId];
+  });
+
   return {
     questions: finalQuestions,
     rubric: finalRubric,
-    requested: numberOfQuestions,
-    fulfilled: finalQuestions.length,
+    perChapterRequested: chapterCounts,
+    perChapterFulfilled,
   };
 }
 
 /**
- * Sinh toàn bộ đề thi theo ma trận độ khó.
- *  - matrix: { NHAN_BIET: n, THONG_HIEU: n, VAN_DUNG: n, VAN_DUNG_CAO: n }
- *  - typeByLevel: { NHAN_BIET: "trac_nghiem"|"tu_luan", ... } (giáo viên chọn riêng cho từng mức độ,
- *    vì thực tế đề Toán Việt Nam thường có phần Trắc nghiệm cho câu Dễ/Trung bình và Tự luận cho câu Khó)
- * Trả về { questions, teacherRubric, warnings } - warnings liệt kê các mức độ bị thiếu câu do
- * hết lượt thử lại (giáo viên cần biết để bổ sung thủ công, không bị "mất câu" âm thầm).
+ * Sinh toàn bộ đề thi theo MA TRẬN THEO CHƯƠNG (Giai đoạn 1):
+ *  - chaptersInfo: [{ chapterId, label, markdown }] - nội dung từng chương (tải 1 lần, dùng chung mọi mức độ)
+ *  - chapterMatrix: { [chapterId]: { NHAN_BIET: n, THONG_HIEU: n, VAN_DUNG: n, VAN_DUNG_CAO: n } }
+ *  - typeByLevel: { NHAN_BIET: "trac_nghiem"|"tu_luan", ... } (RIÊNG cho từng mức độ)
+ * Trả về { questions, teacherRubric, warnings } - warnings liệt kê CHÍNH XÁC chương + mức độ
+ * nào bị thiếu câu (không chỉ chung chung theo mức độ như trước), giáo viên biết rõ cần bổ
+ * sung ở đâu.
  */
 export async function generateFullExam({
   grade,
   subject,
-  chapter,
-  sourceMarkdown,
-  matrix,
+  chaptersInfo,
+  chapterMatrix,
   typeByLevel = {},
   includeAnswers = false,
   useVisualQuestions = false,
   existingQuestions = [],
 }) {
-  const levels = Object.keys(matrix).filter((k) => matrix[k] > 0);
+  const levels = Object.keys(DIFFICULTY_LEVELS).filter((lvl) =>
+    Object.values(chapterMatrix).some((row) => (row[lvl] || 0) > 0)
+  );
 
   const results = await Promise.all(
-    levels.map((difficulty) =>
-      generateQuestionsForLevel({
+    levels.map((difficulty) => {
+      const chapterCounts = {};
+      Object.entries(chapterMatrix).forEach(([chapterId, row]) => {
+        if (row[difficulty] > 0) chapterCounts[chapterId] = row[difficulty];
+      });
+      return generateQuestionsForLevel({
         grade,
         subject,
-        chapter,
-        sourceMarkdown,
+        chaptersInfo,
+        chapterCounts,
         difficulty,
         questionType: typeByLevel[difficulty] || "trac_nghiem",
-        numberOfQuestions: matrix[difficulty],
         includeAnswers,
         useVisualQuestions,
         existingQuestions,
-      })
-    )
+      });
+    })
   );
 
   const questions = results.flatMap((r) => r.questions);
   const teacherRubric = results.flatMap((r) => r.rubric);
 
-  const warnings = results
-    .filter((r) => r.fulfilled < r.requested)
-    .map((r, i) => {
-      const level = DIFFICULTY_LEVELS[levels[i]];
-      return `Mức "${level?.label}" chỉ tạo được ${r.fulfilled}/${r.requested} câu (do trùng lặp nhiều hoặc lỗi API). Vui lòng thử tạo thêm hoặc bổ sung chương kiến thức.`;
+  const warnings = [];
+  results.forEach((r, i) => {
+    const level = DIFFICULTY_LEVELS[levels[i]];
+    Object.entries(r.perChapterRequested).forEach(([chapterId, requested]) => {
+      const fulfilled = r.perChapterFulfilled[chapterId] || 0;
+      if (fulfilled < requested) {
+        const chapterLabel = chaptersInfo.find((c) => c.chapterId === chapterId)?.label || chapterId;
+        warnings.push(
+          `Mức "${level?.label}" - ${chapterLabel}: chỉ tạo được ${fulfilled}/${requested} câu ` +
+            `(do trùng lặp nhiều hoặc lỗi API). Vui lòng thử tạo thêm hoặc bổ sung chương kiến thức.`
+        );
+      }
     });
+  });
 
   // (Đã bỏ tính năng tự động gán điểm/thang điểm theo yêu cầu giáo viên - xem scoringUtils.js
   // nếu muốn bật lại trong tương lai, chỉ cần gọi computeScores(questions) ở đây.)

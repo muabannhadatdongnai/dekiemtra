@@ -151,6 +151,35 @@ body {
   text-transform: uppercase;
 }
 
+/* ===== Bảng Ma trận đề thi / Bản đặc tả (Giai đoạn 2) ===== */
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10pt;
+  font-size: 11pt;
+}
+
+.spec-table th,
+.spec-table td {
+  border: 1pt solid #444;
+  padding: 4pt 6pt;
+  vertical-align: middle;
+}
+
+.spec-table th {
+  background: #f1f5f9;
+  font-weight: 700;
+  text-align: center;
+}
+
+.spec-table .text-center {
+  text-align: center;
+}
+
+.spec-table .font-semibold {
+  font-weight: 700;
+}
+
 /* ===== Ngắt trang cho phần Rubric (chỉ khi in/PDF) ===== */
 @media print {
   .page-break-before {

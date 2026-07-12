@@ -93,11 +93,9 @@ CHỐNG TRÙNG LẶP (RẤT QUAN TRỌNG):
 export function buildExamPrompt({
   grade,
   subject = "Toán",
-  chapter,
-  sourceMarkdown,
+  chaptersBreakdown, // [{ chapterId, label, markdown, count }] - GĐ1: Ma trận theo Chương
   difficulty,
   questionType = "trac_nghiem",
-  numberOfQuestions = 5,
   excludeQuestionsSummary = "",
   includeAnswers = false,
   useVisualQuestions = false,
@@ -107,29 +105,39 @@ export function buildExamPrompt({
 
   const seed = generateAntiDuplicationSeed();
   const isEssay = questionType === "tu_luan";
+  const totalQuestions = chaptersBreakdown.reduce((sum, c) => sum + c.count, 0);
+  const multiChapter = chaptersBreakdown.length > 1;
 
   // ⚠️ Khi includeAnswers=false: KHÔNG yêu cầu correctAnswer lẫn teacher_rubric -
   // giảm đáng kể số token output (phần tốn credit AI nhiều nhất), phù hợp mặc định
   // "không tạo đáp án" để tiết kiệm chi phí. Bật includeAnswers=true khi giáo viên
   // chủ động cần đáp án + lời giải chi tiết để chấm bài.
+  //
+  // ⚠️ "chapterRef" LUÔN bắt buộc (kể cả khi chỉ có 1 chương) - dùng để Ma trận đề thi
+  // và Bản đặc tả (Giai đoạn 2) biết chính xác câu nào thuộc chương nào, và để hệ thống
+  // kiểm tra/tự động bổ sung nếu 1 chương bị AI tạo thiếu câu.
   const questionSchemaExample = isEssay
     ? includeAnswers
       ? `{
       "content": "Đề bài tự luận, có thể chứa LaTeX",
+      "chapterRef": "phải khớp đúng 1 trong các mã chương ở trên",
       "correctAnswer": "Đáp số cuối cùng, ngắn gọn"
     }`
       : `{
-      "content": "Đề bài tự luận, có thể chứa LaTeX"
+      "content": "Đề bài tự luận, có thể chứa LaTeX",
+      "chapterRef": "phải khớp đúng 1 trong các mã chương ở trên"
     }`
     : includeAnswers
       ? `{
       "content": "Đề bài câu hỏi, có thể chứa LaTeX",
       "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+      "chapterRef": "phải khớp đúng 1 trong các mã chương ở trên",
       "correctAnswer": "A|B|C|D"
     }`
       : `{
       "content": "Đề bài câu hỏi, có thể chứa LaTeX",
-      "options": ["A. ...", "B. ...", "C. ...", "D. ..."]
+      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+      "chapterRef": "phải khớp đúng 1 trong các mã chương ở trên"
     }`;
 
   const outputSchema = includeAnswers
@@ -160,6 +168,19 @@ QUY TẮC GHÉP NỐI QUAN TRỌNG:
 `
     : "";
 
+  const chapterCountLines = chaptersBreakdown
+    .map((c) => `  - Mã chương "${c.chapterId}" (${c.label}): CHÍNH XÁC ${c.count} câu`)
+    .join("\n");
+
+  const sourceDocsBlock = chaptersBreakdown
+    .map(
+      (c) => `--- NGUỒN TÀI LIỆU cho mã chương "${c.chapterId}" (${c.label}) ---
+"""
+${c.markdown}
+"""`
+    )
+    .join("\n\n");
+
   return `
 ${BASE_RULES}
 
@@ -168,15 +189,16 @@ SEED: ${seed}
 THÔNG TIN ĐỀ:
 - Lớp: ${grade}
 - Môn: ${subject}
-- Chương/Chủ đề: ${chapter}
 - Mức độ: ${level.label} (${level.description})
 - Dạng câu hỏi: ${isEssay ? "Tự luận" : "Trắc nghiệm 4 lựa chọn"}
-- Số lượng câu cần tạo: ${numberOfQuestions}
+- Tổng số câu cần tạo ở mức độ này: ${totalQuestions}
+${
+  multiChapter
+    ? `- PHÂN BỔ THEO CHƯƠNG (BẮT BUỘC tuân thủ chính xác từng dòng):\n${chapterCountLines}`
+    : `- Chương/Chủ đề: ${chaptersBreakdown[0].label} (mã chương "${chaptersBreakdown[0].chapterId}")`
+}
 
-NGUỒN TÀI LIỆU (Markdown, trích từ kho kiến thức GitHub):
-"""
-${sourceMarkdown}
-"""
+${sourceDocsBlock}
 
 ${
   excludeQuestionsSummary
@@ -184,6 +206,17 @@ ${
     : ""
 }
 ${pairingRule}
+${
+  multiChapter
+    ? `QUY TẮC PHÂN BỔ CHƯƠNG (BẮT BUỘC):
+- Mỗi câu hỏi PHẢI có trường "chapterRef" khớp ĐÚNG với 1 trong các mã chương đã liệt kê ở trên.
+- PHẢI tạo ĐÚNG số câu cho từng chương như đã yêu cầu ở mục "PHÂN BỔ THEO CHƯƠNG" - không dồn hết
+  câu vào 1 chương, không bỏ sót chương nào.
+- Chỉ dùng nội dung của ĐÚNG chương tương ứng khi soạn câu hỏi cho chương đó (không trộn kiến thức
+  giữa các chương trong 1 câu, trừ khi đề bài chủ đích yêu cầu liên hệ nhiều chương).
+`
+    : ""
+}
 ${useVisualQuestions ? VISUAL_TYPE_PROMPT_GUIDE : ""}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema${
     useVisualQuestions

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Minus, Plus, Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { getSession } from "@/services/authService";
 
@@ -13,41 +13,14 @@ const SUBJECTS = [
   { value: "Lich_Su", label: "Lịch sử" },
 ];
 
-function Stepper({ label, sub, value, onChange, type, onTypeChange }) {
-  return (
-    <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
-      <div>
-        <p className="text-sm font-medium text-slate-800">{label}</p>
-        {sub && <p className="text-xs text-slate-500">{sub}</p>}
-      </div>
-      <div className="flex items-center gap-3">
-        <select
-          value={type}
-          onChange={(e) => onTypeChange(e.target.value)}
-          className="rounded-md border border-slate-300 px-2 py-1 text-xs"
-        >
-          <option value="trac_nghiem">Trắc nghiệm</option>
-          <option value="tu_luan">Tự luận</option>
-        </select>
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(0, value - 1))}
-          className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-300 text-slate-600 hover:bg-slate-50"
-        >
-          <Minus size={14} />
-        </button>
-        <span className="w-6 text-center text-sm font-semibold">{value}</span>
-        <button
-          type="button"
-          onClick={() => onChange(value + 1)}
-          className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-300 text-slate-600 hover:bg-slate-50"
-        >
-          <Plus size={14} />
-        </button>
-      </div>
-    </div>
-  );
-}
+const LEVEL_SHORT_LABEL = {
+  NHAN_BIET: "Nhận biết (Dễ)",
+  THONG_HIEU: "Thông hiểu (TB)",
+  VAN_DUNG: "Vận dụng (Khó)",
+  VAN_DUNG_CAO: "Vận dụng cao (Rất khó)",
+};
+
+const EMPTY_ROW = { NHAN_BIET: 0, THONG_HIEU: 0, VAN_DUNG: 0, VAN_DUNG_CAO: 0 };
 
 function Field({ label, children }) {
   return (
@@ -73,11 +46,10 @@ export default function ExamMatrixForm({ onGenerated }) {
   const [grade, setGrade] = useState(5);
   const [volume, setVolume] = useState(1);
   const [availableChapters, setAvailableChapters] = useState([]);
-  const [selectedChapters, setSelectedChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
   const [chaptersError, setChaptersError] = useState("");
 
-  // ============ Dạng câu hỏi (RIÊNG cho từng mức độ) & ma trận ============
+  // ============ Dạng câu hỏi (RIÊNG cho từng mức độ) ============
   // Mặc định theo thông lệ đề Toán VN: Nhận biết/Thông hiểu = trắc nghiệm, Vận dụng/Vận dụng cao = tự luận
   const [typeByLevel, setTypeByLevel] = useState({
     NHAN_BIET: "trac_nghiem",
@@ -85,12 +57,12 @@ export default function ExamMatrixForm({ onGenerated }) {
     VAN_DUNG: "tu_luan",
     VAN_DUNG_CAO: "tu_luan",
   });
-  const [matrix, setMatrix] = useState({
-    NHAN_BIET: 5,
-    THONG_HIEU: 6,
-    VAN_DUNG: 1,
-    VAN_DUNG_CAO: 1,
-  });
+
+  // ⚠️ GIAI ĐOẠN 1 - MA TRẬN THEO CHƯƠNG: mỗi chương được chọn có 1 hàng riêng trong ma trận,
+  // với số câu RIÊNG cho từng mức độ - không còn "tổng số câu" chung chung không rõ chương nào.
+  // chapterMatrix: { [chapterId]: { NHAN_BIET, THONG_HIEU, VAN_DUNG, VAN_DUNG_CAO } }
+  const [chapterMatrix, setChapterMatrix] = useState({});
+
   // Mặc định KHÔNG tạo đáp án/lời giải - tiết kiệm credit AI đáng kể. Giáo viên tự bật khi cần.
   const [includeAnswers, setIncludeAnswers] = useState(false);
   // Câu hỏi trực quan (đặt tính, tam giác số, sơ đồ đoạn thẳng, hình đếm) - đặc trưng Tiểu học,
@@ -100,15 +72,20 @@ export default function ExamMatrixForm({ onGenerated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const totalQuestions = Object.values(matrix).reduce((a, b) => a + b, 0);
+  const chapterIds = Object.keys(chapterMatrix);
+  const columnTotals = Object.keys(DIFFICULTY_LEVELS).reduce((acc, lvl) => {
+    acc[lvl] = chapterIds.reduce((sum, cId) => sum + (chapterMatrix[cId]?.[lvl] || 0), 0);
+    return acc;
+  }, {});
+  const totalQuestions = Object.values(columnTotals).reduce((a, b) => a + b, 0);
 
-  // Tự động tải danh sách chương khi Môn/Lớp/Tập thay đổi (đổ vào Select Box)
+  // Tự động tải danh sách chương khi Môn/Lớp/Tập thay đổi, reset ma trận vì chương đã đổi
   useEffect(() => {
     let cancelled = false;
     async function loadChapters() {
       setLoadingChapters(true);
       setChaptersError("");
-      setSelectedChapters([]);
+      setChapterMatrix({});
       try {
         const res = await fetch(`/api/chapters?grade=${grade}&subject=${subject}&volume=${volume}`);
         const data = await res.json();
@@ -129,22 +106,36 @@ export default function ExamMatrixForm({ onGenerated }) {
     };
   }, [grade, subject, volume]);
 
-  function toggleChapter(chapter) {
-    setSelectedChapters((prev) =>
-      prev.includes(chapter) ? prev.filter((c) => c !== chapter) : [...prev, chapter]
-    );
+  function toggleChapter(chapterId) {
+    setChapterMatrix((prev) => {
+      const next = { ...prev };
+      if (next[chapterId]) {
+        delete next[chapterId];
+      } else {
+        next[chapterId] = { ...EMPTY_ROW };
+      }
+      return next;
+    });
+  }
+
+  function updateCell(chapterId, level, value) {
+    const n = Math.max(0, Number(value) || 0);
+    setChapterMatrix((prev) => ({
+      ...prev,
+      [chapterId]: { ...prev[chapterId], [level]: n },
+    }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
 
-    if (selectedChapters.length === 0) {
+    if (chapterIds.length === 0) {
       setError("Vui lòng chọn ít nhất 1 Chương/Bài học.");
       return;
     }
     if (totalQuestions === 0) {
-      setError("Tổng số câu hỏi phải lớn hơn 0.");
+      setError("Tổng số câu hỏi phải lớn hơn 0 (điền số câu vào ma trận bên dưới).");
       return;
     }
 
@@ -153,6 +144,13 @@ export default function ExamMatrixForm({ onGenerated }) {
       setError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
       return;
     }
+
+    // Chỉ gửi các chương thực sự có câu hỏi (bỏ chương chọn nhầm nhưng để trống toàn bộ ma trận)
+    const nonEmptyChapterMatrix = Object.fromEntries(
+      Object.entries(chapterMatrix).filter(
+        ([, row]) => Object.values(row).reduce((a, b) => a + b, 0) > 0
+      )
+    );
 
     setLoading(true);
     try {
@@ -164,9 +162,8 @@ export default function ExamMatrixForm({ onGenerated }) {
           grade,
           subject,
           volume,
-          chapters: selectedChapters,
+          chapterMatrix: nonEmptyChapterMatrix,
           typeByLevel,
-          matrix,
           includeAnswers,
           useVisualQuestions,
         }),
@@ -246,7 +243,7 @@ export default function ExamMatrixForm({ onGenerated }) {
           </Field>
         </div>
 
-        <Field label="Chương / Bài học">
+        <Field label="Chương / Bài học (bấm để thêm vào ma trận bên dưới)">
           {loadingChapters && (
             <p className="flex items-center gap-2 text-sm text-slate-400">
               <Loader2 size={14} className="animate-spin" /> Đang tải danh sách chương...
@@ -261,7 +258,7 @@ export default function ExamMatrixForm({ onGenerated }) {
           <div className="flex flex-wrap gap-2">
             {availableChapters.map((c) => {
               const isAdvanced = c.isAdvancedBook;
-              const selected = selectedChapters.includes(c.chapter);
+              const selected = Boolean(chapterMatrix[c.chapter]);
               return (
                 <button
                   key={c.chapter}
@@ -284,19 +281,71 @@ export default function ExamMatrixForm({ onGenerated }) {
         </Field>
       </div>
 
-      {/* ============ MA TRẬN CÂU HỎI ============ */}
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-slate-800">Ma trận số câu theo mức độ</p>
-        {Object.values(DIFFICULTY_LEVELS).map((level) => (
-          <Stepper
-            key={level.key}
-            label={`${level.label}${level.label === "Nhận biết" ? " (Dễ)" : level.label === "Thông hiểu" ? " (Trung bình)" : level.label === "Vận dụng" ? " (Khó)" : " (Rất khó)"}`}
-            value={matrix[level.key]}
-            onChange={(v) => setMatrix((m) => ({ ...m, [level.key]: v }))}
-            type={typeByLevel[level.key]}
-            onTypeChange={(t) => setTypeByLevel((m) => ({ ...m, [level.key]: t }))}
-          />
-        ))}
+      {/* ============ MA TRẬN THEO CHƯƠNG × MỨC ĐỘ ============ */}
+      <div className="space-y-2 border-b border-slate-100 pb-5">
+        <p className="text-sm font-semibold text-slate-800">Ma trận số câu (theo Chương × Mức độ)</p>
+        {chapterIds.length === 0 ? (
+          <p className="text-sm text-slate-400">
+            Chọn ít nhất 1 chương ở trên để bắt đầu điền ma trận.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] border-collapse text-xs">
+              <thead>
+                <tr>
+                  <th className="border-b border-slate-200 px-2 py-2 text-left font-medium text-slate-600">
+                    Chương
+                  </th>
+                  {Object.values(DIFFICULTY_LEVELS).map((level) => (
+                    <th key={level.key} className="border-b border-slate-200 px-2 py-2 text-center font-medium text-slate-600">
+                      <div>{LEVEL_SHORT_LABEL[level.key]}</div>
+                      <select
+                        value={typeByLevel[level.key]}
+                        onChange={(e) => setTypeByLevel((m) => ({ ...m, [level.key]: e.target.value }))}
+                        className="mt-1 rounded border border-slate-300 px-1 py-0.5 text-[11px]"
+                      >
+                        <option value="trac_nghiem">Trắc nghiệm</option>
+                        <option value="tu_luan">Tự luận</option>
+                      </select>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {chapterIds.map((cId) => {
+                  const chapterMeta = availableChapters.find((c) => c.chapter === cId);
+                  const rowLabel = chapterMeta?.isAdvancedBook ? "📘 Sách nâng cao" : `Chương ${cId}`;
+                  return (
+                    <tr key={cId}>
+                      <td className="border-b border-slate-100 px-2 py-1.5 font-medium text-slate-700">{rowLabel}</td>
+                      {Object.keys(DIFFICULTY_LEVELS).map((lvl) => (
+                        <td key={lvl} className="border-b border-slate-100 px-2 py-1.5 text-center">
+                          <input
+                            type="number"
+                            min={0}
+                            value={chapterMatrix[cId][lvl]}
+                            onChange={(e) => updateCell(cId, lvl, e.target.value)}
+                            className="w-14 rounded border border-slate-300 px-1 py-1 text-center"
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td className="px-2 py-1.5 font-semibold text-slate-700">Tổng theo mức độ</td>
+                  {Object.keys(DIFFICULTY_LEVELS).map((lvl) => (
+                    <td key={lvl} className="px-2 py-1.5 text-center font-semibold text-slate-700">
+                      {columnTotals[lvl]}
+                    </td>
+                  ))}
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
         <p className="pt-1 text-sm text-slate-600">
           Tổng số câu: <span className="font-semibold">{totalQuestions}</span>
         </p>

@@ -172,6 +172,7 @@ export async function listChapters({ grade, subject, volume }) {
 /**
  * Ghép nhiều chương (và/hoặc sách nâng cao) lại thành 1 nguồn tài liệu tổng hợp cho đề
  * kiểm tra bao quát nhiều chủ đề (ví dụ đề kiểm tra giữa kỳ / cuối kỳ chọn nhiều chương cùng lúc).
+ * (Giữ lại để tương thích ngược - không dùng trong luồng Ma trận theo Chương mới.)
  */
 export async function fetchMultipleChapters({ grade, subject, volume, chapters }) {
   const contents = await Promise.all(
@@ -189,4 +190,31 @@ export async function fetchMultipleChapters({ grade, subject, volume, chapters }
     })
   );
   return contents.map((c) => `## ${c.heading}\n\n${c.md}`).join("\n\n---\n\n");
+}
+
+/**
+ * Tải NỘI DUNG RIÊNG của từng chương (không gộp chung thành 1 blob) - dùng cho luồng
+ * "Ma trận theo Chương": mỗi chương cần nội dung markdown riêng để AI sinh đúng số câu
+ * yêu cầu cho TỪNG chương, và để Bản đặc tả biết chính xác câu nào thuộc chương nào.
+ * Trả về mảng [{ chapterId, label, markdown }].
+ */
+export async function fetchChaptersSeparately({ grade, subject, volume, chapters }) {
+  return Promise.all(
+    chapters.map(async (chapter) => {
+      if (chapter === ADVANCED_BOOK_MARKER) {
+        const markdown = await fetchAdvancedBook(grade, subject);
+        return {
+          chapterId: chapter,
+          label: "Sách nâng cao (toàn bộ)",
+          markdown,
+        };
+      }
+      const markdown = await fetchMarkdownFromGitHub(grade, subject, volume, chapter);
+      return {
+        chapterId: chapter,
+        label: `Chương ${chapter}`,
+        markdown,
+      };
+    })
+  );
 }

@@ -4,6 +4,12 @@ import JSZip from "jszip";
 import temml from "temml";
 import { mml2omml } from "mathml2omml";
 import { parseLatexSegments } from "./latexUtils";
+import { computeExamMatrix, computeSpecificationRows } from "./specificationBuilder";
+import {
+  buildSectionTitleParagraph,
+  buildMatrixTable,
+  buildSpecificationTable,
+} from "./specificationExportBuilders";
 import {
   buildVerticalArithmeticTable,
   buildNumberTriangleTable,
@@ -306,9 +312,11 @@ async function injectEquationsIntoDocx(docxBlob, equations) {
 }
 
 /**
- * Tạo và tải file .docx cho đề thi, kèm trang "Đáp án & Thang điểm" ngắt trang riêng ở cuối.
+ * Dựng Blob .docx cho đề thi - hàm lõi dùng chung, KHÔNG tự tải file (không gọi saveAs).
+ * @param includeRubricSection - true: kèm trang Đáp án & Lời giải ở cuối (bản giáo viên).
+ *                                 false: bản sạch cho học sinh (dù có teacherRubric cũng bỏ qua).
  */
-export async function exportToWord({
+async function buildExamDocxBlob({
   title = "ĐỀ KIỂM TRA",
   schoolName = "",
   className = "",
@@ -319,12 +327,35 @@ export async function exportToWord({
   academicYear = "",
   questions,
   teacherRubric = [],
+  chaptersInfo = [],
+  typeByLevel = {},
+  includeMatrixAndSpec = true,
+  includeRubricSection = true,
 }) {
   const equations = {};
+
+  // ============ Giai đoạn 2: Ma trận đề thi + Bản đặc tả (mỗi văn bản 1 trang riêng, đứng TRƯỚC đề) ============
+  const frontMatterElements = [];
+  if (includeMatrixAndSpec && chaptersInfo.length > 0) {
+    const matrix = computeExamMatrix(questions, chaptersInfo, typeByLevel);
+    const specRows = computeSpecificationRows(questions, chaptersInfo, typeByLevel);
+
+    if (matrix.rows.length > 0) {
+      frontMatterElements.push(buildSectionTitleParagraph("MA TRẬN ĐỀ KIỂM TRA"));
+      frontMatterElements.push(buildMatrixTable(matrix));
+    }
+    if (specRows.length > 0) {
+      frontMatterElements.push(new Paragraph({ text: "", pageBreakBefore: true }));
+      frontMatterElements.push(buildSectionTitleParagraph("BẢN ĐẶC TẢ ĐỀ KIỂM TRA"));
+      frontMatterElements.push(buildSpecificationTable(specRows));
+    }
+  }
+  const hasFrontMatter = frontMatterElements.length > 0;
 
   const headerParagraphs = [
     new Paragraph({
       alignment: AlignmentType.CENTER,
+      pageBreakBefore: hasFrontMatter, // ngắt sang trang riêng cho đề thi nếu có Ma trận/Đặc tả phía trước
       children: [new TextRun({ text: title, bold: true, size: 32, font: "Times New Roman" })],
     }),
     ...(schoolName
@@ -364,9 +395,11 @@ export async function exportToWord({
 
   const questionParagraphs = questions.flatMap((q, i) => buildQuestionParagraphs(q, i, equations));
 
-  const sections = [{ properties: {}, children: [...headerParagraphs, ...questionParagraphs] }];
+  const sections = [
+    { properties: {}, children: [...frontMatterElements, ...headerParagraphs, ...questionParagraphs] },
+  ];
 
-  if (teacherRubric?.length) {
+  if (includeRubricSection && teacherRubric?.length) {
     sections[0].children.push(...buildRubricParagraphs(teacherRubric, questions, equations));
   }
 
@@ -378,9 +411,36 @@ export async function exportToWord({
   const rawBlob = await Packer.toBlob(doc);
 
   // Bước 2: hậu xử lý XML, thay placeholder bằng OMML thật (Equation có thể sửa trong Word)
-  const finalBlob = await injectEquationsIntoDocx(rawBlob, equations);
+  return injectEquationsIntoDocx(rawBlob, equations);
+}
 
-  saveAs(finalBlob, `De-thi-${subject}-Lop${grade}-Ma${examCode}.docx`);
+/**
+ * Tạo và tải 1 file .docx duy nhất (hành vi cũ, giữ tương thích ngược) - kèm trang Đáp án &
+ * Lời giải ở cuối nếu có teacherRubric.
+ */
+export async function exportToWord(params) {
+  const blob = await buildExamDocxBlob({ ...params, includeRubricSection: true });
+  saveAs(blob, `De-thi-${params.subject}-Lop${params.grade}-Ma${params.examCode}.docx`);
+}
+
+/**
+ * ⚠️ GIAI ĐOẠN 3 - XUẤT TRỌN BỘ 1 LẦN: tải ĐỒNG THỜI 2 file từ CÙNG 1 dữ liệu đã tạo, không
+ * gọi lại AI:
+ *   - Bản học sinh: Ma trận + Đặc tả (tuỳ chọn) + Đề - SẠCH, không đáp án, không rubric.
+ *   - Bản giáo viên: giống bản học sinh + kèm trang Đáp án & Lời giải ở cuối.
+ * Chỉ tạo bản giáo viên nếu thực sự có teacherRubric (tức đã bật "Tạo đáp án" khi tạo đề).
+ */
+export async function exportBothVersions(params) {
+  const fileBase = `De-thi-${params.subject}-Lop${params.grade}-Ma${params.examCode}`;
+  const hasRubric = params.teacherRubric?.length > 0;
+
+  const studentBlob = await buildExamDocxBlob({ ...params, includeRubricSection: false });
+  saveAs(studentBlob, `${fileBase}-HocSinh.docx`);
+
+  if (hasRubric) {
+    const teacherBlob = await buildExamDocxBlob({ ...params, includeRubricSection: true });
+    saveAs(teacherBlob, `${fileBase}-GiaoVien.docx`);
+  }
 }
 
 /**
