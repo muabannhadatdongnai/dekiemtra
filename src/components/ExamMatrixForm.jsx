@@ -4,14 +4,10 @@ import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { getSession } from "@/services/authService";
-
-const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
-const SUBJECTS = [
-  { value: "Toan", label: "Toán" },
-  { value: "Tieng_Viet", label: "Tiếng Việt" },
-  { value: "Tieng_Anh", label: "Tiếng Anh" },
-  { value: "Lich_Su", label: "Lịch sử" },
-];
+import { GRADES, SUBJECTS, getSubjectLabel } from "@/data/config";
+import { buildExamBlueprint } from "@/data/examBlueprint";
+import { buildExamResult } from "@/data/examResult";
+import { fetchChaptersRequest, generateExamRequest } from "@/services/apiClient";
 
 const LEVEL_SHORT_LABEL = {
   NHAN_BIET: "Nhận biết (Dễ)",
@@ -87,9 +83,7 @@ export default function ExamMatrixForm({ onGenerated }) {
       setChaptersError("");
       setChapterMatrix({});
       try {
-        const res = await fetch(`/api/chapters?grade=${grade}&subject=${subject}&volume=${volume}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Không tải được danh sách chương.");
+        const data = await fetchChaptersRequest({ grade, subject, volume });
         if (!cancelled) setAvailableChapters(data.chapters || []);
       } catch (err) {
         if (!cancelled) {
@@ -154,36 +148,30 @@ export default function ExamMatrixForm({ onGenerated }) {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: session.username,
-          grade,
-          subject,
-          volume,
-          chapterMatrix: nonEmptyChapterMatrix,
-          typeByLevel,
-          includeAnswers,
-          useVisualQuestions,
-        }),
+      const blueprint = buildExamBlueprint({
+        username: session.username,
+        grade,
+        subject,
+        volume,
+        chapterMatrix: nonEmptyChapterMatrix,
+        typeByLevel,
+        includeAnswers,
+        useVisualQuestions,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Tạo đề thất bại.");
+      const data = await generateExamRequest(blueprint);
 
-      onGenerated({
-        ...data,
-        meta: {
-          schoolName,
-          className,
-          duration,
-          academicYear,
-          title: examTitle,
-          subject: SUBJECTS.find((s) => s.value === subject)?.label || subject,
-          grade,
-          examCode: Math.floor(100 + Math.random() * 900),
-        },
-      });
+      const meta = {
+        schoolName,
+        className,
+        duration,
+        academicYear,
+        title: examTitle,
+        subject: getSubjectLabel(subject),
+        grade,
+        examCode: Math.floor(100 + Math.random() * 900),
+      };
+
+      onGenerated(buildExamResult(data, meta));
     } catch (err) {
       setError(err.message);
     } finally {

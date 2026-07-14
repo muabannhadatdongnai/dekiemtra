@@ -26,6 +26,7 @@
  */
 
 import { VISUAL_TYPE_PROMPT_GUIDE } from "./visualSchemas";
+import { getSubjectProfile } from "./subjectProfiles";
 
 const FREE_TIER_MODEL = "gemini-3.5-flash";
 
@@ -65,20 +66,20 @@ export function generateAntiDuplicationSeed() {
   return `Seed_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
-const BASE_RULES = `
-BẠN LÀ MỘT CHUYÊN GIA RA ĐỀ THI MÔN TOÁN CHUẨN BỘ GIÁO DỤC VIỆT NAM.
+function buildBaseRules(subjectProfile) {
+  return `
+BẠN LÀ ${subjectProfile.expertRole.toUpperCase()}.
 
 QUY TẮC BẮT BUỘC:
 - Chỉ sử dụng kiến thức có trong NGUỒN TÀI LIỆU được cung cấp bên dưới, KHÔNG bịa thêm kiến thức ngoài chương trình.
-- Công thức Toán học phải viết bằng LaTeX, đặt trong dấu $...$ (inline) hoặc $$...$$ (block).
 - Mỗi câu hỏi trắc nghiệm phải có: đề bài, 4 phương án A/B/C/D chỉ có 1 đáp án đúng.
 - Mỗi câu hỏi tự luận phải có: đề bài rõ ràng, đủ dữ liệu để giải.
-- Ngôn ngữ: Tiếng Việt, chuẩn mực, phù hợp lứa tuổi học sinh của lớp được chỉ định.
-- SỐ LIỆU PHẢI "ĐẸP" VÀ PHÙ HỢP LỨA TUỔI: với Lớp 1-5, ưu tiên số nguyên hoặc phân số/thập phân
-  hữu hạn, kết quả cuối cùng phải là số tròn, dễ kiểm tra (tránh số vô tỉ, thập phân vô hạn,
-  phân số quá phức tạp). Với Lớp 6 trở lên có thể dùng căn thức/số vô tỉ nếu phù hợp chương trình,
-  nhưng vẫn phải đảm bảo có lời giải "sạch", không sai số làm tròn khó chịu.
+- Ngôn ngữ: Tiếng Việt, chuẩn mực, phù hợp lứa tuổi học sinh của lớp được chỉ định (trừ khi môn học
+  yêu cầu khác, ví dụ Tiếng Anh).
 - Đầu ra CHỈ trả về JSON hợp lệ theo đúng schema, không kèm giải thích, không markdown code fence.
+
+QUY TẮC RIÊNG CHO MÔN ${subjectProfile.label.toUpperCase()}:
+${subjectProfile.extraRules}
 
 CHỐNG TRÙNG LẶP (RẤT QUAN TRỌNG):
 - Hãy TRÍCH XUẤT VÀ CHỌN NGẪU NHIÊN các phân vùng kiến thức khác nhau trong tài liệu Markdown
@@ -89,6 +90,7 @@ CHỐNG TRÙNG LẶP (RẤT QUAN TRỌNG):
   hãy dùng SEED này như một "hạt giống" ngẫu nhiên để đa dạng hoá cấu trúc số liệu, KHÔNG in SEED
   ra trong nội dung câu hỏi.
 `;
+}
 
 export function buildExamPrompt({
   grade,
@@ -103,6 +105,7 @@ export function buildExamPrompt({
   const level = DIFFICULTY_LEVELS[difficulty];
   if (!level) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
 
+  const subjectProfile = getSubjectProfile(subject);
   const seed = generateAntiDuplicationSeed();
   const isEssay = questionType === "tu_luan";
   const totalQuestions = chaptersBreakdown.reduce((sum, c) => sum + c.count, 0);
@@ -182,13 +185,13 @@ ${c.markdown}
     .join("\n\n");
 
   return `
-${BASE_RULES}
+${buildBaseRules(subjectProfile)}
 
 SEED: ${seed}
 
 THÔNG TIN ĐỀ:
 - Lớp: ${grade}
-- Môn: ${subject}
+- Môn: ${subjectProfile.label}
 - Mức độ: ${level.label} (${level.description})
 - Dạng câu hỏi: ${isEssay ? "Tự luận" : "Trắc nghiệm 4 lựa chọn"}
 - Tổng số câu cần tạo ở mức độ này: ${totalQuestions}

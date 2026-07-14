@@ -7,19 +7,17 @@ import ExamMatrixForm from "@/components/ExamMatrixForm";
 import A4LivePreview from "@/components/A4LivePreview";
 import ExportActions from "@/components/ExportActions";
 import { getSession, clearSession } from "@/services/authService";
+import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
   const [checkedSession, setCheckedSession] = useState(false);
 
-  const [questions, setQuestions] = useState([]);
-  const [teacherRubric, setTeacherRubric] = useState([]);
-  const [examMeta, setExamMeta] = useState(null);
-  const [warnings, setWarnings] = useState([]);
-  // Giai đoạn 2: cần để dựng Ma trận đề thi + Bản đặc tả (đã có sẵn từ response /api/generate,
-  // không cần gọi thêm AI)
-  const [chaptersInfo, setChaptersInfo] = useState([]);
-  const [typeByLevel, setTypeByLevel] = useState({});
+  // ⚠️ GIAI ĐOẠN 4: gộp toàn bộ dữ liệu kết quả tạo đề (câu hỏi, rubric, thông tin chương,
+  // cảnh báo, meta hiển thị) thành 1 object DUY NHẤT thay vì 6 useState() rời rạc trước đây -
+  // xem cấu trúc "ExamResult" trong src/data/examResult.js. Thêm trường mới sau này (ví dụ
+  // ngân hàng câu hỏi) chỉ cần sửa examResult.js, không phải rà lại từng useState() ở đây.
+  const [examResult, setExamResult] = useState(EMPTY_EXAM_RESULT);
 
   // Tạo 4 Mã Đề (A, B, C, D) - xáo trộn front-end, không gọi lại AI
   const [variants, setVariants] = useState([]);
@@ -34,24 +32,15 @@ export default function HomePage() {
   function handleLogout() {
     clearSession();
     setUser(null);
-    setQuestions([]);
-    setTeacherRubric([]);
-    setExamMeta(null);
-    setVariants([]);
-    setWarnings([]);
-    setChaptersInfo([]);
-    setTypeByLevel({});
-  }
-
-  function handleGenerated(data) {
-    setQuestions(data.questions);
-    setTeacherRubric(data.teacherRubric || []);
-    setExamMeta(data.meta);
+    setExamResult(EMPTY_EXAM_RESULT);
     setVariants([]);
     setActiveVariantIndex(0);
-    setWarnings(data.warnings || []);
-    setChaptersInfo(data.chaptersInfo || []);
-    setTypeByLevel(data.typeByLevel || {});
+  }
+
+  function handleGenerated(result) {
+    setExamResult(result);
+    setVariants([]);
+    setActiveVariantIndex(0);
   }
 
   function handleVariantsGenerated(newVariants) {
@@ -59,9 +48,11 @@ export default function HomePage() {
     setActiveVariantIndex(0);
   }
 
+  const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
+
   // Câu hỏi đang hiển thị trong khung xem trước: mã đề đang chọn (nếu đã tạo 4 mã) hoặc đề gốc
   const displayedQuestions = variants.length ? variants[activeVariantIndex].questions : questions;
-  const displayedExamCode = variants.length ? variants[activeVariantIndex].examCode : examMeta?.examCode;
+  const displayedExamCode = variants.length ? variants[activeVariantIndex].examCode : meta?.examCode;
 
   if (!checkedSession) return null; // tránh nhấp nháy trước khi đọc xong localStorage
 
@@ -92,7 +83,7 @@ export default function HomePage() {
               </div>
             )}
             <ExportActions
-              examMeta={examMeta}
+              examMeta={meta}
               questions={questions}
               teacherRubric={teacherRubric}
               chaptersInfo={chaptersInfo}
@@ -104,7 +95,7 @@ export default function HomePage() {
             />
             <div className="overflow-auto rounded-xl bg-slate-100 p-4">
               <A4LivePreview
-                examMeta={{ ...examMeta, examCode: displayedExamCode }}
+                examMeta={{ ...meta, examCode: displayedExamCode }}
                 questions={displayedQuestions}
                 teacherRubric={teacherRubric}
                 chaptersInfo={chaptersInfo}

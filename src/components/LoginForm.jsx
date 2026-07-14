@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Lock, User, Loader2 } from "lucide-react";
 import { saveSession } from "@/services/authService";
+import { loginRequest } from "@/services/apiClient";
 
 export default function LoginForm({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -15,13 +16,7 @@ export default function LoginForm({ onLoginSuccess }) {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Đăng nhập thất bại.");
+      const data = await loginRequest(username, password);
 
       // Lưu trạng thái đăng nhập ở localStorage (đơn giản, không cần JWT)
       saveSession(data.user);
