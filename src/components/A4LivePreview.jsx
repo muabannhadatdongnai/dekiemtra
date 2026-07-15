@@ -101,12 +101,12 @@ function QuestionBlock({ question, index }) {
 }
 
 /** Giai đoạn 2: Ma trận đề thi - chuẩn Thông tư 22 (Chương x Mức độ, kèm Điểm, tự tính từ questions đã tạo). */
-function MatrixPage({ matrix }) {
+function MatrixPage({ matrix, pageBreakBefore }) {
   if (!matrix || matrix.rows.length === 0) return null;
   const { levelKeys, rows, columnCountTotals, columnPointTotals, grandCount, grandPoints, typeByLevel } = matrix;
 
   return (
-    <div className="a4-page page-break-before">
+    <div className={`a4-page ${pageBreakBefore ? "page-break-before" : ""}`}>
       <h2 className="text-center text-base font-bold uppercase">Ma trận đề kiểm tra</h2>
       <table className="spec-table">
         <thead>
@@ -154,11 +154,11 @@ function MatrixPage({ matrix }) {
 }
 
 /** Giai đoạn 2: Bản đặc tả - mô tả yêu cầu cần đạt cho từng (chương, mức độ), kèm số câu tương ứng trong đề. */
-function SpecificationPage({ specRows }) {
+function SpecificationPage({ specRows, pageBreakBefore }) {
   if (!specRows?.length) return null;
 
   return (
-    <div className="a4-page page-break-before">
+    <div className={`a4-page ${pageBreakBefore ? "page-break-before" : ""}`}>
       <h2 className="text-center text-base font-bold uppercase">Bản đặc tả đề kiểm tra</h2>
       <table className="spec-table">
         <thead>
@@ -233,13 +233,20 @@ export default function A4LivePreview({ examMeta, questions, teacherRubric = [],
 
   const matrix = chaptersInfo.length > 0 ? computeExamMatrix(questions, chaptersInfo, typeByLevel) : null;
   const specRows = chaptersInfo.length > 0 ? computeSpecificationRows(questions, chaptersInfo, typeByLevel) : [];
+  const hasMatrix = Boolean(matrix && matrix.rows.length > 0);
+  const hasSpec = specRows.length > 0;
+  const hasFrontMatter = hasMatrix || hasSpec;
 
   return (
     <div id="print-area">
-      <MatrixPage matrix={matrix} />
-      <SpecificationPage specRows={specRows} />
+      {/* ⚠️ Trang ĐẦU TIÊN trong luồng in KHÔNG BAO GIỜ được ép ngắt trang trước nó - đây là
+          nguyên nhân thật của lỗi "trang trắng đầu PDF". MatrixPage chỉ nhận pageBreakBefore=false
+          (nó luôn là trang đầu nếu tồn tại); SpecificationPage chỉ ngắt trang nếu MatrixPage đã
+          render trước nó. */}
+      <MatrixPage matrix={matrix} pageBreakBefore={false} />
+      <SpecificationPage specRows={specRows} pageBreakBefore={hasMatrix} />
 
-      <div className={`a4-page ${matrix || specRows.length ? "page-break-before" : ""}`}>
+      <div className={`a4-page ${hasFrontMatter ? "page-break-before" : ""}`}>
         <ExamHeaderTable meta={examMeta} />
         <StudentInfoLine meta={examMeta} />
 

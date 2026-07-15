@@ -198,11 +198,11 @@ body {
     visibility: visible;
   }
   #print-area {
-    /* ⚠️ QUAN TRỌNG: dùng position:fixed (KHÔNG phải absolute) - fixed thoát hoàn toàn khỏi
-       ảnh hưởng của các phần tử cha (min-h-screen, layout grid 2 cột, padding...) dù chúng đã
-       bị ẩn. absolute vẫn có thể bị đẩy xuống bởi chiều cao còn sót lại của các phần tử cha,
-       gây ra 1 trang trắng ở đầu file PDF khi in. */
-    position: fixed;
+    /* ⚠️ position:fixed từng được thử để sửa lỗi trang trắng đầu, nhưng gây lỗi NẶNG HƠN: nội
+       dung bị LẶP LẠI trên MỌI trang khi in (fixed bị coi là "page furniture", vẽ lại mỗi trang).
+       Quay lại absolute - nguyên nhân thật của trang trắng đầu nằm ở chỗ khác (xem A4LivePreview.jsx:
+       trang đầu tiên trong luồng in không được ép ngắt trang trước nó nữa). */
+    position: absolute;
     left: 0;
     top: 0;
     width: 100%;

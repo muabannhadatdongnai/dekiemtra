@@ -94,10 +94,24 @@ function nextPlaceholderId() {
   return `MATHEQN${Date.now().toString(36)}${placeholderCounter}`;
 }
 
+/**
+ * ⚠️ SỬA LỖI THƯ VIỆN mathml2omml: thư viện này giải mã ĐÚNG các entity MathML như &lt;/&gt;/&amp;
+ * thành ký tự thật (<, >, &), nhưng lại QUÊN escape lại khi xuất ra chuỗi XML OMML - khiến bất kỳ
+ * công thức nào chứa bất đẳng thức (<, >) hoặc dấu & đều tạo ra XML KHÔNG HỢP LỆ, làm hỏng toàn bộ
+ * file .docx (Word báo lỗi không mở được file). Hàm này escape lại ĐÚNG các ký tự đặc biệt, nhưng
+ * CHỈ trong phần nội dung text bên trong thẻ <m:t>...</m:t> - không đụng đến cấu trúc thẻ XML.
+ */
+function escapeMathTextNodes(ommlString) {
+  return ommlString.replace(/(<m:t[^>]*>)([\s\S]*?)(<\/m:t>)/g, (match, openTag, content, closeTag) => {
+    const escaped = content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return openTag + escaped + closeTag;
+  });
+}
+
 function latexToOMML(latex, display) {
   try {
     const mathml = temml.renderToString(latex, { displayMode: display });
-    const omml = mml2omml(mathml);
+    const omml = escapeMathTextNodes(mml2omml(mathml));
     if (display) {
       return `<m:oMathPara><m:oMathParaPr><m:jc m:val="center"/></m:oMathParaPr>${omml}</m:oMathPara>`;
     }
