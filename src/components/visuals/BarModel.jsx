@@ -31,7 +31,11 @@ export default function BarModel({ barA, barB, differenceValue, unit }) {
 
   const bracketTopY = barA_y;
   const bracketBottomY = barA_y + barHeight + gapBetweenBars - 10;
-  const diffLabelX = 10 + (barBWidth + fullWidth) / 2 + 14;
+  // ⚠️ ĐÃ SỬA LỖI: nhãn chênh lệch trước đây đặt ở giữa khoảng [barBWidth, fullWidth], nhưng bar A
+  // luôn trải dài HẾT fullWidth bất kể barB ngắn hơn bao nhiêu -> nhãn bị lọt vào TRONG hình chữ
+  // nhật của bar A (đặc biệt rõ khi chênh lệch nhỏ so với giá trị bar A, ví dụ 20/105). Giờ đặt
+  // hẳn ra ngoài, ngay sau mép phải của bar A.
+  const diffLabelX = 10 + fullWidth + 8;
   const diffLabelY = (bracketTopY + bracketBottomY) / 2 + 4;
 
   const barB_y = barA_y + barHeight + gapBetweenBars;

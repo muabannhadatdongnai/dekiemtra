@@ -198,7 +198,11 @@ body {
     visibility: visible;
   }
   #print-area {
-    position: absolute;
+    /* ⚠️ QUAN TRỌNG: dùng position:fixed (KHÔNG phải absolute) - fixed thoát hoàn toàn khỏi
+       ảnh hưởng của các phần tử cha (min-h-screen, layout grid 2 cột, padding...) dù chúng đã
+       bị ẩn. absolute vẫn có thể bị đẩy xuống bởi chiều cao còn sót lại của các phần tử cha,
+       gây ra 1 trang trắng ở đầu file PDF khi in. */
+    position: fixed;
     left: 0;
     top: 0;
     width: 100%;
