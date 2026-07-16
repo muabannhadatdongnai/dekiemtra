@@ -102,7 +102,10 @@ function nextPlaceholderId() {
  * CHỈ trong phần nội dung text bên trong thẻ <m:t>...</m:t> - không đụng đến cấu trúc thẻ XML.
  */
 function escapeMathTextNodes(ommlString) {
-  return ommlString.replace(/(<m:t[^>]*>)([\s\S]*?)(<\/m:t>)/g, (match, openTag, content, closeTag) => {
+  // ⚠️ QUAN TRỌNG: "(?:\\s[^>]*)?" đảm bảo chỉ khớp ĐÚNG thẻ <m:t> (text node), KHÔNG khớp
+  // nhầm các thẻ khác có tên bắt đầu bằng "m:t" như <m:type .../> (dấu phân số) - lỗi cũ khiến
+  // <m:type m:val="bar"/> bị coi nhầm là thẻ mở <m:t...>, làm hỏng toàn bộ cấu trúc XML phía sau.
+  return ommlString.replace(/(<m:t(?:\s[^>]*)?>)([\s\S]*?)(<\/m:t>)/g, (match, openTag, content, closeTag) => {
     const escaped = content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     return openTag + escaped + closeTag;
   });
