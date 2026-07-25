@@ -6,8 +6,20 @@ import LoginForm from "@/components/LoginForm";
 import ExamMatrixForm from "@/components/ExamMatrixForm";
 import A4LivePreview from "@/components/A4LivePreview";
 import ExportActions from "@/components/ExportActions";
+import WorksheetForm from "@/components/WorksheetForm";
+import WorksheetPreview from "@/components/WorksheetPreview";
+import WorksheetExportActions from "@/components/WorksheetExportActions";
 import { getSession, clearSession } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
+
+// A2: 2 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12) và "worksheet" (Phiếu bài tập,
+// Mầm non - Lớp 2). Chỉ 1 trong 2 được mount tại 1 thời điểm vì cả 2 đều dùng chung
+// id="print-area" (CSS in ấn @media print chọn theo id) - mount cả 2 cùng lúc sẽ vi phạm
+// id trùng lặp và có thể in nhầm nội dung.
+const MODES = {
+  EXAM: "exam",
+  WORKSHEET: "worksheet",
+};
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -23,6 +35,10 @@ export default function HomePage() {
   const [variants, setVariants] = useState([]);
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
 
+  // A2: chế độ đang chọn + dữ liệu Phiếu bài tập (độc lập với examResult, giữ 2 luồng tách biệt)
+  const [mode, setMode] = useState(MODES.EXAM);
+  const [worksheetResult, setWorksheetResult] = useState(null); // { worksheet, meta } | null
+
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
     setUser(getSession());
@@ -35,6 +51,8 @@ export default function HomePage() {
     setExamResult(EMPTY_EXAM_RESULT);
     setVariants([]);
     setActiveVariantIndex(0);
+    setWorksheetResult(null);
+    setMode(MODES.EXAM);
   }
 
   function handleGenerated(result) {
@@ -46,6 +64,10 @@ export default function HomePage() {
   function handleVariantsGenerated(newVariants) {
     setVariants(newVariants);
     setActiveVariantIndex(0);
+  }
+
+  function handleWorksheetGenerated(result) {
+    setWorksheetResult(result);
   }
 
   const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
@@ -65,44 +87,84 @@ export default function HomePage() {
       <Header user={user} onLogout={handleLogout} />
 
       <main className="mx-auto max-w-7xl px-4 py-6">
+        {/* A2: Tab chuyển đổi "Đề kiểm tra" <-> "Phiếu bài tập". no-print vì chỉ là điều khiển,
+            không liên quan nội dung in ra. */}
+        <div className="no-print mb-4 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setMode(MODES.EXAM)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.EXAM
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            📝 Đề kiểm tra
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.WORKSHEET)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.WORKSHEET
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            🧮 Phiếu bài tập
+          </button>
+        </div>
+
         {/* Split-screen: Trái 40% (Bảng điều khiển) - Phải 60% (Xem trước A4) */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_3fr]">
           <aside className="no-print h-fit rounded-xl border border-slate-200 bg-white p-5">
-            <ExamMatrixForm onGenerated={handleGenerated} />
+            {mode === MODES.EXAM ? (
+              <ExamMatrixForm onGenerated={handleGenerated} />
+            ) : (
+              <WorksheetForm onGenerated={handleWorksheetGenerated} />
+            )}
           </aside>
 
-          <section className="space-y-4">
-            {warnings.length > 0 && (
-              <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-                <p className="mb-1 font-semibold">⚠️ Lưu ý:</p>
-                <ul className="list-disc space-y-0.5 pl-5">
-                  {warnings.map((w, i) => (
-                    <li key={i}>{w}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <ExportActions
-              examMeta={meta}
-              questions={questions}
-              teacherRubric={teacherRubric}
-              chaptersInfo={chaptersInfo}
-              typeByLevel={typeByLevel}
-              variants={variants}
-              activeVariantIndex={activeVariantIndex}
-              onVariantsGenerated={handleVariantsGenerated}
-              onSelectVariant={setActiveVariantIndex}
-            />
-            <div className="overflow-auto rounded-xl bg-slate-100 p-4">
-              <A4LivePreview
-                examMeta={{ ...meta, examCode: displayedExamCode }}
-                questions={displayedQuestions}
+          {mode === MODES.EXAM ? (
+            <section className="space-y-4">
+              {warnings.length > 0 && (
+                <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <p className="mb-1 font-semibold">⚠️ Lưu ý:</p>
+                  <ul className="list-disc space-y-0.5 pl-5">
+                    {warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <ExportActions
+                examMeta={meta}
+                questions={questions}
                 teacherRubric={teacherRubric}
                 chaptersInfo={chaptersInfo}
                 typeByLevel={typeByLevel}
+                variants={variants}
+                activeVariantIndex={activeVariantIndex}
+                onVariantsGenerated={handleVariantsGenerated}
+                onSelectVariant={setActiveVariantIndex}
               />
-            </div>
-          </section>
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <A4LivePreview
+                  examMeta={{ ...meta, examCode: displayedExamCode }}
+                  questions={displayedQuestions}
+                  teacherRubric={teacherRubric}
+                  chaptersInfo={chaptersInfo}
+                  typeByLevel={typeByLevel}
+                />
+              </div>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              <WorksheetExportActions worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <WorksheetPreview worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
+              </div>
+            </section>
+          )}
         </div>
       </main>
     </div>

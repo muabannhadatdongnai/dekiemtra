@@ -44,3 +44,12 @@ export async function generateExamRequest(blueprint) {
   });
   return handleResponse(res);
 }
+
+export async function generateWorksheetRequest(payload) {
+  const res = await fetch("/api/generate-worksheet", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse(res);
+}
