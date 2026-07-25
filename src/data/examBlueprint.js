@@ -5,9 +5,14 @@
  * trường mới sau này (ví dụ "difficulty preset", "questionBankMode"...) không bị quên đồng bộ
  * giữa ExamMatrixForm (client) và route.js (server) - chỉ cần sửa 1 chỗ này.
  *
+ * ⚠️ C1 (Phần B - Ý 1): KHÔNG thêm field "gradeProfile" vào blueprint này - trường "grade" sẵn có
+ * đã đủ để tầng sinh đề tự tra cứu profile qua getGradeProfile(grade) trong gradeProfiles.js
+ * (xem cách dùng trong promptTemplates.js). Giữ blueprint tối giản, tránh trùng lặp nguồn dữ liệu
+ * (nếu thêm field riêng, dễ bị lệch nếu sau này đổi logic profile mà quên đồng bộ 2 nơi).
+ *
  * @typedef {Object} ExamBlueprint
  * @property {string} username
- * @property {number} grade - 1-12
+ * @property {number} grade - 1-12, dùng để tra cứu cả subjectProfile lẫn gradeProfile phía server
  * @property {string} subject - mã môn học, xem src/data/config.js -> SUBJECTS
  * @property {number} volume - 1 | 2
  * @property {Object<string, {NHAN_BIET:number, THONG_HIEU:number, VAN_DUNG:number, VAN_DUNG_CAO:number}>} chapterMatrix

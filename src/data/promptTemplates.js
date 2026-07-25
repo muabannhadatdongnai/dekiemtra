@@ -27,6 +27,7 @@
 
 import { VISUAL_TYPE_PROMPT_GUIDE } from "./visualSchemas";
 import { getSubjectProfile } from "./subjectProfiles";
+import { getGradeProfile } from "./gradeProfiles";
 
 const FREE_TIER_MODEL = "gemini-3.5-flash";
 
@@ -66,7 +67,7 @@ export function generateAntiDuplicationSeed() {
   return `Seed_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function buildBaseRules(subjectProfile) {
+function buildBaseRules(subjectProfile, gradeProfile) {
   return `
 BẠN LÀ ${subjectProfile.expertRole.toUpperCase()}.
 
@@ -80,6 +81,9 @@ QUY TẮC BẮT BUỘC:
 
 QUY TẮC RIÊNG CHO MÔN ${subjectProfile.label.toUpperCase()}:
 ${subjectProfile.extraRules}
+
+QUY TẮC RIÊNG CHO KHỐI (Họ ${gradeProfile.family} - ${gradeProfile.label}):
+${gradeProfile.guidance}
 
 CHỐNG TRÙNG LẶP (RẤT QUAN TRỌNG):
 - Hãy TRÍCH XUẤT VÀ CHỌN NGẪU NHIÊN các phân vùng kiến thức khác nhau trong tài liệu Markdown
@@ -106,6 +110,7 @@ export function buildExamPrompt({
   if (!level) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
 
   const subjectProfile = getSubjectProfile(subject);
+  const gradeProfile = getGradeProfile(grade);
   const seed = generateAntiDuplicationSeed();
   const isEssay = questionType === "tu_luan";
   const totalQuestions = chaptersBreakdown.reduce((sum, c) => sum + c.count, 0);
@@ -185,7 +190,7 @@ ${c.markdown}
     .join("\n\n");
 
   return `
-${buildBaseRules(subjectProfile)}
+${buildBaseRules(subjectProfile, gradeProfile)}
 
 SEED: ${seed}
 
