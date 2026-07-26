@@ -15,6 +15,17 @@ import { GoogleGenAI } from "@google/genai";
  * tức chuyển sang key kế tiếp TRONG CÙNG 1 LẦN GỌI, người dùng không thấy gián đoạn.
  * KHÔNG lưu trạng thái ở đâu cả (không cần Redis/KV trả phí) - phù hợp Vercel serverless,
  * nơi mỗi request có thể chạy trên 1 instance khác nhau nên không giữ được bộ nhớ dùng chung.
+ *
+ * ⚠️ C3 (Phần B - Ý 3 "Key pool ưu tiên"): KHÔNG tách 2 pool key vật lý theo mục đích sử dụng -
+ * vẫn CHỈ 1 biến GEMINI_API_KEYS chung. Thay vào đó, thêm tham số `priority` để phân biệt CÁCH
+ * xử lý lỗi khi tranh chấp quota giữa 2 loại luồng:
+ *   - priority="generate" (mặc định, giữ nguyên hành vi trước C3): luồng BẮT BUỘC phải chạy
+ *     (tạo đề, tạo phiếu bài tập) - thử HẾT toàn bộ key trong pool trước khi bỏ cuộc.
+ *   - priority="analyze": luồng PHỤ, có thể tự rơi về phương án dự phòng nếu lỗi (ví dụ: phân
+ *     tích đề mẫu ở C4/C5 - sampleExamAnalyzer.js) - chỉ thử 2 key rồi fail nhanh, NHƯỜNG quota
+ *     còn lại cho luồng "generate" đang chờ, không để 1 việc phụ chiếm hết cả pool key chung.
+ * Chưa có nơi nào TRUYỀN priority="analyze" ở bước C3 này (vì tính năng đề mẫu chưa tồn tại) -
+ * chỉ làm sẵn interface để C4/C5 không phải sửa lại chữ ký hàm lần nữa.
  */
 
 function parseApiKeys() {
@@ -67,17 +78,30 @@ function isRetryableWithOtherKey(err) {
 
 /**
  * Gọi Gemini generateContent, tự động thử qua các API key đã cấu hình theo thứ tự ngẫu nhiên.
- * Ném lỗi CUỐI CÙNG ra ngoài nếu tất cả key đều thất bại, hoặc gặp lỗi KHÔNG liên quan đến
- * quota/key (ví dụ model không tồn tại) - trường hợp đó thử key khác cũng vô ích nên dừng ngay.
+ * Ném lỗi CUỐI CÙNG ra ngoài nếu tất cả key trong lượt thử đều thất bại, hoặc gặp lỗi KHÔNG
+ * liên quan đến quota/key (ví dụ model không tồn tại) - trường hợp đó thử key khác cũng vô ích
+ * nên dừng ngay.
+ *
+ * @param {Object} params - tham số gửi thẳng cho client.models.generateContent (model, contents, config...)
+ * @param {Object} [options]
+ * @param {"generate"|"analyze"} [options.priority="generate"] - xem giải thích ở đầu file.
+ * @param {number} [options.maxRetries] - ghi đè thủ công số lần thử nếu cần; nếu bỏ trống,
+ *   mặc định theo priority: "generate" = thử hết toàn bộ key trong pool, "analyze" = tối đa 2 key.
  */
-export async function generateContentWithFailover(params) {
+export async function generateContentWithFailover(params, options = {}) {
+  const { priority = "generate", maxRetries } = options;
+
   if (clients.length === 0) {
     throw new Error(
       "Chưa cấu hình GEMINI_API_KEYS hoặc GEMINI_API_KEY trong .env.local / Vercel Environment Variables."
     );
   }
 
-  const order = shuffle(clients);
+  const shuffled = shuffle(clients);
+  const defaultMaxRetries = priority === "analyze" ? 2 : shuffled.length;
+  const effectiveMaxRetries = Math.max(1, Math.min(maxRetries ?? defaultMaxRetries, shuffled.length));
+  const order = shuffled.slice(0, effectiveMaxRetries);
+
   let lastError;
 
   for (let i = 0; i < order.length; i++) {
@@ -85,7 +109,7 @@ export async function generateContentWithFailover(params) {
       return await order[i].client.models.generateContent(params);
     } catch (err) {
       lastError = err;
-      const isLastKey = i === order.length - 1;
+      const isLastAttempt = i === order.length - 1;
       const maskedKey = `...${order[i].key.slice(-4)}`;
 
       if (!isRetryableWithOtherKey(err)) {
@@ -94,12 +118,15 @@ export async function generateContentWithFailover(params) {
         throw err;
       }
 
-      if (isLastKey) {
-        throw err; // đã thử hết toàn bộ key, không còn lựa chọn nào khác
+      if (isLastAttempt) {
+        // priority="analyze" dừng sớm ở đây dù pool còn key khác chưa thử - CHỦ Ý, không phải bug:
+        // nhường phần key còn lại cho luồng priority="generate" đang chờ xử lý.
+        throw err;
       }
 
       console.warn(
-        `[geminiKeyPool] Key ${maskedKey} hết hạn mức hoặc lỗi xác thực, chuyển sang key khác... (${err.message?.slice(0, 100)})`
+        `[geminiKeyPool] (priority=${priority}) Key ${maskedKey} hết hạn mức hoặc lỗi xác thực, ` +
+          `chuyển sang key khác... (${err.message?.slice(0, 100)})`
       );
     }
   }
