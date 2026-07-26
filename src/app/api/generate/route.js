@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import users from "@/data/users.json";
 import { fetchChaptersSeparately } from "@/services/githubService";
-import { generateFullExam } from "@/services/geminiEngine";
+import { orchestrateExamGeneration } from "@/services/examOrchestrator";
 
 /**
  * ⚠️ GIAI ĐOẠN 1 - MA TRẬN THEO CHƯƠNG:
@@ -39,7 +39,7 @@ export async function POST(request) {
     // Tải nội dung RIÊNG từng chương (không gộp chung 1 blob) để AI phân bổ đúng số câu/chương
     const chaptersInfo = await fetchChaptersSeparately({ grade, subject, volume, chapters: chapterIds });
 
-    const { questions, teacherRubric, warnings } = await generateFullExam({
+    const { questions, teacherRubric, warnings } = await orchestrateExamGeneration({
       grade,
       subject,
       chaptersInfo,
