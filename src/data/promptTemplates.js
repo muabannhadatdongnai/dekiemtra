@@ -29,7 +29,7 @@ import { VISUAL_TYPE_PROMPT_GUIDE } from "./visualSchemas";
 import { getSubjectProfile } from "./subjectProfiles";
 import { getGradeProfile } from "./gradeProfiles";
 
-const FREE_TIER_MODEL = "gemini-3.5-flash";
+export const FREE_TIER_MODEL = "gemini-3.5-flash";
 
 export const DIFFICULTY_LEVELS = {
   NHAN_BIET: {
