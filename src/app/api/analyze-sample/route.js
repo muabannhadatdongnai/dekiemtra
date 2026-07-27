@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import users from "@/data/users.json";
 import { analyzeSampleExam } from "@/services/sampleExamAnalyzer";
+import { getCachedSampleExamSpec, setCachedSampleExamSpec } from "@/services/sampleExamCache";
 
 /**
  * /api/analyze-sample
@@ -9,9 +10,12 @@ import { analyzeSampleExam } from "@/services/sampleExamAnalyzer";
  *
  * ⚠️ CHƯA nối vào luồng tạo đề chính (/api/generate) ở bước này - đây CHỈ là bước test riêng:
  * upload file mẫu -> xem spec phong cách trả về có đúng ý không, trước khi tin tưởng đưa vào
- * luồng chính (C6). sampleExamCache.js (C5) cũng CHƯA tồn tại - mỗi lần gọi route này ĐỀU phân
- * tích lại từ đầu (tốn 1 lượt AI priority="analyze" mỗi lần), đây là điều CHỦ Ý để dễ test độc
- * lập, sẽ được nối cache ở C5.
+ * luồng chính (C6).
+ *
+ * C5: đã nối sampleExamCache.js - kiểm tra cache TRƯỚC khi gọi AI, theo (username + hash nội
+ * dung file). Cache hit -> trả về ngay, KHÔNG gọi analyzeSampleExam (không tốn thêm 1 lượt AI).
+ * Response luôn có field `fromCache` để dễ xác nhận hành vi này khi test (đúng yêu cầu C5:
+ * "phân tích lại 1 file mẫu đã cache có bị gọi AI lần 2 không").
  */
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB - đủ cho ảnh chụp/scan chất lượng cao
@@ -34,13 +38,20 @@ export async function POST(request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    const cached = getCachedSampleExamSpec(username, buffer);
+    if (cached) {
+      return NextResponse.json({ success: true, ...cached, fromCache: true });
+    }
+
     const { spec, extractionMethod } = await analyzeSampleExam({
       buffer,
       mimeType: file.type,
       fileName: file.name,
     });
 
-    return NextResponse.json({ success: true, spec, extractionMethod });
+    setCachedSampleExamSpec(username, buffer, { spec, extractionMethod });
+
+    return NextResponse.json({ success: true, spec, extractionMethod, fromCache: false });
   } catch (err) {
     console.error("[/api/analyze-sample] error:", err);
     return NextResponse.json(
