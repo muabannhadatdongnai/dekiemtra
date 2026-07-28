@@ -1,6 +1,7 @@
 import { generateFullExam } from "./geminiEngine";
 import { getGradeProfile } from "@/data/gradeProfiles";
 import { getSubjectProfile } from "@/data/subjectProfiles";
+import { isUsableSampleExamSpec } from "@/data/sampleExamSchema";
 
 /**
  * examOrchestrator.js
@@ -10,20 +11,21 @@ import { getSubjectProfile } from "@/data/subjectProfiles";
  * - Đây là nơi DUY NHẤT tra cứu gradeProfile (khối) + subjectProfile (môn) rồi quyết định cấu
  *   hình cuối cùng trước khi build prompt - "thay thế cho ý tưởng router riêng từng khối" mà
  *   KHÔNG cần nhân bản route theo từng khối×môn (xem B1 trong ROADMAP_TIEP_THEO.md).
- * - Dọn đường cho C4-C6 (đề mẫu - sampleExamSpec): khi nối luồng phân tích đề mẫu vào luồng tạo
- *   đề chính, CHỈ cần sửa file này (đọc sampleExamSpec từ cache, gộp vào tham số gọi geminiEngine)
- *   - KHÔNG phải sửa lại route.js lần nữa.
  * - Vì generateFullExam ở geminiEngine.js gọi buildExamPrompt (đã tự tra gradeProfile bên trong
  *   promptTemplates.js kể từ C1) NÊN orchestrator không tính lại phần "guidance" đó - orchestrator
  *   chỉ xử lý các quyết định Ở TẦNG TRÊN prompt, việc mà bản thân promptTemplates.js không tự biết
  *   (ví dụ: một tuỳ chọn từ UI có thực sự hợp lý với khối đã chọn hay không).
  *
- * Quyết định đầu tiên đưa vào orchestrator (C2): tự động BỎ QUA "useVisualQuestions" nếu khối đã
- * chọn thuộc Họ B (Lớp 6-12, allowVisual=false) - dù giáo viên có lỡ để tick chọn (mặc định BẬT
- * trong ExamMatrixForm.jsx, giáo viên đổi Lớp nhưng quên tắt lại). Trước C2, hệ thống vẫn gửi
- * VISUAL_TYPE_PROMPT_GUIDE cho AI dù đang ra đề Lớp 6-12 - không sai nghiêm trọng (AI vẫn ra đề
- * text bình thường vì Họ B không có chương trình phù hợp cho các visualType hiện có) nhưng lãng
- * phí token vô ích. Có cảnh báo (warning) rõ ràng để giáo viên biết vì sao, không âm thầm đổi.
+ * Quyết định #1 (C2): tự động BỎ QUA "useVisualQuestions" nếu khối đã chọn thuộc Họ B (Lớp
+ * 6-12, allowVisual=false) - dù giáo viên có lỡ để tick chọn (mặc định BẬT trong
+ * ExamMatrixForm.jsx, giáo viên đổi Lớp nhưng quên tắt lại).
+ *
+ * Quyết định #2 (C6 - đề mẫu): nếu giáo viên chọn chế độ "theo_de_mau" hoặc "ket_hop" nhưng
+ * sampleExamSpec KHÔNG hợp lệ/rỗng (chưa phân tích, phân tích lỗi, hoặc AI trả về spec không
+ * có gì hữu ích) - tự động fallback về "theo_chuong" (tạo đề CHỈ theo Ma trận Chương, bỏ qua
+ * đề mẫu), KÈM cảnh báo rõ lý do. Đây chính là mục tiêu cốt lõi của Ý 3 đã chốt: "luồng phân
+ * tích đề mẫu lỗi/hết quota KHÔNG được làm hỏng cả phiên tạo đề" - luồng tạo đề (bắt buộc) vẫn
+ * luôn chạy được dù luồng phân tích mẫu (phụ) có thất bại.
  */
 export async function orchestrateExamGeneration({
   grade,
@@ -34,6 +36,8 @@ export async function orchestrateExamGeneration({
   includeAnswers,
   useVisualQuestions,
   existingQuestions,
+  sampleMode = "theo_chuong",
+  sampleExamSpec = null,
 }) {
   const gradeProfile = getGradeProfile(grade);
   const subjectProfile = getSubjectProfile(subject);
@@ -49,6 +53,18 @@ export async function orchestrateExamGeneration({
     );
   }
 
+  let effectiveSampleMode = sampleMode;
+  let effectiveSampleExamSpec = sampleExamSpec;
+
+  if (sampleMode !== "theo_chuong" && !isUsableSampleExamSpec(sampleExamSpec)) {
+    effectiveSampleMode = "theo_chuong";
+    effectiveSampleExamSpec = null;
+    orchestratorWarnings.push(
+      `Không có đề mẫu hợp lệ để áp dụng (chưa phân tích thành công hoặc đề mẫu không đủ thông tin) - ` +
+        `hệ thống đã tự động chuyển sang tạo đề CHỈ theo Ma trận Chương, bỏ qua đề mẫu cho lượt tạo đề này.`
+    );
+  }
+
   const { questions, teacherRubric, warnings } = await generateFullExam({
     grade,
     subject,
@@ -58,14 +74,14 @@ export async function orchestrateExamGeneration({
     includeAnswers,
     useVisualQuestions: effectiveUseVisualQuestions,
     existingQuestions,
+    sampleMode: effectiveSampleMode,
+    sampleExamSpec: effectiveSampleExamSpec,
   });
 
   return {
     questions,
     teacherRubric,
     warnings: [...orchestratorWarnings, ...warnings],
-    // Trả kèm 2 profile đã tra cứu - route.js hiện chưa cần dùng, nhưng để sẵn cho C6 (UI chọn
-    // chế độ Theo chương/Theo đề mẫu/Kết hợp) tránh phải tra cứu lại lần 2 ở tầng route.
     gradeProfile,
     subjectProfile,
   };

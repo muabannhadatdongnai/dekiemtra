@@ -96,6 +96,39 @@ CHỐNG TRÙNG LẶP (RẤT QUAN TRỌNG):
 `;
 }
 
+/**
+ * C6 (Phần B - đề mẫu): chuyển sampleExamSpec (đã phân tích ở C4/C5) thành 1 đoạn hướng dẫn
+ * PHONG CÁCH cho AI - hoàn toàn tách biệt với "nguồn tài liệu kiến thức" (vẫn luôn lấy từ
+ * chaptersBreakdown như cũ, KHÔNG đổi). sampleMode chỉ ảnh hưởng ĐỘ ƯU TIÊN của phong cách này
+ * so với quy tắc mặc định của môn/khối, không thay đổi cơ chế chọn kiến thức.
+ */
+function buildSampleExamGuidance(sampleMode, sampleExamSpec) {
+  if (sampleMode === "theo_chuong" || !sampleExamSpec) return "";
+
+  const lengthLabels = { ngan: "ngắn gọn", trung_binh: "độ dài trung bình", dai: "dài, nhiều chi tiết" };
+
+  const parts = [];
+  if (sampleExamSpec.writingStyle) parts.push(`- Cách hành văn: ${sampleExamSpec.writingStyle}`);
+  if (sampleExamSpec.presentationNotes) parts.push(`- Cách trình bày: ${sampleExamSpec.presentationNotes}`);
+  if (sampleExamSpec.averageQuestionLength) {
+    parts.push(`- Độ dài câu hỏi: ${lengthLabels[sampleExamSpec.averageQuestionLength]}`);
+  }
+  if (parts.length === 0) return ""; // spec không có gì hữu ích để mô tả -> bỏ qua, không thêm đoạn rỗng
+
+  const priorityNote =
+    sampleMode === "theo_de_mau"
+      ? "Hãy ƯU TIÊN bám sát phong cách đề mẫu này hơn phong cách mặc định của môn/khối đã nêu ở trên."
+      : "Hãy KẾT HỢP CÂN BẰNG phong cách đề mẫu này với quy tắc chuẩn của môn/khối đã nêu ở trên (không bỏ hẳn quy tắc chuẩn).";
+
+  return `
+PHONG CÁCH ĐỀ MẪU (do giáo viên cung cấp - chế độ "${sampleMode === "theo_de_mau" ? "Theo đề mẫu" : "Kết hợp"}"):
+${parts.join("\n")}
+${priorityNote}
+⚠️ Đây CHỈ là mô tả phong cách khái quát - TUYỆT ĐỐI KHÔNG có (và không được tự suy diễn ra) nội
+dung, số liệu, hay đề bài cụ thể nào của đề mẫu gốc.
+`;
+}
+
 export function buildExamPrompt({
   grade,
   subject = "Toán",
@@ -105,6 +138,8 @@ export function buildExamPrompt({
   excludeQuestionsSummary = "",
   includeAnswers = false,
   useVisualQuestions = false,
+  sampleMode = "theo_chuong", // "theo_chuong" | "theo_de_mau" | "ket_hop" - xem examOrchestrator.js
+  sampleExamSpec = null, // xem src/data/sampleExamSchema.js - null nếu không dùng đề mẫu
 }) {
   const level = DIFFICULTY_LEVELS[difficulty];
   if (!level) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
@@ -226,6 +261,7 @@ ${
     : ""
 }
 ${useVisualQuestions ? VISUAL_TYPE_PROMPT_GUIDE : ""}
+${buildSampleExamGuidance(sampleMode, sampleExamSpec)}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema${
     useVisualQuestions
       ? '; RIÊNG "visualType", "visualData", và "needsScratchSpace" là các trường TUỲ CHỌN có thể thêm vào bất kỳ câu hỏi nào ở trên, theo đúng hướng dẫn phía trên'

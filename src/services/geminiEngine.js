@@ -133,6 +133,8 @@ export async function generateQuestionsForLevel({
   useVisualQuestions = false,
   existingQuestions = [],
   maxRetries = 2,
+  sampleMode = "theo_chuong",
+  sampleExamSpec = null,
 }) {
   const levelConfig = DIFFICULTY_LEVELS[difficulty];
   if (!levelConfig) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
@@ -162,6 +164,8 @@ export async function generateQuestionsForLevel({
       questionType,
       includeAnswers,
       useVisualQuestions,
+      sampleMode,
+      sampleExamSpec,
       excludeQuestionsSummary: summarizeForPrompt([
         ...poolExisting,
         ...collectedPairs.map((p) => p.question.content),
@@ -270,6 +274,8 @@ export async function generateFullExam({
   includeAnswers = false,
   useVisualQuestions = false,
   existingQuestions = [],
+  sampleMode = "theo_chuong",
+  sampleExamSpec = null,
 }) {
   const levels = Object.keys(DIFFICULTY_LEVELS).filter((lvl) =>
     Object.values(chapterMatrix).some((row) => (row[lvl] || 0) > 0)
@@ -291,6 +297,8 @@ export async function generateFullExam({
         includeAnswers,
         useVisualQuestions,
         existingQuestions,
+        sampleMode,
+        sampleExamSpec,
       });
     })
   );

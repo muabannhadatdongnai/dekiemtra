@@ -20,6 +20,10 @@
  * @property {Object<string, "trac_nghiem"|"tu_luan">} typeByLevel - loại câu hỏi riêng từng mức độ
  * @property {boolean} includeAnswers - có tạo đáp án + lời giải hay không (ảnh hưởng credit AI)
  * @property {boolean} useVisualQuestions - cho phép câu hỏi trực quan (đặt tính, sơ đồ...)
+ * @property {"theo_chuong"|"theo_de_mau"|"ket_hop"} [sampleMode] - C6: chế độ dùng đề mẫu,
+ *           mặc định "theo_chuong" (hành vi cũ, không đổi nếu không truyền)
+ * @property {Object|null} [sampleExamSpec] - C6: spec phong cách đã phân tích từ /api/analyze-sample
+ *           (xem src/data/sampleExamSchema.js) - null nếu chưa có/không dùng đề mẫu
  */
 
 export function buildExamBlueprint({
@@ -31,6 +35,8 @@ export function buildExamBlueprint({
   typeByLevel,
   includeAnswers,
   useVisualQuestions,
+  sampleMode = "theo_chuong",
+  sampleExamSpec = null,
 }) {
   return {
     username,
@@ -41,5 +47,7 @@ export function buildExamBlueprint({
     typeByLevel,
     includeAnswers,
     useVisualQuestions,
+    sampleMode,
+    sampleExamSpec,
   };
 }

@@ -22,6 +22,8 @@ export async function POST(request) {
       includeAnswers = false, // mặc định KHÔNG tạo đáp án để tiết kiệm credit AI
       useVisualQuestions = false, // câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...) - đặc trưng Tiểu học
       existingQuestions = [],
+      sampleMode = "theo_chuong", // C6: "theo_chuong" | "theo_de_mau" | "ket_hop"
+      sampleExamSpec = null, // C6: spec phong cách đã phân tích ở /api/analyze-sample (C4/C5)
     } = body;
 
     if (!username || !users[username]) {
@@ -48,6 +50,8 @@ export async function POST(request) {
       includeAnswers,
       useVisualQuestions,
       existingQuestions,
+      sampleMode,
+      sampleExamSpec,
     });
 
     return NextResponse.json({

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
 import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { getSession } from "@/services/authService";
 import { GRADES, SUBJECTS, getSubjectLabel } from "@/data/config";
 import { buildExamBlueprint } from "@/data/examBlueprint";
 import { buildExamResult } from "@/data/examResult";
-import { fetchChaptersRequest, generateExamRequest } from "@/services/apiClient";
+import { fetchChaptersRequest, generateExamRequest, analyzeSampleExamRequest } from "@/services/apiClient";
 
 const LEVEL_SHORT_LABEL = {
   NHAN_BIET: "Nhận biết (Dễ)",
@@ -17,6 +17,13 @@ const LEVEL_SHORT_LABEL = {
 };
 
 const EMPTY_ROW = { NHAN_BIET: 0, THONG_HIEU: 0, VAN_DUNG: 0, VAN_DUNG_CAO: 0 };
+
+// C6 (Phần B - đề mẫu): 3 chế độ, khớp với sampleMode phía server (examOrchestrator.js)
+const SAMPLE_MODES = [
+  { value: "theo_chuong", label: "Theo chương", hint: "Mặc định - không dùng đề mẫu" },
+  { value: "theo_de_mau", label: "Theo đề mẫu", hint: "Ưu tiên bám sát phong cách đề mẫu" },
+  { value: "ket_hop", label: "Kết hợp cả 2", hint: "Cân bằng đề mẫu + quy tắc chuẩn" },
+];
 
 function Field({ label, children }) {
   return (
@@ -67,6 +74,14 @@ export default function ExamMatrixForm({ onGenerated }) {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // ============ C6: Đề mẫu (tuỳ chọn) ============
+  const [sampleMode, setSampleMode] = useState("theo_chuong");
+  const [sampleFile, setSampleFile] = useState(null);
+  const [sampleSpec, setSampleSpec] = useState(null);
+  const [sampleFromCache, setSampleFromCache] = useState(false);
+  const [analyzingSample, setAnalyzingSample] = useState(false);
+  const [sampleError, setSampleError] = useState("");
 
   const chapterIds = Object.keys(chapterMatrix);
   const columnTotals = Object.keys(DIFFICULTY_LEVELS).reduce((acc, lvl) => {
@@ -120,6 +135,34 @@ export default function ExamMatrixForm({ onGenerated }) {
     }));
   }
 
+  // C6: phân tích đề mẫu ngay khi giáo viên chọn file - KHÔNG chờ đến lúc bấm "Tạo đề" mới báo
+  // lỗi, để giáo viên biết ngay file có phân tích được hay không (đúng tinh thần C4: xem trước
+  // spec phong cách trả về có đúng ý không).
+  async function handleSampleFileChange(e) {
+    const file = e.target.files?.[0] || null;
+    setSampleFile(file);
+    setSampleSpec(null);
+    setSampleError("");
+    if (!file) return;
+
+    const session = getSession();
+    if (!session) {
+      setSampleError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
+      return;
+    }
+
+    setAnalyzingSample(true);
+    try {
+      const data = await analyzeSampleExamRequest({ username: session.username, file });
+      setSampleSpec(data.spec);
+      setSampleFromCache(Boolean(data.fromCache));
+    } catch (err) {
+      setSampleError(err.message);
+    } finally {
+      setAnalyzingSample(false);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -130,6 +173,17 @@ export default function ExamMatrixForm({ onGenerated }) {
     }
     if (totalQuestions === 0) {
       setError("Tổng số câu hỏi phải lớn hơn 0 (điền số câu vào ma trận bên dưới).");
+      return;
+    }
+    // C6: chặn sớm phía client nếu chọn chế độ cần đề mẫu nhưng chưa phân tích xong - đỡ phải
+    // chờ round-trip lên server rồi mới biết (server vẫn tự fallback an toàn nếu lọt qua, xem
+    // examOrchestrator.js, nhưng báo lỗi ngay ở đây giúp giáo viên hiểu rõ hơn là cần làm gì).
+    if (sampleMode !== "theo_chuong" && !sampleSpec) {
+      setError(
+        analyzingSample
+          ? "Đang phân tích đề mẫu, vui lòng đợi xong rồi bấm Tạo đề lại."
+          : "Vui lòng upload đề mẫu và chờ phân tích xong, hoặc chuyển về chế độ \"Theo chương\"."
+      );
       return;
     }
 
@@ -157,6 +211,8 @@ export default function ExamMatrixForm({ onGenerated }) {
         typeByLevel,
         includeAnswers,
         useVisualQuestions,
+        sampleMode,
+        sampleExamSpec: sampleMode !== "theo_chuong" ? sampleSpec : null,
       });
       const data = await generateExamRequest(blueprint);
 
@@ -337,6 +393,74 @@ export default function ExamMatrixForm({ onGenerated }) {
         <p className="pt-1 text-sm text-slate-600">
           Tổng số câu: <span className="font-semibold">{totalQuestions}</span>
         </p>
+      </div>
+
+      {/* ============ C6: ĐỀ MẪU (TUỲ CHỌN) ============ */}
+      <div className="space-y-3 border-b border-slate-100 pb-5">
+        <p className="text-sm font-semibold text-slate-800">Đề mẫu (tuỳ chọn)</p>
+        <div className="flex flex-wrap gap-2">
+          {SAMPLE_MODES.map((m) => (
+            <label
+              key={m.value}
+              className={`cursor-pointer rounded-md border px-3 py-2 text-xs transition ${
+                sampleMode === m.value
+                  ? "border-brand-600 bg-brand-50 text-brand-700"
+                  : "border-slate-300 text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              <input
+                type="radio"
+                name="sampleMode"
+                value={m.value}
+                checked={sampleMode === m.value}
+                onChange={(e) => setSampleMode(e.target.value)}
+                className="sr-only"
+              />
+              <span className="block font-medium">{m.label}</span>
+              <span className="block text-slate-500">{m.hint}</span>
+            </label>
+          ))}
+        </div>
+
+        {sampleMode !== "theo_chuong" && (
+          <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+              <Upload size={15} />
+              <span>{sampleFile ? sampleFile.name : "Chọn file đề mẫu (.docx, .pdf, hoặc ảnh chụp)"}</span>
+              <input
+                type="file"
+                accept=".docx,.pdf,image/*"
+                onChange={handleSampleFileChange}
+                className="sr-only"
+              />
+            </label>
+
+            {analyzingSample && (
+              <p className="flex items-center gap-2 text-xs text-slate-500">
+                <Loader2 size={13} className="animate-spin" /> Đang phân tích phong cách đề mẫu...
+              </p>
+            )}
+
+            {sampleError && (
+              <p className="flex items-start gap-2 text-xs text-red-600">
+                <XCircle size={13} className="mt-0.5 shrink-0" /> {sampleError}
+              </p>
+            )}
+
+            {sampleSpec && !analyzingSample && (
+              <div className="flex items-start gap-2 text-xs text-emerald-700">
+                <CheckCircle2 size={13} className="mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">
+                    Đã phân tích xong{sampleFromCache ? " (lấy từ cache, không tốn thêm lượt AI)" : ""}.
+                  </p>
+                  {sampleSpec.writingStyle && <p>Hành văn: {sampleSpec.writingStyle}</p>}
+                  {sampleSpec.presentationNotes && <p>Trình bày: {sampleSpec.presentationNotes}</p>}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ============ TUỲ CHỌN ĐÁP ÁN & CÂU HỎI TRỰC QUAN ============ */}

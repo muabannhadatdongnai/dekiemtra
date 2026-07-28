@@ -53,3 +53,15 @@ export async function generateWorksheetRequest(payload) {
   });
   return handleResponse(res);
 }
+
+/**
+ * C6: upload file đề mẫu (docx/pdf/ảnh) để phân tích phong cách - xem sampleExamAnalyzer.js.
+ * Dùng FormData (không phải JSON) vì cần gửi file nhị phân.
+ */
+export async function analyzeSampleExamRequest({ username, file }) {
+  const formData = new FormData();
+  formData.set("username", username);
+  formData.set("file", file);
+  const res = await fetch("/api/analyze-sample", { method: "POST", body: formData });
+  return handleResponse(res);
+}
