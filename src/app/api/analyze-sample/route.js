@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import users from "@/data/users.json";
 import { analyzeSampleExam } from "@/services/sampleExamAnalyzer";
 import { getCachedSampleExamSpec, setCachedSampleExamSpec } from "@/services/sampleExamCache";
+import { requireAuth } from "@/services/apiAuth";
 
 /**
  * /api/analyze-sample
@@ -22,13 +22,16 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB - đủ cho ảnh chụp/s
 
 export async function POST(request) {
   try {
+    const auth = requireAuth(request);
+    if (auth.error) return auth.error;
+    // ⚠️ Dùng username đã verify qua token (auth.session.username) để scoping cache - KHÔNG
+    // dùng formData.get("username") do client tự gửi (có thể giả mạo tên người khác để dò
+    // cache của họ).
+    const { username } = auth.session;
+
     const formData = await request.formData();
-    const username = formData.get("username");
     const file = formData.get("file");
 
-    if (!username || !users[username]) {
-      return NextResponse.json({ error: "Vui lòng đăng nhập lại." }, { status: 401 });
-    }
     if (!file || typeof file === "string") {
       return NextResponse.json({ error: "Thiếu file đề mẫu (field 'file')." }, { status: 400 });
     }

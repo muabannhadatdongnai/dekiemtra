@@ -1,11 +1,11 @@
 {
   "admin": {
-    "password": "admin123",
+    "passwordHash": "a4861d8925aad88d465080cc7846d9a3:63b83927f0a34c591aa0a3c249eaa169b0fb69b4c2138d20820ec010c892772ffe4d2305f31d2b50e36d01aafd2594d3d70aa1182289aad647bcb84c376ccce5",
     "fullName": "Quản trị viên",
     "role": "admin"
   },
   "gv.toan01": {
-    "password": "toan123",
+    "passwordHash": "1b0fd3e7aa257d37bc72060bce601211:71c20d0ee63553f03f3710252b59873076564c4eecb4a9aa0159a80d68b144acb933c13fa148661d452ad12c8eb04ff0607153a3f060e06f0c7957f9d2cde885",
     "fullName": "Giáo viên Toán 01",
     "role": "teacher"
   }

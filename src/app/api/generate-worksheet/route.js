@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import users from "@/data/users.json";
 import { generateWorksheet } from "@/services/worksheetGenerator";
+import { requireAuth } from "@/services/apiAuth";
 
 export async function POST(request) {
   try {
-    const body = await request.json();
-    const { username, grade, includeAnswers = false, exerciseCounts } = body;
+    const auth = requireAuth(request);
+    if (auth.error) return auth.error;
 
-    if (!username || !users[username]) {
-      return NextResponse.json({ error: "Vui lòng đăng nhập lại." }, { status: 401 });
-    }
+    const body = await request.json();
+    // ⚠️ "username" trong body KHÔNG dùng để xác thực nữa (client tự gửi gì cũng được).
+    const { grade, includeAnswers = false, exerciseCounts } = body;
+
     if (!grade || !exerciseCounts) {
       return NextResponse.json({ error: "Thiếu tham số: grade, exerciseCounts." }, { status: 400 });
     }

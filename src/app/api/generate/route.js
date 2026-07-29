@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import users from "@/data/users.json";
 import { fetchChaptersSeparately } from "@/services/githubService";
 import { orchestrateExamGeneration } from "@/services/examOrchestrator";
+import { requireAuth } from "@/services/apiAuth";
 
 /**
  * ⚠️ GIAI ĐOẠN 1 - MA TRẬN THEO CHƯƠNG:
@@ -11,9 +11,14 @@ import { orchestrateExamGeneration } from "@/services/examOrchestrator";
  */
 export async function POST(request) {
   try {
+    const auth = requireAuth(request);
+    if (auth.error) return auth.error;
+
     const body = await request.json();
     const {
-      username, // gửi kèm từ localStorage session phía client để xác thực nhẹ (không dùng JWT)
+      // ⚠️ KHÔNG dùng "username" từ body để xác thực (đó là lỗi bảo mật trước đây - client tự
+      // gửi gì cũng được, không có gì ràng buộc). Danh tính thật lấy từ auth.session.username
+      // (đã verify chữ ký token) - xem services/apiAuth.js.
       grade,
       subject = "Toan",
       volume = 1,
@@ -25,10 +30,6 @@ export async function POST(request) {
       sampleMode = "theo_chuong", // C6: "theo_chuong" | "theo_de_mau" | "ket_hop"
       sampleExamSpec = null, // C6: spec phong cách đã phân tích ở /api/analyze-sample (C4/C5)
     } = body;
-
-    if (!username || !users[username]) {
-      return NextResponse.json({ error: "Vui lòng đăng nhập lại." }, { status: 401 });
-    }
 
     const chapterIds = Object.keys(chapterMatrix || {});
     if (!grade || chapterIds.length === 0) {

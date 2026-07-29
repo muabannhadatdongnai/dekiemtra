@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Lock, User, Loader2 } from "lucide-react";
-import { saveSession } from "@/services/authService";
+import { saveSession, getSession } from "@/services/authService";
 import { loginRequest } from "@/services/apiClient";
 
 export default function LoginForm({ onLoginSuccess }) {
@@ -16,11 +16,11 @@ export default function LoginForm({ onLoginSuccess }) {
     setError("");
     setLoading(true);
     try {
-      const data = await loginRequest(username, password);
+      const data = await loginRequest(username, password); // { user, token, expiresAt }
 
-      // Lưu trạng thái đăng nhập ở localStorage (đơn giản, không cần JWT)
-      saveSession(data.user);
-      onLoginSuccess(data.user);
+      // Lưu token đã ký (không phải chỉ lưu user object như trước) - xem authService.js
+      saveSession(data);
+      onLoginSuccess(getSession());
     } catch (err) {
       setError(err.message);
     } finally {

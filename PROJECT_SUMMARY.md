@@ -97,12 +97,15 @@ src/
 
 ## 8. Bảo mật cần nhớ
 - Người dùng từng lộ `GEMINI_API_KEY` thật + `GITHUB_KNOWLEDGE_REPO` sai định dạng lên **repo GitHub Public** qua file `.env.local` bị commit nhầm (thiếu `.gitignore`). Đã hướng dẫn revoke key + thêm `.gitignore`. Cần nhắc lại nếu thấy dấu hiệu tương tự.
-- `users.json` password dạng plaintext — chấp nhận được cho nhóm nhỏ giáo viên tin cậy, KHÔNG nên mở rộng công khai.
+- **[ĐÃ SỬA] Lỗ hổng auth nghiêm trọng**: trước đây MỌI API route (`generate`, `generate-worksheet`, `analyze-sample`) chỉ kiểm tra `users[username]` có tồn tại — KHÔNG xác thực mật khẩu ở các lần gọi sau, ai cũng gọi thẳng API với `{"username":"admin"}` mà không cần mật khẩu; `/api/chapters` còn public 100% không check gì. Đã sửa bằng cơ chế session token ký HMAC (`src/services/sessionToken.js`), verify qua `requireAuth()` (`src/services/apiAuth.js`) ở ĐẦU cả 4 route, client gửi kèm header `Authorization: Bearer <token>` (`apiClient.js`). Mật khẩu trong `users.json` đổi từ plaintext sang hash scrypt (`passwordHash`, xem `src/services/passwordUtils.js`) — dùng `node scripts/hash-password.js "mat_khau"` để tạo/đổi tài khoản. Thêm rate-limit chống brute-force cho `/api/login` (`src/services/loginRateLimiter.js`, best-effort vì serverless không share bộ nhớ giữa instance). **BẮT BUỘC** đặt biến môi trường `SESSION_SECRET` (xem `.env.local.example`) trước khi deploy — chưa đặt thì token ký bằng secret mặc định KHÔNG AN TOÀN (có cảnh báo console).
+- Tài khoản mẫu hiện tại: `admin`/`admin123`, `gv.toan01`/`toan123` — **nên đổi mật khẩu thật trước khi đưa cho giáo viên dùng** bằng script `hash-password.js` ở trên.
 
 ## 9. Đánh giá còn tồn đọng (đã trao đổi với người dùng)
 - Chưa có bộ test tự động cố định cho `exportService.js` (mọi lần test đều làm bằng sandbox tạm rồi xoá — đây là lý do 2 bug Word liên tiếp lọt qua)
 - Chưa test thật đề Lịch sử/Tiếng Anh/Tiếng Việt (mới sửa xong bug subject, chưa ai tạo đề thật)
 - Chưa có ngân hàng câu hỏi lưu trữ xuyên suốt nhiều lần tạo (chỉ chống trùng trong 1 lần tạo)
+
+**⚠️ Ghi chú soát lại (chat sau)**: khi review code trong zip, mục 6/9/10 bên dưới có phần đã LỖI THỜI — thực tế trong zip `page.js` ĐÃ có mode toggle Đề thi/Phiếu bài tập, `worksheetExportService.js` ĐÃ được viết khá đầy đủ (đồng bộ màu với `WorksheetPreview.jsx`). Trước khi làm tiếp theo checklist mục 10, hãy tự kiểm tra lại code hiện có trong zip TRƯỚC, đừng mặc định các mục "CHƯA XONG" bên dưới vẫn còn đúng.
 
 ## 10. Việc cần làm ngay khi tiếp tục ở chat mới
 1. Khôi phục project từ zip cuối cùng (xem mục 7)
