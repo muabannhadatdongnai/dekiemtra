@@ -9,17 +9,22 @@ import ExportActions from "@/components/ExportActions";
 import WorksheetForm from "@/components/WorksheetForm";
 import WorksheetPreview from "@/components/WorksheetPreview";
 import WorksheetExportActions from "@/components/WorksheetExportActions";
+import LessonPlanForm from "@/components/LessonPlanForm";
+import LessonPlanPreview from "@/components/LessonPlanPreview";
+import LessonPlanExportActions from "@/components/LessonPlanExportActions";
 import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
+import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
 
-// A2: 2 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12) và "worksheet" (Phiếu bài tập,
-// Mầm non - Lớp 2). Chỉ 1 trong 2 được mount tại 1 thời điểm vì cả 2 đều dùng chung
-// id="print-area" (CSS in ấn @media print chọn theo id) - mount cả 2 cùng lúc sẽ vi phạm
-// id trùng lặp và có thể in nhầm nội dung.
+// A2/A3: 3 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12), "worksheet" (Phiếu bài tập,
+// Mầm non - Lớp 2) và "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5). Chỉ 1 trong 3 được mount
+// tại 1 thời điểm vì cả 3 đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id)
+// - mount nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung.
 const MODES = {
   EXAM: "exam",
   WORKSHEET: "worksheet",
+  LESSON_PLAN: "lessonPlan",
 };
 
 export default function HomePage() {
@@ -36,9 +41,10 @@ export default function HomePage() {
   const [variants, setVariants] = useState([]);
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
 
-  // A2: chế độ đang chọn + dữ liệu Phiếu bài tập (độc lập với examResult, giữ 2 luồng tách biệt)
+  // A2/A3: chế độ đang chọn + dữ liệu Phiếu bài tập/Giáo án (độc lập với examResult, giữ 3 luồng tách biệt)
   const [mode, setMode] = useState(MODES.EXAM);
   const [worksheetResult, setWorksheetResult] = useState(null); // { worksheet, meta } | null
+  const [lessonPlanResult, setLessonPlanResult] = useState(EMPTY_LESSON_PLAN_RESULT);
 
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
@@ -53,6 +59,7 @@ export default function HomePage() {
     setVariants([]);
     setActiveVariantIndex(0);
     setWorksheetResult(null);
+    setLessonPlanResult(EMPTY_LESSON_PLAN_RESULT);
     setMode(MODES.EXAM);
   }
 
@@ -69,6 +76,10 @@ export default function HomePage() {
 
   function handleWorksheetGenerated(result) {
     setWorksheetResult(result);
+  }
+
+  function handleLessonPlanGenerated(result) {
+    setLessonPlanResult(result);
   }
 
   const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
@@ -113,16 +124,25 @@ export default function HomePage() {
           >
             🧮 Phiếu bài tập
           </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.LESSON_PLAN)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.LESSON_PLAN
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            📘 Soạn giáo án
+          </button>
         </div>
 
         {/* Split-screen: Trái 40% (Bảng điều khiển) - Phải 60% (Xem trước A4) */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_3fr]">
           <aside className="no-print h-fit rounded-xl border border-slate-200 bg-white p-5">
-            {mode === MODES.EXAM ? (
-              <ExamMatrixForm onGenerated={handleGenerated} />
-            ) : (
-              <WorksheetForm onGenerated={handleWorksheetGenerated} />
-            )}
+            {mode === MODES.EXAM && <ExamMatrixForm onGenerated={handleGenerated} />}
+            {mode === MODES.WORKSHEET && <WorksheetForm onGenerated={handleWorksheetGenerated} />}
+            {mode === MODES.LESSON_PLAN && <LessonPlanForm onGenerated={handleLessonPlanGenerated} />}
             <div className="mt-4">
               <UsageWidget />
             </div>
@@ -161,11 +181,36 @@ export default function HomePage() {
                 />
               </div>
             </section>
-          ) : (
+          ) : mode === MODES.WORKSHEET ? (
             <section className="space-y-4">
               <WorksheetExportActions worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
               <div className="overflow-auto rounded-xl bg-slate-100 p-4">
                 <WorksheetPreview worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
+              </div>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              {lessonPlanResult.warnings.length > 0 && (
+                <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <p className="mb-1 font-semibold">⚠️ Lưu ý:</p>
+                  <ul className="list-disc space-y-0.5 pl-5">
+                    {lessonPlanResult.warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <LessonPlanExportActions
+                lessonPlan={lessonPlanResult.lessonPlan}
+                timeline={lessonPlanResult.timeline}
+                meta={lessonPlanResult.meta}
+              />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <LessonPlanPreview
+                  lessonPlan={lessonPlanResult.lessonPlan}
+                  timeline={lessonPlanResult.timeline}
+                  meta={lessonPlanResult.meta}
+                />
               </div>
             </section>
           )}
