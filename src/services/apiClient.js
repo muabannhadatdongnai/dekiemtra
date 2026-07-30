@@ -84,3 +84,9 @@ export async function analyzeSampleExamRequest({ username, file }) {
   });
   return handleResponse(res);
 }
+
+/** Thống kê mức dùng Gemini API hôm nay - xem UsageWidget.jsx */
+export async function fetchUsageSummaryRequest() {
+  const res = await fetch("/api/usage", { headers: authHeaders() });
+  return handleResponse(res);
+}

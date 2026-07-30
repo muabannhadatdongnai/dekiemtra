@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { recordGeminiCall, maskKey } from "./geminiUsageTracker.js";
 
 /**
  * geminiKeyPool.js
@@ -77,6 +78,35 @@ function isRetryableWithOtherKey(err) {
 }
 
 /**
+ * Phân loại lỗi CHI TIẾT HƠN isRetryableWithOtherKey() ở trên - dùng RIÊNG cho mục đích thống
+ * kê/cảnh báo quota (geminiUsageTracker.js), KHÔNG ảnh hưởng đến quyết định failover (vẫn dùng
+ * isRetryableWithOtherKey() như cũ, không đổi hành vi retry hiện có). Tách riêng "hết hạn mức"
+ * và "key sai/bị thu hồi" vì 2 nguyên nhân này cần xử lý khác nhau: hết hạn mức thì chờ qua
+ * ngày hôm sau hoặc thêm key mới; key sai thì cần SỬA NGAY trong .env.local, không phải chờ.
+ */
+function classifyGeminiError(err) {
+  const status = err?.status ?? err?.code ?? err?.response?.status;
+  const text = `${err?.message || ""} ${err?.toString?.() || ""}`.toLowerCase();
+
+  const isQuota =
+    status === 429 ||
+    text.includes("429") ||
+    text.includes("resource_exhausted") ||
+    text.includes("quota") ||
+    text.includes("rate limit");
+  if (isQuota) return "quota_exhausted";
+
+  const isAuth =
+    status === 403 ||
+    text.includes("permission_denied") ||
+    text.includes("api key not valid") ||
+    text.includes("api_key_invalid");
+  if (isAuth) return "auth_error";
+
+  return "other_error";
+}
+
+/**
  * Gọi Gemini generateContent, tự động thử qua các API key đã cấu hình theo thứ tự ngẫu nhiên.
  * Ném lỗi CUỐI CÙNG ra ngoài nếu tất cả key trong lượt thử đều thất bại, hoặc gặp lỗi KHÔNG
  * liên quan đến quota/key (ví dụ model không tồn tại) - trường hợp đó thử key khác cũng vô ích
@@ -103,14 +133,21 @@ export async function generateContentWithFailover(params, options = {}) {
   const order = shuffled.slice(0, effectiveMaxRetries);
 
   let lastError;
+  let quotaFailureCount = 0;
 
   for (let i = 0; i < order.length; i++) {
     try {
-      return await order[i].client.models.generateContent(params);
+      const result = await order[i].client.models.generateContent(params);
+      await recordGeminiCall({ rawKey: order[i].key, outcome: "success" });
+      return result;
     } catch (err) {
       lastError = err;
+      const outcome = classifyGeminiError(err);
+      if (outcome === "quota_exhausted") quotaFailureCount++;
+      await recordGeminiCall({ rawKey: order[i].key, outcome });
+
       const isLastAttempt = i === order.length - 1;
-      const maskedKey = `...${order[i].key.slice(-4)}`;
+      const maskedKeyLabel = maskKey(order[i].key);
 
       if (!isRetryableWithOtherKey(err)) {
         // Lỗi không liên quan quota/key (vd model bị shutdown, request sai định dạng)
@@ -121,11 +158,17 @@ export async function generateContentWithFailover(params, options = {}) {
       if (isLastAttempt) {
         // priority="analyze" dừng sớm ở đây dù pool còn key khác chưa thử - CHỦ Ý, không phải bug:
         // nhường phần key còn lại cho luồng priority="generate" đang chờ xử lý.
+        // ⚠️ Đánh dấu allKeysExhausted nếu TẤT CẢ lần thử trong lượt này đều do hết hạn mức
+        // (không phải key sai) - để route.js/orchestrator hiển thị cảnh báo rõ ràng, đúng
+        // nguyên nhân cho giáo viên ("hết hạn mức hôm nay" khác hẳn "lỗi hệ thống chung chung").
+        if (quotaFailureCount === order.length) {
+          err.allKeysExhausted = true;
+        }
         throw err;
       }
 
       console.warn(
-        `[geminiKeyPool] (priority=${priority}) Key ${maskedKey} hết hạn mức hoặc lỗi xác thực, ` +
+        `[geminiKeyPool] (priority=${priority}) Key ${maskedKeyLabel} hết hạn mức hoặc lỗi xác thực, ` +
           `chuyển sang key khác... (${err.message?.slice(0, 100)})`
       );
     }
@@ -137,4 +180,9 @@ export async function generateContentWithFailover(params, options = {}) {
 /** Số lượng key đang cấu hình - dùng để hiển thị chẩn đoán nếu cần. */
 export function getConfiguredKeyCount() {
   return API_KEYS.length;
+}
+
+/** Danh sách key ĐÃ CHE (chỉ 4 ký tự cuối) - dùng cho API/widget thống kê mức dùng quota. */
+export function getMaskedKeyList() {
+  return API_KEYS.map(maskKey);
 }

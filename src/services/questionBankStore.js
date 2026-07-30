@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { isUpstashConfigured, upstashCommand } from "./upstashClient.js";
 
 /**
  * questionBankStore.js
@@ -42,24 +43,10 @@ function bankKey({ subject, grade, chapterId }) {
   return `qbank:${sanitizeKeyPart(subject)}:${sanitizeKeyPart(grade)}:${sanitizeKeyPart(chapterId)}`;
 }
 
-function isUpstashConfigured() {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
-}
-
-/** Gọi 1 lệnh Redis qua Upstash REST API (dạng POST body JSON array - không cần URL-encode). */
-async function upstashCommand(command) {
-  const res = await fetch(process.env.UPSTASH_REDIS_REST_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(command),
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(`Upstash lỗi: ${data.error}`);
-  return data.result;
-}
+/**
+ * ⚠️ isUpstashConfigured() và lệnh gọi Upstash REST đã CHUYỂN sang src/services/upstashClient.js
+ * (dùng chung với geminiUsageTracker.js) - xem import ở đầu file.
+ */
 
 async function upstashAppend(key, items) {
   if (items.length === 0) return;

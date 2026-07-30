@@ -9,6 +9,7 @@ import ExportActions from "@/components/ExportActions";
 import WorksheetForm from "@/components/WorksheetForm";
 import WorksheetPreview from "@/components/WorksheetPreview";
 import WorksheetExportActions from "@/components/WorksheetExportActions";
+import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 
@@ -122,6 +123,9 @@ export default function HomePage() {
             ) : (
               <WorksheetForm onGenerated={handleWorksheetGenerated} />
             )}
+            <div className="mt-4">
+              <UsageWidget />
+            </div>
           </aside>
 
           {mode === MODES.EXAM ? (

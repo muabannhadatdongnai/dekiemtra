@@ -24,6 +24,7 @@ node --test test/xmlEscapeUtils.test.js
 | `sessionToken.test.js` | ❌ Không (chỉ dùng `crypto` built-in) | Ký/verify session token, chống giả mạo (sửa 1 ký tự trong token phải fail), token rác không được throw. |
 | `loginRateLimiter.test.js` | ❌ Không | Chặn brute-force `/api/login` sau N lần sai, reset đúng khi đăng nhập thành công. |
 | `questionBankStore.test.js` | ❌ Không (test nhánh file JSON local) | Ngân hàng câu hỏi bền vững: lưu/đọc lại đúng, cộng dồn qua nhiều lần gọi (không ghi đè), gộp nhiều chương, bỏ qua item thiếu dữ liệu. **Chỉ test được nhánh local** - nhánh Upstash thật cần test thủ công sau khi cấu hình (xem ghi chú trong file test). |
+| `geminiUsageTracker.test.js` | ❌ Không (test nhánh file JSON local) | Thống kê mức dùng Gemini: che key đúng, đếm lượt gọi + lỗi hết quota đúng, không throw khi input thiếu/lạ. **Chỉ test được nhánh local**, tương tự `questionBankStore.test.js`. |
 | `exportService.docx.test.js` | ✅ **Có** — cần `npm install` (dùng thật `docx`, `temml`, `mathml2omml`, `jszip`) | Test tích hợp toàn bộ pipeline LaTeX→OMML→.docx với **cả phân số LẪN bất đẳng thức trong CÙNG 1 lần tạo file** — đúng kịch bản đã lọt 2 bug trước đây. Soi thẳng `word/document.xml` bên trong file .docx để đảm bảo không có ký tự XML chưa escape lọt vào node `<m:t>`. |
 
 ## ⚠️ Lưu ý quan trọng khi sửa `exportService.js` / `xmlEscapeUtils.js`

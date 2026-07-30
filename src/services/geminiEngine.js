@@ -149,6 +149,7 @@ export async function generateQuestionsForLevel({
   const remainingCounts = { ...chapterCounts };
   let collectedPairs = [];
   let attempt = 0;
+  let lastQuotaExhaustedError = null; // ⚠️ nhớ lại lỗi hết quota GẦN NHẤT dù vòng lặp vẫn tiếp tục thử
   const poolExisting = existingQuestions.map((q) => q.content || q);
 
   while (Object.values(remainingCounts).some((c) => c > 0) && attempt <= maxRetries) {
@@ -185,6 +186,10 @@ export async function generateQuestionsForLevel({
       rawText = result.text;
     } catch (err) {
       console.error(`[geminiEngine] Lỗi gọi API (${difficulty}, lần thử ${attempt + 1}):`, err.message);
+      // ⚠️ Đánh dấu do geminiKeyPool.js gắn khi TOÀN BỘ key trong pool cùng hết hạn mức ở lượt
+      // gọi này - nhớ lại để phân biệt cảnh báo cụ thể ("hết hạn mức Gemini hôm nay") thay vì
+      // gộp chung với mọi nguyên nhân khác ("trùng lặp nhiều hoặc lỗi API" chung chung).
+      if (err.allKeysExhausted) lastQuotaExhaustedError = err;
       attempt++;
       continue;
     }
@@ -253,6 +258,7 @@ export async function generateQuestionsForLevel({
     rubric: finalRubric,
     perChapterRequested: chapterCounts,
     perChapterFulfilled,
+    quotaExhausted: Boolean(lastQuotaExhaustedError),
   };
 }
 
@@ -313,9 +319,15 @@ export async function generateFullExam({
       const fulfilled = r.perChapterFulfilled[chapterId] || 0;
       if (fulfilled < requested) {
         const chapterLabel = chaptersInfo.find((c) => c.chapterId === chapterId)?.label || chapterId;
+        // ⚠️ Cảnh báo CỤ THỂ khi biết chắc nguyên nhân là hết hạn mức Gemini (không phải đoán
+        // chung chung) - giáo viên biết ngay cần chờ qua ngày mai / thêm key mới, thay vì
+        // tưởng lỗi do đề khó tạo hoặc trùng lặp quá nhiều.
+        const reason = r.quotaExhausted
+          ? "do TẤT CẢ API key Gemini đã hết hạn mức hôm nay"
+          : "do trùng lặp nhiều hoặc lỗi API";
         warnings.push(
           `Mức "${level?.label}" - ${chapterLabel}: chỉ tạo được ${fulfilled}/${requested} câu ` +
-            `(do trùng lặp nhiều hoặc lỗi API). Vui lòng thử tạo thêm hoặc bổ sung chương kiến thức.`
+            `(${reason}). Vui lòng thử tạo thêm hoặc bổ sung chương kiến thức.`
         );
       }
     });

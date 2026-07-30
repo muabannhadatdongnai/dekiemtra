@@ -116,6 +116,13 @@ Giải quyết tồn đọng ở mục 9: "chưa có ngân hàng câu hỏi lưu
 - Đã test nhánh local file (`test/questionBankStore.test.js`, 5/5 pass). **CHƯA test nhánh Upstash thật** (cần tài khoản Upstash thật + mạng) — nên test thủ công 1 lần sau khi cấu hình: tạo đề 2 lần liên tiếp cho CÙNG 1 chương, xem lần 2 có tự tránh trùng ý tưởng với lần 1 không.
 - Giới hạn: mỗi (môn+lớp+chương) chỉ giữ tối đa 300 câu gần nhất (FIFO), tránh phình to vô hạn.
 
+## 13. Cảnh báo mức dùng quota Gemini (mới thêm)
+- File mới: `src/services/geminiUsageTracker.js` (dùng chung backend Upstash/local với `questionBankStore.js` qua `src/services/upstashClient.js` mới tách ra) + `src/app/api/usage/route.js` + `src/components/UsageWidget.jsx` (hiển thị trong sidebar trang chính, dưới form tạo đề).
+- **CHỦ Ý không hiển thị "còn lại bao nhiêu % quota"** so với 1 con số hạn mức Google cố định — hạn mức free tier của Google từng bị âm thầm cắt giảm (xem mục 5), so với số có thể đã lỗi thời sẽ gây hiểu lầm. Thay vào đó hiển thị: tổng lượt gọi hôm nay, số lượt/từng key, và **số lần bị từ chối do hết hạn mức thật** (429/RESOURCE_EXHAUSTED) - tín hiệu đáng tin hơn nhiều.
+- `geminiKeyPool.js`: mỗi lần gọi (thành công lẫn thất bại) đều gọi `recordGeminiCall()` (không throw, không làm chậm luồng chính đáng kể). Khi TOÀN BỘ key trong pool cùng hết quota ở 1 lượt gọi, lỗi ném ra được gắn cờ `err.allKeysExhausted = true`.
+- `geminiEngine.js`: bắt cờ `allKeysExhausted` này (trước đây bị "nuốt" âm thầm trong vòng lặp retry, chỉ ra warning chung chung "do trùng lặp nhiều hoặc lỗi API") → giờ cảnh báo CỤ THỂ "do TẤT CẢ API key Gemini đã hết hạn mức hôm nay" khi đúng là nguyên nhân đó, giáo viên biết ngay cần chờ qua ngày mai hoặc thêm key mới thay vì đoán mò.
+- Test: `test/geminiUsageTracker.test.js` (nhánh local, 5/5 pass). Route `/api/usage` yêu cầu đăng nhập (dùng `requireAuth`), không cần quyền admin riêng (nhóm giáo viên nhỏ, tin cậy).
+
 ## 9. Đánh giá còn tồn đọng (đã trao đổi với người dùng)
 - Chưa có bộ test tự động cố định cho `exportService.js` (mọi lần test đều làm bằng sandbox tạm rồi xoá — đây là lý do 2 bug Word liên tiếp lọt qua)
 - Chưa test thật đề Lịch sử/Tiếng Anh/Tiếng Việt (mới sửa xong bug subject, chưa ai tạo đề thật)
