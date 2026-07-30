@@ -2,6 +2,7 @@ import { generateFullExam } from "./geminiEngine";
 import { getGradeProfile } from "@/data/gradeProfiles";
 import { getSubjectProfile } from "@/data/subjectProfiles";
 import { isUsableSampleExamSpec } from "@/data/sampleExamSchema";
+import { getBankEntries, appendBankEntries } from "./questionBankStore";
 
 /**
  * examOrchestrator.js
@@ -20,12 +21,15 @@ import { isUsableSampleExamSpec } from "@/data/sampleExamSchema";
  * 6-12, allowVisual=false) - dù giáo viên có lỡ để tick chọn (mặc định BẬT trong
  * ExamMatrixForm.jsx, giáo viên đổi Lớp nhưng quên tắt lại).
  *
- * Quyết định #2 (C6 - đề mẫu): nếu giáo viên chọn chế độ "theo_de_mau" hoặc "ket_hop" nhưng
- * sampleExamSpec KHÔNG hợp lệ/rỗng (chưa phân tích, phân tích lỗi, hoặc AI trả về spec không
- * có gì hữu ích) - tự động fallback về "theo_chuong" (tạo đề CHỈ theo Ma trận Chương, bỏ qua
- * đề mẫu), KÈM cảnh báo rõ lý do. Đây chính là mục tiêu cốt lõi của Ý 3 đã chốt: "luồng phân
- * tích đề mẫu lỗi/hết quota KHÔNG được làm hỏng cả phiên tạo đề" - luồng tạo đề (bắt buộc) vẫn
- * luôn chạy được dù luồng phân tích mẫu (phụ) có thất bại.
+ * Quyết định #3 (ngân hàng câu hỏi bền vững): TRƯỚC khi tạo, đọc thêm các câu hỏi đã lưu từ
+ * NHỮNG LẦN TẠO TRƯỚC ĐÓ (`getBankEntries`, xem questionBankStore.js) cho đúng các chương đang
+ * tạo, gộp vào existingQuestions để 3 lớp chống trùng trong geminiEngine.js coi những câu đó
+ * như "đã tồn tại" - không chỉ chống trùng TRONG 1 lần tạo như trước, mà XUYÊN SUỐT NHIỀU LẦN
+ * tạo đề khác nhau (kể cả sau khi đóng app / deploy lại). SAU khi tạo xong, lưu các câu MỚI
+ * (đã qua chống trùng) trở lại ngân hàng (`appendBankEntries`) để lần tạo SAU nữa lại chống
+ * trùng được với lần này. Lỗi ở bước đọc/ghi ngân hàng KHÔNG BAO GIỜ làm hỏng việc tạo đề
+ * (xem try/catch nuốt lỗi ngay trong questionBankStore.js) - luồng chính (tạo đề) luôn ưu
+ * tiên hơn luồng phụ (ghi nhớ để chống trùng dài hạn).
  */
 export async function orchestrateExamGeneration({
   grade,
@@ -65,6 +69,15 @@ export async function orchestrateExamGeneration({
     );
   }
 
+  // Đọc câu hỏi đã lưu từ NHỮNG LẦN TẠO TRƯỚC (ngân hàng bền vững) cho đúng các chương đang
+  // tạo, gộp với existingQuestions của phiên hiện tại (client gửi lên, nếu có).
+  const bankEntries = await getBankEntries({
+    subject,
+    grade,
+    chapterIds: Object.keys(chapterMatrix),
+  });
+  const mergedExistingQuestions = [...(existingQuestions || []), ...bankEntries];
+
   const { questions, teacherRubric, warnings } = await generateFullExam({
     grade,
     subject,
@@ -73,10 +86,16 @@ export async function orchestrateExamGeneration({
     typeByLevel,
     includeAnswers,
     useVisualQuestions: effectiveUseVisualQuestions,
-    existingQuestions,
+    existingQuestions: mergedExistingQuestions,
     sampleMode: effectiveSampleMode,
     sampleExamSpec: effectiveSampleExamSpec,
   });
+
+  // Lưu lại các câu MỚI vừa tạo (đã qua chống trùng) vào ngân hàng bền vững, để lần tạo SAU
+  // (dù cách xa hàng tuần/tháng) vẫn chống trùng được với lần này. Await (không "fire-and-
+  // forget") vì hàm serverless có thể bị dừng ngay sau khi trả response - not-awaited work
+  // dễ bị cắt ngang giữa chừng trên Vercel, mất dữ liệu ghi.
+  await appendBankEntries({ subject, grade, questions });
 
   return {
     questions,

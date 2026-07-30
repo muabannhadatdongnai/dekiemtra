@@ -38,11 +38,17 @@ export function verifyPassword(plainPassword, storedHash) {
 
   try {
     const storedBuffer = Buffer.from(hashHex, "hex");
+
+    // ⚠️ PHÁT HIỆN QUA TEST TỰ ĐỘNG (xem test/passwordUtils.test.js): Buffer.from(str, "hex")
+    // của Node KHÔNG throw khi gặp ký tự không hợp lệ trong hex - nó ÂM THẦM CẮT NGẮN, có thể
+    // ra buffer 0 byte (vd hashHex bị hỏng/ghi sai). Nếu không chặn ở đây, storedBuffer rỗng
+    // sẽ khiến scryptSync bên dưới cũng trả về buffer rỗng, và timingSafeEqual(rỗng, rỗng) =
+    // true MỘT CÁCH SAI LẦM - tức BẤT KỲ mật khẩu nào cũng "verify đúng" nếu dữ liệu hash bị
+    // hỏng. Hash hợp lệ LUÔN đúng KEY_LENGTH byte - sai độ dài là dữ liệu hỏng, từ chối ngay.
+    if (storedBuffer.length !== KEY_LENGTH) return false;
+
     const candidateBuffer = crypto.scryptSync(plainPassword, salt, storedBuffer.length);
-    return (
-      storedBuffer.length === candidateBuffer.length &&
-      crypto.timingSafeEqual(storedBuffer, candidateBuffer)
-    );
+    return crypto.timingSafeEqual(storedBuffer, candidateBuffer);
   } catch {
     return false;
   }

@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import temml from "temml";
 import { mml2omml } from "mathml2omml";
 import { parseLatexSegments } from "./latexUtils";
+import { escapeMathTextNodes } from "./xmlEscapeUtils";
 import { computeExamMatrix, computeSpecificationRows } from "./specificationBuilder";
 import {
   buildSectionTitleParagraph,
@@ -95,21 +96,9 @@ function nextPlaceholderId() {
 }
 
 /**
- * ⚠️ SỬA LỖI THƯ VIỆN mathml2omml: thư viện này giải mã ĐÚNG các entity MathML như &lt;/&gt;/&amp;
- * thành ký tự thật (<, >, &), nhưng lại QUÊN escape lại khi xuất ra chuỗi XML OMML - khiến bất kỳ
- * công thức nào chứa bất đẳng thức (<, >) hoặc dấu & đều tạo ra XML KHÔNG HỢP LỆ, làm hỏng toàn bộ
- * file .docx (Word báo lỗi không mở được file). Hàm này escape lại ĐÚNG các ký tự đặc biệt, nhưng
- * CHỈ trong phần nội dung text bên trong thẻ <m:t>...</m:t> - không đụng đến cấu trúc thẻ XML.
+ * ⚠️ Hàm escapeMathTextNodes() đã CHUYỂN sang src/services/xmlEscapeUtils.js (tách riêng để
+ * test độc lập không cần cài "docx"/"temml"/"mathml2omml" - xem test/xmlEscapeUtils.test.js).
  */
-function escapeMathTextNodes(ommlString) {
-  // ⚠️ QUAN TRỌNG: "(?:\\s[^>]*)?" đảm bảo chỉ khớp ĐÚNG thẻ <m:t> (text node), KHÔNG khớp
-  // nhầm các thẻ khác có tên bắt đầu bằng "m:t" như <m:type .../> (dấu phân số) - lỗi cũ khiến
-  // <m:type m:val="bar"/> bị coi nhầm là thẻ mở <m:t...>, làm hỏng toàn bộ cấu trúc XML phía sau.
-  return ommlString.replace(/(<m:t(?:\s[^>]*)?>)([\s\S]*?)(<\/m:t>)/g, (match, openTag, content, closeTag) => {
-    const escaped = content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    return openTag + escaped + closeTag;
-  });
-}
 
 function latexToOMML(latex, display) {
   try {
@@ -330,10 +319,14 @@ async function injectEquationsIntoDocx(docxBlob, equations) {
 
 /**
  * Dựng Blob .docx cho đề thi - hàm lõi dùng chung, KHÔNG tự tải file (không gọi saveAs).
+ * ⚠️ Export hàm này (thay vì để nội bộ) CÓ CHỦ ĐÍCH: cho phép test tích hợp gọi thẳng để lấy
+ * Blob rồi soi XML bên trong, KHÔNG phải đi qua exportToWord()/exportBothVersions() (2 hàm đó
+ * gọi saveAs() - chỉ chạy được trên trình duyệt thật, không chạy được trong test Node thuần).
+ * Xem test/exportService.docx.test.js.
  * @param includeRubricSection - true: kèm trang Đáp án & Lời giải ở cuối (bản giáo viên).
  *                                 false: bản sạch cho học sinh (dù có teacherRubric cũng bỏ qua).
  */
-async function buildExamDocxBlob({
+export async function buildExamDocxBlob({
   title = "ĐỀ KIỂM TRA",
   schoolName = "",
   className = "",

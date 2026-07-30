@@ -100,6 +100,22 @@ src/
 - **[ĐÃ SỬA] Lỗ hổng auth nghiêm trọng**: trước đây MỌI API route (`generate`, `generate-worksheet`, `analyze-sample`) chỉ kiểm tra `users[username]` có tồn tại — KHÔNG xác thực mật khẩu ở các lần gọi sau, ai cũng gọi thẳng API với `{"username":"admin"}` mà không cần mật khẩu; `/api/chapters` còn public 100% không check gì. Đã sửa bằng cơ chế session token ký HMAC (`src/services/sessionToken.js`), verify qua `requireAuth()` (`src/services/apiAuth.js`) ở ĐẦU cả 4 route, client gửi kèm header `Authorization: Bearer <token>` (`apiClient.js`). Mật khẩu trong `users.json` đổi từ plaintext sang hash scrypt (`passwordHash`, xem `src/services/passwordUtils.js`) — dùng `node scripts/hash-password.js "mat_khau"` để tạo/đổi tài khoản. Thêm rate-limit chống brute-force cho `/api/login` (`src/services/loginRateLimiter.js`, best-effort vì serverless không share bộ nhớ giữa instance). **BẮT BUỘC** đặt biến môi trường `SESSION_SECRET` (xem `.env.local.example`) trước khi deploy — chưa đặt thì token ký bằng secret mặc định KHÔNG AN TOÀN (có cảnh báo console).
 - Tài khoản mẫu hiện tại: `admin`/`admin123`, `gv.toan01`/`toan123` — **nên đổi mật khẩu thật trước khi đưa cho giáo viên dùng** bằng script `hash-password.js` ở trên.
 
+## 11. Test tự động (mới thêm)
+Dùng `node --test` (built-in, không cần cài Jest/Vitest) — chạy `npm test`. Chi tiết đầy đủ xem `test/README.md`. Điểm quan trọng:
+- `test/xmlEscapeUtils.test.js`, `passwordUtils.test.js`, `sessionToken.test.js`, `loginRateLimiter.test.js`, `questionBankStore.test.js` — chạy được ngay, KHÔNG cần `npm install` (đã tự chạy và pass 28/28 trong lúc viết).
+- **`passwordUtils.test.js` đã bắt được 1 lỗi bảo mật thật lúc viết**: `Buffer.from(hex_hỏng, "hex")` không throw mà âm thầm cắt ngắn thành buffer rỗng → `verifyPassword` trả `true` sai cho dữ liệu hash bị hỏng. Đã sửa (kiểm tra `storedBuffer.length !== KEY_LENGTH` trước khi so sánh).
+- `test/exportService.docx.test.js` — test tích hợp pipeline LaTeX→OMML→.docx thật (cả phân số LẪN bất đẳng thức cùng lúc, đúng kịch bản đã lọt 2 bug trước đây). **CẦN `npm install` trước khi chạy được** — sandbox lúc viết không có mạng nên CHƯA verify chạy thật lần nào, cần tự chạy `npm test` để xác nhận trước khi tin tưởng.
+- Đã tách `escapeMathTextNodes()` từ `exportService.js` sang `src/services/xmlEscapeUtils.js` (module thuần, không phụ thuộc `docx`/`temml`) để test được độc lập, và export thêm `buildExamDocxBlob` từ `exportService.js` (trước đó không export) để test gọi thẳng, không phải đi qua `exportToWord()` (dùng `saveAs`, chỉ chạy được ở browser).
+
+## 12. Ngân hàng câu hỏi bền vững (mới thêm)
+Giải quyết tồn đọng ở mục 9: "chưa có ngân hàng câu hỏi lưu trữ xuyên suốt nhiều lần tạo".
+- File mới: `src/services/questionBankStore.js`. 2 backend tự động chọn theo cấu hình:
+  - **Upstash Redis REST API** (khuyến nghị, free tier) — gọi thẳng bằng `fetch()`, KHÔNG cần cài `@upstash/redis` SDK. Cấu hình bằng `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (xem `.env.local.example`).
+  - **File JSON local** (`.data/question-bank/`, đã thêm vào `.gitignore`) — fallback tự động khi chưa cấu hình Upstash. ⚠️ CHỈ dùng để test ở máy cá nhân, KHÔNG bền vững trên Vercel serverless.
+- Nối vào `examOrchestrator.js`: đọc `getBankEntries()` TRƯỚC khi gọi `generateFullExam` (gộp vào `existingQuestions` để 3 lớp chống trùng trong `geminiEngine.js` coi các câu đã lưu từ NHỮNG LẦN TẠO TRƯỚC như đã tồn tại), ghi `appendBankEntries()` SAU khi tạo xong (await, không fire-and-forget, vì hàm serverless có thể bị dừng ngay sau khi trả response).
+- Đã test nhánh local file (`test/questionBankStore.test.js`, 5/5 pass). **CHƯA test nhánh Upstash thật** (cần tài khoản Upstash thật + mạng) — nên test thủ công 1 lần sau khi cấu hình: tạo đề 2 lần liên tiếp cho CÙNG 1 chương, xem lần 2 có tự tránh trùng ý tưởng với lần 1 không.
+- Giới hạn: mỗi (môn+lớp+chương) chỉ giữ tối đa 300 câu gần nhất (FIFO), tránh phình to vô hạn.
+
 ## 9. Đánh giá còn tồn đọng (đã trao đổi với người dùng)
 - Chưa có bộ test tự động cố định cho `exportService.js` (mọi lần test đều làm bằng sandbox tạm rồi xoá — đây là lý do 2 bug Word liên tiếp lọt qua)
 - Chưa test thật đề Lịch sử/Tiếng Anh/Tiếng Việt (mới sửa xong bug subject, chưa ai tạo đề thật)
