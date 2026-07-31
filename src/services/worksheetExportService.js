@@ -27,18 +27,27 @@ import { saveAs } from "file-saver";
  * - Chỉ paragraph ĐẦU của khung mới có border-top, chỉ paragraph CUỐI mới có border-bottom -
  *   nếu để border-bottom/top ở tất cả sẽ tạo ra các đường kẻ ngang thừa giữa các dòng.
  *
- * Màu khung PHẢI đồng bộ với BOX_COLORS trong WorksheetPreview.jsx (xem trước trên web) -
- * nếu đổi màu ở 1 nơi, nhớ đổi cả nơi kia.
+ * Màu khung PHẢI đồng bộ với BOX_THEMES trong WorksheetPreview.jsx (xem trước trên web) -
+ * nếu đổi màu/linh vật ở 1 nơi, nhớ đổi cả nơi kia. Word không vẽ được nhãn dán nổi khối hay
+ * góc trang trí như bản web, nên ở đây chỉ mô phỏng lại MÀU + LINH VẬT (emoji) cạnh số thứ tự
+ * trong tiêu đề mỗi khung - vẫn giữ được không khí vui mắt khi in ra giấy.
  */
 
-// Đồng bộ với BOX_COLORS trong src/components/WorksheetPreview.jsx (bỏ dấu "#" vì docx cần hex thô)
-const BOX_COLORS = [
-  { border: "7DBEE8", badge: "378ADD", title: "0C447C", bg: "EFF7FD" },
-  { border: "F2AE8E", badge: "D85A30", title: "712B13", bg: "FDF3EE" },
-  { border: "B9D98A", badge: "5F9A2E", title: "33520F", bg: "F4F9EC" },
-  { border: "E3AEDD", badge: "B24CA8", title: "5C1E56", bg: "FBF1FA" },
-  { border: "F5CD79", badge: "D99A1B", title: "6B4C09", bg: "FDF7E9" },
-];
+// Đồng bộ với BOX_THEMES trong src/components/WorksheetPreview.jsx (bỏ dấu "#" vì docx cần hex thô),
+// gắn theo section.type để 1 dạng bài luôn cùng màu/linh vật dù phiếu chọn dạng nào, thứ tự ra sao.
+const BOX_THEMES = {
+  tinh_nham: { border: "5B9BD5", badge: "2F80ED", title: "124070", bg: "EAF4FF", mascot: "🧮" },
+  noi_phep_tinh: { border: "2FBFA0", badge: "14A085", title: "0B5C4B", bg: "E6FBF6", mascot: "🦖" },
+  so_sanh: { border: "F191C1", badge: "E85CA0", title: "8E2F63", bg: "FFF0F7", mascot: "🐰" },
+  day_so: { border: "B48CE0", badge: "9455D3", title: "5A2E8C", bg: "F5EEFF", mascot: "🌸" },
+  giai_toan: { border: "FFAA5C", badge: "FF8C32", title: "A85A12", bg: "FFF3E6", mascot: "🐻" },
+  dem_va_viet_so: { border: "8BC97A", badge: "5FA83C", title: "2E5E1A", bg: "F0FAEC", mascot: "🎒" },
+  nhan_dien_hinh: { border: "FFD166", badge: "E8A800", title: "7A5900", bg: "FFFAEA", mascot: "⭐" },
+};
+const FALLBACK_THEMES = Object.values(BOX_THEMES);
+function getTheme(type, index) {
+  return BOX_THEMES[type] || FALLBACK_THEMES[index % FALLBACK_THEMES.length];
+}
 
 const CIRCLED_DIGITS = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩"];
 
@@ -197,12 +206,12 @@ function applyBoxStyling(rawOptions, colors) {
 }
 
 function buildSectionParagraphs(section, index, showAnswers) {
-  const colors = BOX_COLORS[index % BOX_COLORS.length];
+  const colors = getTheme(section.type, index);
   const badge = CIRCLED_DIGITS[index] ?? `(${index + 1})`;
 
   const headerOptions = {
     children: [
-      new TextRun({ text: `${badge}  `, bold: true, color: colors.badge, font: FONT, size: 26 }),
+      new TextRun({ text: `${badge} ${colors.mascot}  `, bold: true, color: colors.badge, font: FONT, size: 26 }),
       new TextRun({ text: section.title, bold: true, color: colors.title, font: FONT, size: 26 }),
     ],
     spacing: { before: 80, after: 100 },
