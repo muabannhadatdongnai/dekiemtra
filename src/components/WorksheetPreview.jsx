@@ -241,21 +241,69 @@ function NoiPhepTinhSection({ data, accent }) {
   );
 }
 
+// Hình vẽ viền nét (outline, không tô sẵn) để bé tự tô màu - khớp tên với SHAPES trong
+// src/data/worksheetSchemas.js. Nếu sinh ra tên hình lạ (chưa map), fallback về hình tròn.
+function ShapeIcon({ name, accent }) {
+  const common = { fill: "#ffffff", stroke: accent, strokeWidth: 3, strokeLinejoin: "round" };
+  let shape;
+  switch (name) {
+    case "Hình vuông":
+      shape = <rect x="8" y="8" width="40" height="40" rx="4" {...common} />;
+      break;
+    case "Hình chữ nhật":
+      shape = <rect x="3" y="14" width="50" height="28" rx="4" {...common} />;
+      break;
+    case "Hình tam giác":
+      shape = <polygon points="28,6 51,48 5,48" {...common} />;
+      break;
+    case "Hình ngôi sao":
+      shape = (
+        <polygon
+          points="28,4 34.5,20.5 52,22 38,33.5 42.5,51 28,41 13.5,51 18,33.5 4,22 21.5,20.5"
+          {...common}
+        />
+      );
+      break;
+    case "Hình trái tim":
+      shape = (
+        <path
+          d="M28 48C28 48 6 34 6 19C6 11 12 6 19 6C23.5 6 27 8.5 28 12C29 8.5 32.5 6 37 6C44 6 50 11 50 19C50 34 28 48 28 48Z"
+          {...common}
+        />
+      );
+      break;
+    case "Hình tròn":
+    default:
+      shape = <circle cx="28" cy="28" r="22" {...common} />;
+  }
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+      {shape}
+    </svg>
+  );
+}
+
 function NhanDienHinhSection({ shapes, accent }) {
   return (
-    <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 13 }}>
+    <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
       {shapes.map((s, i) => (
-        <span
+        <div
           key={i}
           style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 6,
             background: "#fff",
-            border: `1.5px solid ${accent}`,
-            borderRadius: 999,
-            padding: "5px 12px",
+            border: `1.5px dashed ${accent}`,
+            borderRadius: 14,
+            padding: "10px 12px 8px",
+            minWidth: 84,
           }}
         >
-          {s}
-        </span>
+          <ShapeIcon name={s} accent={accent} />
+          <span style={{ fontSize: 12, fontWeight: 600 }}>{s}</span>
+        </div>
       ))}
     </div>
   );

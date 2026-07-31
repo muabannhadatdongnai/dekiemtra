@@ -134,10 +134,27 @@ function buildNoiPhepTinhParagraphs(data, showAnswers) {
   }));
 }
 
+// Ký tự Unicode dạng VIỀN NÉT (không tô đặc) đứng trước tên hình, để bản Word cũng gợi ý
+// hình dáng cho bé tô màu, chứ không chỉ có chữ - khớp tên với SHAPES trong worksheetSchemas.js.
+const SHAPE_GLYPHS = {
+  "Hình tròn": "○",
+  "Hình vuông": "□",
+  "Hình tam giác": "△",
+  "Hình chữ nhật": "▭",
+  "Hình ngôi sao": "☆",
+  "Hình trái tim": "♡",
+};
+
 function buildNhanDienHinhParagraphs(shapes) {
   return [
     {
-      children: [new TextRun({ text: shapes.join("      "), font: FONT, size: 24 })],
+      children: [
+        new TextRun({
+          text: shapes.map((s) => `${SHAPE_GLYPHS[s] || "○"} ${s}`).join("      "),
+          font: FONT,
+          size: 28,
+        }),
+      ],
       spacing: { after: 100 },
     },
   ];
