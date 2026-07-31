@@ -59,6 +59,32 @@ function shuffle(arr) {
   return copy;
 }
 
+/**
+ * Nhận diện lỗi "quá tải tạm thời" phía Google (503/UNAVAILABLE/"high demand", hoặc 500/504) -
+ * KHÁC với hết quota, nhưng CŨNG đáng để thử key khác (đôi khi key khác gọi qua region/luồng
+ * khác nên vẫn có cơ hội thành công) và đáng để chờ 1 chút rồi thử lại.
+ * ⚠️ SỬA LỖI: trước đây lỗi 503 "model đang quá tải" bị coi là "lỗi khác, thử key khác vô ích"
+ * -> ném lỗi ngay lập tức, khiến các key dự phòng không được tận dụng và giáo viên nhận lỗi
+ * JSON thô ngay từ lần thử đầu tiên (đây chính là lỗi trong ảnh chụp màn hình).
+ */
+function isTransientServerError(err) {
+  const status = err?.status ?? err?.code ?? err?.response?.status;
+  const text = `${err?.message || ""} ${err?.toString?.() || ""}`.toLowerCase();
+
+  return (
+    status === 503 ||
+    status === 500 ||
+    status === 504 ||
+    text.includes("503") ||
+    text.includes("unavailable") ||
+    text.includes("overloaded") ||
+    text.includes("high demand") ||
+    text.includes("internal error") ||
+    text.includes("deadline exceeded") ||
+    text.includes("timeout")
+  );
+}
+
 /** Nhận diện lỗi "hết hạn mức" hoặc "key không hợp lệ" - đáng để thử key khác. */
 function isRetryableWithOtherKey(err) {
   const status = err?.status ?? err?.code ?? err?.response?.status;
@@ -73,8 +99,13 @@ function isRetryableWithOtherKey(err) {
     text.includes("rate limit") ||
     text.includes("permission_denied") ||
     text.includes("api key not valid") ||
-    text.includes("api_key_invalid")
+    text.includes("api_key_invalid") ||
+    isTransientServerError(err)
   );
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -134,6 +165,7 @@ export async function generateContentWithFailover(params, options = {}) {
 
   let lastError;
   let quotaFailureCount = 0;
+  let overloadFailureCount = 0;
 
   for (let i = 0; i < order.length; i++) {
     try {
@@ -143,14 +175,16 @@ export async function generateContentWithFailover(params, options = {}) {
     } catch (err) {
       lastError = err;
       const outcome = classifyGeminiError(err);
+      const overloaded = isTransientServerError(err);
       if (outcome === "quota_exhausted") quotaFailureCount++;
+      if (overloaded) overloadFailureCount++;
       await recordGeminiCall({ rawKey: order[i].key, outcome });
 
       const isLastAttempt = i === order.length - 1;
       const maskedKeyLabel = maskKey(order[i].key);
 
       if (!isRetryableWithOtherKey(err)) {
-        // Lỗi không liên quan quota/key (vd model bị shutdown, request sai định dạng)
+        // Lỗi không liên quan quota/key/quá tải (vd model bị shutdown, request sai định dạng)
         // -> thử key khác cũng sẽ lỗi y hệt, ném lỗi ra ngay để không tốn thời gian.
         throw err;
       }
@@ -164,11 +198,26 @@ export async function generateContentWithFailover(params, options = {}) {
         if (quotaFailureCount === order.length) {
           err.allKeysExhausted = true;
         }
+        // ⚠️ MỚI: đánh dấu RIÊNG khi TẤT CẢ lần thử đều do Google báo "quá tải/UNAVAILABLE" (503) -
+        // đây KHÔNG phải lỗi hết quota của bạn, mà do phía Google đang nghẽn tạm thời. Phân biệt
+        // rõ để orchestrator hiển thị đúng lời khuyên ("chờ vài phút rồi thử lại") thay vì lẫn lộn
+        // với "hết hạn mức hôm nay" (khiến giáo viên tưởng nhầm phải đợi qua ngày mai).
+        if (overloadFailureCount === order.length) {
+          err.allKeysOverloaded = true;
+        }
         throw err;
       }
 
+      // ⚠️ MỚI: chờ 1 chút (backoff tăng dần + jitter) trước khi thử key kế tiếp khi lỗi là do
+      // quá tải tạm thời - dội request liên tục vào lúc Google đang nghẽn chỉ làm tình hình tệ
+      // hơn; chờ 1-2 giây thường đủ để lần thử sau (key khác hoặc vòng retry sau) thành công.
+      if (overloaded) {
+        const backoffMs = 800 * (i + 1) + Math.floor(Math.random() * 400);
+        await sleep(backoffMs);
+      }
+
       console.warn(
-        `[geminiKeyPool] (priority=${priority}) Key ${maskedKeyLabel} hết hạn mức hoặc lỗi xác thực, ` +
+        `[geminiKeyPool] (priority=${priority}) Key ${maskedKeyLabel} hết hạn mức, quá tải hoặc lỗi xác thực, ` +
           `chuyển sang key khác... (${err.message?.slice(0, 100)})`
       );
     }

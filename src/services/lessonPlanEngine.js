@@ -10,6 +10,10 @@ import { generateContentWithFailover } from "./geminiKeyPool";
  * maxRetries: thử lại nếu AI trả JSON lỗi hoặc thiếu "hoatDong" - KHÔNG throw ngay, giáo viên
  * không nên mất cả lượt soạn chỉ vì 1 lần AI trả JSON hỏng.
  */
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function generateLessonPlanContent({
   tenBai,
   grade,
@@ -51,15 +55,24 @@ export async function generateLessonPlanContent({
     } catch (err) {
       lastError = err;
       if (err.allKeysExhausted) {
-        return { lessonPlan: null, quotaExhausted: true, error: err };
+        return { lessonPlan: null, quotaExhausted: true, serverOverloaded: false, error: err };
+      }
+      // ⚠️ MỚI: phân biệt "quá tải tạm thời phía Google" (503/UNAVAILABLE) với các lỗi khác
+      // (JSON hỏng, thiếu hoatDong...). Trường hợp quá tải: KHÔNG dội lại ngay lập tức - chờ
+      // theo backoff tăng dần rồi mới thử lại, tăng cơ hội thành công thay vì lặp lại đúng
+      // lỗi cũ 3 lần liên tiếp trong tích tắc (đây là nguyên nhân giáo viên thấy lỗi JSON thô).
+      if (err.allKeysOverloaded) {
+        if (attempt === maxRetries) {
+          return { lessonPlan: null, quotaExhausted: false, serverOverloaded: true, error: err };
+        }
+        await sleep(1500 * (attempt + 1));
       }
       attempt++;
     }
   }
 
   throw new Error(
-    lastError?.message
-      ? `Không thể soạn giáo án sau ${maxRetries + 1} lần thử: ${lastError.message}`
-      : `Không thể soạn giáo án sau ${maxRetries + 1} lần thử.`
+    `Không thể soạn giáo án sau ${maxRetries + 1} lần thử. Vui lòng thử lại sau ít phút. ` +
+      `(Chi tiết kỹ thuật: ${lastError?.message?.slice(0, 200) || "không rõ nguyên nhân"})`
   );
 }

@@ -42,21 +42,43 @@ export async function orchestrateLessonPlanGeneration({
     }
   }
 
-  const { lessonPlan, quotaExhausted, error } = await generateLessonPlanContent({
-    tenBai,
-    grade,
-    subject,
-    soTiet,
-    noiDungCotLoi,
-    sourceMarkdown,
-    chapterLabel,
-    integrations,
-  });
+  let lessonPlan, quotaExhausted, serverOverloaded, error;
+  try {
+    ({ lessonPlan, quotaExhausted, serverOverloaded, error } = await generateLessonPlanContent({
+      tenBai,
+      grade,
+      subject,
+      soTiet,
+      noiDungCotLoi,
+      sourceMarkdown,
+      chapterLabel,
+      integrations,
+    }));
+  } catch (err) {
+    // ⚠️ MỚI: chặn lỗi bất ngờ (JSON hỏng nhiều lần, lỗi mạng...) tại đây - KHÔNG để lọt nguyên
+    // văn lên route.js/giao diện dưới dạng JSON thô khó hiểu với giáo viên.
+    warnings.push(
+      `Không thể soạn giáo án: ${err.message}. Vui lòng thử lại; nếu vẫn lỗi, hãy thử đổi ` +
+        `bớt một vài "Tuỳ chọn nâng cao" hoặc rút gọn "Nội dung cốt lõi" rồi tạo lại.`
+    );
+    return { lessonPlan: null, timeline: [], warnings };
+  }
 
   if (quotaExhausted) {
     warnings.push(
       `Không thể soạn giáo án do TẤT CẢ API key Gemini đã hết hạn mức hôm nay (${error?.message || ""}). ` +
         `Vui lòng thử lại sau hoặc bổ sung thêm API key.`
+    );
+    return { lessonPlan: null, timeline: [], warnings };
+  }
+
+  if (serverOverloaded) {
+    // ⚠️ MỚI: đây chính là trường hợp trong ảnh chụp màn hình - lỗi 503 "high demand" từ Google,
+    // KHÔNG phải do hết quota của bạn. Thông báo rõ để giáo viên biết chỉ cần chờ 1-2 phút và
+    // bấm "Bắt đầu tạo bài dạy" lại, không cần thêm key hay chờ qua ngày hôm sau.
+    warnings.push(
+      `Máy chủ Gemini của Google đang quá tải tạm thời (nhu cầu tăng đột biến), không phải do ` +
+        `hết hạn mức key của bạn. Vui lòng đợi khoảng 1-2 phút rồi bấm "Bắt đầu tạo bài dạy" lại.`
     );
     return { lessonPlan: null, timeline: [], warnings };
   }
