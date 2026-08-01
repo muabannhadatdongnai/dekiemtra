@@ -190,6 +190,28 @@ export function getDefaultLayout() {
  * nhất được chọn. Có DAO ĐỘNG NGẪU NHIÊN NHẸ giữa các layout đồng điểm để không rơi vào đúng 1
  * layout mỗi lần có sample giống nhau (vẫn giữ tinh thần chống lặp khuôn của Giai đoạn 1).
  */
+/**
+ * ================== GIAI ĐOẠN 3 ==================
+ * Thiên vị CÓ XÁC SUẤT theo layout yêu thích đã lưu của giáo viên (teacherPreferenceStore.js) -
+ * CHỦ Ý không ép cứng luôn dùng đúng 1 layout yêu thích, vì như vậy sẽ lại quay về đúng vấn đề
+ * "lặp khuôn" mà Giai đoạn 1 vừa giải quyết. Thay vào đó: PREFERENCE_WEIGHT (mặc định 45%) cơ
+ * hội dùng đúng layout yêu thích, phần còn lại vẫn random như bình thường - vừa chiều được sở
+ * thích, vừa giữ được sự đa dạng.
+ */
+const PREFERENCE_WEIGHT = 0.45;
+
+export function pickLayoutWithPreference(favoriteLayoutId, previousLayoutId = null) {
+  if (!favoriteLayoutId || favoriteLayoutId === previousLayoutId) {
+    // Không có yêu thích, hoặc yêu thích trùng đúng layout vừa dùng -> random bình thường để
+    // không lặp lại 2 lần liên tiếp.
+    return pickRandomLayout(previousLayoutId);
+  }
+  if (Math.random() < PREFERENCE_WEIGHT) {
+    return getLayoutById(favoriteLayoutId) || pickRandomLayout(previousLayoutId);
+  }
+  return pickRandomLayout(previousLayoutId);
+}
+
 export function pickLayoutFromSampleSpec(spec, previousLayoutId = null) {
   if (!spec) return pickRandomLayout(previousLayoutId);
 

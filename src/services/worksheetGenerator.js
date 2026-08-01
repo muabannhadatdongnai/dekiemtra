@@ -9,7 +9,7 @@ import {
   generateNhanDienHinh,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getImplementedCatalogFor } from "@/data/worksheetExerciseCatalog";
-import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec } from "@/data/worksheetLayoutTemplates";
+import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
 import { isUsableWorksheetSampleSpec } from "@/data/worksheetSampleSchema";
 
 /**
@@ -97,6 +97,10 @@ async function generateWordProblems({ grade, count, includeAnswers, referenceCon
  *   mẫu (qua pickLayoutFromSampleSpec()) thay vì random hoàn toàn. Bỏ qua nếu đã chỉ định layoutId.
  * @param config.referenceContext  (GIAI ĐOẠN 2, tuỳ chọn) đoạn text trích từ tài liệu tham khảo
  *   (SGK/đề cương riêng giáo viên upload) - làm ngữ cảnh chủ đề khi AI soạn "giải toán có lời văn".
+ * @param config.favoriteLayoutId  (GIAI ĐOẠN 3, tuỳ chọn) layoutId giáo viên đã lưu làm yêu
+ *   thích (xem teacherPreferenceStore.js) - được ưu tiên THẤP HƠN sampleSpec (nếu giáo viên vừa
+ *   upload phiếu mẫu ở lần này, ý định "theo phiếu mẫu" rõ ràng hơn ý thích lưu từ trước), và
+ *   CHỈ áp dụng CÓ XÁC SUẤT (xem pickLayoutWithPreference()) để không quay lại vấn đề lặp khuôn.
  */
 export async function generateWorksheet({
   grade,
@@ -106,6 +110,7 @@ export async function generateWorksheet({
   previousLayoutId = null,
   sampleSpec = null,
   referenceContext = null,
+  favoriteLayoutId = null,
 }) {
   if (!WORKSHEET_GRADES[grade]) throw new Error(`Khối lớp không hợp lệ: ${grade}`);
 
@@ -114,6 +119,8 @@ export async function generateWorksheet({
     layout = getLayoutById(layoutId) || pickRandomLayout(previousLayoutId);
   } else if (isUsableWorksheetSampleSpec(sampleSpec)) {
     layout = pickLayoutFromSampleSpec(sampleSpec, previousLayoutId);
+  } else if (favoriteLayoutId) {
+    layout = pickLayoutWithPreference(favoriteLayoutId, previousLayoutId);
   } else {
     layout = pickRandomLayout(previousLayoutId);
   }

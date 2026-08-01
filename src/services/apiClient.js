@@ -84,6 +84,21 @@ export async function analyzeWorksheetSampleRequest({ username, file }) {
   return handleResponse(res);
 }
 
+/** GIAI ĐOẠN 3: lấy/lưu layout phiếu bài tập yêu thích của giáo viên hiện tại. */
+export async function getWorksheetPreferenceRequest() {
+  const res = await fetch("/api/worksheet-preference", { headers: authHeaders() });
+  return handleResponse(res);
+}
+
+export async function saveWorksheetPreferenceRequest({ favoriteLayoutId }) {
+  const res = await fetch("/api/worksheet-preference", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ favoriteLayoutId }),
+  });
+  return handleResponse(res);
+}
+
 /**
  * C6: upload file đề mẫu (docx/pdf/ảnh) để phân tích phong cách - xem sampleExamAnalyzer.js.
  * Dùng FormData (không phải JSON) vì cần gửi file nhị phân. KHÔNG tự set "Content-Type" ở đây

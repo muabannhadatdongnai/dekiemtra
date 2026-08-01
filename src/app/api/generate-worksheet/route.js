@@ -17,6 +17,7 @@ export async function POST(request) {
       previousLayoutId = null,
       sampleSpec = null,
       referenceContext = null,
+      favoriteLayoutId = null,
     } = body;
 
     if (!grade || !exerciseCounts) {
@@ -31,6 +32,7 @@ export async function POST(request) {
       previousLayoutId,
       sampleSpec,
       referenceContext,
+      favoriteLayoutId,
     });
     return NextResponse.json({ success: true, ...result });
   } catch (err) {

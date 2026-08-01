@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Loader2, Sparkles, Upload, CheckCircle2, XCircle, RefreshCw, Star } from "lucide-react";
 import { getSession } from "@/services/authService";
-import { generateWorksheetRequest, analyzeWorksheetSampleRequest } from "@/services/apiClient";
+import {
+  generateWorksheetRequest,
+  analyzeWorksheetSampleRequest,
+  getWorksheetPreferenceRequest,
+  saveWorksheetPreferenceRequest,
+} from "@/services/apiClient";
 
 const GRADES = [
   { value: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)" },
@@ -48,7 +53,26 @@ export default function WorksheetForm({ onGenerated }) {
   const [sampleError, setSampleError] = useState("");
   const [lastLayoutId, setLastLayoutId] = useState(null); // để tránh random trùng layout 2 lần liên tiếp
 
+  // ================== GIAI ĐOẠN 3: tiện lợi giáo viên ==================
+  const [favoriteLayoutId, setFavoriteLayoutId] = useState(null); // đã lưu từ trước, tải khi mở form
+  const [hasGenerated, setHasGenerated] = useState(false); // đã tạo phiếu ít nhất 1 lần -> hiện thêm 2 nút tiện lợi
+  const [savingFavorite, setSavingFavorite] = useState(false);
+  const [favoriteSavedNotice, setFavoriteSavedNotice] = useState("");
+
   const totalSections = Object.values(exerciseCounts).filter((c) => c > 0).length;
+
+  // Tải layout yêu thích đã lưu (nếu có) ngay khi mở form - không chặn giáo viên thao tác gì
+  // cả, chỉ để sẵn favoriteLayoutId cho lần tạo phiếu đầu tiên đã có thể thiên vị theo sở thích.
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getWorksheetPreferenceRequest();
+        setFavoriteLayoutId(data?.preference?.favoriteLayoutId || null);
+      } catch {
+        // Im lặng bỏ qua - không có tuỳ chọn đã lưu cũng không sao, tạo phiếu vẫn chạy bình thường.
+      }
+    })();
+  }, []);
 
   function updateCount(key, value) {
     setExerciseCounts((prev) => ({ ...prev, [key]: Math.max(0, Number(value) || 0) }));
@@ -90,10 +114,12 @@ export default function WorksheetForm({ onGenerated }) {
     setSampleError("");
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  // Hàm sinh phiếu DÙNG CHUNG cho cả submit form lần đầu VÀ nút "🔄 Tạo phiên bản khác" - cùng
+  // 1 bộ tham số (grade/exerciseCounts/sampleSpec giữ nguyên), chỉ khác ở chỗ previousLayoutId
+  // luôn được cập nhật nên layout/số liệu/bài toán mới sẽ khác lần trước (xem worksheetGenerator.js:
+  // code-sinh luôn random số liệu mỗi lần gọi, AI-sinh bài toán cũng luôn ra nội dung mới).
+  async function generate() {
     setError("");
-
     if (totalSections === 0) {
       setError("Chọn ít nhất 1 dạng bài tập.");
       return;
@@ -114,13 +140,39 @@ export default function WorksheetForm({ onGenerated }) {
         previousLayoutId: lastLayoutId,
         sampleSpec,
         referenceContext: sampleReferenceContext,
+        favoriteLayoutId,
       });
       setLastLayoutId(data?.layout?.id || null);
+      setHasGenerated(true);
+      setFavoriteSavedNotice("");
       onGenerated({ worksheet: data, meta: { title } });
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    generate();
+  }
+
+  // "⭐ Lưu bố cục này làm yêu thích" - lưu layoutId của phiếu VỪA tạo (lastLayoutId), để những
+  // lần tạo phiếu sau (kể cả sau khi đóng app, đăng nhập lại) có ~45% cơ hội ưu tiên dùng lại
+  // đúng bố cục này (xem pickLayoutWithPreference() trong worksheetLayoutTemplates.js).
+  async function handleSaveFavorite() {
+    if (!lastLayoutId) return;
+    setSavingFavorite(true);
+    setFavoriteSavedNotice("");
+    try {
+      await saveWorksheetPreferenceRequest({ favoriteLayoutId: lastLayoutId });
+      setFavoriteLayoutId(lastLayoutId);
+      setFavoriteSavedNotice("Đã lưu! Các lần tạo phiếu sau sẽ ưu tiên bố cục này.");
+    } catch (err) {
+      setFavoriteSavedNotice(`Lỗi khi lưu: ${err.message}`);
+    } finally {
+      setSavingFavorite(false);
     }
   }
 
@@ -220,6 +272,34 @@ export default function WorksheetForm({ onGenerated }) {
         {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
         {loading ? "Đang tạo phiếu..." : "🚀 TẠO PHIẾU BÀI TẬP"}
       </button>
+
+      {/* ================== GIAI ĐOẠN 3: tiện lợi sau khi đã có ít nhất 1 phiếu ================== */}
+      {hasGenerated && (
+        <div className="space-y-2 border-t border-slate-200 pt-3">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              disabled={loading}
+              onClick={generate}
+              className="flex flex-1 items-center justify-center gap-2 rounded-md border border-brand-600 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50 disabled:opacity-60"
+              title="Giữ nguyên cấu hình (khối lớp, dạng bài, phiếu mẫu), đổi số liệu/bố cục/mascot sang phiên bản khác"
+            >
+              <RefreshCw size={15} /> Tạo phiên bản khác
+            </button>
+            <button
+              type="button"
+              disabled={savingFavorite || favoriteLayoutId === lastLayoutId}
+              onClick={handleSaveFavorite}
+              className="flex flex-1 items-center justify-center gap-2 rounded-md border border-amber-400 py-2 text-sm font-medium text-amber-700 transition hover:bg-amber-50 disabled:opacity-60"
+              title="Lưu bố cục vừa dùng làm mặc định ưu tiên cho các lần tạo phiếu sau"
+            >
+              <Star size={15} className={favoriteLayoutId === lastLayoutId ? "fill-amber-400" : ""} />
+              {favoriteLayoutId === lastLayoutId ? "Đã lưu làm yêu thích" : "Lưu bố cục này"}
+            </button>
+          </div>
+          {favoriteSavedNotice && <p className="text-xs text-slate-500">{favoriteSavedNotice}</p>}
+        </div>
+      )}
     </form>
   );
 }
