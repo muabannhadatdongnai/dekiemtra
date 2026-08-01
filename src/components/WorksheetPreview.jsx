@@ -1,96 +1,126 @@
 "use client";
 
+import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
+
 /**
  * WorksheetPreview.jsx
- * Xem trước "Phiếu bài tập" (Mầm non - Lớp 2) - phong cách trang trí sinh động, bắt mắt:
- * khung thẻ trắng dày + viền chấm bo tròn bên trong, 4 góc hoạt hình (☀️🌈✏️⭐), tiêu đề dạng
- * "badge" nổi khối, mỗi khối bài 1 màu + 1 linh vật riêng (đồng bộ với BOX_THEMES bên dưới).
+ * Xem trước "Phiếu bài tập" (Mầm non - Lớp 2).
  *
- * ⚠️ Màu/khối ở đây PHẢI đồng bộ với BOX_THEMES trong worksheetExportService.js (bản Word) -
- * đổi màu/linh vật ở 1 nơi thì nhớ đổi cả nơi kia.
+ * ================== GIAI ĐOẠN 1 (chống lặp khuôn) ==================
+ * Trước đây CHỈ CÓ 1 bố cục cố định (khung viền chấm, 4 góc ☀️🌈✏️⭐ cố định, 1 màu/1 mascot
+ * cố định vĩnh viễn theo section.type qua BOX_THEMES hard-code) -> mọi phiếu nhìn gần như
+ * giống hệt nhau, đúng vấn đề giáo viên phản ánh.
+ *
+ * Giờ đây phiếu đọc field `worksheet.layout` (do worksheetGenerator.js gắn ngẫu nhiên, xem
+ * src/data/worksheetLayoutTemplates.js) để quyết định: số cột, kiểu khung ngoài, kiểu tiêu đề,
+ * bộ icon góc trang trí, và màu/mascot của TỪNG khối bài tập (qua getSectionVisualTheme() -
+ * NGUỒN DUY NHẤT dùng chung với worksheetExportService.js, không còn định nghĩa riêng 2 nơi).
  */
 
-// Mỗi DẠNG BÀI (section.type) có 1 màu chủ đạo + 1 linh vật riêng, gắn cố định theo type
-// (không theo index) để 1 dạng bài luôn cùng màu dù phiếu chọn dạng nào, thứ tự ra sao.
-const BOX_THEMES = {
-  tinh_nham: {
-    border: "#5B9BD5",
-    bg: "#EAF4FF",
-    badge: "#2F80ED",
-    badgeDark: "#1B62C4",
-    title: "#124070",
-    mascot: "🧮",
-  },
-  noi_phep_tinh: {
-    border: "#2FBFA0",
-    bg: "#E6FBF6",
-    badge: "#14A085",
-    badgeDark: "#0E7C68",
-    title: "#0B5C4B",
-    mascot: "🦖",
-  },
-  so_sanh: {
-    border: "#F191C1",
-    bg: "#FFF0F7",
-    badge: "#E85CA0",
-    badgeDark: "#C13E80",
-    title: "#8E2F63",
-    mascot: "🐰",
-  },
-  day_so: {
-    border: "#B48CE0",
-    bg: "#F5EEFF",
-    badge: "#9455D3",
-    badgeDark: "#7635B5",
-    title: "#5A2E8C",
-    mascot: "🌸",
-  },
-  giai_toan: {
-    border: "#FFAA5C",
-    bg: "#FFF3E6",
-    badge: "#FF8C32",
-    badgeDark: "#E06E12",
-    title: "#A85A12",
-    mascot: "🐻",
-  },
-  dem_va_viet_so: {
-    border: "#8BC97A",
-    bg: "#F0FAEC",
-    badge: "#5FA83C",
-    badgeDark: "#478229",
-    title: "#2E5E1A",
-    mascot: "🎒",
-  },
-  nhan_dien_hinh: {
-    border: "#FFD166",
-    bg: "#FFFAEA",
-    badge: "#E8A800",
-    badgeDark: "#B98300",
-    title: "#7A5900",
-    mascot: "⭐",
-  },
-};
-const FALLBACK_THEMES = Object.values(BOX_THEMES);
-function getTheme(type, index) {
-  return BOX_THEMES[type] || FALLBACK_THEMES[index % FALLBACK_THEMES.length];
+function getTheme(layout, section, index) {
+  return getSectionVisualTheme(layout, section, index);
 }
 
-function ExerciseBox({ index, type, title, children }) {
-  const t = getTheme(type, index);
+// ===== Kiểu khung ngoài (frameStyle) - áp dụng lên .worksheet-inner =====
+const FRAME_STYLES = {
+  dotted_border_thick_card: { border: "3px dashed #bcd6ee", borderRadius: 24 },
+  soft_rounded_border: { border: "3px solid #d8e6f5", borderRadius: 34 },
+  notebook_lines: {
+    border: "2px solid #dcd0b8",
+    borderRadius: 12,
+    backgroundImage: "repeating-linear-gradient(#fffefb 0 27px, #eadfc7 27px 28px)",
+  },
+  adventure_border: { border: "4px dashed #ffcf7a", borderRadius: 28 },
+};
+
+function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, titleColor, bg, cardStyle, children }) {
+  if (cardStyle === "minimal_box") {
+    // Khung tối giản: không nhãn dán nổi, tiêu đề nằm ngay trong khung, ít trang trí hơn -
+    // dành cho layout "notebook_style" (giáo viên muốn phiếu bớt "vui nhộn" hơn).
+    return (
+      <div
+        style={{
+          border: `2px solid ${accent}`,
+          borderRadius: 10,
+          padding: "12px 16px",
+          margin: "16px 0",
+          breakInside: "avoid",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, color: titleColor, fontWeight: 700 }}>
+          <span>{index + 1}.</span>
+          <span>{mascot}</span>
+          <span>{title}</span>
+        </div>
+        {children}
+      </div>
+    );
+  }
+
+  if (cardStyle === "step_journey" || cardStyle === "game_station") {
+    // Số thứ tự lớn kiểu "chặng"/"trạm" đứng riêng bên trái, khung nội dung bên phải.
+    const isStation = cardStyle === "game_station";
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "stretch",
+          gap: 12,
+          margin: "20px 0",
+          breakInside: "avoid",
+        }}
+      >
+        <div
+          style={{
+            flexShrink: 0,
+            width: isStation ? 56 : 44,
+            borderRadius: isStation ? 14 : "50%",
+            background: badge,
+            color: "#fff",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 800,
+            fontSize: isStation ? 12 : 15,
+            boxShadow: `0 3px 0 ${badgeDark}`,
+            padding: isStation ? "6px 2px" : 0,
+          }}
+        >
+          {isStation && <span style={{ fontSize: 9, opacity: 0.85 }}>TRẠM</span>}
+          <span style={{ fontSize: isStation ? 18 : 16 }}>{index + 1}</span>
+          <span style={{ fontSize: 16 }}>{mascot}</span>
+        </div>
+        <div
+          style={{
+            flex: 1,
+            border: `2.5px solid ${accent}`,
+            background: bg,
+            borderRadius: 16,
+            padding: "10px 14px",
+          }}
+        >
+          <div style={{ fontWeight: 700, color: titleColor, marginBottom: 6 }}>{title}</div>
+          <div style={{ color: titleColor }}>{children}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Mặc định: "rounded_dotted" - nhãn dán nổi khối (kiểu ban đầu của dự án).
   return (
     <div
       style={{
         position: "relative",
-        border: `3px solid ${t.border}`,
-        background: t.bg,
+        border: `3px solid ${accent}`,
+        background: bg,
         borderRadius: 18,
         padding: "20px 16px 14px",
         margin: "24px 0 14px",
-        boxShadow: `0 3px 0 ${t.border}66`,
+        boxShadow: `0 3px 0 ${accent}66`,
         breakInside: "avoid",
       }}
     >
-      {/* Tiêu đề dạng nhãn dán lồi ra khỏi mép trên của khối, kèm linh vật riêng của dạng bài */}
       <div
         style={{
           position: "absolute",
@@ -99,12 +129,12 @@ function ExerciseBox({ index, type, title, children }) {
           display: "flex",
           alignItems: "center",
           gap: 6,
-          background: t.badge,
+          background: badge,
           color: "#fff",
           padding: "6px 16px 6px 10px",
           borderRadius: 999,
           border: "2.5px solid #ffffff",
-          boxShadow: `0 3px 0 ${t.badgeDark}, 0 4px 8px rgba(0,0,0,.18)`,
+          boxShadow: `0 3px 0 ${badgeDark}, 0 4px 8px rgba(0,0,0,.18)`,
           fontFamily: "'Baloo 2', 'Segoe UI', sans-serif",
           fontWeight: 700,
           fontSize: 14,
@@ -121,16 +151,16 @@ function ExerciseBox({ index, type, title, children }) {
             borderRadius: "50%",
             background: "rgba(255,255,255,.9)",
             fontSize: 13,
-            color: t.title,
+            color: titleColor,
             fontWeight: 800,
           }}
         >
           {index + 1}
         </span>
-        <span style={{ fontSize: 16 }}>{t.mascot}</span>
+        <span style={{ fontSize: 16 }}>{mascot}</span>
         <span>{title}</span>
       </div>
-      <div style={{ marginTop: 8, color: t.title }}>{children}</div>
+      <div style={{ marginTop: 8, color: titleColor }}>{children}</div>
     </div>
   );
 }
@@ -331,47 +361,98 @@ export default function WorksheetPreview({ worksheet, meta }) {
     );
   }
 
+  // Phiếu tạo trước Giai đoạn 0 sẽ không có field "layout" -> dùng layout mặc định để vẫn
+  // hiển thị đúng, không vỡ giao diện với dữ liệu cũ.
+  const layout = worksheet.layout || getDefaultLayout();
+  const frame = FRAME_STYLES[layout.frameStyle] || FRAME_STYLES.dotted_border_thick_card;
+  const corners = layout.cornerDecor?.length === 4 ? layout.cornerDecor : ["☀️", "🌈", "✏️", "⭐"];
+  const isRibbonHeader = layout.headerStyle === "ribbon_corner";
+  const isUnderlineHeader = layout.headerStyle === "simple_underline";
+
   return (
     <div id="print-area">
       <div className="a4-page worksheet-page">
         {/* Khung thẻ trắng dày (mat) bao ngoài */}
         <div className="worksheet-outer">
-          {/* Viền chấm/gạch bo tròn bên trong + 4 góc trang trí */}
-          <div className="worksheet-inner">
-            <span className="worksheet-corner tl" aria-hidden="true">☀️</span>
-            <span className="worksheet-corner tr" aria-hidden="true">🌈</span>
-            <span className="worksheet-corner bl" aria-hidden="true">✏️</span>
-            <span className="worksheet-corner br" aria-hidden="true">⭐</span>
+          {/* Viền trang trí bên trong (kiểu viền thay đổi theo layout.frameStyle) + 4 góc */}
+          <div className="worksheet-inner" style={frame}>
+            <span className="worksheet-corner tl" aria-hidden="true">{corners[0]}</span>
+            <span className="worksheet-corner tr" aria-hidden="true">{corners[1]}</span>
+            <span className="worksheet-corner bl" aria-hidden="true">{corners[2]}</span>
+            <span className="worksheet-corner br" aria-hidden="true">{corners[3]}</span>
 
-            <div style={{ textAlign: "center" }}>
-              <span className="worksheet-title-badge">{meta?.title || "BÀI TẬP TOÁN"}</span>
-              <div className="worksheet-rainbow" />
+            <div style={{ textAlign: isRibbonHeader ? "left" : "center" }}>
+              {isUnderlineHeader ? (
+                <span
+                  style={{
+                    fontSize: 26,
+                    fontWeight: 800,
+                    color: layout.palette.title,
+                    borderBottom: `3px solid ${layout.palette.border}`,
+                    paddingBottom: 4,
+                  }}
+                >
+                  {meta?.title || "BÀI TẬP TOÁN"}
+                </span>
+              ) : (
+                <span
+                  className="worksheet-title-badge"
+                  style={
+                    isRibbonHeader
+                      ? { borderRadius: "6px 20px 6px 20px", background: `linear-gradient(180deg, ${layout.palette.bg}, ${layout.palette.border}55)`, color: layout.palette.title }
+                      : undefined
+                  }
+                >
+                  {meta?.title || "BÀI TẬP TOÁN"}
+                </span>
+              )}
+              {!isUnderlineHeader && !isRibbonHeader && <div className="worksheet-rainbow" />}
             </div>
 
-            <div style={{ textAlign: "center", marginBottom: 18 }}>
+            <div style={{ textAlign: "center", marginBottom: 18, marginTop: isUnderlineHeader ? 14 : 0 }}>
               <span className="worksheet-info-pill">
                 📝 Họ và tên: .......................................... &nbsp;&nbsp; 🏫 Lớp: .......... &nbsp;&nbsp; 📅 Ngày: ..........
               </span>
             </div>
 
-            {worksheet.sections.map((section, i) => {
-              const t = getTheme(section.type, i);
-              return (
-                <ExerciseBox key={i} index={i} type={section.type} title={section.title}>
-                  {section.type === "tinh_nham" && <TinhNhamSection items={section.items} accent={t.border} />}
-                  {section.type === "dem_va_viet_so" && (
-                    <DemVaVietSoSection items={section.items} accent={t.border} />
-                  )}
-                  {section.type === "so_sanh" && <SoSanhSection items={section.items} accent={t.border} />}
-                  {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
-                  {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
-                  {section.type === "nhan_dien_hinh" && (
-                    <NhanDienHinhSection shapes={section.shapes} accent={t.border} />
-                  )}
-                  {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}
-                </ExerciseBox>
-              );
-            })}
+            <div
+              style={
+                layout.columns === 2
+                  ? { columnCount: 2, columnGap: 22 }
+                  : undefined
+              }
+            >
+              {worksheet.sections.map((section, i) => {
+                const t = getTheme(layout, section, i);
+                return (
+                  <ExerciseBox
+                    key={i}
+                    index={i}
+                    type={section.type}
+                    title={section.title}
+                    mascot={t.mascot}
+                    accent={t.border}
+                    bg={t.bg}
+                    badge={t.badge}
+                    badgeDark={t.badgeDark}
+                    titleColor={t.title}
+                    cardStyle={layout.sectionCardStyle}
+                  >
+                    {section.type === "tinh_nham" && <TinhNhamSection items={section.items} accent={t.border} />}
+                    {section.type === "dem_va_viet_so" && (
+                      <DemVaVietSoSection items={section.items} accent={t.border} />
+                    )}
+                    {section.type === "so_sanh" && <SoSanhSection items={section.items} accent={t.border} />}
+                    {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
+                    {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
+                    {section.type === "nhan_dien_hinh" && (
+                      <NhanDienHinhSection shapes={section.shapes} accent={t.border} />
+                    )}
+                    {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}
+                  </ExerciseBox>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import {
   TabStopPosition,
 } from "docx";
 import { saveAs } from "file-saver";
+import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
 
 /**
  * worksheetExportService.js
@@ -27,26 +28,33 @@ import { saveAs } from "file-saver";
  * - Chỉ paragraph ĐẦU của khung mới có border-top, chỉ paragraph CUỐI mới có border-bottom -
  *   nếu để border-bottom/top ở tất cả sẽ tạo ra các đường kẻ ngang thừa giữa các dòng.
  *
- * Màu khung PHẢI đồng bộ với BOX_THEMES trong WorksheetPreview.jsx (xem trước trên web) -
- * nếu đổi màu/linh vật ở 1 nơi, nhớ đổi cả nơi kia. Word không vẽ được nhãn dán nổi khối hay
- * góc trang trí như bản web, nên ở đây chỉ mô phỏng lại MÀU + LINH VẬT (emoji) cạnh số thứ tự
- * trong tiêu đề mỗi khung - vẫn giữ được không khí vui mắt khi in ra giấy.
+ * ================== GIAI ĐOẠN 1 (chống lặp khuôn) ==================
+ * Màu + mascot của từng khối giờ lấy từ getSectionVisualTheme() trong worksheetLayoutTemplates.js
+ * - NGUỒN DUY NHẤT dùng chung với WorksheetPreview.jsx (bản xem trước web). Không còn định
+ *   nghĩa BOX_THEMES riêng ở đây nữa nên KHÔNG còn rủi ro "sửa 1 nơi quên nơi kia" như trước.
+ * - Word không hỗ trợ layout nhiều cột đáng tin cậy cho các khung có border/shading phức tạp
+ *   (dễ vỡ khung khi Word tự ngắt cột giữa chừng 1 khối), nên bản Word CHỦ Ý giữ 1 cột dọc dù
+ *   bản web có thể hiển thị 2 cột - đổi lại, kiểu viền khung (border style) vẫn biến hoá theo
+ *   layout.frameStyle để bản in ra giấy cũng không bị rập khuôn.
  */
 
-// Đồng bộ với BOX_THEMES trong src/components/WorksheetPreview.jsx (bỏ dấu "#" vì docx cần hex thô),
-// gắn theo section.type để 1 dạng bài luôn cùng màu/linh vật dù phiếu chọn dạng nào, thứ tự ra sao.
-const BOX_THEMES = {
-  tinh_nham: { border: "5B9BD5", badge: "2F80ED", title: "124070", bg: "EAF4FF", mascot: "🧮" },
-  noi_phep_tinh: { border: "2FBFA0", badge: "14A085", title: "0B5C4B", bg: "E6FBF6", mascot: "🦖" },
-  so_sanh: { border: "F191C1", badge: "E85CA0", title: "8E2F63", bg: "FFF0F7", mascot: "🐰" },
-  day_so: { border: "B48CE0", badge: "9455D3", title: "5A2E8C", bg: "F5EEFF", mascot: "🌸" },
-  giai_toan: { border: "FFAA5C", badge: "FF8C32", title: "A85A12", bg: "FFF3E6", mascot: "🐻" },
-  dem_va_viet_so: { border: "8BC97A", badge: "5FA83C", title: "2E5E1A", bg: "F0FAEC", mascot: "🎒" },
-  nhan_dien_hinh: { border: "FFD166", badge: "E8A800", title: "7A5900", bg: "FFFAEA", mascot: "⭐" },
+const FRAME_BORDER_STYLE = {
+  dotted_border_thick_card: BorderStyle.SINGLE,
+  soft_rounded_border: BorderStyle.SINGLE,
+  notebook_lines: BorderStyle.DASHED,
+  adventure_border: BorderStyle.DASHED,
 };
-const FALLBACK_THEMES = Object.values(BOX_THEMES);
-function getTheme(type, index) {
-  return BOX_THEMES[type] || FALLBACK_THEMES[index % FALLBACK_THEMES.length];
+
+function getTheme(layout, section, index) {
+  const t = getSectionVisualTheme(layout, section, index);
+  // docx cần mã hex KHÔNG có dấu "#"
+  return {
+    border: t.border.replace("#", ""),
+    badge: t.badge.replace("#", ""),
+    title: t.title.replace("#", ""),
+    bg: t.bg.replace("#", ""),
+    mascot: t.mascot,
+  };
 }
 
 const CIRCLED_DIGITS = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩"];
@@ -210,9 +218,10 @@ function buildSectionContentOptions(section, showAnswers) {
  * border-bottom cho cái CUỐI (xem giải thích ở đầu file) - toàn bộ đều có shading + border
  * trái/phải giống nhau để Word render liền thành 1 khung.
  */
-function applyBoxStyling(rawOptions, colors) {
+function applyBoxStyling(rawOptions, colors, frameStyle) {
+  const borderType = FRAME_BORDER_STYLE[frameStyle] || BorderStyle.SINGLE;
   const shading = { fill: colors.bg, type: ShadingType.CLEAR, color: "auto" };
-  const side = { style: BorderStyle.SINGLE, size: 6, color: colors.border, space: 6 };
+  const side = { style: borderType, size: 6, color: colors.border, space: 6 };
 
   return rawOptions.map((opts, i) => {
     const border = { left: side, right: side };
@@ -222,8 +231,8 @@ function applyBoxStyling(rawOptions, colors) {
   });
 }
 
-function buildSectionParagraphs(section, index, showAnswers) {
-  const colors = getTheme(section.type, index);
+function buildSectionParagraphs(section, index, showAnswers, layout) {
+  const colors = getTheme(layout, section, index);
   const badge = CIRCLED_DIGITS[index] ?? `(${index + 1})`;
 
   const headerOptions = {
@@ -235,7 +244,7 @@ function buildSectionParagraphs(section, index, showAnswers) {
   };
 
   const contentOptions = buildSectionContentOptions(section, showAnswers);
-  const boxed = applyBoxStyling([headerOptions, ...contentOptions], colors);
+  const boxed = applyBoxStyling([headerOptions, ...contentOptions], colors, layout?.frameStyle);
 
   // Khoảng trống SAU khung, không border - tách các khung với nhau
   const spacer = new Paragraph({ text: "", spacing: { after: 200 } });
@@ -268,9 +277,10 @@ function buildHeaderParagraphs(title) {
 
 /** Dựng Blob .docx - hàm lõi dùng chung, KHÔNG tự tải file (không gọi saveAs), giống quy ước exportService.js. */
 async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = false }) {
+  const layout = worksheet?.layout || getDefaultLayout();
   const headerParagraphs = buildHeaderParagraphs(meta.title);
   const sectionParagraphs = (worksheet?.sections || []).flatMap((section, i) =>
-    buildSectionParagraphs(section, i, showAnswers)
+    buildSectionParagraphs(section, i, showAnswers, layout)
   );
 
   const doc = new Document({
