@@ -9,7 +9,8 @@ import {
   generateNhanDienHinh,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getImplementedCatalogFor } from "@/data/worksheetExerciseCatalog";
-import { pickRandomLayout, getLayoutById } from "@/data/worksheetLayoutTemplates";
+import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec } from "@/data/worksheetLayoutTemplates";
+import { isUsableWorksheetSampleSpec } from "@/data/worksheetSampleSchema";
 
 /**
  * worksheetGenerator.js
@@ -26,7 +27,7 @@ import { pickRandomLayout, getLayoutById } from "@/data/worksheetLayoutTemplates
 
 const WORD_PROBLEM_MODEL = "gemini-3.5-flash";
 
-function buildWordProblemPrompt({ gradeLabel, maxNumber, count, includeAnswers }) {
+function buildWordProblemPrompt({ gradeLabel, maxNumber, count, includeAnswers, referenceContext }) {
   return `
 Bạn là giáo viên Tiểu học Việt Nam giàu kinh nghiệm, soạn bài toán có lời văn cho học sinh ${gradeLabel}.
 
@@ -37,6 +38,14 @@ YÊU CẦU:
 - Ngôn ngữ đơn giản, câu ngắn, đúng lứa tuổi.
 - Số liệu "đẹp" (số nguyên, kết quả tròn, dễ tính nhẩm).
 ${includeAnswers ? "- Kèm đáp số cuối cùng cho mỗi bài." : ""}
+${
+  referenceContext
+    ? `- GIAI ĐOẠN 2: giáo viên có cung cấp 1 đoạn TÀI LIỆU THAM KHẢO bên dưới (ngữ cảnh) - hãy để ý
+  ĐỀ TÀI/CHỦ ĐỀ/TỪ VỰNG xuất hiện trong đó và ưu tiên dùng bối cảnh tương tự cho bài toán, giúp
+  bài tập gắn liền với những gì học sinh đang học. TUYỆT ĐỐI KHÔNG chép nguyên văn câu chữ từ tài
+  liệu tham khảo, chỉ lấy CẢM HỨNG chủ đề/từ vựng.\n\nTÀI LIỆU THAM KHẢO:\n${referenceContext}`
+    : ""
+}
 
 Trả về JSON đúng schema (không thêm trường khác):
 {
@@ -47,7 +56,7 @@ Trả về JSON đúng schema (không thêm trường khác):
 `.trim();
 }
 
-async function generateWordProblems({ grade, count, includeAnswers }) {
+async function generateWordProblems({ grade, count, includeAnswers, referenceContext }) {
   if (count <= 0) return [];
   const gradeConfig = WORKSHEET_GRADES[grade];
   const prompt = buildWordProblemPrompt({
@@ -55,6 +64,7 @@ async function generateWordProblems({ grade, count, includeAnswers }) {
     maxNumber: gradeConfig.maxNumber,
     count,
     includeAnswers,
+    referenceContext,
   });
 
   try {
@@ -77,10 +87,16 @@ async function generateWordProblems({ grade, count, includeAnswers }) {
  * @param config { grade, includeAnswers, exerciseCounts: { tinh_nham, dem_va_viet_so, so_sanh,
  *   day_so, noi_phep_tinh, giai_toan, nhan_dien_hinh } } - số lượng từng dạng, 0 = không chọn
  * @param config.layoutId  (tuỳ chọn) giáo viên tự chọn 1 layout cụ thể (xem listLayouts() trong
- *   worksheetLayoutTemplates.js). Bỏ trống -> hệ thống tự chọn ngẫu nhiên.
+ *   worksheetLayoutTemplates.js). Bỏ trống -> hệ thống tự chọn ngẫu nhiên (hoặc theo sampleSpec
+ *   nếu có, xem bên dưới).
  * @param config.previousLayoutId  (tuỳ chọn) layoutId của LẦN TẠO GẦN NHẤT (client tự lưu &
  *   gửi lên) - dùng để tránh random trúng lại đúng layout vừa dùng, cho cảm giác đa dạng hơn
  *   giữa các lần bấm tạo liên tiếp. Bỏ qua nếu đã chỉ định layoutId thủ công.
+ * @param config.sampleSpec  (GIAI ĐOẠN 2, tuỳ chọn) spec đã phân tích từ phiếu mẫu giáo viên
+ *   upload (xem worksheetSampleAnalyzer.js) - dùng để CHỌN layout gần giống phong cách phiếu
+ *   mẫu (qua pickLayoutFromSampleSpec()) thay vì random hoàn toàn. Bỏ qua nếu đã chỉ định layoutId.
+ * @param config.referenceContext  (GIAI ĐOẠN 2, tuỳ chọn) đoạn text trích từ tài liệu tham khảo
+ *   (SGK/đề cương riêng giáo viên upload) - làm ngữ cảnh chủ đề khi AI soạn "giải toán có lời văn".
  */
 export async function generateWorksheet({
   grade,
@@ -88,10 +104,24 @@ export async function generateWorksheet({
   exerciseCounts,
   layoutId = null,
   previousLayoutId = null,
+  sampleSpec = null,
+  referenceContext = null,
 }) {
   if (!WORKSHEET_GRADES[grade]) throw new Error(`Khối lớp không hợp lệ: ${grade}`);
 
-  const layout = layoutId ? getLayoutById(layoutId) || pickRandomLayout(previousLayoutId) : pickRandomLayout(previousLayoutId);
+  let layout;
+  if (layoutId) {
+    layout = getLayoutById(layoutId) || pickRandomLayout(previousLayoutId);
+  } else if (isUsableWorksheetSampleSpec(sampleSpec)) {
+    layout = pickLayoutFromSampleSpec(sampleSpec, previousLayoutId);
+  } else {
+    layout = pickRandomLayout(previousLayoutId);
+  }
+
+  // Ngữ cảnh chủ đề cho bài toán: ưu tiên đoạn text trích thô (referenceContext, chính xác hơn),
+  // nếu không có thì dùng themeHints do AI suy luận từ ảnh/PDF scan (kém chi tiết hơn nhưng vẫn
+  // hữu ích hơn là không có gì).
+  const wordProblemContext = referenceContext || sampleSpec?.themeHints || null;
 
   const sections = [];
 
@@ -144,7 +174,12 @@ export async function generateWorksheet({
     });
   }
   if (exerciseCounts.giai_toan > 0) {
-    const problems = await generateWordProblems({ grade, count: exerciseCounts.giai_toan, includeAnswers });
+    const problems = await generateWordProblems({
+      grade,
+      count: exerciseCounts.giai_toan,
+      includeAnswers,
+      referenceContext: wordProblemContext,
+    });
     sections.push({
       type: "giai_toan",
       title: pickInstructionVariant("giai_toan") || "Giải bài toán.",

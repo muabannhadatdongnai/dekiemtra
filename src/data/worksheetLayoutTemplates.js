@@ -176,3 +176,40 @@ export function getSectionVisualTheme(layout, section, index) {
 export function getDefaultLayout() {
   return getLayoutById(WORKSHEET_LAYOUT_TEMPLATES[0].id);
 }
+
+/**
+ * ================== GIAI ĐOẠN 2 ==================
+ * Ánh xạ spec đã phân tích từ phiếu mẫu (worksheetSampleSchema.js) sang 1 layout GẦN GIỐNG NHẤT
+ * trong thư viện đã kiểm định, thay vì để AI "vẽ" bố cục mới từ đầu (rủi ro lỗi tràn trang/vỡ
+ * layout - đúng lý do đã nêu ở JSDoc đầu file). Đây là cách phối hợp AN TOÀN giữa "học phong
+ * cách từ tài liệu giáo viên" và "chỉ dùng khuôn đã kiểm định": AI chỉ SUY LUẬN đặc điểm phong
+ * cách (qua worksheetSampleAnalyzer.js), việc CHỌN LAYOUT THẬT vẫn do CODE quyết định theo quy
+ * tắc rõ ràng bên dưới - không có chỗ cho AI tự "sáng tác" bố cục có thể vỡ khi in.
+ *
+ * Quy tắc chấm điểm đơn giản: mỗi layout được cộng điểm nếu khớp columns/mood; layout điểm cao
+ * nhất được chọn. Có DAO ĐỘNG NGẪU NHIÊN NHẸ giữa các layout đồng điểm để không rơi vào đúng 1
+ * layout mỗi lần có sample giống nhau (vẫn giữ tinh thần chống lặp khuôn của Giai đoạn 1).
+ */
+export function pickLayoutFromSampleSpec(spec, previousLayoutId = null) {
+  if (!spec) return pickRandomLayout(previousLayoutId);
+
+  const mood = (spec.moodKeywords || "").toLowerCase();
+  const wantsMinimal = /đơn giản|tối giản|nghiêm túc|ít trang trí/.test(mood);
+  const wantsPlayful = /vui nhộn|nhiều màu|rực rỡ|sinh động/.test(mood);
+
+  const scored = WORKSHEET_LAYOUT_TEMPLATES.map((layout) => {
+    let score = 0;
+    if (spec.suggestedColumns && layout.columns === spec.suggestedColumns) score += 3;
+    if (wantsMinimal && layout.id === "notebook_style") score += 2;
+    if (wantsPlayful && (layout.id === "learning_stations" || layout.id === "adventure_map")) score += 2;
+    if (layout.id === previousLayoutId) score -= 5; // vẫn ưu tiên tránh lặp lại layout vừa dùng
+    return { layout, score };
+  });
+
+  const maxScore = Math.max(...scored.map((s) => s.score));
+  const topCandidates = scored.filter((s) => s.score === maxScore).map((s) => s.layout);
+  const chosen = pick(topCandidates);
+
+  const paletteId = pick(chosen.colorPaletteIds);
+  return { ...chosen, palette: COLOR_PALETTES[paletteId], paletteId, cornerDecor: pick(CORNER_DECOR_SETS) };
+}

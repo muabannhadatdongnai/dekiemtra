@@ -9,13 +9,29 @@ export async function POST(request) {
 
     const body = await request.json();
     // ⚠️ "username" trong body KHÔNG dùng để xác thực nữa (client tự gửi gì cũng được).
-    const { grade, includeAnswers = false, exerciseCounts, layoutId = null, previousLayoutId = null } = body;
+    const {
+      grade,
+      includeAnswers = false,
+      exerciseCounts,
+      layoutId = null,
+      previousLayoutId = null,
+      sampleSpec = null,
+      referenceContext = null,
+    } = body;
 
     if (!grade || !exerciseCounts) {
       return NextResponse.json({ error: "Thiếu tham số: grade, exerciseCounts." }, { status: 400 });
     }
 
-    const result = await generateWorksheet({ grade, includeAnswers, exerciseCounts, layoutId, previousLayoutId });
+    const result = await generateWorksheet({
+      grade,
+      includeAnswers,
+      exerciseCounts,
+      layoutId,
+      previousLayoutId,
+      sampleSpec,
+      referenceContext,
+    });
     return NextResponse.json({ success: true, ...result });
   } catch (err) {
     console.error("[/api/generate-worksheet] error:", err);

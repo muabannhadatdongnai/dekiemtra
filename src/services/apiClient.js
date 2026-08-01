@@ -69,6 +69,22 @@ export async function generateWorksheetRequest(payload) {
 }
 
 /**
+ * GIAI ĐOẠN 2: upload file phiếu bài tập mẫu (docx/pdf/ảnh) để phân tích phong cách - xem
+ * worksheetSampleAnalyzer.js. Dùng FormData vì cần gửi file nhị phân, giống analyzeSampleExamRequest.
+ */
+export async function analyzeWorksheetSampleRequest({ username, file }) {
+  const formData = new FormData();
+  formData.set("username", username);
+  formData.set("file", file);
+  const res = await fetch("/api/analyze-worksheet-sample", {
+    method: "POST",
+    headers: authHeaders(),
+    body: formData,
+  });
+  return handleResponse(res);
+}
+
+/**
  * C6: upload file đề mẫu (docx/pdf/ảnh) để phân tích phong cách - xem sampleExamAnalyzer.js.
  * Dùng FormData (không phải JSON) vì cần gửi file nhị phân. KHÔNG tự set "Content-Type" ở đây
  * - để trình duyệt tự thêm boundary đúng cho multipart/form-data.
