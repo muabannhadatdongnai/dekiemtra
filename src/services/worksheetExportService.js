@@ -8,6 +8,7 @@ import {
   ShadingType,
   TabStopType,
   TabStopPosition,
+  ImageRun,
 } from "docx";
 import { saveAs } from "file-saver";
 import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
@@ -275,6 +276,75 @@ function buildHeaderParagraphs(title) {
   ];
 }
 
+/**
+ * ================== GIAI ĐOẠN 4 ==================
+ * Footer "Tự đánh giá / Nhận xét của thầy cô / Ghi nhớ" - bản Word đơn giản hơn bản web (không
+ * dàn 3 cột cạnh nhau vì Word không có CSS grid đáng tin cậy cho khối có border như đã giải
+ * thích ở đầu file), thay bằng 3 đoạn nối tiếp có viền riêng, vẫn đủ chỗ để học sinh tự đánh
+ * dấu và giáo viên viết tay nhận xét khi in ra giấy.
+ */
+function buildFooterParagraphs() {
+  const side = { style: BorderStyle.DASHED, size: 4, color: "94A3B8", space: 6 };
+  const border = { top: side, bottom: side, left: side, right: side };
+
+  return [
+    new Paragraph({ text: "", spacing: { before: 200 } }),
+    new Paragraph({
+      border,
+      children: [new TextRun({ text: "⭐ TỰ ĐÁNH GIÁ:  Học chăm ⭐⭐⭐   Làm tốt ⭐⭐⭐   Cố gắng hơn ⭐⭐⭐", font: FONT, size: 21 })],
+      spacing: { before: 80, after: 80 },
+    }),
+    new Paragraph({
+      border,
+      children: [new TextRun({ text: "💬 NHẬN XÉT CỦA THẦY/CÔ: .................................................................................", font: FONT, size: 21 })],
+      spacing: { before: 80, after: 80 },
+    }),
+    new Paragraph({
+      border,
+      children: [new TextRun({ text: "📌 GHI NHỚ: Ôn lại kiến thức ✔️  Làm bài cẩn thận ✔️  Kiểm tra kết quả ✔️", font: FONT, size: 21 })],
+      spacing: { before: 80, after: 200 },
+    }),
+  ];
+}
+
+/** data:URL (base64) -> Uint8Array, KHÔNG dùng Buffer (API Node.js) vì file này chạy ở browser -
+ * atob() có sẵn ở cả 2 môi trường (browser native, Node.js >= 16). */
+function dataUrlToUint8Array(dataUrl) {
+  const base64 = dataUrl.split(",")[1] || "";
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+/**
+ * QR "chấm nhanh" cho đáp số bài giải toán - CHỈ chèn vào bản GIÁO VIÊN (showAnswers=true),
+ * không chèn vào bản học sinh (tránh lộ đáp số ngay trên phiếu học sinh đang làm bài).
+ */
+async function buildAnswerQrParagraphs(answerKeyText) {
+  if (!answerKeyText) return [];
+  try {
+    const QRCode = (await import("qrcode")).default;
+    const dataUrl = await QRCode.toDataURL(answerKeyText, { width: 96, margin: 1 });
+    const bytes = dataUrlToUint8Array(dataUrl);
+    return [
+      new Paragraph({
+        spacing: { before: 120, after: 40 },
+        children: [
+          new ImageRun({ type: "png", data: bytes, transformation: { width: 96, height: 96 } }),
+        ],
+      }),
+      new Paragraph({
+        children: [new TextRun({ text: "📱 Mã QR đáp số bài giải toán (chỉ có ở bản Giáo viên)", italics: true, size: 18, font: FONT })],
+        spacing: { after: 160 },
+      }),
+    ];
+  } catch (err) {
+    console.warn("[worksheetExportService] Không sinh được QR đáp số, bỏ qua:", err.message);
+    return [];
+  }
+}
+
 /** Dựng Blob .docx - hàm lõi dùng chung, KHÔNG tự tải file (không gọi saveAs), giống quy ước exportService.js. */
 async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = false }) {
   const layout = worksheet?.layout || getDefaultLayout();
@@ -282,9 +352,16 @@ async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = fals
   const sectionParagraphs = (worksheet?.sections || []).flatMap((section, i) =>
     buildSectionParagraphs(section, i, showAnswers, layout)
   );
+  const qrParagraphs = showAnswers ? await buildAnswerQrParagraphs(worksheet?.answerKeyText) : [];
+  const footerParagraphs = buildFooterParagraphs();
 
   const doc = new Document({
-    sections: [{ properties: {}, children: [...headerParagraphs, ...sectionParagraphs] }],
+    sections: [
+      {
+        properties: {},
+        children: [...headerParagraphs, ...sectionParagraphs, ...qrParagraphs, ...footerParagraphs],
+      },
+    ],
   });
 
   // ⚠️ Giống exportService.js: chạy phía browser nên PHẢI dùng Packer.toBlob(), KHÔNG dùng

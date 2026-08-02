@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
 
 /**
@@ -339,6 +340,85 @@ function NhanDienHinhSection({ shapes, accent }) {
   );
 }
 
+/**
+ * ================== GIAI ĐOẠN 4 ==================
+ * QR "chấm nhanh" - mã hoá đáp số các bài giải toán có lời văn vào 1 mã QR, phụ huynh/học sinh
+ * quét để tự đối chiếu kết quả (không cần giáo viên soạn riêng 1 tờ đáp án). Sinh QR PHÍA
+ * CLIENT (thư viện "qrcode" chạy được cả trong trình duyệt) để không tốn round-trip server;
+ * chỉ áp dụng cho bài giải toán vì đây là dạng DUY NHẤT có đáp số dạng câu chữ tự do do AI sinh
+ * (các dạng code-sinh khác đáp số tính trực tiếp từ số liệu in sẵn trên phiếu, không cần QR).
+ */
+function AnswerQrCode({ text, accent }) {
+  const [dataUrl, setDataUrl] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    import("qrcode")
+      .then((QRCode) => QRCode.toDataURL(text, { width: 96, margin: 1, color: { dark: accent } }))
+      .then((url) => {
+        if (!cancelled) setDataUrl(url);
+      })
+      .catch(() => {
+        // Lỗi sinh QR (hiếm khi xảy ra) - im lặng bỏ qua, KHÔNG làm hỏng phần còn lại của phiếu.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [text, accent]);
+
+  if (!dataUrl) return null;
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10 }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={dataUrl} alt="Mã QR đáp số" width={72} height={72} style={{ borderRadius: 6 }} />
+      <span style={{ fontSize: 12, color: "#64748b" }}>
+        📱 Quét mã QR để xem đáp số (phụ huynh/học sinh tự đối chiếu)
+      </span>
+    </div>
+  );
+}
+
+/**
+ * ================== GIAI ĐOẠN 4 ==================
+ * Footer "Tự đánh giá / Nhận xét của thầy cô / Ghi nhớ" - đúng tinh thần 5 phiếu mẫu giáo viên
+ * gửi làm nguồn cảm hứng ban đầu, giúp phiếu có chỗ cho học sinh tự phản hồi và giáo viên ghi
+ * nhận xét, thay vì chỉ dừng lại ở phần bài tập thuần tuý.
+ */
+function WorksheetFooter({ palette }) {
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1.3fr 1fr",
+        gap: 12,
+        marginTop: 24,
+        fontSize: 12,
+      }}
+    >
+      <div style={{ border: `2px dashed ${palette.border}`, borderRadius: 12, padding: "10px 12px", textAlign: "center" }}>
+        <p style={{ fontWeight: 700, color: palette.title, marginBottom: 6 }}>⭐ TỰ ĐÁNH GIÁ</p>
+        <p>Học chăm ⭐⭐⭐</p>
+        <p>Làm tốt ⭐⭐⭐</p>
+        <p>Cố gắng hơn ⭐⭐⭐</p>
+      </div>
+      <div style={{ border: `2px dashed ${palette.border}`, borderRadius: 12, padding: "10px 12px" }}>
+        <p style={{ fontWeight: 700, color: palette.title, marginBottom: 6, textAlign: "center" }}>
+          💬 NHẬN XÉT CỦA THẦY/CÔ
+        </p>
+        <div style={{ borderBottom: "1px dotted #cbd5e1", height: 18 }} />
+        <div style={{ borderBottom: "1px dotted #cbd5e1", height: 18 }} />
+      </div>
+      <div style={{ border: `2px dashed ${palette.border}`, borderRadius: 12, padding: "10px 12px" }}>
+        <p style={{ fontWeight: 700, color: palette.title, marginBottom: 6, textAlign: "center" }}>📌 GHI NHỚ</p>
+        <p>✔️ Ôn lại kiến thức</p>
+        <p>✔️ Làm bài cẩn thận</p>
+        <p>✔️ Kiểm tra kết quả</p>
+      </div>
+    </div>
+  );
+}
+
 function GiaiToanSection({ items, accent }) {
   return (
     <div>
@@ -453,6 +533,10 @@ export default function WorksheetPreview({ worksheet, meta }) {
                 );
               })}
             </div>
+
+            {worksheet.answerKeyText && <AnswerQrCode text={worksheet.answerKeyText} accent={layout.palette.border} />}
+
+            <WorksheetFooter palette={layout.palette} />
           </div>
         </div>
       </div>

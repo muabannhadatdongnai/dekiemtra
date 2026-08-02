@@ -130,13 +130,24 @@ export async function generateWorksheet({
   // hữu ích hơn là không có gì).
   const wordProblemContext = referenceContext || sampleSpec?.themeHints || null;
 
+  // ================== GIAI ĐOẠN 4 ==================
+  // Layout "adventure_map" (bản đồ phiêu lưu) được MÔ TẢ là "mascot chính dẫn dắt xuyên suốt
+  // phiếu, không đổi mascot giữa chừng" (xem worksheetLayoutTemplates.js) - trước đây mô tả này
+  // CHƯA thực sự được code hoá, mỗi khối vẫn random mascot độc lập như các layout khác. Giờ
+  // chốt 1 "heroMascot" DUY NHẤT ngay từ đầu và dùng xuyên suốt mọi khối trong phiếu, đúng như
+  // lời hứa trong mô tả layout - tạo cảm giác 1 câu chuyện liền mạch thay vì rời rạc.
+  const heroMascot = layout.id === "adventure_map" ? pickMascot("tinh_nham") : null;
+  function mascotFor(key) {
+    return heroMascot || pickMascot(key);
+  }
+
   const sections = [];
 
   if (exerciseCounts.tinh_nham > 0) {
     sections.push({
       type: "tinh_nham",
       title: pickInstructionVariant("tinh_nham") || "Tính nhẩm.",
-      mascot: pickMascot("tinh_nham"),
+      mascot: mascotFor("tinh_nham"),
       items: generateTinhNham(grade, exerciseCounts.tinh_nham),
     });
   }
@@ -144,7 +155,7 @@ export async function generateWorksheet({
     sections.push({
       type: "dem_va_viet_so",
       title: pickInstructionVariant("dem_va_viet_so") || "Đếm và viết số thích hợp vào ô trống.",
-      mascot: pickMascot("dem_va_viet_so"),
+      mascot: mascotFor("dem_va_viet_so"),
       items: generateDemVaVietSo(grade, exerciseCounts.dem_va_viet_so),
     });
   }
@@ -152,7 +163,7 @@ export async function generateWorksheet({
     sections.push({
       type: "so_sanh",
       title: pickInstructionVariant("so_sanh") || "So sánh. Điền dấu >, <, = thích hợp.",
-      mascot: pickMascot("so_sanh"),
+      mascot: mascotFor("so_sanh"),
       items: generateSoSanh(grade, exerciseCounts.so_sanh),
     });
   }
@@ -160,7 +171,7 @@ export async function generateWorksheet({
     sections.push({
       type: "day_so",
       title: pickInstructionVariant("day_so") || "Viết số thích hợp vào ô trống.",
-      mascot: pickMascot("day_so"),
+      mascot: mascotFor("day_so"),
       items: generateDaySo(grade, exerciseCounts.day_so),
     });
   }
@@ -168,7 +179,7 @@ export async function generateWorksheet({
     sections.push({
       type: "noi_phep_tinh",
       title: pickInstructionVariant("noi_phep_tinh") || "Nối phép tính với kết quả đúng.",
-      mascot: pickMascot("noi_phep_tinh"),
+      mascot: mascotFor("noi_phep_tinh"),
       data: generateNoiPhepTinh(grade, exerciseCounts.noi_phep_tinh),
     });
   }
@@ -176,10 +187,11 @@ export async function generateWorksheet({
     sections.push({
       type: "nhan_dien_hinh",
       title: pickInstructionVariant("nhan_dien_hinh") || "Bé nhận biết hình và tô màu.",
-      mascot: pickMascot("nhan_dien_hinh"),
+      mascot: mascotFor("nhan_dien_hinh"),
       shapes: generateNhanDienHinh(exerciseCounts.nhan_dien_hinh),
     });
   }
+  let answerKeyText = null;
   if (exerciseCounts.giai_toan > 0) {
     const problems = await generateWordProblems({
       grade,
@@ -190,12 +202,21 @@ export async function generateWorksheet({
     sections.push({
       type: "giai_toan",
       title: pickInstructionVariant("giai_toan") || "Giải bài toán.",
-      mascot: pickMascot("giai_toan"),
+      mascot: mascotFor("giai_toan"),
       items: problems,
     });
+
+    // ================== GIAI ĐOẠN 4 ==================
+    // Đáp số các bài "giải toán có lời văn" (CHỈ dạng này cần đáp án dạng câu chữ tự do do AI
+    // sinh - các dạng bài code-sinh khác như tính nhẩm/so sánh có đáp số tính trực tiếp từ số
+    // liệu, học sinh/phụ huynh tự đối chiếu dễ dàng, không cần QR) -> gộp thành 1 đoạn text
+    // ngắn để mã hoá vào QR "chấm nhanh" (xem WorksheetPreview.jsx / worksheetExportService.js).
+    if (includeAnswers && problems.some((p) => p.answer)) {
+      answerKeyText = problems.map((p, i) => `Bài ${i + 1}: ${p.answer || "?"}`).join("\n");
+    }
   }
 
-  return { sections, layout };
+  return { sections, layout, answerKeyText };
 }
 
 /** Danh sách dạng bài ĐÃ TRIỂN KHAI (source khác "planned") cho 1 khối lớp - để form dựng
