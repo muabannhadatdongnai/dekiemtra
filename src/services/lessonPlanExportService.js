@@ -11,10 +11,12 @@ import {
   AlignmentType,
   VerticalAlign,
   HeadingLevel,
+  convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
 import { LESSON_PLAN_COLUMN_MODES } from "@/data/lessonPlanTemplates";
 import { getSubjectLabel } from "@/data/config";
+import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 
 /**
  * lessonPlanExportService.js
@@ -180,9 +182,27 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
   return children;
 }
 
+// ================== GIAI ĐOẠN 1 (sửa lỗi layout/in ấn) ==================
+// Cùng bug với exportService.js/worksheetExportService.js: properties:{} rỗng -> khổ Letter
+// mặc định thay vì A4. Dùng chung PAGE_A4_MM/PAGE_MARGIN_MM từ constants.js để 3 nơi luôn khớp.
+const LESSON_PLAN_PAGE_PROPERTIES = {
+  page: {
+    size: {
+      width: convertMillimetersToTwip(PAGE_A4_MM.width),
+      height: convertMillimetersToTwip(PAGE_A4_MM.height),
+    },
+    margin: {
+      top: convertMillimetersToTwip(PAGE_MARGIN_MM.top),
+      bottom: convertMillimetersToTwip(PAGE_MARGIN_MM.bottom),
+      left: convertMillimetersToTwip(PAGE_MARGIN_MM.left),
+      right: convertMillimetersToTwip(PAGE_MARGIN_MM.right),
+    },
+  },
+};
+
 export async function exportLessonPlanToWord({ lessonPlan, timeline, meta }) {
   const children = buildLessonPlanDocxSections({ lessonPlan, timeline, meta });
-  const doc = new Document({ sections: [{ properties: {}, children }] });
+  const doc = new Document({ sections: [{ properties: LESSON_PLAN_PAGE_PROPERTIES, children }] });
   const blob = await Packer.toBlob(doc);
   const fileNameBase = (lessonPlan.tenBai || meta?.tenBai || "giao-an").replace(/[^\p{L}\p{N}]+/gu, "-");
   saveAs(blob, `Giao-an-${fileNameBase}.docx`);

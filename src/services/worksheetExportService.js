@@ -9,9 +9,11 @@ import {
   TabStopType,
   TabStopPosition,
   ImageRun,
+  convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
 import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
+import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 
 /**
  * worksheetExportService.js
@@ -355,10 +357,30 @@ async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = fals
   const qrParagraphs = showAnswers ? await buildAnswerQrParagraphs(worksheet?.answerKeyText) : [];
   const footerParagraphs = buildFooterParagraphs();
 
+  // ================== GIAI ĐOẠN 1 (sửa lỗi layout/in ấn) ==================
+  // Cùng bug với exportService.js: properties:{} rỗng -> docx.js dùng mặc định khổ Letter
+  // (8.5x11 inch), KHÔNG PHẢI A4. Đây là nguyên nhân THẬT của "margin không full khổ A4" ở
+  // phiếu bài tập. Dùng chung PAGE_A4_MM/PAGE_MARGIN_MM từ constants.js để khớp với đề kiểm
+  // tra và giáo án - 3 loại tài liệu xuất ra đều cùng 1 khổ giấy, không lệch nhau nữa.
+  const pageProperties = {
+    page: {
+      size: {
+        width: convertMillimetersToTwip(PAGE_A4_MM.width),
+        height: convertMillimetersToTwip(PAGE_A4_MM.height),
+      },
+      margin: {
+        top: convertMillimetersToTwip(PAGE_MARGIN_MM.top),
+        bottom: convertMillimetersToTwip(PAGE_MARGIN_MM.bottom),
+        left: convertMillimetersToTwip(PAGE_MARGIN_MM.left),
+        right: convertMillimetersToTwip(PAGE_MARGIN_MM.right),
+      },
+    },
+  };
+
   const doc = new Document({
     sections: [
       {
-        properties: {},
+        properties: pageProperties,
         children: [...headerParagraphs, ...sectionParagraphs, ...qrParagraphs, ...footerParagraphs],
       },
     ],

@@ -1,4 +1,17 @@
-import { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } from "docx";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  AlignmentType,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
+  BorderStyle,
+  convertMillimetersToTwip,
+} from "docx";
+import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import temml from "temml";
@@ -405,8 +418,31 @@ export async function buildExamDocxBlob({
 
   const questionParagraphs = questions.flatMap((q, i) => buildQuestionParagraphs(q, i, equations));
 
+  // ================== GIAI ĐOẠN 1 (sửa lỗi layout/in ấn) ==================
+  // TRƯỚC ĐÂY properties:{} rỗng -> docx.js dùng mặc định khổ Letter (8.5x11 inch), KHÔNG
+  // PHẢI A4 -> đây là nguyên nhân THẬT khiến file Word/PDF xuất ra "margin không full khổ A4"
+  // khi giáo viên in trên máy in đặt sẵn khổ A4. Xem giải thích đầy đủ + nguồn giá trị dùng
+  // chung trong src/data/constants.js (PAGE_A4_MM, PAGE_MARGIN_MM).
+  const pageProperties = {
+    page: {
+      size: {
+        width: convertMillimetersToTwip(PAGE_A4_MM.width),
+        height: convertMillimetersToTwip(PAGE_A4_MM.height),
+      },
+      margin: {
+        top: convertMillimetersToTwip(PAGE_MARGIN_MM.top),
+        bottom: convertMillimetersToTwip(PAGE_MARGIN_MM.bottom),
+        left: convertMillimetersToTwip(PAGE_MARGIN_MM.left),
+        right: convertMillimetersToTwip(PAGE_MARGIN_MM.right),
+      },
+    },
+  };
+
   const sections = [
-    { properties: {}, children: [...frontMatterElements, ...headerParagraphs, ...questionParagraphs] },
+    {
+      properties: pageProperties,
+      children: [...frontMatterElements, ...headerParagraphs, ...questionParagraphs],
+    },
   ];
 
   if (includeRubricSection && teacherRubric?.length) {

@@ -319,8 +319,14 @@ body {
   }
   @page {
     size: A4;
-    /* Lề in an toàn, áp dụng cho TẤT CẢ các trang vật lý khi nội dung tràn nhiều trang */
-    margin: 15mm 16mm;
+    /* ================== GIAI ĐOẠN 1 (sửa lỗi layout/in ấn) ==================
+       TRƯỚC ĐÂY giá trị ở đây (15mm 16mm) KHÁC với padding màn hình của .a4-page (20mm 18mm)
+       -> bản xem trước trên web và bản in/PDF thật không khớp nhau, đây là 1 phần nguyên nhân
+       "margin không full khổ A4" giáo viên phản ánh. Giờ thống nhất 20mm 18mm ở CẢ 3 nơi:
+       .a4-page (màn hình, ngay trên), @page (in/PDF, ở đây), và constants.js PAGE_MARGIN_MM
+       (Word export qua exportService.js/worksheetExportService.js/lessonPlanExportService.js).
+       Đổi margin thì PHẢI đổi cả 3 nơi - CSS không import được hằng số từ JS. */
+    margin: 20mm 18mm;
   }
   .no-print {
     display: none !important;
