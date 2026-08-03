@@ -19,6 +19,8 @@ export const EXERCISE_TYPES = {
   NOI_PHEP_TINH: "noi_phep_tinh",
   GIAI_TOAN: "giai_toan", // duy nhất cần AI
   NHAN_DIEN_HINH: "nhan_dien_hinh",
+  SAP_XEP_THU_TU: "sap_xep_thu_tu", // GIAI ĐOẠN 2
+  DEM_HINH_UNG_DUNG: "dem_hinh_ung_dung", // GIAI ĐOẠN 2 - hoạt động ứng dụng đi kèm NHAN_DIEN_HINH
 };
 
 const ICONS = ["🍎", "⭐", "🚗", "🐥", "🌻", "🦋", "🥕"];
@@ -132,6 +134,49 @@ export function generateNoiPhepTinh(grade, count = 5) {
 /** Nhận diện hình - chọn ngẫu nhiên 1 tập con hình cơ bản để học sinh gọi tên + tô màu. */
 export function generateNhanDienHinh(count = 6) {
   return [...SHAPES].sort(() => Math.random() - 0.5).slice(0, count);
+}
+
+/**
+ * ================== GIAI ĐOẠN 2 (đa dạng hoá dạng hoạt động) ==================
+ * Sắp xếp thứ tự: mỗi bộ gồm 3 số phân biệt trong phạm vi của khối, hiển thị xáo trộn,
+ * học sinh viết lại theo thứ tự. Đổi chiều bé->lớn / lớn->bé NGẪU NHIÊN theo từng bộ (không
+ * cố định 1 chiều suốt phiếu) để bớt đơn điệu - khớp tinh thần bài mẫu "Sắp xếp các số đo độ
+ * dài theo thứ tự từ bé đến lớn" trong phiếu lớp 2 giáo viên gửi làm nguồn cảm hứng ban đầu.
+ */
+export function generateSapXepThuTu(grade, count = 3) {
+  const max = WORKSHEET_GRADES[grade].maxNumber;
+  const sets = [];
+  for (let i = 0; i < count; i++) {
+    const numbers = new Set();
+    while (numbers.size < 3) numbers.add(randInt(0, max));
+    const ascending = [...numbers].sort((a, b) => a - b);
+    const direction = Math.random() < 0.5 ? "asc" : "desc";
+    const sortedAnswer = direction === "asc" ? ascending : [...ascending].reverse();
+    const shuffled = [...numbers].sort(() => Math.random() - 0.5);
+    sets.push({ numbers: shuffled, sortedAnswer, direction });
+  }
+  return sets;
+}
+
+/**
+ * ================== GIAI ĐOẠN 2 (sửa bug "Nhận diện hình" đứng trơ trọi) ==================
+ * Đếm hình theo yêu cầu - hoạt động ỨNG DỤNG luôn đi kèm BẮT BUỘC ngay sau "Nhận diện hình"
+ * (xem worksheetGenerator.js - không phải dạng bài giáo viên tự bật/tắt riêng, vì mục đích là
+ * đảm bảo "Nhận diện hình" không bao giờ đứng một mình chỉ để liệt kê + tô màu như trước).
+ *
+ * QUAN TRỌNG: nhận `shapes` là CHÍNH danh sách hình đã chọn cho "Nhận diện hình" (không tự
+ * chọn hình khác) - để 2 khối bài liên kết với nhau (hình bé vừa gọi tên/tô màu ở trên, giờ
+ * đếm lại đúng những hình đó trong 1 "khay hình" trộn lẫn), không phải 2 hoạt động rời rạc.
+ */
+export function generateDemHinhUngDung(shapes, count = 3) {
+  const targets = [...shapes].sort(() => Math.random() - 0.5).slice(0, Math.min(count, shapes.length));
+  const tray = shapes.map((shape) => ({ shape, qty: randInt(2, 5) }));
+  const trayIcons = tray.flatMap(({ shape, qty }) => Array(qty).fill(shape)).sort(() => Math.random() - 0.5);
+  const questions = targets.map((shape) => ({
+    shape,
+    answer: tray.find((t) => t.shape === shape)?.qty ?? 0,
+  }));
+  return { trayIcons, questions };
 }
 
 /** Danh sách icon dùng chung (để component render dùng lại, tránh lệch giữa các hàm sinh). */

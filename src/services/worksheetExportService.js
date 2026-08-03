@@ -121,6 +121,22 @@ function buildDaySoParagraphs(items, showAnswers) {
 }
 
 /**
+ * ================== GIAI ĐOẠN 2 (đa dạng hoá dạng hoạt động) ==================
+ * Sắp xếp thứ tự: in 3 số xáo trộn -> mũi tên -> kết quả (đã sắp xếp nếu showAnswers, ngược
+ * lại chỗ trống ngăn cách bởi dấu < hoặc > tương ứng chiều sắp xếp của bộ đó).
+ */
+function buildSapXepThuTuParagraphs(items, showAnswers) {
+  return items.map((it) => {
+    const symbol = it.direction === "asc" ? " < " : " > ";
+    const resultText = showAnswers ? it.sortedAnswer.join(symbol) : it.sortedAnswer.map(() => BLANK).join(symbol);
+    return {
+      children: [new TextRun({ text: `${it.numbers.join(" ;  ")}   ➜   ${resultText}`, font: FONT, size: 24 })],
+      spacing: { after: 120 },
+    };
+  });
+}
+
+/**
  * "Nối phép tính": Word không vẽ được đường nối tay như trên phiếu in - giữ đúng tinh thần
  * bài tập (học sinh tự nối bằng bút khi in ra giấy), dùng tab-stop RIGHT để đẩy cột kết quả
  * xáo trộn ra sát lề phải, mô phỏng bố cục 2 cột trái/phải giống WorksheetPreview.jsx.
@@ -171,6 +187,35 @@ function buildNhanDienHinhParagraphs(shapes) {
   ];
 }
 
+/**
+ * ================== GIAI ĐOẠN 2 (hoạt động ứng dụng tự động đi kèm Nhận diện hình) ==================
+ * "Khay hình" trộn lẫn in bằng glyph Unicode (tái dùng SHAPE_GLYPHS - Word không vẽ SVG được
+ * như bản web), tiếp theo là các câu hỏi "Có bao nhiêu Hình X?" kèm chỗ trống hoặc đáp số.
+ */
+function buildDemHinhUngDungParagraphs(data, showAnswers) {
+  const trayLine = {
+    children: [
+      new TextRun({
+        text: data.trayIcons.map((s) => SHAPE_GLYPHS[s] || "○").join("  "),
+        font: FONT,
+        size: 30,
+      }),
+    ],
+    spacing: { after: 100 },
+  };
+  const questionLines = data.questions.map((q) => ({
+    children: [
+      new TextRun({
+        text: `❓ Có bao nhiêu ${q.shape}?   ${showAnswers ? q.answer : BLANK}`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 80 },
+  }));
+  return [trayLine, ...questionLines];
+}
+
 function buildGiaiToanParagraphs(items, showAnswers) {
   return items.flatMap((it) => {
     const paras = [
@@ -205,10 +250,14 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildSoSanhParagraphs(section.items, showAnswers);
     case "day_so":
       return buildDaySoParagraphs(section.items, showAnswers);
+    case "sap_xep_thu_tu":
+      return buildSapXepThuTuParagraphs(section.items, showAnswers);
     case "noi_phep_tinh":
       return buildNoiPhepTinhParagraphs(section.data, showAnswers);
     case "nhan_dien_hinh":
       return buildNhanDienHinhParagraphs(section.shapes);
+    case "dem_hinh_ung_dung":
+      return buildDemHinhUngDungParagraphs(section.data, showAnswers);
     case "giai_toan":
       return buildGiaiToanParagraphs(section.items, showAnswers);
     default:

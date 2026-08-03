@@ -251,6 +251,31 @@ function DaySoSection({ items, accent }) {
   );
 }
 
+/**
+ * ================== GIAI ĐOẠN 2 (đa dạng hoá dạng hoạt động) ==================
+ * Sắp xếp thứ tự: hiển thị 3 số xáo trộn -> mũi tên -> 3 ô trống cách nhau bởi dấu < hoặc >
+ * (tuỳ it.direction), mô phỏng đúng bố cục "30 cm < ⬜ < ⬜" trong phiếu mẫu lớp 2.
+ */
+function SapXepThuTuSection({ items, accent }) {
+  const symbol = (direction) => (direction === "asc" ? "<" : ">");
+  return (
+    <div>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 14 }}>
+          <span style={{ marginRight: 10 }}>{it.numbers.join(" ;  ")}</span>
+          <span style={{ color: accent, fontWeight: 700 }}>➜</span>
+          {it.sortedAnswer.map((_, idx) => (
+            <span key={idx} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              {blankBox(accent)}
+              {idx < it.sortedAnswer.length - 1 && <span style={{ color: accent, fontWeight: 700 }}>{symbol(it.direction)}</span>}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function NoiPhepTinhSection({ data, accent }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
@@ -336,6 +361,46 @@ function NhanDienHinhSection({ shapes, accent }) {
           <span style={{ fontSize: 12, fontWeight: 600 }}>{s}</span>
         </div>
       ))}
+    </div>
+  );
+}
+
+/**
+ * ================== GIAI ĐOẠN 2 (hoạt động ứng dụng tự động đi kèm Nhận diện hình) ==================
+ * "Khay hình" trộn lẫn (trayIcons, đã được worksheetSchemas.js xáo trộn sẵn) hiển thị bằng
+ * ShapeIcon nhỏ hơn NhanDienHinhSection (không cần tên chữ, chỉ cần nhận diện hình dáng), tiếp
+ * theo là các câu hỏi "Có bao nhiêu Hình X?" với ô trống để điền số - CHÍNH LÀ phần "có gì
+ * khác" mà giáo viên phản ánh còn thiếu ở "Nhận diện hình" bản cũ.
+ */
+function DemHinhUngDungSection({ data, accent }) {
+  return (
+    <div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 6,
+          padding: "8px 10px",
+          background: "#fff",
+          border: `1.5px dashed ${accent}`,
+          borderRadius: 12,
+          marginBottom: 10,
+        }}
+      >
+        {data.trayIcons.map((s, i) => (
+          <span key={i} style={{ transform: "scale(0.6)", transformOrigin: "center" }}>
+            <ShapeIcon name={s} accent={accent} />
+          </span>
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14 }}>
+        {data.questions.map((q, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span>❓ Có bao nhiêu <strong>{q.shape}</strong>?</span>
+            {blankBox(accent)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -524,9 +589,15 @@ export default function WorksheetPreview({ worksheet, meta }) {
                     )}
                     {section.type === "so_sanh" && <SoSanhSection items={section.items} accent={t.border} />}
                     {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
+                    {section.type === "sap_xep_thu_tu" && (
+                      <SapXepThuTuSection items={section.items} accent={t.border} />
+                    )}
                     {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
                     {section.type === "nhan_dien_hinh" && (
                       <NhanDienHinhSection shapes={section.shapes} accent={t.border} />
+                    )}
+                    {section.type === "dem_hinh_ung_dung" && (
+                      <DemHinhUngDungSection data={section.data} accent={t.border} />
                     )}
                     {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}
                   </ExerciseBox>

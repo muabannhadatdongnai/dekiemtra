@@ -59,6 +59,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "MAM_NON",
     maxGrade: "LOP_2",
+    defaultCount: 6,
     instructionVariants: [
       "Tính nhẩm.",
       "Em hãy tính nhẩm thật nhanh nhé!",
@@ -76,6 +77,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "MAM_NON",
     maxGrade: "LOP_1",
+    defaultCount: 3,
     instructionVariants: [
       "Đếm và viết số thích hợp vào ô trống.",
       "Em hãy đếm số lượng rồi viết số vào ô trống.",
@@ -92,6 +94,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "MAM_NON",
     maxGrade: "LOP_2",
+    defaultCount: 6,
     instructionVariants: [
       "So sánh. Điền dấu >, <, = thích hợp.",
       "Điền dấu >, <, = vào chỗ trống cho đúng nhé!",
@@ -108,6 +111,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "MAM_NON",
     maxGrade: "LOP_2",
+    defaultCount: 4,
     instructionVariants: [
       "Viết số thích hợp vào ô trống.",
       "Điền số còn thiếu vào dãy số sau.",
@@ -117,6 +121,25 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     colorThemeTags: ["green", "brown", "blue"],
   },
   {
+    key: "sap_xep_thu_tu",
+    subject: "TOAN",
+    label: "Sắp xếp thứ tự (bé → lớn)",
+    skillGroup: "nhan_biet_so",
+    source: "code",
+    minGrade: "MAM_NON",
+    maxGrade: "LOP_2",
+    // GIAI ĐOẠN 2: dạng bài MỚI, lấp khoảng trống skillGroup "nhan_biet_so" trước đây chỉ có
+    // duy nhất "dem_va_viet_so" - đa dạng hoá cách hỏi về cùng nhóm kỹ năng nhận biết số.
+    defaultCount: 3,
+    instructionVariants: [
+      "Sắp xếp các số theo thứ tự từ bé đến lớn.",
+      "Viết lại 3 số sau theo đúng thứ tự nhé!",
+      "Em hãy sắp xếp các số theo thứ tự.",
+    ],
+    mascotPool: ["📏", "🔢", "🐌", "🦔"],
+    colorThemeTags: ["teal", "brown", "blue"],
+  },
+  {
     key: "noi_phep_tinh",
     subject: "TOAN",
     label: "Nối phép tính với kết quả",
@@ -124,6 +147,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "LOP_1",
     maxGrade: "LOP_2",
+    defaultCount: 5,
     instructionVariants: [
       "Nối phép tính với kết quả đúng.",
       "Em hãy nối mỗi phép tính với đáp số đúng của nó.",
@@ -140,6 +164,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "MAM_NON",
     maxGrade: "LOP_2",
+    defaultCount: 6,
     instructionVariants: [
       "Bé nhận biết hình và tô màu.",
       "Gọi tên các hình rồi tô màu thật đẹp nhé!",
@@ -149,6 +174,28 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     colorThemeTags: ["purple", "pink", "yellow"],
   },
   {
+    key: "dem_hinh_ung_dung",
+    subject: "TOAN",
+    label: "Đếm hình theo yêu cầu",
+    skillGroup: "hinh_hoc",
+    source: "code",
+    minGrade: "MAM_NON",
+    maxGrade: "LOP_2",
+    // ================== GIAI ĐOẠN 2 (sửa bug "Nhận diện hình" đứng trơ trọi) ==================
+    // hiddenFromForm: true -> KHÔNG hiện thành 1 ô chọn riêng trong WorksheetForm.jsx. Giáo
+    // viên không cần tự nhớ bật thêm - hễ chọn "Nhận diện hình" (count > 0) thì
+    // worksheetGenerator.js TỰ ĐỘNG kèm theo khối này ngay sau, dùng CHUNG danh sách hình đã
+    // chọn. Đây là cách "bắt buộc đi kèm" (không phải tuỳ chọn giáo viên có thể quên bật).
+    hiddenFromForm: true,
+    instructionVariants: [
+      "Đếm xem có bao nhiêu hình mỗi loại rồi viết số vào ô trống.",
+      "Quan sát khay hình bên dưới và đếm theo yêu cầu nhé!",
+      "Đếm thật kỹ từng loại hình trong khay rồi ghi số nhé!",
+    ],
+    mascotPool: ["🔍", "🧮", "🐿️"],
+    colorThemeTags: ["purple", "yellow", "teal"],
+  },
+  {
     key: "giai_toan",
     subject: "TOAN",
     label: "Giải toán có lời văn",
@@ -156,6 +203,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "ai", // duy nhất cần AI vì cần biến hoá ngôn ngữ tự nhiên
     minGrade: "LOP_1",
     maxGrade: "LOP_2",
+    defaultCount: 2,
     instructionVariants: ["Giải bài toán.", "Em hãy đọc kỹ đề rồi giải bài toán sau.", "Cùng giải bài toán nhé!"],
     mascotPool: ["📖", "🐝", "🌻", "🍚"],
     colorThemeTags: ["orange", "brown", "green"],
@@ -230,6 +278,17 @@ export function getCatalogItem(key) {
 /** Chỉ những dạng bài ĐÃ CÓ generator thật (code hoặc ai) - "planned" bị loại vì chưa chạy được. */
 export function getImplementedCatalogFor(grade, subject = "TOAN") {
   return getCatalogFor(grade, subject).filter((item) => item.source !== "planned");
+}
+
+/**
+ * ================== GIAI ĐOẠN 2 ==================
+ * Như getImplementedCatalogFor(), nhưng loại thêm các block hiddenFromForm:true (VD
+ * "dem_hinh_ung_dung" - luôn tự động đi kèm "nhan_dien_hinh", KHÔNG phải ô chọn riêng cho giáo
+ * viên). Đây là danh sách ĐÚNG để WorksheetForm.jsx render checkbox - dùng hàm này thay vì
+ * getImplementedCatalogFor() trực tiếp để không vô tình hiện các block "ẩn, tự động".
+ */
+export function getSelectableCatalogFor(grade, subject = "TOAN") {
+  return getImplementedCatalogFor(grade, subject).filter((item) => !item.hiddenFromForm);
 }
 
 function pick(arr) {

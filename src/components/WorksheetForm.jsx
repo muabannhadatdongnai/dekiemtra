@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Loader2, Sparkles, Upload, CheckCircle2, XCircle, RefreshCw, Star } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Loader2, Sparkles, Upload, CheckCircle2, XCircle, RefreshCw, Star, Save, ClipboardCheck } from "lucide-react";
 import { getSession } from "@/services/authService";
 import {
   generateWorksheetRequest,
@@ -9,6 +9,12 @@ import {
   getWorksheetPreferenceRequest,
   saveWorksheetPreferenceRequest,
 } from "@/services/apiClient";
+// GIAI ĐOẠN 2: import trực tiếp từ module DỮ LIỆU thuần (không phải worksheetGenerator.js -
+// file đó có import geminiKeyPool.js đọc biến môi trường phía server, KHÔNG an toàn để import
+// vào component "use client"). getSelectableCatalogFor() đã tự lọc bỏ "planned" (chưa có
+// generator thật) và "hiddenFromForm" (hoạt động tự động, không phải ô chọn riêng - VD
+// "dem_hinh_ung_dung" luôn tự kèm theo "nhan_dien_hinh", xem worksheetGenerator.js).
+import { getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 
 const GRADES = [
   { value: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)" },
@@ -16,30 +22,18 @@ const GRADES = [
   { value: "LOP_2", label: "Lớp 2" },
 ];
 
-const EXERCISE_LABELS = {
-  tinh_nham: "Tính nhẩm",
-  dem_va_viet_so: "Đếm và viết số",
-  so_sanh: "So sánh (>, <, =)",
-  day_so: "Dãy số cách đều",
-  noi_phep_tinh: "Nối phép tính với kết quả",
-  giai_toan: "Giải toán có lời văn (dùng AI)",
-  nhan_dien_hinh: "Nhận diện hình + tô màu",
-};
-
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
+
+function defaultCountsFor(grade) {
+  return Object.fromEntries(getSelectableCatalogFor(grade).map((item) => [item.key, item.defaultCount ?? 0]));
+}
 
 export default function WorksheetForm({ onGenerated }) {
   const [grade, setGrade] = useState("LOP_1");
   const [title, setTitle] = useState("BÀI TẬP TOÁN");
-  const [exerciseCounts, setExerciseCounts] = useState({
-    tinh_nham: 6,
-    dem_va_viet_so: 3,
-    so_sanh: 6,
-    day_so: 4,
-    noi_phep_tinh: 5,
-    giai_toan: 2,
-    nhan_dien_hinh: 6,
-  });
+  // GIAI ĐOẠN 2: khởi tạo từ catalog (defaultCount của từng dạng bài) thay vì object hard-code
+  // cố định - thêm/bớt dạng bài trong worksheetExerciseCatalog.js giờ không cần sửa file này.
+  const [exerciseCounts, setExerciseCounts] = useState(() => defaultCountsFor("LOP_1"));
   const [includeAnswers, setIncludeAnswers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -59,7 +53,32 @@ export default function WorksheetForm({ onGenerated }) {
   const [savingFavorite, setSavingFavorite] = useState(false);
   const [favoriteSavedNotice, setFavoriteSavedNotice] = useState("");
 
+  // ================== GIAI ĐOẠN 3 MỚI: "công thức đề" theo từng khối lớp ==================
+  // Khác favoriteLayoutId (1 giá trị, áp dụng mọi khối) - đây là 1 OBJECT theo khối lớp, vì
+  // dạng bài khả dụng khác nhau theo khối (VD công thức Lớp 1 không thể áp y nguyên cho Lớp 2).
+  const [favoriteExerciseCounts, setFavoriteExerciseCounts] = useState({}); // { [grade]: {key: count} }
+  const [savingFormula, setSavingFormula] = useState(false);
+  const [formulaSavedNotice, setFormulaSavedNotice] = useState("");
+
   const totalSections = Object.values(exerciseCounts).filter((c) => c > 0).length;
+
+  // GIAI ĐOẠN 2: danh sách dạng bài hiện đúng theo khối lớp (catalog có minGrade/maxGrade
+  // riêng từng dạng - VD "Nối phép tính" chỉ từ Lớp 1, "Đếm và viết số" chỉ tới Lớp 1). TRƯỚC
+  // ĐÂY form hiện đủ cả 7 ô bất kể khối lớp nào, không khớp với catalog đã khai báo.
+  const visibleExercises = useMemo(() => getSelectableCatalogFor(grade), [grade]);
+
+  // Đổi khối lớp -> đồng bộ lại exerciseCounts: giữ số đã nhập cho dạng bài vẫn còn hiện,
+  // dùng defaultCount cho dạng bài MỚI xuất hiện, bỏ dạng bài không còn phù hợp khối lớp mới.
+  useEffect(() => {
+    setExerciseCounts((prev) => {
+      const next = {};
+      for (const item of visibleExercises) {
+        next[item.key] = prev[item.key] ?? item.defaultCount ?? 0;
+      }
+      return next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grade]);
 
   // Tải layout yêu thích đã lưu (nếu có) ngay khi mở form - không chặn giáo viên thao tác gì
   // cả, chỉ để sẵn favoriteLayoutId cho lần tạo phiếu đầu tiên đã có thể thiên vị theo sở thích.
@@ -68,11 +87,46 @@ export default function WorksheetForm({ onGenerated }) {
       try {
         const data = await getWorksheetPreferenceRequest();
         setFavoriteLayoutId(data?.preference?.favoriteLayoutId || null);
+        setFavoriteExerciseCounts(data?.preference?.favoriteExerciseCounts || {});
       } catch {
         // Im lặng bỏ qua - không có tuỳ chọn đã lưu cũng không sao, tạo phiếu vẫn chạy bình thường.
       }
     })();
   }, []);
+
+  // Công thức đề đã lưu cho ĐÚNG khối lớp đang chọn (nếu có) - dùng để hiện banner gợi ý và cho
+  // nút "Dùng công thức đã lưu".
+  const savedFormulaForGrade = favoriteExerciseCounts[grade];
+  const hasSavedFormulaForGrade = Boolean(savedFormulaForGrade && Object.keys(savedFormulaForGrade).length > 0);
+
+  /** Áp công thức đề đã lưu (cho khối lớp hiện tại) vào form - giáo viên chủ động bấm, KHÔNG
+   * tự động âm thầm ghi đè để tránh mất công giáo viên vừa chỉnh tay xong lại bị thay đổi. */
+  function applySavedFormula() {
+    if (!savedFormulaForGrade) return;
+    setExerciseCounts(() => {
+      const next = {};
+      for (const item of visibleExercises) {
+        next[item.key] = savedFormulaForGrade[item.key] ?? item.defaultCount ?? 0;
+      }
+      return next;
+    });
+  }
+
+  /** "⭐ Lưu công thức đề này" - lưu ĐÚNG tổ hợp dạng bài + số lượng hiện tại cho khối lớp đang
+   * chọn. Không cần đã tạo phiếu trước đó (khác nút "Lưu bố cục" - cái đó cần lastLayoutId). */
+  async function handleSaveFormula() {
+    setSavingFormula(true);
+    setFormulaSavedNotice("");
+    try {
+      await saveWorksheetPreferenceRequest({ gradeExerciseCounts: { grade, counts: exerciseCounts } });
+      setFavoriteExerciseCounts((prev) => ({ ...prev, [grade]: exerciseCounts }));
+      setFormulaSavedNotice("Đã lưu công thức đề cho khối này! Lần sau mở lại khối này sẽ có gợi ý dùng lại.");
+    } catch (err) {
+      setFormulaSavedNotice(`Lỗi khi lưu: ${err.message}`);
+    } finally {
+      setSavingFormula(false);
+    }
+  }
 
   function updateCount(key, value) {
     setExerciseCounts((prev) => ({ ...prev, [key]: Math.max(0, Number(value) || 0) }));
@@ -158,6 +212,24 @@ export default function WorksheetForm({ onGenerated }) {
     generate();
   }
 
+  /** "Áp dụng cấu trúc từ phiếu mẫu" - THAY THẾ hoàn toàn lựa chọn hiện tại bằng đúng cấu trúc
+   * quan sát được (giống hành vi applySavedFormula() ở trên: reset về 0 rồi điền lại theo
+   * detectedExercises, không PHẢI cộng dồn vào lựa chọn đang có - tránh gây nhầm lẫn "sao số
+   * không khớp mẫu"). Chỉ áp cho key hiện có trong visibleExercises (đúng khối lớp đang chọn) -
+   * dạng bài mẫu có nhưng khối lớp hiện tại không hỗ trợ thì bỏ qua (an toàn, không lỗi). */
+  function applyDetectedExercises() {
+    if (!sampleSpec?.detectedExercises?.length) return;
+    const visibleKeys = new Set(visibleExercises.map((item) => item.key));
+    setExerciseCounts(() => {
+      const next = {};
+      for (const item of visibleExercises) next[item.key] = 0;
+      for (const d of sampleSpec.detectedExercises) {
+        if (visibleKeys.has(d.key)) next[d.key] = d.approxCount;
+      }
+      return next;
+    });
+  }
+
   // "⭐ Lưu bố cục này làm yêu thích" - lưu layoutId của phiếu VỪA tạo (lastLayoutId), để những
   // lần tạo phiếu sau (kể cả sau khi đóng app, đăng nhập lại) có ~45% cơ hội ưu tiên dùng lại
   // đúng bố cục này (xem pickLayoutWithPreference() trong worksheetLayoutTemplates.js).
@@ -193,19 +265,51 @@ export default function WorksheetForm({ onGenerated }) {
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-semibold text-slate-800">Chọn dạng bài + số lượng</p>
-        {Object.entries(EXERCISE_LABELS).map(([key, label]) => (
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold text-slate-800">Chọn dạng bài + số lượng</p>
+          {/* GIAI ĐOẠN 3 MỚI: gợi ý dùng lại công thức đề đã lưu cho ĐÚNG khối lớp này - không tự
+              động áp, giáo viên chủ động bấm để tránh mất công vừa chỉnh tay xong. */}
+          {hasSavedFormulaForGrade && (
+            <button
+              type="button"
+              onClick={applySavedFormula}
+              className="flex items-center gap-1 text-xs font-medium text-brand-700 underline decoration-dotted"
+              title="Điền lại đúng tổ hợp dạng bài + số lượng đã lưu trước đó cho khối này"
+            >
+              <ClipboardCheck size={13} /> Dùng công thức đã lưu
+            </button>
+          )}
+        </div>
+        {visibleExercises.map(({ key, label, source }) => (
           <div key={key} className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2">
-            <span className="text-sm text-slate-700">{label}</span>
+            <span className="text-sm text-slate-700">
+              {label}
+              {source === "ai" && <span className="text-slate-400"> (dùng AI)</span>}
+            </span>
             <input
               type="number"
               min={0}
-              value={exerciseCounts[key]}
+              value={exerciseCounts[key] ?? 0}
               onChange={(e) => updateCount(key, e.target.value)}
               className="w-16 rounded border border-slate-300 px-2 py-1 text-center text-sm"
             />
           </div>
         ))}
+        {/* GIAI ĐOẠN 3 MỚI: lưu ĐÚNG tổ hợp hiện tại làm "công thức đề" cho khối lớp này - không
+            cần đã tạo phiếu trước đó, khác nút "Lưu bố cục" (yêu cầu lastLayoutId). */}
+        <div className="flex items-center justify-between pt-1">
+          <button
+            type="button"
+            disabled={savingFormula || totalSections === 0}
+            onClick={handleSaveFormula}
+            className="flex items-center gap-1.5 text-xs font-medium text-slate-500 underline decoration-dotted hover:text-slate-700 disabled:opacity-50"
+            title="Lưu tổ hợp dạng bài + số lượng hiện tại làm công thức đề mặc định cho khối này"
+          >
+            {savingFormula ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+            Lưu công thức đề này cho {GRADES.find((g) => g.value === grade)?.label}
+          </button>
+        </div>
+        {formulaSavedNotice && <p className="text-xs text-slate-500">{formulaSavedNotice}</p>}
       </div>
 
       <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
@@ -252,6 +356,22 @@ export default function WorksheetForm({ onGenerated }) {
                 {sampleSpec.themeHints && <p>Chủ đề: {sampleSpec.themeHints}</p>}
                 {sampleSpec.exerciseTypeHints?.length > 0 && (
                   <p>Dạng bài quan sát thấy: {sampleSpec.exerciseTypeHints.join(", ")}</p>
+                )}
+                {/* ================== GIAI ĐOẠN 4 MỚI (content-aware theo mẫu thật) ==================
+                    TRƯỚC ĐÂY exerciseTypeHints chỉ hiện CHO ĐỌC THAM KHẢO, không áp dụng được vào
+                    phiếu. detectedExercises (key thật + số lượng) giờ THỰC SỰ áp dụng được - nút
+                    này CHỦ ĐỘNG để giáo viên bấm (không tự động ghi đè số liệu đang chỉnh tay),
+                    cùng nguyên tắc với "Dùng công thức đã lưu" ở Giai đoạn 3. LƯU Ý: thứ tự khối
+                    bài đã tự động theo mẫu NGẦM (không cần bấm gì) - nút này chỉ áp dụng SỐ LƯỢNG. */}
+                {sampleSpec.detectedExercises?.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={applyDetectedExercises}
+                    className="mt-1 flex items-center gap-1 font-medium text-emerald-800 underline decoration-dotted"
+                    title="Điền số lượng câu theo đúng cấu trúc quan sát được từ phiếu mẫu (thay thế lựa chọn hiện tại)"
+                  >
+                    <ClipboardCheck size={13} /> Áp dụng cấu trúc từ phiếu mẫu ({sampleSpec.detectedExercises.length} dạng bài)
+                  </button>
                 )}
               </div>
             </div>

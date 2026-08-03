@@ -90,11 +90,13 @@ export async function getWorksheetPreferenceRequest() {
   return handleResponse(res);
 }
 
-export async function saveWorksheetPreferenceRequest({ favoriteLayoutId }) {
+/** GIAI ĐOẠN 3 MỚI: payload linh hoạt - có thể gửi { favoriteLayoutId } (như trước), hoặc
+ * { gradeExerciseCounts: { grade, counts } } (lưu công thức đề), hoặc cả 2 cùng lúc. */
+export async function saveWorksheetPreferenceRequest(payload) {
   const res = await fetch("/api/worksheet-preference", {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({ favoriteLayoutId }),
+    body: JSON.stringify(payload),
   });
   return handleResponse(res);
 }
