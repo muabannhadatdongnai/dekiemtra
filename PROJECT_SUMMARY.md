@@ -183,7 +183,54 @@ src/
 - **Subject bị mặc định "Toán"**: trước đây prompt luôn nói AI là "chuyên gia Toán" và hiện "Môn: Toan" (không dấu) dù đang tạo đề Sử/Văn/Anh. Đã sửa bằng `subjectProfiles.js`.
 - **BarModel nhãn chênh lệch chèn vào ô**: do tính sai vị trí X (tưởng có khoảng trống nhưng bar A luôn trải hết chiều rộng). Đã sửa đặt nhãn hẳn ra ngoài mép phải.
 
+## 5e. Giai đoạn 5 (bên ngoài) - Liên kết SGK markdown
+- **Tái dùng hạ tầng có sẵn, không làm mới**: hệ thống "Giáo án" (`lessonPlanOrchestrator.js`)
+  đã có sẵn ĐÚNG pattern cần thiết - tải markdown SGK best-effort qua `githubService.js`
+  (`fetchMarkdownFromGitHub`/`fetchAdvancedBook`), lỗi không chặn đứng cả lượt tạo mà chỉ đẩy
+  vào mảng `warnings`. `/api/chapters` (route liệt kê chương, dùng chung cho Đề thi + Giáo án)
+  cũng đã đủ tổng quát để tái dùng thẳng cho Phiếu bài tập, không cần route mới.
+- **`src/data/constants.js`**: thêm `WORKSHEET_GRADE_TO_SGK_GRADE` - map mã khối phiếu bài tập
+  (MAM_NON/LOP_1/LOP_2) sang số lớp SGK (`lop_1`, `lop_2`...). CHỈ có LOP_1/LOP_2 (Mầm non không
+  có SGK theo chương chính thức, giống nguyên tắc `isPreschoolGrade` bên Giáo án).
+- **`src/services/worksheetGenerator.js`**: thêm `resolveSgkChapterContext()` (best-effort, try/
+  catch quanh `fetchMarkdownFromGitHub`/`fetchAdvancedBook`, lỗi -> warning chứ không throw) +
+  2 tham số mới `sgkVolume`/`sgkChapterId`. Nội dung chương SGK được ưu tiên **CAO NHẤT** làm
+  ngữ cảnh cho AI soạn "giải toán có lời văn" (cao hơn cả `referenceContext` từ file mẫu upload -
+  chọn đúng chương đang dạy là tín hiệu rõ ràng/chính thống hơn 1 file mẫu ngẫu nhiên). Hàm trả
+  về thêm `warnings: string[]` và `sgkChapterLabel: string|null`.
+- **`/api/generate-worksheet/route.js`**: pass-through `sgkVolume`/`sgkChapterId`, không có logic
+  gì thêm (đúng tinh thần route mỏng, mọi orchestration nằm trong service).
+- **`WorksheetForm.jsx`**: thêm 2 dropdown "Tập" + "Bài/Chương SGK (tuỳ chọn)", COPY Y NGUYÊN
+  pattern UI + `fetchChaptersRequest()` đã dùng ở `LessonPlanForm.jsx` (đã kiểm định, không phát
+  minh lại). Chỉ hiện khi `WORKSHEET_GRADE_TO_SGK_GRADE[grade]` tồn tại (ẩn cho Mầm non). Thêm
+  hiển thị `warnings` dạng banner vàng (phân biệt với `error` đỏ - đây là cảnh báo "mềm", phiếu
+  vẫn tạo được bình thường).
+- **Đã test kỹ, đặc biệt tình huống THẬT của sandbox này** (chưa cấu hình
+  `GITHUB_KNOWLEDGE_REPO`): (1) chọn chương SGK khi chưa cấu hình repo -> phiếu VẪN được tạo bình
+  thường, có `warnings` đúng nội dung lỗi; (2) gửi `sgkChapterId` cho MAM_NON (mô phỏng gọi thẳng
+  API bỏ qua UI) -> im lặng bỏ qua, KHÔNG sinh warning (không phải lỗi, chỉ là không áp dụng
+  được); (3) không chọn chương SGK -> hành vi giống hệt trước Giai đoạn 5 (hồi quy sạch); (4) test
+  tích hợp CẢ 3 giai đoạn cùng lúc (SGK + sampleSpec + exerciseCounts) không xung đột nhau.
+- **Việc CHƯA làm** (ngoài phạm vi giai đoạn này, có thể cân nhắc sau nếu cần):
+  - Chỉ ảnh hưởng NGỮ CẢNH cho "giải toán có lời văn" (dạng bài duy nhất dùng AI) - CÁC DẠNG BÀI
+    THUẦN CODE khác (tính nhẩm, so sánh, dãy số...) vẫn sinh số ngẫu nhiên theo PHẠM VI CHUNG của
+    cả khối lớp (VD Lớp 2 = 0-100), KHÔNG tự thu hẹp theo đúng nội dung chương đã chọn (VD chương
+    "phép cộng có nhớ trong phạm vi 100" thực ra nên loại các phép tính không nhớ). Muốn làm được
+    việc này cần 1 hệ thống lớn hơn nhiều - ánh xạ TỪNG chương SGK sang tham số sinh số cụ thể
+    (phạm vi, có nhớ/không nhớ, loại phép tính...) - đây chính là ý tưởng `topicRegistry.js`/
+    `topicActivityMap.js` đã phác thảo ở Giai đoạn 0 (bản thiết kế ĐẦU TIÊN, riêng, CHƯA merge
+    vào code thật - xem file `giai-doan-0.zip` đã gửi lượt đầu) nhưng chưa triển khai thật.
+  - Chưa hiện `sgkChapterLabel` lên phiếu đã tạo (VD ghi chú nhỏ "Bám theo Chương 3 - SGK Toán
+    Lớp 2 Tập 1" trên `WorksheetPreview.jsx`/Word) - dữ liệu đã có sẵn ở kết quả trả về, chỉ chưa
+    hiển thị, có thể bổ sung nhanh nếu giáo viên thấy cần.
+
+
 ## 6. Tính năng ĐANG LÀM DỞ — "Phiếu bài tập" (Mầm non - Lớp 2)
+⚠️ **MỤC NÀY ĐÃ LỖI THỜI** (viết từ giai đoạn code còn chưa build/test lần nào) - danh sách
+"CHƯA XONG" bên dưới hầu hết ĐÃ XONG từ lâu (đã build/test/đóng gói zip nhiều lần, xem mục
+5b/5c/5d/5e để biết trạng thái THẬT hiện tại). Giữ lại nguyên văn để biết bối cảnh ban đầu, nhưng
+**đừng tin danh sách "CHƯA XONG" bên dưới** - luôn ưu tiên đối chiếu với mục 5b-5e.
+
 **Bối cảnh**: người dùng gửi mẫu phiếu bài tập tô màu, có mascot gấu/thỏ (nhà xuất bản làm). Đã thống nhất: **KHÔNG vẽ nhân vật** (tốn công, lo bản quyền) mà **dùng emoji có sẵn** (🍎⭐🚗🐥...) — đủ sinh động, miễn phí, Word/web đều render được. Đã duyệt 1 bản mockup 2 bài mẫu (khung bo góc màu + số tròn + emoji) qua Visualizer, người dùng ĐỒNG Ý.
 
 **Phạm vi đã chốt**: Phiếu bài tập chỉ làm cho **Mầm non/Lớp 1/Lớp 2**. Lớp 3-5 dùng lại hệ thống đề thi hiện có (không cần làm thêm).
