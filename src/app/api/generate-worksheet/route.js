@@ -18,6 +18,8 @@ export async function POST(request) {
       sampleSpec = null,
       referenceContext = null,
       favoriteLayoutId = null,
+      sgkVolume = null,
+      sgkChapterId = null,
     } = body;
 
     if (!grade || !exerciseCounts) {
@@ -33,6 +35,8 @@ export async function POST(request) {
       sampleSpec,
       referenceContext,
       favoriteLayoutId,
+      sgkVolume,
+      sgkChapterId,
     });
     return NextResponse.json({ success: true, ...result });
   } catch (err) {

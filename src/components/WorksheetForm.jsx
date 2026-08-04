@@ -8,6 +8,7 @@ import {
   analyzeWorksheetSampleRequest,
   getWorksheetPreferenceRequest,
   saveWorksheetPreferenceRequest,
+  fetchChaptersRequest,
 } from "@/services/apiClient";
 // GIAI ĐOẠN 2: import trực tiếp từ module DỮ LIỆU thuần (không phải worksheetGenerator.js -
 // file đó có import geminiKeyPool.js đọc biến môi trường phía server, KHÔNG an toàn để import
@@ -15,6 +16,9 @@ import {
 // generator thật) và "hiddenFromForm" (hoạt động tự động, không phải ô chọn riêng - VD
 // "dem_hinh_ung_dung" luôn tự kèm theo "nhan_dien_hinh", xem worksheetGenerator.js).
 import { getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
+// GIAI ĐOẠN 5: mapping khối lớp phiếu bài tập -> số lớp SGK (chỉ LOP_1/LOP_2, Mầm non không có
+// SGK theo chương) - module dữ liệu thuần, an toàn phía client giống worksheetExerciseCatalog.js.
+import { WORKSHEET_GRADE_TO_SGK_GRADE } from "@/data/constants";
 
 const GRADES = [
   { value: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)" },
@@ -59,6 +63,48 @@ export default function WorksheetForm({ onGenerated }) {
   const [favoriteExerciseCounts, setFavoriteExerciseCounts] = useState({}); // { [grade]: {key: count} }
   const [savingFormula, setSavingFormula] = useState(false);
   const [formulaSavedNotice, setFormulaSavedNotice] = useState("");
+
+  // ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
+  const [sgkVolume, setSgkVolume] = useState(1);
+  const [sgkChapterId, setSgkChapterId] = useState("");
+  const [availableChapters, setAvailableChapters] = useState([]);
+  const [loadingChapters, setLoadingChapters] = useState(false);
+  const [chaptersError, setChaptersError] = useState("");
+  const [generateWarnings, setGenerateWarnings] = useState([]);
+
+  const hasSgkForGrade = Boolean(WORKSHEET_GRADE_TO_SGK_GRADE[grade]); // false cho Mầm non
+
+  // Tự động tải danh sách bài/chương SGK khi khối lớp/Tập đổi - TÁI DÙNG đúng API/pattern đã có
+  // ở LessonPlanForm.jsx (fetchChaptersRequest -> /api/chapters, dùng chung cho Giáo án + Đề thi
+  // + giờ thêm Phiếu bài tập). Bỏ qua với Mầm non (không có SGK theo chương).
+  useEffect(() => {
+    if (!hasSgkForGrade) {
+      setAvailableChapters([]);
+      setSgkChapterId("");
+      return;
+    }
+    let cancelled = false;
+    async function loadChapters() {
+      setLoadingChapters(true);
+      setChaptersError("");
+      setSgkChapterId("");
+      try {
+        const data = await fetchChaptersRequest({ grade: WORKSHEET_GRADE_TO_SGK_GRADE[grade], subject: "Toan", volume: sgkVolume });
+        if (!cancelled) setAvailableChapters(data.chapters || []);
+      } catch (err) {
+        if (!cancelled) {
+          setChaptersError(err.message);
+          setAvailableChapters([]);
+        }
+      } finally {
+        if (!cancelled) setLoadingChapters(false);
+      }
+    }
+    loadChapters();
+    return () => {
+      cancelled = true;
+    };
+  }, [grade, sgkVolume, hasSgkForGrade]);
 
   const totalSections = Object.values(exerciseCounts).filter((c) => c > 0).length;
 
@@ -195,10 +241,13 @@ export default function WorksheetForm({ onGenerated }) {
         sampleSpec,
         referenceContext: sampleReferenceContext,
         favoriteLayoutId,
+        sgkVolume,
+        sgkChapterId: sgkChapterId || null,
       });
       setLastLayoutId(data?.layout?.id || null);
       setHasGenerated(true);
       setFavoriteSavedNotice("");
+      setGenerateWarnings(data?.warnings || []);
       onGenerated({ worksheet: data, meta: { title } });
     } catch (err) {
       setError(err.message);
@@ -263,6 +312,42 @@ export default function WorksheetForm({ onGenerated }) {
         <label className="mb-1 block text-sm font-medium text-slate-700">Tiêu đề phiếu</label>
         <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
       </div>
+
+      {/* ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
+          Chỉ hiện cho LOP_1/LOP_2 (Mầm non không có SGK theo chương chính thức, giống cách
+          LessonPlanForm.jsx ẩn phần này với "isPreschoolGrade"). Chọn 1 chương -> nội dung
+          chương đó được ưu tiên CAO NHẤT làm ngữ cảnh cho "giải toán có lời văn" (xem
+          worksheetGenerator.js: resolveSgkChapterContext, cao hơn cả file mẫu upload). */}
+      {hasSgkForGrade && (
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Tập</label>
+            <select value={sgkVolume} onChange={(e) => setSgkVolume(Number(e.target.value))} className={inputClass}>
+              <option value={1}>Tập 1</option>
+              <option value={2}>Tập 2</option>
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Bài/Chương SGK (tuỳ chọn)</label>
+            <select
+              value={sgkChapterId}
+              onChange={(e) => setSgkChapterId(e.target.value)}
+              className={inputClass}
+              disabled={loadingChapters}
+            >
+              <option value="">
+                {loadingChapters ? "Đang tải danh sách..." : "-- Không liên kết SGK --"}
+              </option>
+              {availableChapters.map((c) => (
+                <option key={c.chapter} value={c.chapter}>
+                  {c.isAdvancedBook ? "Sách nâng cao (toàn bộ)" : `Chương/Bài ${c.chapter}`}
+                </option>
+              ))}
+            </select>
+            {chaptersError && <p className="mt-1 text-xs text-red-600">{chaptersError}</p>}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -383,6 +468,17 @@ export default function WorksheetForm({ onGenerated }) {
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
+      {/* GIAI ĐOẠN 5: cảnh báo "mềm" (không phải lỗi chặn đứng) - VD tải SGK thất bại nhưng phiếu
+          vẫn được tạo bình thường dựa trên lựa chọn khác. Màu vàng để phân biệt với error đỏ. */}
+      {generateWarnings.length > 0 && (
+        <div className="space-y-1 rounded-md border border-amber-200 bg-amber-50 p-2">
+          {generateWarnings.map((w, i) => (
+            <p key={i} className="text-xs text-amber-700">
+              ⚠️ {w}
+            </p>
+          ))}
+        </div>
+      )}
 
       <button
         type="submit"

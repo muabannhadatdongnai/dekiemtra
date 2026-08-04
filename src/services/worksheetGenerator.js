@@ -13,6 +13,8 @@ import {
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
 import { isUsableWorksheetSampleSpec } from "@/data/worksheetSampleSchema";
+import { ADVANCED_BOOK_MARKER, WORKSHEET_GRADE_TO_SGK_GRADE } from "@/data/constants";
+import { fetchMarkdownFromGitHub, fetchAdvancedBook } from "./githubService";
 
 /**
  * worksheetGenerator.js
@@ -81,6 +83,43 @@ async function generateWordProblems({ grade, count, includeAnswers, referenceCon
   } catch (err) {
     console.error("[worksheetGenerator] Lỗi sinh bài toán có lời văn:", err.message);
     return []; // lỗi AI không làm hỏng cả phiếu - các dạng bài khác (code sinh) vẫn có đủ
+  }
+}
+
+const MAX_SGK_CONTEXT_LENGTH = 4000; // khớp MAX_REFERENCE_CONTEXT_LENGTH trong worksheetSampleAnalyzer.js
+
+/**
+ * ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
+ * Tải nội dung 1 chương/bài SGK (best-effort, KHÔNG làm hỏng cả lượt tạo phiếu nếu lỗi) - TÁI
+ * DÙNG đúng nguyên tắc `lessonPlanOrchestrator.js` đã kiểm định (try/catch quanh
+ * fetchMarkdownFromGitHub/fetchAdvancedBook, lỗi -> đẩy vào `warnings`, KHÔNG throw). Trả về
+ * { context, label, warning } - `context` = null nếu không chọn chương hoặc tải lỗi (luồng gọi
+ * vẫn hoạt động bình thường, chỉ là "giải toán có lời văn" sẽ kém bám sát SGK hơn).
+ */
+async function resolveSgkChapterContext({ grade, sgkVolume, sgkChapterId }) {
+  if (!sgkChapterId) return { context: null, label: null, warning: null };
+
+  const sgkGrade = WORKSHEET_GRADE_TO_SGK_GRADE[grade];
+  if (!sgkGrade) {
+    // Mầm non hoặc khối chưa map -> im lặng bỏ qua, KHÔNG coi là lỗi (UI vốn đã ẩn phần chọn
+    // chương SGK cho các khối này, xem WorksheetForm.jsx - nếu vẫn nhận được sgkChapterId ở đây
+    // thì có thể do gọi thẳng API bỏ qua form, không tin dữ liệu client tuyệt đối).
+    return { context: null, label: null, warning: null };
+  }
+
+  try {
+    const markdown =
+      sgkChapterId === ADVANCED_BOOK_MARKER
+        ? await fetchAdvancedBook(sgkGrade, "Toan")
+        : await fetchMarkdownFromGitHub(sgkGrade, "Toan", sgkVolume || "1", sgkChapterId);
+    const label = sgkChapterId === ADVANCED_BOOK_MARKER ? "Sách nâng cao (toàn bộ)" : `Chương/Bài ${sgkChapterId}`;
+    return { context: markdown.slice(0, MAX_SGK_CONTEXT_LENGTH), label, warning: null };
+  } catch (err) {
+    return {
+      context: null,
+      label: null,
+      warning: `Không tải được tài liệu SGK cho bài đã chọn (${err.message}) - phiếu vẫn được tạo bình thường, nhưng "giải toán có lời văn" có thể kém bám sát SGK hơn.`,
+    };
   }
 }
 
@@ -207,6 +246,12 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
  *   thích (xem teacherPreferenceStore.js) - được ưu tiên THẤP HƠN sampleSpec (nếu giáo viên vừa
  *   upload phiếu mẫu ở lần này, ý định "theo phiếu mẫu" rõ ràng hơn ý thích lưu từ trước), và
  *   CHỈ áp dụng CÓ XÁC SUẤT (xem pickLayoutWithPreference()) để không quay lại vấn đề lặp khuôn.
+ * @param config.sgkVolume, config.sgkChapterId  (GIAI ĐOẠN 5, tuỳ chọn) Tập + Chương/Bài SGK giáo
+ *   viên chọn (qua /api/chapters, xem WorksheetForm.jsx) - nội dung chương này được tải server-
+ *   side (best-effort, xem resolveSgkChapterContext()) và ưu tiên CAO NHẤT làm ngữ cảnh chủ đề
+ *   cho AI soạn "giải toán có lời văn" (cao hơn cả referenceContext từ file mẫu upload, vì đây là
+ *   tín hiệu "giáo viên đang dạy đúng bài này" rõ ràng và chính thống hơn). Chỉ áp dụng cho
+ *   LOP_1/LOP_2 (Mầm non không có SGK theo chương, xem WORKSHEET_GRADE_TO_SGK_GRADE).
  */
 export async function generateWorksheet({
   grade,
@@ -217,6 +262,8 @@ export async function generateWorksheet({
   sampleSpec = null,
   referenceContext = null,
   favoriteLayoutId = null,
+  sgkVolume = null,
+  sgkChapterId = null,
 }) {
   if (!WORKSHEET_GRADES[grade]) throw new Error(`Khối lớp không hợp lệ: ${grade}`);
 
@@ -241,10 +288,20 @@ export async function generateWorksheet({
     layout = pickRandomLayout(previousLayoutId);
   }
 
-  // Ngữ cảnh chủ đề cho bài toán: ưu tiên đoạn text trích thô (referenceContext, chính xác hơn),
-  // nếu không có thì dùng themeHints do AI suy luận từ ảnh/PDF scan (kém chi tiết hơn nhưng vẫn
-  // hữu ích hơn là không có gì).
-  const wordProblemContext = referenceContext || sampleSpec?.themeHints || null;
+  // ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
+  const warnings = [];
+  const { context: sgkContext, label: sgkLabel, warning: sgkWarning } = await resolveSgkChapterContext({
+    grade,
+    sgkVolume,
+    sgkChapterId,
+  });
+  if (sgkWarning) warnings.push(sgkWarning);
+
+  // Ngữ cảnh chủ đề cho bài toán: ƯU TIÊN chương SGK giáo viên vừa chọn (sgkContext - tín hiệu
+  // "đang dạy đúng bài này" rõ ràng, chính thống nhất), sau đó đến đoạn text trích thô từ file
+  // mẫu upload (referenceContext, chính xác nhưng có thể không phải bài đang dạy), cuối cùng mới
+  // đến themeHints do AI suy luận từ ảnh/PDF scan (kém chi tiết nhất, chỉ còn hơn không có gì).
+  const wordProblemContext = sgkContext || referenceContext || sampleSpec?.themeHints || null;
 
   // ================== GIAI ĐOẠN 4 ==================
   // Layout "adventure_map" (bản đồ phiêu lưu) được MÔ TẢ là "mascot chính dẫn dắt xuyên suốt
@@ -321,7 +378,7 @@ export async function generateWorksheet({
     if (section) sections.push(section);
   }
 
-  return { sections, layout, answerKeyText };
+  return { sections, layout, answerKeyText, warnings, sgkChapterLabel: sgkLabel };
 }
 
 /** Danh sách dạng bài ĐÃ TRIỂN KHAI VÀ CHỌN ĐƯỢC (bỏ "planned" và "hiddenFromForm") cho 1

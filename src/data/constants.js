@@ -29,3 +29,16 @@ export const ADVANCED_BOOK_MARKER = "__NANG_CAO__";
  */
 export const PAGE_A4_MM = { width: 210, height: 297 };
 export const PAGE_MARGIN_MM = { top: 20, bottom: 20, left: 18, right: 18 };
+
+/**
+ * ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
+ * "Phiếu bài tập" dùng mã khối riêng (MAM_NON/LOP_1/LOP_2 - xem WORKSHEET_GRADES trong
+ * worksheetSchemas.js), trong khi repo SGK (githubService.js) dùng SỐ LỚP thô (lop_1, lop_2...,
+ * xem quy ước "sach_giao_khoa/lop_{grade}/..."). Mapping này nối 2 hệ thống lại - CHỈ có
+ * LOP_1/LOP_2 (Mầm non KHÔNG có SGK theo chương chính thức, giống cách lessonPlanTemplates.js
+ * xử lý "isPreschoolGrade" cho Giáo án - tái dùng đúng nguyên tắc đó).
+ */
+export const WORKSHEET_GRADE_TO_SGK_GRADE = {
+  LOP_1: "1",
+  LOP_2: "2",
+};
