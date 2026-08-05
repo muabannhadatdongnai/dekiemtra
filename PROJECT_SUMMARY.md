@@ -225,6 +225,66 @@ src/
     hiển thị, có thể bổ sung nhanh nếu giáo viên thấy cần.
 
 
+## 5f. Giai đoạn 6 (bên ngoài) - Mở rộng sang Tiếng Việt
+- **Tận dụng "chỗ đứng" đã có sẵn**: `worksheetExerciseCatalog.js` từ trước đã khai báo 4 dạng bài
+  Tiếng Việt với `source: "planned"` (chỉ là placeholder, chưa chạy được) - `khoanh_tu_loai`,
+  `noi_tu_nhom`, `dien_tu_cho_san`, `dat_cau_theo_mau` (LOP_1/LOP_2, riêng `dat_cau_theo_mau` chỉ
+  LOP_2). Giai đoạn này viết generator THẬT cho cả 4 và đổi `source` -> `"ai"` (không dạng nào
+  sinh được bằng code thuần như Toán - từ vựng/câu văn cần AI).
+- **`worksheetGenerator.js`** (thay đổi lớn nhất):
+  - 4 generator mới (`generateKhoanhTuLoai`/`generateNoiTuNhom`/`generateDienTuChoSan`/
+    `generateDatCauTheoMau`), theo ĐÚNG pattern `generateWordProblems()` đã có (1 prompt/dạng, 1
+    lần gọi AI/dạng, KHÔNG throw khi lỗi). Validate CHẶT hơn `generateWordProblems` vì JSON trả về
+    phức tạp hơn: `khoanh_tu_loai` loại bỏ item nếu `targetWord` không THỰC SỰ nằm trong
+    `sentence`; `dien_tu_cho_san` loại câu nếu `answer` không nằm trong `wordBank`; `noi_tu_nhom`
+    loại cặp trùng `right` (tránh nhiều đáp án đúng khi nối).
+  - Thêm `subject` param (mặc định "TOAN") xuyên suốt: lọc catalog (`getSelectableCatalogFor`),
+    chọn bảng thứ tự mặc định (`DEFAULT_SECTION_ORDER` vs `DEFAULT_SECTION_ORDER_TIENG_VIET`),
+    môn khi tải chương SGK (`resolveSgkChapterContext` giờ dùng "Tieng_Viet" thay vì hard-code
+    "Toan"), và mascot đại diện cho layout "adventure_map" (`representativeKey`).
+  - `answerKeyText` đổi từ "gán 1 lần cho giai_toan" sang "gộp nhiều phần" (`answerKeyParts`) -
+    giờ QR "chấm nhanh" gộp đáp án của TẤT CẢ dạng AI-sinh có đáp án cố định (giải toán + khoanh
+    từ + nối từ + điền từ), KHÔNG có "đặt câu theo mẫu" (học sinh tự sáng tạo câu, không có 1 đáp
+    án đúng duy nhất để đối chiếu).
+- **`worksheetExerciseCatalog.js`**: 4 entry đổi `source: "planned"` -> `"ai"`, thêm `defaultCount`
+  (khớp UI Giai đoạn 2 cần để dựng ô nhập số mặc định).
+- **`WorksheetPreview.jsx`/`worksheetExportService.js`**: thêm 4 renderer (web + Word) cho từng
+  dạng. `noi_tu_nhom` tái dùng ĐÚNG kỹ thuật bố cục "2 cột nối chấm tròn" của `noi_phep_tinh`
+  (web: flex 2 cột; Word: `TabStopType.RIGHT` + ký tự tab) - chỉ khác nội dung CHỮ thay vì SỐ. Web
+  preview KHÔNG hiện đáp án inline (giống mọi dạng khác từ trước - chỉ QR); Word CÓ hiện đáp án
+  inline khi `showAnswers=true` (giữ đúng hành vi cũ của `giai_toan`).
+- **`WorksheetForm.jsx`**: thêm dropdown "Môn học" (Toán/Tiếng Việt) cạnh "Khối lớp" -
+  `WORKSHEET_SUBJECTS` (chỉ 2 môn có generator thật, KHÔNG dùng nguyên `SUBJECTS` trong
+  `config.js` vì cái đó có cả Tiếng Anh/Lịch sử dành cho luồng Đề thi, chưa có generator Phiếu bài
+  tập). Đổi môn -> tự đồng bộ lại danh sách dạng bài + tiêu đề mặc định (CHỈ khi giáo viên chưa tự
+  sửa tiêu đề, tránh ghi đè tuỳ chỉnh riêng). SGK subject-aware ("Tieng_Viet" khi chọn Tiếng Việt).
+- **Phát hiện + sửa 1 bug tiềm ẩn trong lúc làm** (không phải yêu cầu ban đầu nhưng bắt buộc phải
+  sửa để không xung đột dữ liệu): "công thức đề" (Giai đoạn 3) trước đây lưu
+  `favoriteExerciseCounts[grade]` PHẲNG (chỉ 1 môn) - nếu giữ nguyên, lưu công thức Tiếng Việt sẽ
+  XOÁ MẤT công thức Toán đã lưu cho CÙNG khối lớp (2 môn key khác nhau hoàn toàn nhưng đè lên cùng
+  1 chỗ). Đã sửa `teacherPreferenceStore.js` lồng thêm 1 cấp theo `subject`
+  (`favoriteExerciseCounts[grade][subject]`), CÓ migration tự động cho dữ liệu cũ đã lưu từ trước
+  (coi dữ liệu phẳng cũ là của môn "TOAN" khi đọc lên, không cần script migrate riêng, không mất
+  dữ liệu giáo viên đã lưu qua Giai đoạn 3). `/api/worksheet-preference` route validate thêm
+  `subject` bắt buộc trong `gradeExerciseCounts`.
+- **Đã test kỹ, đặc biệt phần validate AI JSON** (mock AI trả về item CỐ TÌNH hỏng - targetWord
+  không khớp câu, thiếu field, trùng lặp, answer ngoài wordBank - xác nhận tất cả bị lọc đúng,
+  không sót); test đầy đủ 4 kịch bản hồi quy cho Giai đoạn 2-5 (không bị phá bởi refactor lớn
+  thêm subject); test riêng "an toàn không lẫn môn" (cố tình gửi key Toán khi subject=Tiếng Việt
+  -> bị lọc sạch, không lọt vào phiếu); test migration `teacherPreferenceStore.js` 4 bước (dữ liệu
+  cũ tự động migrate đúng, lưu thêm môn khác không xoá môn cũ, cập nhật là THAY THẾ không cộng
+  dồn).
+- **Việc CHƯA làm** (ngoài phạm vi giai đoạn này):
+  - Chỉ 4 dạng bài đã lên kế hoạch từ trước - CHƯA có "chính tả nghe-viết", "đọc hiểu đoạn văn
+    ngắn", "nhận biết âm/vần" (Lớp 1) như phác thảo ban đầu trong roadmap 7 bước - có thể làm
+    thêm nếu giáo viên cần, theo ĐÚNG pattern đã thiết lập ở giai đoạn này (thêm catalog entry +
+    generator AI + 2 renderer).
+  - SGK linking (Giai đoạn 5) đã tự động hoạt động được cho Tiếng Việt (dùng subject
+    "Tieng_Viet") nhưng CHƯA test thực tế với nội dung SGK Tiếng Việt thật (cần repo SGK có sẵn
+    file `tieng_viet_tY/chuong_Z.md` - sandbox này chưa cấu hình `GITHUB_KNOWLEDGE_REPO` nên
+    không test được nội dung thật, chỉ test được "lỗi không phá phiếu" như Giai đoạn 5).
+
+
 ## 6. Tính năng ĐANG LÀM DỞ — "Phiếu bài tập" (Mầm non - Lớp 2)
 ⚠️ **MỤC NÀY ĐÃ LỖI THỜI** (viết từ giai đoạn code còn chưa build/test lần nào) - danh sách
 "CHƯA XONG" bên dưới hầu hết ĐÃ XONG từ lâu (đã build/test/đóng gói zip nhiều lần, xem mục
