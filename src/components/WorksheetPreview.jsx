@@ -497,6 +497,110 @@ function GiaiToanSection({ items, accent }) {
   );
 }
 
+/**
+ * ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+ * "Khoanh từ chỉ hoạt động / đặc điểm" - chỉ hiện câu văn (KHÔNG lộ targetWord - học sinh tự
+ * khoanh trên bản in, đáp án nằm trong QR "chấm nhanh" nếu includeAnswers, xem
+ * worksheetGenerator.js answerKeyParts).
+ */
+function KhoanhTuLoaiSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 14 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", gap: 8 }}>
+          <span style={{ color: accent, fontWeight: 700 }}>{i + 1}.</span>
+          <span>{it.sentence}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** "Nối từ với nhóm thích hợp" - CÙNG bố cục 2 cột-nối như NoiPhepTinhSection (quen thuộc với
+ * học sinh), chỉ khác nội dung là CHỮ thay vì SỐ. */
+function NoiTuNhomSection({ data, accent }) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
+      <div>
+        {data.pairs.map((p, i) => (
+          <div key={i} style={{ marginBottom: 10 }}>
+            {p.left} <span style={{ marginLeft: 6, color: accent, fontWeight: 700 }}>●</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ textAlign: "right" }}>
+        {data.shuffledRight.map((r, i) => (
+          <div key={i} style={{ marginBottom: 10 }}>
+            <span style={{ marginRight: 6, color: accent, fontWeight: 700 }}>●</span> {r}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** "Điền từ thích hợp vào chỗ trống" - ngân hàng từ dạng "chip" ở trên (đúng kiểu mẫu in sẵn
+ * thường thấy), câu có "___" thay bằng khoảng trống viền chấm bên dưới. */
+function DienTuChoSanSection({ data, accent }) {
+  return (
+    <div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          padding: "8px 10px",
+          background: "#fff",
+          border: `1.5px dashed ${accent}`,
+          borderRadius: 12,
+          marginBottom: 10,
+          fontSize: 13,
+          fontWeight: 600,
+        }}
+      >
+        {data.wordBank.map((w, i) => (
+          <span key={i} style={{ padding: "2px 10px", border: `1px solid ${accent}`, borderRadius: 999, color: accent }}>
+            {w}
+          </span>
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 14 }}>
+        {data.sentences.map((s, i) => {
+          const parts = s.template.split("___");
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+              <span style={{ color: accent, fontWeight: 700, marginRight: 4 }}>{i + 1}.</span>
+              <span>{parts[0]}</span>
+              <span style={{ display: "inline-block", minWidth: 60, borderBottom: `2px dotted ${accent}`, height: 18 }} />
+              <span>{parts[1]}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** "Đặt câu theo mẫu" - mẫu câu (đậm) + ví dụ (chữ nghiêng, nhạt màu) + 1 dòng kẻ trống để học
+ * sinh tự viết câu riêng (KHÔNG có đáp án cố định - xem worksheetGenerator.js, không đẩy vào
+ * answerKeyParts). */
+function DatCauTheoMauSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 14 }}>
+      {items.map((it, i) => (
+        <div key={i}>
+          <p style={{ marginBottom: 2 }}>
+            <span style={{ color: accent, fontWeight: 700 }}>{i + 1}. Mẫu: </span>
+            <strong>{it.pattern}</strong>
+          </p>
+          <p style={{ marginBottom: 6, fontStyle: "italic", color: "#64748b" }}>VD: {it.example}</p>
+          <div style={{ borderBottom: `1.5px dashed ${accent}`, height: 24 }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function WorksheetPreview({ worksheet, meta }) {
   if (!worksheet?.sections?.length) {
     return (
@@ -600,6 +704,10 @@ export default function WorksheetPreview({ worksheet, meta }) {
                       <DemHinhUngDungSection data={section.data} accent={t.border} />
                     )}
                     {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}
+                    {section.type === "khoanh_tu_loai" && <KhoanhTuLoaiSection items={section.items} accent={t.border} />}
+                    {section.type === "noi_tu_nhom" && <NoiTuNhomSection data={section.data} accent={t.border} />}
+                    {section.type === "dien_tu_cho_san" && <DienTuChoSanSection data={section.data} accent={t.border} />}
+                    {section.type === "dat_cau_theo_mau" && <DatCauTheoMauSection items={section.items} accent={t.border} />}
                   </ExerciseBox>
                 );
               })}

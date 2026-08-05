@@ -48,9 +48,31 @@ function warnLocalFallbackOnce() {
   );
 }
 
+/**
+ * ================== GIAI ĐOẠN 6 (tương thích ngược) ==================
+ * TRƯỚC Giai đoạn 6, `favoriteExerciseCounts[grade]` là counts PHẲNG (VD { tinh_nham: 6, ... })
+ * vì lúc đó chỉ có 1 môn (Toán). Giờ lồng thêm 1 cấp theo subject (VD { TOAN: { tinh_nham: 6 } })
+ * để 2 môn không ghi đè nhau (xem setWorksheetPreference bên dưới). Dữ liệu ĐÃ LƯU TỪ TRƯỚC (nếu
+ * app đã có giáo viên dùng qua Giai đoạn 3) vẫn ở dạng PHẲNG trong Redis/file - hàm này tự nhận
+ * diện và "nâng cấp" ngay khi đọc (coi dữ liệu phẳng cũ là của môn "TOAN", vì trước đây chỉ có
+ * môn đó), KHÔNG cần chạy script migrate riêng, KHÔNG làm mất dữ liệu giáo viên đã lưu.
+ */
+function migrateFavoriteExerciseCounts(raw) {
+  if (!raw || typeof raw !== "object") return {};
+  const migrated = {};
+  for (const [grade, value] of Object.entries(raw)) {
+    if (!value || typeof value !== "object") continue;
+    const looksAlreadyNested = "TOAN" in value || "TIENG_VIET" in value;
+    migrated[grade] = looksAlreadyNested ? value : { TOAN: value };
+  }
+  return migrated;
+}
+
 /** @returns {Promise<{ favoriteLayoutId: string|null, favoriteExerciseCounts: Object<string,Object> } | null>}
  * null nếu chưa lưu gì / lỗi. favoriteExerciseCounts luôn là object (rỗng {} nếu chưa lưu gì),
- * KHÔNG BAO GIỜ null, để phía gọi khỏi phải tự kiểm tra optional-chain nhiều lớp. */
+ * KHÔNG BAO GIỜ null, để phía gọi khỏi phải tự kiểm tra optional-chain nhiều lớp. Dạng trả về:
+ * { [grade]: { [subject]: {key: count} } } (đã tự động migrate dữ liệu cũ nếu cần, xem
+ * migrateFavoriteExerciseCounts() ở trên). */
 export async function getWorksheetPreference(username) {
   try {
     const useUpstash = isUpstashConfigured();
@@ -66,7 +88,7 @@ export async function getWorksheetPreference(username) {
     const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
     return {
       favoriteLayoutId: parsed?.favoriteLayoutId || null,
-      favoriteExerciseCounts: parsed?.favoriteExerciseCounts || {},
+      favoriteExerciseCounts: migrateFavoriteExerciseCounts(parsed?.favoriteExerciseCounts),
     };
   } catch (err) {
     console.warn("[teacherPreferenceStore] Lỗi đọc tuỳ chọn, bỏ qua:", err.message);
@@ -78,7 +100,7 @@ export async function getWorksheetPreference(username) {
  * GIAI ĐOẠN 3 MỚI: nhận UPDATE MỘT PHẦN (không phải toàn bộ preference) rồi tự đọc-gộp-ghi lại,
  * để lưu "công thức đề" cho 1 khối lớp KHÔNG xoá mất favoriteLayoutId hay công thức của khối
  * lớp khác đã lưu trước đó.
- * @param updates { favoriteLayoutId?: string|null, gradeExerciseCounts?: { grade: string, counts: Object } }
+ * @param updates { favoriteLayoutId?: string|null, gradeExerciseCounts?: { grade: string, subject: string, counts: Object } }
  */
 export async function setWorksheetPreference(username, updates) {
   try {
@@ -91,8 +113,17 @@ export async function setWorksheetPreference(username, updates) {
       favoriteExerciseCounts: { ...existing.favoriteExerciseCounts },
       updatedAt: Date.now(),
     };
-    if (updates.gradeExerciseCounts?.grade) {
-      merged.favoriteExerciseCounts[updates.gradeExerciseCounts.grade] = updates.gradeExerciseCounts.counts;
+    // GIAI ĐOẠN 6: lồng thêm 1 cấp theo MÔN (subject) bên trong mỗi khối lớp - TRƯỚC Giai đoạn 6
+    // chỉ có 1 môn (Toán) nên `favoriteExerciseCounts[grade]` LÀ counts luôn; giờ có 2 môn với
+    // key hoàn toàn khác nhau (VD "tinh_nham" vs "khoanh_tu_loai"), lưu chung 1 cấp sẽ khiến lưu
+    // công thức Tiếng Việt XOÁ MẤT công thức Toán đã lưu trước đó cho CÙNG khối lớp - phải tách
+    // riêng theo subject để 2 môn không đè lên nhau.
+    if (updates.gradeExerciseCounts?.grade && updates.gradeExerciseCounts?.subject) {
+      const { grade, subject, counts } = updates.gradeExerciseCounts;
+      merged.favoriteExerciseCounts[grade] = {
+        ...(existing.favoriteExerciseCounts?.[grade] || {}),
+        [subject]: counts,
+      };
     }
 
     const payload = JSON.stringify(merged);

@@ -209,18 +209,20 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     colorThemeTags: ["orange", "brown", "green"],
   },
 
-  // ===== Tiếng Việt - GIAI ĐOẠN 0 chỉ khai báo chỗ đứng trong catalog (source:"planned"),
-  // generator thật (cần AI vì đây là ngôn ngữ, không tính toán được bằng code) sẽ làm ở G1/G2
-  // theo đúng roadmap đã thống nhất. Khai báo trước để schema layout/mascot dùng chung ngay
-  // được, không phải sửa cấu trúc catalog lần 2 khi thêm Tiếng Việt thật.
+  // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn
+  // ngữ - từ vựng/câu văn, không tính toán được bằng code như các dạng Toán). Trước đây chỉ
+  // khai báo "chỗ đứng" (source:"planned") để schema layout/mascot dùng chung được ngay - giờ
+  // đã có generator thật trong worksheetGenerator.js (generateKhoanhTuLoai/generateNoiTuNhom/
+  // generateDienTuChoSan/generateDatCauTheoMau), đổi source -> "ai".
   {
     key: "khoanh_tu_loai",
     subject: "TIENG_VIET",
     label: "Khoanh từ chỉ hoạt động / đặc điểm",
     skillGroup: "tu_vung",
-    source: "planned",
+    source: "ai",
     minGrade: "LOP_1",
     maxGrade: "LOP_2",
+    defaultCount: 5,
     instructionVariants: ["Khoanh tròn vào từ chỉ hoạt động.", "Khoanh tròn vào từ chỉ đặc điểm."],
     mascotPool: ["📚", "✏️", "🔍"],
     colorThemeTags: ["blue", "green"],
@@ -230,9 +232,10 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     subject: "TIENG_VIET",
     label: "Nối từ với nhóm thích hợp",
     skillGroup: "tu_vung",
-    source: "planned",
+    source: "ai",
     minGrade: "LOP_1",
     maxGrade: "LOP_2",
+    defaultCount: 5,
     instructionVariants: ["Nối từ chỉ hoạt động với nhóm thích hợp.", "Nối sự vật với đặc điểm thích hợp."],
     mascotPool: ["🔗", "🧩"],
     colorThemeTags: ["green", "purple"],
@@ -242,9 +245,10 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     subject: "TIENG_VIET",
     label: "Điền từ thích hợp vào chỗ trống",
     skillGroup: "ngu_phap",
-    source: "planned",
+    source: "ai",
     minGrade: "LOP_1",
     maxGrade: "LOP_2",
+    defaultCount: 5,
     instructionVariants: ["Điền từ thích hợp vào chỗ trống."],
     mascotPool: ["✍️", "📝"],
     colorThemeTags: ["blue", "orange"],
@@ -254,9 +258,10 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     subject: "TIENG_VIET",
     label: "Đặt câu theo mẫu",
     skillGroup: "sang_tao",
-    source: "planned",
+    source: "ai",
     minGrade: "LOP_2",
     maxGrade: "LOP_2",
+    defaultCount: 2,
     instructionVariants: ["Đặt 2 câu theo mẫu Ai/Con gì + làm gì.", "Đặt 2 câu theo mẫu Ai/cái gì/con gì + thế nào."],
     mascotPool: ["💡", "🖊️"],
     colorThemeTags: ["purple", "pink"],

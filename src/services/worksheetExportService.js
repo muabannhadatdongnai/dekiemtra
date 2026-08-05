@@ -238,6 +238,84 @@ function buildGiaiToanParagraphs(items, showAnswers) {
   });
 }
 
+/**
+ * ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+ * "Khoanh từ chỉ hoạt động / đặc điểm" - showAnswers=false chỉ in câu (học sinh tự khoanh khi
+ * làm bài in trên giấy); showAnswers=true (bản giáo viên) in kèm từ đáp án + loại từ.
+ */
+function buildKhoanhTuLoaiParagraphs(items, showAnswers) {
+  return items.map((it, i) => {
+    const wordTypeLabel = it.wordType === "hoat_dong" ? "chỉ hoạt động" : "chỉ đặc điểm";
+    const text = showAnswers ? `${i + 1}. ${it.sentence}   (Đáp án: "${it.targetWord}" - từ ${wordTypeLabel})` : `${i + 1}. ${it.sentence}`;
+    return {
+      children: [new TextRun({ text, font: FONT, size: 24 })],
+      spacing: { after: 100 },
+    };
+  });
+}
+
+/** "Nối từ với nhóm thích hợp" - CÙNG kỹ thuật tabStop 2-cột như buildNoiPhepTinhParagraphs()
+ * (chỉ khác nội dung là CHỮ thay vì SỐ). showAnswers=true in thẳng cặp đã ghép đúng. */
+function buildNoiTuNhomParagraphs(data, showAnswers) {
+  if (showAnswers) {
+    return data.pairs.map((p) => ({
+      children: [new TextRun({ text: `${p.left} - ${p.right}`, font: FONT, size: 24 })],
+      spacing: { after: 100 },
+    }));
+  }
+  return data.pairs.map((p, i) => ({
+    children: [
+      new TextRun({ text: `${p.left}   ●`, font: FONT, size: 24 }),
+      new TextRun({ text: "\t", font: FONT, size: 24 }),
+      new TextRun({ text: `●   ${data.shuffledRight[i]}`, font: FONT, size: 24 }),
+    ],
+    tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+    spacing: { after: 100 },
+  }));
+}
+
+/** "Điền từ thích hợp vào chỗ trống" - dòng đầu in ngân hàng từ (đóng khung bằng dấu ngoặc cho
+ * dễ phân biệt), các câu bên dưới giữ nguyên "___" nếu KHÔNG showAnswers, thay bằng đáp án nếu có. */
+function buildDienTuChoSanParagraphs(data, showAnswers) {
+  const bankLine = {
+    children: [new TextRun({ text: `Ngân hàng từ: ${data.wordBank.join(" - ")}`, bold: true, font: FONT, size: 24 })],
+    spacing: { after: 120 },
+  };
+  const sentenceLines = data.sentences.map((s, i) => ({
+    children: [
+      new TextRun({
+        text: `${i + 1}. ${showAnswers ? s.template.replace("___", s.answer) : s.template}`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 100 },
+  }));
+  return [bankLine, ...sentenceLines];
+}
+
+/** "Đặt câu theo mẫu" - mẫu + ví dụ + 1 dòng kẻ trống để viết (KHÔNG có showAnswers - không có
+ * đáp án cố định, học sinh tự sáng tạo câu riêng theo mẫu). */
+function buildDatCauTheoMauParagraphs(items) {
+  return items.flatMap((it, i) => [
+    {
+      children: [
+        new TextRun({ text: `${i + 1}. Mẫu: `, bold: true, font: FONT, size: 24 }),
+        new TextRun({ text: it.pattern, bold: true, font: FONT, size: 24 }),
+      ],
+      spacing: { after: 40 },
+    },
+    {
+      children: [new TextRun({ text: `VD: ${it.example}`, italics: true, font: FONT, size: 22 })],
+      spacing: { after: 60 },
+    },
+    {
+      children: [new TextRun({ text: WRITING_LINE, font: FONT, size: 24 })],
+      spacing: { after: 140 },
+    },
+  ]);
+}
+
 // =========================== GHÉP 1 "KHUNG MÀU" (header + nội dung) ===========================
 
 function buildSectionContentOptions(section, showAnswers) {
@@ -260,6 +338,14 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildDemHinhUngDungParagraphs(section.data, showAnswers);
     case "giai_toan":
       return buildGiaiToanParagraphs(section.items, showAnswers);
+    case "khoanh_tu_loai":
+      return buildKhoanhTuLoaiParagraphs(section.items, showAnswers);
+    case "noi_tu_nhom":
+      return buildNoiTuNhomParagraphs(section.data, showAnswers);
+    case "dien_tu_cho_san":
+      return buildDienTuChoSanParagraphs(section.data, showAnswers);
+    case "dat_cau_theo_mau":
+      return buildDatCauTheoMauParagraphs(section.items);
     default:
       return [];
   }

@@ -28,16 +28,27 @@ const GRADES = [
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
 
-function defaultCountsFor(grade) {
-  return Object.fromEntries(getSelectableCatalogFor(grade).map((item) => [item.key, item.defaultCount ?? 0]));
+// ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+// Chỉ 2 môn thực sự có generator (source khác "planned") trong worksheetExerciseCatalog.js -
+// KHÔNG tái dùng nguyên SUBJECTS trong config.js (có cả Tiếng Anh/Lịch sử, dành cho luồng Đề thi
+// khác, chưa có generator cho Phiếu bài tập).
+const WORKSHEET_SUBJECTS = [
+  { value: "TOAN", label: "Toán" },
+  { value: "TIENG_VIET", label: "Tiếng Việt" },
+];
+const DEFAULT_TITLE_BY_SUBJECT = { TOAN: "BÀI TẬP TOÁN", TIENG_VIET: "BÀI TẬP TIẾNG VIỆT" };
+
+function defaultCountsFor(grade, subject) {
+  return Object.fromEntries(getSelectableCatalogFor(grade, subject).map((item) => [item.key, item.defaultCount ?? 0]));
 }
 
 export default function WorksheetForm({ onGenerated }) {
   const [grade, setGrade] = useState("LOP_1");
-  const [title, setTitle] = useState("BÀI TẬP TOÁN");
+  const [subject, setSubject] = useState("TOAN");
+  const [title, setTitle] = useState(DEFAULT_TITLE_BY_SUBJECT.TOAN);
   // GIAI ĐOẠN 2: khởi tạo từ catalog (defaultCount của từng dạng bài) thay vì object hard-code
   // cố định - thêm/bớt dạng bài trong worksheetExerciseCatalog.js giờ không cần sửa file này.
-  const [exerciseCounts, setExerciseCounts] = useState(() => defaultCountsFor("LOP_1"));
+  const [exerciseCounts, setExerciseCounts] = useState(() => defaultCountsFor("LOP_1", "TOAN"));
   const [includeAnswers, setIncludeAnswers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -74,9 +85,9 @@ export default function WorksheetForm({ onGenerated }) {
 
   const hasSgkForGrade = Boolean(WORKSHEET_GRADE_TO_SGK_GRADE[grade]); // false cho Mầm non
 
-  // Tự động tải danh sách bài/chương SGK khi khối lớp/Tập đổi - TÁI DÙNG đúng API/pattern đã có
-  // ở LessonPlanForm.jsx (fetchChaptersRequest -> /api/chapters, dùng chung cho Giáo án + Đề thi
-  // + giờ thêm Phiếu bài tập). Bỏ qua với Mầm non (không có SGK theo chương).
+  // Tự động tải danh sách bài/chương SGK khi khối lớp/Tập/Môn đổi - TÁI DÙNG đúng API/pattern đã
+  // có ở LessonPlanForm.jsx (fetchChaptersRequest -> /api/chapters, dùng chung cho Giáo án + Đề
+  // thi + giờ thêm Phiếu bài tập). Bỏ qua với Mầm non (không có SGK theo chương).
   useEffect(() => {
     if (!hasSgkForGrade) {
       setAvailableChapters([]);
@@ -89,7 +100,10 @@ export default function WorksheetForm({ onGenerated }) {
       setChaptersError("");
       setSgkChapterId("");
       try {
-        const data = await fetchChaptersRequest({ grade: WORKSHEET_GRADE_TO_SGK_GRADE[grade], subject: "Toan", volume: sgkVolume });
+        // GIAI ĐOẠN 6: subject SGK dùng đúng giá trị đã có trong config.js (SUBJECTS) - "Toan"
+        // hay "Tieng_Viet" - KHÔNG hard-code "Toan" như trước Giai đoạn 6.
+        const sgkSubject = subject === "TIENG_VIET" ? "Tieng_Viet" : "Toan";
+        const data = await fetchChaptersRequest({ grade: WORKSHEET_GRADE_TO_SGK_GRADE[grade], subject: sgkSubject, volume: sgkVolume });
         if (!cancelled) setAvailableChapters(data.chapters || []);
       } catch (err) {
         if (!cancelled) {
@@ -104,17 +118,19 @@ export default function WorksheetForm({ onGenerated }) {
     return () => {
       cancelled = true;
     };
-  }, [grade, sgkVolume, hasSgkForGrade]);
+  }, [grade, subject, sgkVolume, hasSgkForGrade]);
 
   const totalSections = Object.values(exerciseCounts).filter((c) => c > 0).length;
 
-  // GIAI ĐOẠN 2: danh sách dạng bài hiện đúng theo khối lớp (catalog có minGrade/maxGrade
-  // riêng từng dạng - VD "Nối phép tính" chỉ từ Lớp 1, "Đếm và viết số" chỉ tới Lớp 1). TRƯỚC
-  // ĐÂY form hiện đủ cả 7 ô bất kể khối lớp nào, không khớp với catalog đã khai báo.
-  const visibleExercises = useMemo(() => getSelectableCatalogFor(grade), [grade]);
+  // GIAI ĐOẠN 2 (theo khối lớp) + GIAI ĐOẠN 6 (theo môn học): danh sách dạng bài hiện đúng theo
+  // CẢ khối lớp LẪN môn - catalog có minGrade/maxGrade riêng từng dạng, và giờ có cả 2 môn
+  // (TOAN/TIENG_VIET) với key hoàn toàn khác nhau.
+  const visibleExercises = useMemo(() => getSelectableCatalogFor(grade, subject), [grade, subject]);
 
-  // Đổi khối lớp -> đồng bộ lại exerciseCounts: giữ số đã nhập cho dạng bài vẫn còn hiện,
-  // dùng defaultCount cho dạng bài MỚI xuất hiện, bỏ dạng bài không còn phù hợp khối lớp mới.
+  // Đổi khối lớp HOẶC môn học -> đồng bộ lại exerciseCounts: giữ số đã nhập cho dạng bài vẫn còn
+  // hiện, dùng defaultCount cho dạng bài MỚI xuất hiện, bỏ dạng bài không còn phù hợp. LƯU Ý:
+  // TRƯỚC Giai đoạn 6, effect này chỉ phụ thuộc [grade] - thiếu subject trong deps sẽ khiến đổi
+  // môn học KHÔNG đồng bộ lại danh sách (bug tiềm ẩn nếu thêm subject mà quên sửa chỗ này).
   useEffect(() => {
     setExerciseCounts((prev) => {
       const next = {};
@@ -123,8 +139,13 @@ export default function WorksheetForm({ onGenerated }) {
       }
       return next;
     });
+    // Đổi môn học -> đặt lại tiêu đề mặc định theo môn, NHƯNG chỉ khi giáo viên CHƯA tự sửa tiêu
+    // đề (còn đúng 1 trong 2 giá trị mặc định) - tránh ghi đè tiêu đề giáo viên đã tự đặt riêng.
+    setTitle((prevTitle) =>
+      Object.values(DEFAULT_TITLE_BY_SUBJECT).includes(prevTitle) ? DEFAULT_TITLE_BY_SUBJECT[subject] : prevTitle
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grade]);
+  }, [grade, subject]);
 
   // Tải layout yêu thích đã lưu (nếu có) ngay khi mở form - không chặn giáo viên thao tác gì
   // cả, chỉ để sẵn favoriteLayoutId cho lần tạo phiếu đầu tiên đã có thể thiên vị theo sở thích.
@@ -140,13 +161,15 @@ export default function WorksheetForm({ onGenerated }) {
     })();
   }, []);
 
-  // Công thức đề đã lưu cho ĐÚNG khối lớp đang chọn (nếu có) - dùng để hiện banner gợi ý và cho
-  // nút "Dùng công thức đã lưu".
-  const savedFormulaForGrade = favoriteExerciseCounts[grade];
+  // Công thức đề đã lưu cho ĐÚNG khối lớp + môn học đang chọn (nếu có) - dùng để hiện banner gợi
+  // ý và cho nút "Dùng công thức đã lưu". GIAI ĐOẠN 6: lồng thêm cấp subject - trước đây
+  // `favoriteExerciseCounts[grade]` LÀ counts luôn (chỉ 1 môn); giờ phải qua thêm 1 cấp
+  // `[subject]` vì 2 môn có key hoàn toàn khác nhau, không được lẫn vào nhau.
+  const savedFormulaForGrade = favoriteExerciseCounts[grade]?.[subject];
   const hasSavedFormulaForGrade = Boolean(savedFormulaForGrade && Object.keys(savedFormulaForGrade).length > 0);
 
-  /** Áp công thức đề đã lưu (cho khối lớp hiện tại) vào form - giáo viên chủ động bấm, KHÔNG
-   * tự động âm thầm ghi đè để tránh mất công giáo viên vừa chỉnh tay xong lại bị thay đổi. */
+  /** Áp công thức đề đã lưu (cho khối lớp + môn hiện tại) vào form - giáo viên chủ động bấm,
+   * KHÔNG tự động âm thầm ghi đè để tránh mất công giáo viên vừa chỉnh tay xong lại bị thay đổi. */
   function applySavedFormula() {
     if (!savedFormulaForGrade) return;
     setExerciseCounts(() => {
@@ -158,14 +181,17 @@ export default function WorksheetForm({ onGenerated }) {
     });
   }
 
-  /** "⭐ Lưu công thức đề này" - lưu ĐÚNG tổ hợp dạng bài + số lượng hiện tại cho khối lớp đang
-   * chọn. Không cần đã tạo phiếu trước đó (khác nút "Lưu bố cục" - cái đó cần lastLayoutId). */
+  /** "⭐ Lưu công thức đề này" - lưu ĐÚNG tổ hợp dạng bài + số lượng hiện tại cho khối lớp + môn
+   * đang chọn. Không cần đã tạo phiếu trước đó (khác nút "Lưu bố cục" - cái đó cần lastLayoutId). */
   async function handleSaveFormula() {
     setSavingFormula(true);
     setFormulaSavedNotice("");
     try {
-      await saveWorksheetPreferenceRequest({ gradeExerciseCounts: { grade, counts: exerciseCounts } });
-      setFavoriteExerciseCounts((prev) => ({ ...prev, [grade]: exerciseCounts }));
+      await saveWorksheetPreferenceRequest({ gradeExerciseCounts: { grade, subject, counts: exerciseCounts } });
+      setFavoriteExerciseCounts((prev) => ({
+        ...prev,
+        [grade]: { ...(prev[grade] || {}), [subject]: exerciseCounts },
+      }));
       setFormulaSavedNotice("Đã lưu công thức đề cho khối này! Lần sau mở lại khối này sẽ có gợi ý dùng lại.");
     } catch (err) {
       setFormulaSavedNotice(`Lỗi khi lưu: ${err.message}`);
@@ -235,6 +261,7 @@ export default function WorksheetForm({ onGenerated }) {
       const data = await generateWorksheetRequest({
         username: session.username,
         grade,
+        subject,
         includeAnswers,
         exerciseCounts,
         previousLayoutId: lastLayoutId,
@@ -299,13 +326,27 @@ export default function WorksheetForm({ onGenerated }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">Khối lớp</label>
-        <select value={grade} onChange={(e) => setGrade(e.target.value)} className={inputClass}>
-          {GRADES.map((g) => (
-            <option key={g.value} value={g.value}>{g.label}</option>
-          ))}
-        </select>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Khối lớp</label>
+          <select value={grade} onChange={(e) => setGrade(e.target.value)} className={inputClass}>
+            {GRADES.map((g) => (
+              <option key={g.value} value={g.value}>{g.label}</option>
+            ))}
+          </select>
+        </div>
+        {/* ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+            Chọn môn quyết định TOÀN BỘ danh sách dạng bài bên dưới (visibleExercises), thứ tự
+            mặc định, và tiêu đề gợi ý (DEFAULT_TITLE_BY_SUBJECT) - đổi môn coi như "làm mới"
+            phần chọn dạng bài, giống hệt hành vi đổi khối lớp. */}
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Môn học</label>
+          <select value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass}>
+            {WORKSHEET_SUBJECTS.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div>

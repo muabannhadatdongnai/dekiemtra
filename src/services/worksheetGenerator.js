@@ -89,6 +89,191 @@ async function generateWordProblems({ grade, count, includeAnswers, referenceCon
 const MAX_SGK_CONTEXT_LENGTH = 4000; // khớp MAX_REFERENCE_CONTEXT_LENGTH trong worksheetSampleAnalyzer.js
 
 /**
+ * ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+ * 4 dạng bài Tiếng Việt (LOP_1/LOP_2) - TẤT CẢ đều cần AI (từ vựng/câu văn không tính toán được
+ * bằng code như Toán, xem worksheetExerciseCatalog.js). Theo ĐÚNG pattern generateWordProblems()
+ * ở trên: 1 prompt riêng/dạng, gọi generateContentWithFailover() 1 LẦN/dạng, validate CHẶT kết
+ * quả JSON trả về (AI có thể trả thiếu field/sai kiểu - KHÔNG tin tuyệt đối), lỗi -> trả mảng
+ * rỗng/null (KHÔNG throw, không làm hỏng các dạng bài khác trong cùng phiếu, giống nguyên tắc
+ * generateWordProblems()).
+ */
+const VIETNAMESE_MODEL = "gemini-3.5-flash";
+
+function vietnameseGradeLabel(grade) {
+  return WORKSHEET_GRADES[grade]?.label || grade;
+}
+
+function buildReferenceContextBlock(referenceContext) {
+  return referenceContext
+    ? `\n\nGiáo viên có cung cấp 1 đoạn TÀI LIỆU THAM KHẢO (ngữ cảnh/chủ đề đang dạy) - ưu tiên dùng
+từ vựng/chủ đề tương tự nếu phù hợp, TUYỆT ĐỐI KHÔNG chép nguyên văn câu chữ:\n\nTÀI LIỆU THAM KHẢO:\n${referenceContext}`
+    : "";
+}
+
+/** "Khoanh từ chỉ hoạt động / đặc điểm" - mỗi câu có 1 từ mục tiêu (động từ hoặc tính từ) để học
+ * sinh khoanh tròn trên bản in. wordType chỉ dùng nội bộ (đáp án), KHÔNG hiện ra đề bài. */
+async function generateKhoanhTuLoai({ grade, count, referenceContext }) {
+  if (count <= 0) return [];
+  const prompt = `
+Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
+Soạn ĐÚNG ${count} câu văn NGẮN (6-10 chữ), MỖI câu chứa ĐÚNG 1 từ chỉ HOẠT ĐỘNG (động từ) hoặc 1
+từ chỉ ĐẶC ĐIỂM (tính từ) làm từ mục tiêu để học sinh khoanh tròn. Trộn đều cả 2 loại. Từ mục tiêu
+phải xuất hiện NGUYÊN VẸN, KHÔNG chia tách trong câu (để học sinh khoanh đúng 1 từ).${buildReferenceContextBlock(referenceContext)}
+
+Trả về JSON đúng schema (không thêm trường khác):
+{ "items": [ { "sentence": "câu văn đầy đủ", "targetWord": "từ mục tiêu xuất hiện y hệt trong câu", "wordType": "hoat_dong" | "dac_diem" } ] }
+`.trim();
+
+  try {
+    const result = await generateContentWithFailover({
+      model: VIETNAMESE_MODEL,
+      contents: prompt,
+      config: { temperature: 0.85, responseMimeType: "application/json" },
+    });
+    const parsed = JSON.parse(result.text);
+    const items = Array.isArray(parsed.items) ? parsed.items : [];
+    // Validate CHẶT: câu phải có chứa ĐÚNG targetWord (không thì học sinh không khoanh được gì) -
+    // loại bỏ item nào AI trả thiếu field hoặc targetWord không thực sự nằm trong sentence.
+    return items
+      .filter(
+        (it) =>
+          it &&
+          typeof it.sentence === "string" &&
+          typeof it.targetWord === "string" &&
+          it.targetWord.trim() &&
+          it.sentence.includes(it.targetWord) &&
+          (it.wordType === "hoat_dong" || it.wordType === "dac_diem")
+      )
+      .slice(0, count);
+  } catch (err) {
+    console.error("[worksheetGenerator] Lỗi sinh khoanh_tu_loai:", err.message);
+    return [];
+  }
+}
+
+/** "Nối từ với nhóm thích hợp" - trả { pairs: [{left, right}], shuffledRight: [...] } - CÙNG
+ * hình dạng dữ liệu với generateNoiPhepTinh() (pairs + shuffled) để tái dùng bố cục 2 cột-nối
+ * quen thuộc, chỉ khác nội dung là CHỮ thay vì SỐ. */
+async function generateNoiTuNhom({ grade, count, referenceContext }) {
+  if (count <= 0) return { pairs: [], shuffledRight: [] };
+  const prompt = `
+Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
+Soạn ĐÚNG ${count} cặp "từ - nhóm/đặc điểm thích hợp" để học sinh nối, VD "con mèo" nối với "con
+vật", hoặc "bông hoa" nối với "màu đỏ". MỖI cặp 1 chủ đề khác nhau (đồ vật, con vật, cây cối, màu
+sắc, cảm xúc...), KHÔNG lặp lại "right" giữa các cặp (để chỉ có 1 đáp án đúng khi nối).${buildReferenceContextBlock(referenceContext)}
+
+Trả về JSON đúng schema (không thêm trường khác):
+{ "pairs": [ { "left": "từ/cụm từ", "right": "nhóm/đặc điểm thích hợp, NGẮN GỌN (1-3 chữ)" } ] }
+`.trim();
+
+  try {
+    const result = await generateContentWithFailover({
+      model: VIETNAMESE_MODEL,
+      contents: prompt,
+      config: { temperature: 0.85, responseMimeType: "application/json" },
+    });
+    const parsed = JSON.parse(result.text);
+    const rawPairs = Array.isArray(parsed.pairs) ? parsed.pairs : [];
+    const pairs = rawPairs
+      .filter((p) => p && typeof p.left === "string" && p.left.trim() && typeof p.right === "string" && p.right.trim())
+      .slice(0, count);
+    // Loại "right" trùng lặp (nếu AI lỡ lặp dù đã dặn) - trùng sẽ khiến bài có nhiều đáp án đúng.
+    const seenRight = new Set();
+    const dedupedPairs = pairs.filter((p) => {
+      const key = p.right.trim().toLowerCase();
+      if (seenRight.has(key)) return false;
+      seenRight.add(key);
+      return true;
+    });
+    const shuffledRight = [...dedupedPairs.map((p) => p.right)].sort(() => Math.random() - 0.5);
+    return { pairs: dedupedPairs, shuffledRight };
+  } catch (err) {
+    console.error("[worksheetGenerator] Lỗi sinh noi_tu_nhom:", err.message);
+    return { pairs: [], shuffledRight: [] };
+  }
+}
+
+/** "Điền từ thích hợp vào chỗ trống" - 1 "ngân hàng từ" DÙNG CHUNG cho cả khối câu (giống mẫu in
+ * sẵn thường thấy: khung từ ở trên, câu có chỗ trống ở dưới), mỗi từ trong ngân hàng dùng ĐÚNG 1
+ * lần (validate: số câu phải khớp số từ, mỗi answer phải nằm trong wordBank). */
+async function generateDienTuChoSan({ grade, count, referenceContext }) {
+  if (count <= 0) return { wordBank: [], sentences: [] };
+  const prompt = `
+Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
+Soạn ĐÚNG ${count} câu văn có 1 CHỖ TRỐNG (đánh dấu bằng "___"), cùng 1 "ngân hàng từ" gồm ĐÚNG
+${count} từ để điền - MỖI từ trong ngân hàng CHỈ DÙNG CHO ĐÚNG 1 câu (không thừa, không thiếu,
+không trùng nhau).${buildReferenceContextBlock(referenceContext)}
+
+Trả về JSON đúng schema (không thêm trường khác):
+{
+  "wordBank": ["từ 1", "từ 2", ...],
+  "sentences": [ { "template": "câu có ___ ở giữa", "answer": "từ đúng, PHẢI xuất hiện y hệt trong wordBank" } ]
+}
+`.trim();
+
+  try {
+    const result = await generateContentWithFailover({
+      model: VIETNAMESE_MODEL,
+      contents: prompt,
+      config: { temperature: 0.85, responseMimeType: "application/json" },
+    });
+    const parsed = JSON.parse(result.text);
+    const wordBank = Array.isArray(parsed.wordBank) ? parsed.wordBank.filter((w) => typeof w === "string" && w.trim()) : [];
+    const rawSentences = Array.isArray(parsed.sentences) ? parsed.sentences : [];
+    // Validate CHẶT: template phải có "___" và answer phải THỰC SỰ nằm trong wordBank - nếu
+    // không, câu đó không thể làm được (học sinh không có từ để chọn) -> loại bỏ.
+    const sentences = rawSentences
+      .filter(
+        (s) =>
+          s &&
+          typeof s.template === "string" &&
+          s.template.includes("___") &&
+          typeof s.answer === "string" &&
+          wordBank.includes(s.answer)
+      )
+      .slice(0, count);
+    // Ngân hàng từ chỉ giữ lại từ THỰC SỰ được dùng (phòng AI liệt kê dư) + xáo trộn để không lộ
+    // thứ tự trùng với thứ tự câu (dễ đoán mò).
+    const usedWords = new Set(sentences.map((s) => s.answer));
+    const trimmedWordBank = [...wordBank.filter((w) => usedWords.has(w))].sort(() => Math.random() - 0.5);
+    return { wordBank: trimmedWordBank, sentences };
+  } catch (err) {
+    console.error("[worksheetGenerator] Lỗi sinh dien_tu_cho_san:", err.message);
+    return { wordBank: [], sentences: [] };
+  }
+}
+
+/** "Đặt câu theo mẫu" - chỉ cần MẪU CÂU + 1 VÍ DỤ minh hoạ (KHÔNG có "đáp án" cố định - học sinh
+ * tự sáng tạo câu riêng, không chấm đúng/sai theo 1 câu duy nhất). */
+async function generateDatCauTheoMau({ grade, count, referenceContext }) {
+  if (count <= 0) return [];
+  const prompt = `
+Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
+Soạn ĐÚNG ${count} MẪU CÂU khác nhau (VD "Ai làm gì?", "Ai/cái gì/con gì thế nào?", "Ở đâu có
+gì?") phù hợp Tiểu học, MỖI mẫu kèm 1 CÂU VÍ DỤ minh hoạ đúng mẫu đó.${buildReferenceContextBlock(referenceContext)}
+
+Trả về JSON đúng schema (không thêm trường khác):
+{ "items": [ { "pattern": "tên mẫu câu, VD: Ai làm gì?", "example": "câu ví dụ đúng mẫu" } ] }
+`.trim();
+
+  try {
+    const result = await generateContentWithFailover({
+      model: VIETNAMESE_MODEL,
+      contents: prompt,
+      config: { temperature: 0.85, responseMimeType: "application/json" },
+    });
+    const parsed = JSON.parse(result.text);
+    const items = Array.isArray(parsed.items) ? parsed.items : [];
+    return items
+      .filter((it) => it && typeof it.pattern === "string" && it.pattern.trim() && typeof it.example === "string" && it.example.trim())
+      .slice(0, count);
+  } catch (err) {
+    console.error("[worksheetGenerator] Lỗi sinh dat_cau_theo_mau:", err.message);
+    return [];
+  }
+}
+
+/**
  * ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
  * Tải nội dung 1 chương/bài SGK (best-effort, KHÔNG làm hỏng cả lượt tạo phiếu nếu lỗi) - TÁI
  * DÙNG đúng nguyên tắc `lessonPlanOrchestrator.js` đã kiểm định (try/catch quanh
@@ -96,7 +281,7 @@ const MAX_SGK_CONTEXT_LENGTH = 4000; // khớp MAX_REFERENCE_CONTEXT_LENGTH tron
  * { context, label, warning } - `context` = null nếu không chọn chương hoặc tải lỗi (luồng gọi
  * vẫn hoạt động bình thường, chỉ là "giải toán có lời văn" sẽ kém bám sát SGK hơn).
  */
-async function resolveSgkChapterContext({ grade, sgkVolume, sgkChapterId }) {
+async function resolveSgkChapterContext({ grade, subject, sgkVolume, sgkChapterId }) {
   if (!sgkChapterId) return { context: null, label: null, warning: null };
 
   const sgkGrade = WORKSHEET_GRADE_TO_SGK_GRADE[grade];
@@ -107,18 +292,22 @@ async function resolveSgkChapterContext({ grade, sgkVolume, sgkChapterId }) {
     return { context: null, label: null, warning: null };
   }
 
+  // GIAI ĐOẠN 6: subject SGK dùng đúng giá trị đã có trong config.js (SUBJECTS), KHÔNG hard-code
+  // "Toan" như trước Giai đoạn 6 (khi hệ thống còn chỉ có 1 môn duy nhất).
+  const sgkSubject = subject === "TIENG_VIET" ? "Tieng_Viet" : "Toan";
+
   try {
     const markdown =
       sgkChapterId === ADVANCED_BOOK_MARKER
-        ? await fetchAdvancedBook(sgkGrade, "Toan")
-        : await fetchMarkdownFromGitHub(sgkGrade, "Toan", sgkVolume || "1", sgkChapterId);
+        ? await fetchAdvancedBook(sgkGrade, sgkSubject)
+        : await fetchMarkdownFromGitHub(sgkGrade, sgkSubject, sgkVolume || "1", sgkChapterId);
     const label = sgkChapterId === ADVANCED_BOOK_MARKER ? "Sách nâng cao (toàn bộ)" : `Chương/Bài ${sgkChapterId}`;
     return { context: markdown.slice(0, MAX_SGK_CONTEXT_LENGTH), label, warning: null };
   } catch (err) {
     return {
       context: null,
       label: null,
-      warning: `Không tải được tài liệu SGK cho bài đã chọn (${err.message}) - phiếu vẫn được tạo bình thường, nhưng "giải toán có lời văn" có thể kém bám sát SGK hơn.`,
+      warning: `Không tải được tài liệu SGK cho bài đã chọn (${err.message}) - phiếu vẫn được tạo bình thường, nhưng nội dung có thể kém bám sát SGK hơn.`,
     };
   }
 }
@@ -137,6 +326,11 @@ const DEFAULT_SECTION_ORDER = [
   "giai_toan",
 ];
 
+// ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+// Thứ tự mặc định RIÊNG cho môn Tiếng Việt (4 dạng, tất cả đều cần AI) - từ dễ (nhận biết từ
+// loại) đến khó hơn (đặt câu tự do, sáng tạo nhất, để cuối phiếu).
+const DEFAULT_SECTION_ORDER_TIENG_VIET = ["khoanh_tu_loai", "noi_tu_nhom", "dien_tu_cho_san", "dat_cau_theo_mau"];
+
 /**
  * TRƯỚC ĐÂY thứ tự khối bài trong phiếu LUÔN CỐ ĐỊNH (DEFAULT_SECTION_ORDER ở trên) bất kể
  * phiếu mẫu giáo viên upload có thứ tự khác - đây là 1 phần nguyên nhân "chỉ bắt chước layout/
@@ -151,9 +345,13 @@ const DEFAULT_SECTION_ORDER = [
  * (exerciseCounts) - việc đó vẫn cần giáo viên chủ động bấm "Áp dụng cấu trúc từ phiếu mẫu" ở
  * WorksheetForm.jsx, vì ghi đè số liệu giáo viên đang chỉnh tay là hành động "nặng" hơn nhiều so
  * với chỉ đổi thứ tự hiển thị - không nên làm âm thầm.
+ *
+ * GIAI ĐOẠN 6: nhận thêm `subject` để chọn ĐÚNG bảng thứ tự mặc định (Toán hoặc Tiếng Việt) -
+ * 2 môn có key hoàn toàn KHÔNG trùng nhau nên không có rủi ro lẫn lộn.
  */
-function computeSectionOrder(safeCounts, sampleSpec) {
-  const selectedKeys = DEFAULT_SECTION_ORDER.filter((key) => safeCounts[key] > 0);
+function computeSectionOrder(safeCounts, sampleSpec, subject) {
+  const defaultOrder = subject === "TIENG_VIET" ? DEFAULT_SECTION_ORDER_TIENG_VIET : DEFAULT_SECTION_ORDER;
+  const selectedKeys = defaultOrder.filter((key) => safeCounts[key] > 0);
   const detectedKeys = isUsableWorksheetSampleSpec(sampleSpec)
     ? (sampleSpec?.detectedExercises || []).map((d) => d.key)
     : [];
@@ -252,6 +450,10 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
  *   cho AI soạn "giải toán có lời văn" (cao hơn cả referenceContext từ file mẫu upload, vì đây là
  *   tín hiệu "giáo viên đang dạy đúng bài này" rõ ràng và chính thống hơn). Chỉ áp dụng cho
  *   LOP_1/LOP_2 (Mầm non không có SGK theo chương, xem WORKSHEET_GRADE_TO_SGK_GRADE).
+ * @param config.subject  (GIAI ĐOẠN 6, tuỳ chọn, mặc định "TOAN") "TOAN" | "TIENG_VIET" - quyết
+ *   định catalog nào được dùng (getSelectableCatalogFor), thứ tự mặc định nào áp dụng
+ *   (computeSectionOrder), và môn nào khi tải chương SGK (resolveSgkChapterContext). Với
+ *   "TIENG_VIET", TẤT CẢ 4 dạng bài đều cần AI (không có dạng thuần code như Toán).
  */
 export async function generateWorksheet({
   grade,
@@ -264,6 +466,7 @@ export async function generateWorksheet({
   favoriteLayoutId = null,
   sgkVolume = null,
   sgkChapterId = null,
+  subject = "TOAN",
 }) {
   if (!WORKSHEET_GRADES[grade]) throw new Error(`Khối lớp không hợp lệ: ${grade}`);
 
@@ -272,7 +475,9 @@ export async function generateWorksheet({
   // NHƯNG đó là lọc phía CLIENT - ai gọi thẳng /api/generate-worksheet (bỏ qua form) vẫn có thể
   // gửi 1 key không hợp lệ với khối lớp (VD "noi_phep_tinh" cho MAM_NON, catalog khai báo
   // minGrade LOP_1). Lọc lại 1 lần nữa ở đây cho chắc - không tin tưởng dữ liệu từ client.
-  const eligibleKeys = new Set(getSelectableCatalogFor(grade).map((item) => item.key));
+  // GIAI ĐOẠN 6: lọc theo ĐÚNG subject - key Toán và Tiếng Việt hoàn toàn không trùng tên nên
+  // dù client gửi lẫn (VD subject="TOAN" nhưng lại kèm key "khoanh_tu_loai") vẫn bị loại sạch.
+  const eligibleKeys = new Set(getSelectableCatalogFor(grade, subject).map((item) => item.key));
   const safeCounts = Object.fromEntries(
     Object.entries(exerciseCounts || {}).map(([key, value]) => [key, eligibleKeys.has(key) ? value : 0])
   );
@@ -292,16 +497,18 @@ export async function generateWorksheet({
   const warnings = [];
   const { context: sgkContext, label: sgkLabel, warning: sgkWarning } = await resolveSgkChapterContext({
     grade,
+    subject,
     sgkVolume,
     sgkChapterId,
   });
   if (sgkWarning) warnings.push(sgkWarning);
 
-  // Ngữ cảnh chủ đề cho bài toán: ƯU TIÊN chương SGK giáo viên vừa chọn (sgkContext - tín hiệu
-  // "đang dạy đúng bài này" rõ ràng, chính thống nhất), sau đó đến đoạn text trích thô từ file
-  // mẫu upload (referenceContext, chính xác nhưng có thể không phải bài đang dạy), cuối cùng mới
-  // đến themeHints do AI suy luận từ ảnh/PDF scan (kém chi tiết nhất, chỉ còn hơn không có gì).
-  const wordProblemContext = sgkContext || referenceContext || sampleSpec?.themeHints || null;
+  // Ngữ cảnh chủ đề cho AI (bài toán có lời văn HOẶC 4 dạng Tiếng Việt - xem GIAI ĐOẠN 6): ƯU
+  // TIÊN chương SGK giáo viên vừa chọn (sgkContext - tín hiệu "đang dạy đúng bài này" rõ ràng,
+  // chính thống nhất), sau đó đến đoạn text trích thô từ file mẫu upload (referenceContext,
+  // chính xác nhưng có thể không phải bài đang dạy), cuối cùng mới đến themeHints do AI suy luận
+  // từ ảnh/PDF scan (kém chi tiết nhất, chỉ còn hơn không có gì).
+  const aiContentContext = sgkContext || referenceContext || sampleSpec?.themeHints || null;
 
   // ================== GIAI ĐOẠN 4 ==================
   // Layout "adventure_map" (bản đồ phiêu lưu) được MÔ TẢ là "mascot chính dẫn dắt xuyên suốt
@@ -309,7 +516,11 @@ export async function generateWorksheet({
   // CHƯA thực sự được code hoá, mỗi khối vẫn random mascot độc lập như các layout khác. Giờ
   // chốt 1 "heroMascot" DUY NHẤT ngay từ đầu và dùng xuyên suốt mọi khối trong phiếu, đúng như
   // lời hứa trong mô tả layout - tạo cảm giác 1 câu chuyện liền mạch thay vì rời rạc.
-  const heroMascot = layout.id === "adventure_map" ? pickMascot("tinh_nham") : null;
+  // GIAI ĐOẠN 6: key đại diện để rút mascot cũng phải theo ĐÚNG subject (key Toán không tồn tại
+  // ý nghĩa gì với phiếu Tiếng Việt, dù về mặt kỹ thuật pickMascot() vẫn chạy được vì catalog là
+  // danh sách chung - nhưng chọn đúng subject cho ra mascot phù hợp chủ đề hơn).
+  const representativeKey = subject === "TIENG_VIET" ? "khoanh_tu_loai" : "tinh_nham";
+  const heroMascot = layout.id === "adventure_map" ? pickMascot(representativeKey) : null;
   function mascotFor(key) {
     return heroMascot || pickMascot(key);
   }
@@ -318,9 +529,9 @@ export async function generateWorksheet({
   // Xây dựng sections THEO ĐÚNG THỨ TỰ computeSectionOrder() đã tính - KHÁC bản cũ (luôn build
   // theo 1 chuỗi if cố định đúng DEFAULT_SECTION_ORDER, không thể đổi thứ tự dù có sampleSpec).
   const sections = [];
-  let answerKeyText = null;
+  const answerKeyParts = []; // GIAI ĐOẠN 6: gộp đáp án nhiều dạng bài AI (không chỉ giải toán như trước) vào 1 QR duy nhất
 
-  const orderedKeys = computeSectionOrder(safeCounts, sampleSpec);
+  const orderedKeys = computeSectionOrder(safeCounts, sampleSpec, subject);
 
   for (const key of orderedKeys) {
     if (key === "nhan_dien_hinh") {
@@ -354,7 +565,7 @@ export async function generateWorksheet({
         grade,
         count: safeCounts.giai_toan,
         includeAnswers,
-        referenceContext: wordProblemContext,
+        referenceContext: aiContentContext,
       });
       sections.push({
         type: "giai_toan",
@@ -363,20 +574,92 @@ export async function generateWorksheet({
         items: problems,
       });
 
-      // ================== GIAI ĐOẠN 4 (nội bộ, đã có từ trước) ==================
-      // Đáp số các bài "giải toán có lời văn" (CHỈ dạng này cần đáp án dạng câu chữ tự do do AI
-      // sinh - các dạng bài code-sinh khác như tính nhẩm/so sánh có đáp số tính trực tiếp từ số
-      // liệu, học sinh/phụ huynh tự đối chiếu dễ dàng, không cần QR) -> gộp thành 1 đoạn text
-      // ngắn để mã hoá vào QR "chấm nhanh" (xem WorksheetPreview.jsx / worksheetExportService.js).
+      // ================== GIAI ĐOẠN 4 (nội bộ, đã có từ trước) + GIAI ĐOẠN 6 (gộp nhiều dạng) ==
+      // Đáp số các bài "giải toán có lời văn" (CHỈ dạng AI-sinh mới cần đáp án dạng câu chữ tự do
+      // - các dạng bài code-sinh khác như tính nhẩm/so sánh có đáp số tính trực tiếp từ số liệu,
+      // học sinh/phụ huynh tự đối chiếu dễ dàng, không cần QR) -> gộp vào answerKeyParts để mã
+      // hoá chung 1 QR "chấm nhanh" (xem WorksheetPreview.jsx / worksheetExportService.js).
       if (includeAnswers && problems.some((p) => p.answer)) {
-        answerKeyText = problems.map((p, i) => `Bài ${i + 1}: ${p.answer || "?"}`).join("\n");
+        answerKeyParts.push({
+          label: "Giải toán",
+          text: problems.map((p, i) => `Bài ${i + 1}: ${p.answer || "?"}`).join("\n"),
+        });
       }
+      continue;
+    }
+
+    // ================== GIAI ĐOẠN 6 (mở rộng sang Tiếng Việt) ==================
+    // Cả 4 dạng đều cần AI (xem generateKhoanhTuLoai/generateNoiTuNhom/generateDienTuChoSan/
+    // generateDatCauTheoMau ở trên) - xử lý riêng ở đây (giống "giai_toan") thay vì trong
+    // buildSimpleSection() (dành cho dạng thuần code, đồng bộ).
+    if (key === "khoanh_tu_loai") {
+      const items = await generateKhoanhTuLoai({ grade, count: safeCounts.khoanh_tu_loai, referenceContext: aiContentContext });
+      sections.push({
+        type: "khoanh_tu_loai",
+        title: pickInstructionVariant("khoanh_tu_loai") || "Khoanh tròn vào từ chỉ hoạt động / đặc điểm.",
+        mascot: mascotFor("khoanh_tu_loai"),
+        items,
+      });
+      if (includeAnswers && items.length) {
+        answerKeyParts.push({
+          label: "Khoanh từ",
+          text: items.map((it, i) => `Câu ${i + 1}: ${it.targetWord}`).join("\n"),
+        });
+      }
+      continue;
+    }
+    if (key === "noi_tu_nhom") {
+      const data = await generateNoiTuNhom({ grade, count: safeCounts.noi_tu_nhom, referenceContext: aiContentContext });
+      sections.push({
+        type: "noi_tu_nhom",
+        title: pickInstructionVariant("noi_tu_nhom") || "Nối từ với nhóm thích hợp.",
+        mascot: mascotFor("noi_tu_nhom"),
+        data,
+      });
+      if (includeAnswers && data.pairs.length) {
+        answerKeyParts.push({
+          label: "Nối từ",
+          text: data.pairs.map((p, i) => `${i + 1}. ${p.left} - ${p.right}`).join("\n"),
+        });
+      }
+      continue;
+    }
+    if (key === "dien_tu_cho_san") {
+      const data = await generateDienTuChoSan({ grade, count: safeCounts.dien_tu_cho_san, referenceContext: aiContentContext });
+      sections.push({
+        type: "dien_tu_cho_san",
+        title: pickInstructionVariant("dien_tu_cho_san") || "Điền từ thích hợp vào chỗ trống.",
+        mascot: mascotFor("dien_tu_cho_san"),
+        data,
+      });
+      if (includeAnswers && data.sentences.length) {
+        answerKeyParts.push({
+          label: "Điền từ",
+          text: data.sentences.map((s, i) => `Câu ${i + 1}: ${s.answer}`).join("\n"),
+        });
+      }
+      continue;
+    }
+    if (key === "dat_cau_theo_mau") {
+      // Không có "đáp án" cố định - học sinh tự sáng tạo câu riêng theo mẫu, không đẩy vào
+      // answerKeyParts (không có gì để đối chiếu đúng/sai tuyệt đối).
+      const items = await generateDatCauTheoMau({ grade, count: safeCounts.dat_cau_theo_mau, referenceContext: aiContentContext });
+      sections.push({
+        type: "dat_cau_theo_mau",
+        title: pickInstructionVariant("dat_cau_theo_mau") || "Đặt câu theo mẫu.",
+        mascot: mascotFor("dat_cau_theo_mau"),
+        items,
+      });
       continue;
     }
 
     const section = buildSimpleSection(key, { grade, safeCounts, mascotFor });
     if (section) sections.push(section);
   }
+
+  const answerKeyText = answerKeyParts.length
+    ? answerKeyParts.map((p) => `--- ${p.label} ---\n${p.text}`).join("\n\n")
+    : null;
 
   return { sections, layout, answerKeyText, warnings, sgkChapterLabel: sgkLabel };
 }

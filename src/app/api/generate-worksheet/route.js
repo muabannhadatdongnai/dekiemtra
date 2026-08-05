@@ -20,6 +20,7 @@ export async function POST(request) {
       favoriteLayoutId = null,
       sgkVolume = null,
       sgkChapterId = null,
+      subject = "TOAN",
     } = body;
 
     if (!grade || !exerciseCounts) {
@@ -37,6 +38,7 @@ export async function POST(request) {
       favoriteLayoutId,
       sgkVolume,
       sgkChapterId,
+      subject,
     });
     return NextResponse.json({ success: true, ...result });
   } catch (err) {

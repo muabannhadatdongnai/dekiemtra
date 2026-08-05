@@ -6,14 +6,15 @@ import { requireAuth } from "@/services/apiAuth";
  * /api/worksheet-preference
  * GET: lấy tuỳ chọn đã lưu của giáo viên hiện tại (theo token đăng nhập, không tin username
  * client tự gửi - giống nguyên tắc đã áp dụng ở /api/analyze-sample). Gồm layout yêu thích
- * (favoriteLayoutId, đã có từ trước) VÀ "công thức đề" theo từng khối lớp (favoriteExerciseCounts,
- * GIAI ĐOẠN 3 MỚI).
+ * (favoriteLayoutId, đã có từ trước) VÀ "công thức đề" theo từng khối lớp + môn học
+ * (favoriteExerciseCounts, GIAI ĐOẠN 3 MỚI + GIAI ĐOẠN 6 lồng thêm cấp subject).
  * POST: lưu MỘT PHẦN tuỳ chọn - body có thể gửi `favoriteLayoutId` (VD giáo viên bấm "⭐ Lưu bố
- * cục này"), và/hoặc `gradeExerciseCounts: { grade, counts }` (VD bấm "⭐ Lưu công thức đề cho
- * khối này"). Gửi phần nào thì chỉ phần đó được cập nhật - xem teacherPreferenceStore.js.
+ * cục này"), và/hoặc `gradeExerciseCounts: { grade, subject, counts }` (VD bấm "⭐ Lưu công thức
+ * đề cho khối này"). Gửi phần nào thì chỉ phần đó được cập nhật - xem teacherPreferenceStore.js.
  */
 
 const VALID_GRADES = ["MAM_NON", "LOP_1", "LOP_2"];
+const VALID_SUBJECTS = ["TOAN", "TIENG_VIET"];
 
 export async function GET(request) {
   const auth = requireAuth(request);
@@ -35,9 +36,14 @@ export async function POST(request) {
   }
 
   if (gradeExerciseCounts !== undefined) {
-    const { grade, counts } = gradeExerciseCounts || {};
+    const { grade, subject, counts } = gradeExerciseCounts || {};
     if (!VALID_GRADES.includes(grade)) {
       return NextResponse.json({ error: `grade không hợp lệ, phải là 1 trong: ${VALID_GRADES.join(", ")}` }, { status: 400 });
+    }
+    // GIAI ĐOẠN 6: subject bắt buộc (trước đây chỉ có 1 môn nên không cần) - phân biệt công thức
+    // Toán/Tiếng Việt cho CÙNG 1 khối lớp, xem teacherPreferenceStore.js.
+    if (!VALID_SUBJECTS.includes(subject)) {
+      return NextResponse.json({ error: `subject không hợp lệ, phải là 1 trong: ${VALID_SUBJECTS.join(", ")}` }, { status: 400 });
     }
     if (typeof counts !== "object" || counts === null || Array.isArray(counts)) {
       return NextResponse.json({ error: "counts phải là object { key: số lượng }." }, { status: 400 });
@@ -48,7 +54,7 @@ export async function POST(request) {
         .filter(([, v]) => typeof v === "number" && v >= 0)
         .map(([k, v]) => [k, Math.floor(v)])
     );
-    body.gradeExerciseCounts = { grade, counts: sanitizedCounts };
+    body.gradeExerciseCounts = { grade, subject, counts: sanitizedCounts };
   }
 
   const saved = await setWorksheetPreference(auth.session.username, {
