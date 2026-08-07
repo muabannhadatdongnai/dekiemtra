@@ -37,6 +37,7 @@ export default function ExportActions({
       examCode: active.examCode,
       duration: examMeta?.duration,
       academicYear: examMeta?.academicYear,
+      objective: examMeta?.objective,
       questions: active.questions,
       teacherRubric,
       chaptersInfo,

@@ -43,6 +43,11 @@ export default function ExamMatrixForm({ onGenerated }) {
   const [duration, setDuration] = useState("45 phút");
   const [academicYear, setAcademicYear] = useState("2026-2027");
   const [examTitle, setExamTitle] = useState("Phiếu kiểm tra cuối học kì I");
+  // Giai đoạn 1 (mở rộng): "Mục tiêu" - dòng chữ mở đầu đề (VD: "Kiểm tra kĩ năng đọc hiểu...").
+  // Giáo viên tự gõ, để trống nếu không cần - KHÔNG gửi lên AI (chỉ dùng để in đầu đề khi xem
+  // trước/xuất Word, xem A4LivePreview.jsx + exportService.js), tránh AI tự bịa sai giọng văn
+  // hành chính của nhà trường.
+  const [examObjective, setExamObjective] = useState("");
 
   // ============ Chọn kiến thức ============
   const [subject, setSubject] = useState("Toan");
@@ -51,6 +56,10 @@ export default function ExamMatrixForm({ onGenerated }) {
   const [availableChapters, setAvailableChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
   const [chaptersError, setChaptersError] = useState("");
+  // Giai đoạn 1 (mở rộng): "Nội dung kiến thức" - gõ tay tên bài/chủ đề trọng tâm, SONG SONG với
+  // việc chọn Chương từ kho SGK ở dưới (không bắt buộc, không thay thế chapterMatrix). Có gửi
+  // lên AI (xem buildKnowledgeContentGuidance trong promptTemplates.js).
+  const [knowledgeContent, setKnowledgeContent] = useState("");
 
   // ============ Dạng câu hỏi (RIÊNG cho từng mức độ) ============
   // Mặc định theo thông lệ đề Toán VN: Nhận biết/Thông hiểu = trắc nghiệm, Vận dụng/Vận dụng cao = tự luận
@@ -71,6 +80,9 @@ export default function ExamMatrixForm({ onGenerated }) {
   // Câu hỏi trực quan (đặt tính, tam giác số, sơ đồ đoạn thẳng, hình đếm) - đặc trưng Tiểu học,
   // mặc định BẬT vì phần lớn giáo viên dùng hệ thống này dạy Lớp 1-5.
   const [useVisualQuestions, setUseVisualQuestions] = useState(true);
+  // Giai đoạn 1 (mở rộng): "Yêu cầu bổ sung" - dặn dò riêng cho AI (VD: "cần 1 câu liên hệ thực
+  // tế"), chèn vào cuối prompt (xem buildExtraRequirementsGuidance trong promptTemplates.js).
+  const [extraRequirements, setExtraRequirements] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -213,6 +225,8 @@ export default function ExamMatrixForm({ onGenerated }) {
         useVisualQuestions,
         sampleMode,
         sampleExamSpec: sampleMode !== "theo_chuong" ? sampleSpec : null,
+        knowledgeContent,
+        extraRequirements,
       });
       const data = await generateExamRequest(blueprint);
 
@@ -225,6 +239,9 @@ export default function ExamMatrixForm({ onGenerated }) {
         subject: getSubjectLabel(subject),
         grade,
         examCode: Math.floor(100 + Math.random() * 900),
+        // Giai đoạn 1 (mở rộng): "Mục tiêu" - chỉ hiển thị, KHÔNG đi qua blueprint/AI (xem khai
+        // báo state examObjective phía trên).
+        objective: examObjective,
       };
 
       onGenerated(buildExamResult(data, meta));
@@ -259,6 +276,18 @@ export default function ExamMatrixForm({ onGenerated }) {
             <input value={examTitle} onChange={(e) => setExamTitle(e.target.value)} className={inputClass} />
           </Field>
         </div>
+        <Field label="Mục tiêu (tuỳ chọn - dòng chữ mở đầu đề, in nguyên văn khi xem trước/xuất Word)">
+          <textarea
+            value={examObjective}
+            onChange={(e) => setExamObjective(e.target.value)}
+            className={inputClass}
+            rows={2}
+            placeholder='VD: "Kiểm tra kĩ năng đọc hiểu văn bản. Kiểm tra kĩ năng viết đoạn văn tả cảnh."'
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Do bạn tự gõ, AI KHÔNG được yêu cầu tạo ra dòng này - để tránh sai giọng văn hành chính của trường.
+          </p>
+        </Field>
       </div>
 
       {/* ============ CHỌN KIẾN THỨC ============ */}
@@ -286,6 +315,19 @@ export default function ExamMatrixForm({ onGenerated }) {
             </select>
           </Field>
         </div>
+
+        <Field label="Nội dung kiến thức (tuỳ chọn - gõ tay tên bài/chủ đề trọng tâm cần nhấn mạnh)">
+          <textarea
+            value={knowledgeContent}
+            onChange={(e) => setKnowledgeContent(e.target.value)}
+            className={inputClass}
+            rows={2}
+            placeholder='VD: "Tập trung vào phép chia có dư và bài toán có lời văn liên quan"'
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Không thay thế việc chọn Chương ở dưới - chỉ giúp AI biết nên nhấn mạnh phần nào trong các chương đã chọn.
+          </p>
+        </Field>
 
         <Field label="Chương / Bài học (bấm để thêm vào ma trận bên dưới)">
           {loadingChapters && (
@@ -464,6 +506,16 @@ export default function ExamMatrixForm({ onGenerated }) {
       </div>
 
       {/* ============ TUỲ CHỌN ĐÁP ÁN & CÂU HỎI TRỰC QUAN ============ */}
+      <Field label="Yêu cầu bổ sung (tuỳ chọn - dặn dò riêng cho AI, áp dụng cho toàn bộ đề)">
+        <textarea
+          value={extraRequirements}
+          onChange={(e) => setExtraRequirements(e.target.value)}
+          className={inputClass}
+          rows={2}
+          placeholder='VD: "Cần ít nhất 1 câu liên hệ thực tế mỗi mức độ"'
+        />
+      </Field>
+
       <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
         <input
           type="checkbox"

@@ -30,6 +30,11 @@ import { getBankEntries, appendBankEntries } from "./questionBankStore";
  * trùng được với lần này. Lỗi ở bước đọc/ghi ngân hàng KHÔNG BAO GIỜ làm hỏng việc tạo đề
  * (xem try/catch nuốt lỗi ngay trong questionBankStore.js) - luồng chính (tạo đề) luôn ưu
  * tiên hơn luồng phụ (ghi nhớ để chống trùng dài hạn).
+ *
+ * Giai đoạn 1 (mở rộng): knowledgeContent + extraRequirements chỉ ĐI XUYÊN QUA orchestrator này
+ * (không có quyết định "tầng trên" nào cần áp dụng cho 2 trường này, khác với useVisualQuestions/
+ * sampleMode ở trên) - việc diễn giải chúng thành hướng dẫn cụ thể cho AI nằm hoàn toàn ở
+ * promptTemplates.js (buildKnowledgeContentGuidance/buildExtraRequirementsGuidance).
  */
 export async function orchestrateExamGeneration({
   grade,
@@ -42,6 +47,8 @@ export async function orchestrateExamGeneration({
   existingQuestions,
   sampleMode = "theo_chuong",
   sampleExamSpec = null,
+  knowledgeContent = "",
+  extraRequirements = "",
 }) {
   const gradeProfile = getGradeProfile(grade);
   const subjectProfile = getSubjectProfile(subject);
@@ -89,6 +96,8 @@ export async function orchestrateExamGeneration({
     existingQuestions: mergedExistingQuestions,
     sampleMode: effectiveSampleMode,
     sampleExamSpec: effectiveSampleExamSpec,
+    knowledgeContent,
+    extraRequirements,
   });
 
   // Lưu lại các câu MỚI vừa tạo (đã qua chống trùng) vào ngân hàng bền vững, để lần tạo SAU

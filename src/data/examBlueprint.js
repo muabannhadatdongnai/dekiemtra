@@ -24,6 +24,13 @@
  *           mặc định "theo_chuong" (hành vi cũ, không đổi nếu không truyền)
  * @property {Object|null} [sampleExamSpec] - C6: spec phong cách đã phân tích từ /api/analyze-sample
  *           (xem src/data/sampleExamSchema.js) - null nếu chưa có/không dùng đề mẫu
+ * @property {string} [knowledgeContent] - Giai đoạn 1 (mở rộng): "Nội dung kiến thức" giáo viên
+ *           gõ tay (tên bài/chủ đề trọng tâm cần nhấn mạnh) - SONG SONG với việc chọn Chương từ
+ *           kho SGK (chapterMatrix vẫn LUÔN bắt buộc như cũ, trường này KHÔNG thay thế chapterMatrix,
+ *           chỉ bổ sung thêm ngữ cảnh cho AI khi soạn câu hỏi trong các chương đã chọn). Rỗng nếu
+ *           giáo viên không điền gì (hành vi cũ, không đổi).
+ * @property {string} [extraRequirements] - Giai đoạn 1 (mở rộng): "Yêu cầu bổ sung" - dặn dò riêng
+ *           cho AI (vd "cần 1 câu liên hệ thực tế"), chèn vào cuối prompt. Rỗng nếu không điền.
  */
 
 export function buildExamBlueprint({
@@ -37,6 +44,8 @@ export function buildExamBlueprint({
   useVisualQuestions,
   sampleMode = "theo_chuong",
   sampleExamSpec = null,
+  knowledgeContent = "",
+  extraRequirements = "",
 }) {
   return {
     username,
@@ -49,5 +58,7 @@ export function buildExamBlueprint({
     useVisualQuestions,
     sampleMode,
     sampleExamSpec,
+    knowledgeContent,
+    extraRequirements,
   };
 }

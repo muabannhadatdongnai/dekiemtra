@@ -129,6 +129,33 @@ dung, số liệu, hay đề bài cụ thể nào của đề mẫu gốc.
 `;
 }
 
+/**
+ * Giai đoạn 1 (mở rộng - "Nội dung kiến thức" + "Yêu cầu bổ sung"):
+ * 2 trường giáo viên gõ tay, HOÀN TOÀN TÁCH BIỆT với nhau về vai trò trong prompt:
+ * - knowledgeContent: đặt NGAY SAU "THÔNG TIN ĐỀ" (cùng nhóm với Chương/Nguồn tài liệu) vì đây là
+ *   NỘI DUNG cần nhấn mạnh - không thay thế chaptersBreakdown (vẫn là nguồn kiến thức bắt buộc),
+ *   chỉ là lớp "trọng tâm hoá" thêm bên trên. Nếu rỗng -> không thêm đoạn nào (hành vi cũ y nguyên).
+ * - extraRequirements: đặt Ở CUỐI prompt, ngay trước schema JSON (giống cách buildSampleExamGuidance
+ *   đã làm cho phong cách đề mẫu) vì đây là DẶN DÒ chung, áp dụng sau khi đã hiểu hết bối cảnh phía trên.
+ */
+function buildKnowledgeContentGuidance(knowledgeContent) {
+  if (!knowledgeContent || !knowledgeContent.trim()) return "";
+  return `
+NỘI DUNG KIẾN THỨC TRỌNG TÂM (giáo viên yêu cầu nhấn mạnh, dùng CÙNG với nguồn tài liệu ở trên,
+KHÔNG thay thế nguồn tài liệu, chỉ giúp bạn ưu tiên đúng phần giáo viên đang cần):
+"${knowledgeContent.trim()}"
+`;
+}
+
+function buildExtraRequirementsGuidance(extraRequirements) {
+  if (!extraRequirements || !extraRequirements.trim()) return "";
+  return `
+YÊU CẦU BỔ SUNG TỪ GIÁO VIÊN (áp dụng cho toàn bộ câu hỏi ở lượt tạo này, ưu tiên tuân thủ trừ khi
+mâu thuẫn trực tiếp với QUY TẮC BẮT BUỘC ở trên):
+"${extraRequirements.trim()}"
+`;
+}
+
 export function buildExamPrompt({
   grade,
   subject = "Toán",
@@ -140,6 +167,8 @@ export function buildExamPrompt({
   useVisualQuestions = false,
   sampleMode = "theo_chuong", // "theo_chuong" | "theo_de_mau" | "ket_hop" - xem examOrchestrator.js
   sampleExamSpec = null, // xem src/data/sampleExamSchema.js - null nếu không dùng đề mẫu
+  knowledgeContent = "", // Giai đoạn 1 (mở rộng): "Nội dung kiến thức" giáo viên gõ tay
+  extraRequirements = "", // Giai đoạn 1 (mở rộng): "Yêu cầu bổ sung" giáo viên gõ tay
 }) {
   const level = DIFFICULTY_LEVELS[difficulty];
   if (!level) throw new Error(`Mức độ không hợp lệ: ${difficulty}`);
@@ -240,7 +269,7 @@ ${
     ? `- PHÂN BỔ THEO CHƯƠNG (BẮT BUỘC tuân thủ chính xác từng dòng):\n${chapterCountLines}`
     : `- Chương/Chủ đề: ${chaptersBreakdown[0].label} (mã chương "${chaptersBreakdown[0].chapterId}")`
 }
-
+${buildKnowledgeContentGuidance(knowledgeContent)}
 ${sourceDocsBlock}
 
 ${
@@ -262,6 +291,7 @@ ${
 }
 ${useVisualQuestions ? VISUAL_TYPE_PROMPT_GUIDE : ""}
 ${buildSampleExamGuidance(sampleMode, sampleExamSpec)}
+${buildExtraRequirementsGuidance(extraRequirements)}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema${
     useVisualQuestions
       ? '; RIÊNG "visualType", "visualData", và "needsScratchSpace" là các trường TUỲ CHỌN có thể thêm vào bất kỳ câu hỏi nào ở trên, theo đúng hướng dẫn phía trên'

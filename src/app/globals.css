@@ -121,6 +121,12 @@ body {
   margin: 2pt 0;
 }
 
+.gdt-exam-objective {
+  font-size: 11pt;
+  font-style: italic;
+  margin: 2pt 0 4pt;
+}
+
 .gdt-student-line {
   margin-bottom: 4pt;
   font-size: 13pt;

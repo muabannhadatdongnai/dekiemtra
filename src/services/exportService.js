@@ -348,6 +348,7 @@ export async function buildExamDocxBlob({
   examCode,
   duration = "45 phút",
   academicYear = "",
+  objective = "",
   questions,
   teacherRubric = [],
   chaptersInfo = [],
@@ -389,6 +390,17 @@ export async function buildExamDocxBlob({
               new TextRun({ text: `Trường: ${schoolName}`, bold: true, size: 24, font: "Times New Roman" }),
             ],
             spacing: { before: 60 },
+          }),
+        ]
+      : []),
+    ...(objective
+      ? [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({ text: objective, italics: true, size: 22, font: "Times New Roman" }),
+            ],
+            spacing: { before: 40, after: 40 },
           }),
         ]
       : []),

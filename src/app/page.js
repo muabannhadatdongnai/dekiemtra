@@ -12,19 +12,25 @@ import WorksheetExportActions from "@/components/WorksheetExportActions";
 import LessonPlanForm from "@/components/LessonPlanForm";
 import LessonPlanPreview from "@/components/LessonPlanPreview";
 import LessonPlanExportActions from "@/components/LessonPlanExportActions";
+import VietnameseExamForm from "@/components/VietnameseExamForm";
+import VietnameseExamPreview from "@/components/VietnameseExamPreview";
+import VietnameseExamExportActions from "@/components/VietnameseExamExportActions";
 import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
+import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
 
-// A2/A3: 3 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12), "worksheet" (Phiếu bài tập,
-// Mầm non - Lớp 2) và "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5). Chỉ 1 trong 3 được mount
-// tại 1 thời điểm vì cả 3 đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id)
-// - mount nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung.
+// A2/A3/Giai đoạn 2: 4 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12), "worksheet" (Phiếu bài
+// tập, Mầm non - Lớp 2), "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5) và "vietnameseExam" (Đề
+// Tiếng Việt Tiểu học, Lớp 1-5 - xem PROJECT_SUMMARY.md Phần B). Chỉ 1 trong 4 được mount tại 1
+// thời điểm vì cả 4 đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount
+// nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung.
 const MODES = {
   EXAM: "exam",
   WORKSHEET: "worksheet",
   LESSON_PLAN: "lessonPlan",
+  VIETNAMESE_EXAM: "vietnameseExam",
 };
 
 export default function HomePage() {
@@ -45,6 +51,7 @@ export default function HomePage() {
   const [mode, setMode] = useState(MODES.EXAM);
   const [worksheetResult, setWorksheetResult] = useState(null); // { worksheet, meta } | null
   const [lessonPlanResult, setLessonPlanResult] = useState(EMPTY_LESSON_PLAN_RESULT);
+  const [vietnameseExamResult, setVietnameseExamResult] = useState(EMPTY_VIETNAMESE_EXAM_RESULT);
 
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
@@ -60,6 +67,7 @@ export default function HomePage() {
     setActiveVariantIndex(0);
     setWorksheetResult(null);
     setLessonPlanResult(EMPTY_LESSON_PLAN_RESULT);
+    setVietnameseExamResult(EMPTY_VIETNAMESE_EXAM_RESULT);
     setMode(MODES.EXAM);
   }
 
@@ -80,6 +88,10 @@ export default function HomePage() {
 
   function handleLessonPlanGenerated(result) {
     setLessonPlanResult(result);
+  }
+
+  function handleVietnameseExamGenerated(result) {
+    setVietnameseExamResult(result);
   }
 
   const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
@@ -135,6 +147,17 @@ export default function HomePage() {
           >
             📘 Soạn giáo án
           </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.VIETNAMESE_EXAM)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.VIETNAMESE_EXAM
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            📖 Đề Tiếng Việt Tiểu học
+          </button>
         </div>
 
         {/* Split-screen: Trái 40% (Bảng điều khiển) - Phải 60% (Xem trước A4) */}
@@ -143,6 +166,7 @@ export default function HomePage() {
             {mode === MODES.EXAM && <ExamMatrixForm onGenerated={handleGenerated} />}
             {mode === MODES.WORKSHEET && <WorksheetForm onGenerated={handleWorksheetGenerated} />}
             {mode === MODES.LESSON_PLAN && <LessonPlanForm onGenerated={handleLessonPlanGenerated} />}
+            {mode === MODES.VIETNAMESE_EXAM && <VietnameseExamForm onGenerated={handleVietnameseExamGenerated} />}
             <div className="mt-4">
               <UsageWidget />
             </div>
@@ -188,7 +212,7 @@ export default function HomePage() {
                 <WorksheetPreview worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
               </div>
             </section>
-          ) : (
+          ) : mode === MODES.LESSON_PLAN ? (
             <section className="space-y-4">
               {lessonPlanResult.warnings.length > 0 && (
                 <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
@@ -211,6 +235,23 @@ export default function HomePage() {
                   timeline={lessonPlanResult.timeline}
                   meta={lessonPlanResult.meta}
                 />
+              </div>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              {vietnameseExamResult.warnings.length > 0 && (
+                <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <p className="mb-1 font-semibold">⚠️ Lưu ý:</p>
+                  <ul className="list-disc space-y-0.5 pl-5">
+                    {vietnameseExamResult.warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <VietnameseExamExportActions results={vietnameseExamResult.results} meta={vietnameseExamResult.meta} />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <VietnameseExamPreview results={vietnameseExamResult.results} meta={vietnameseExamResult.meta} />
               </div>
             </section>
           )}

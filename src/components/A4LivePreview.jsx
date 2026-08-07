@@ -59,6 +59,7 @@ function ExamHeaderTable({ meta }) {
           <td className="gdt-col-right">
             <p className="gdt-exam-title">{meta?.title || "PHIẾU KIỂM TRA"}</p>
             {meta?.schoolName && <p className="gdt-exam-school">Trường: {meta.schoolName}</p>}
+            {meta?.objective && <p className="gdt-exam-objective">{meta.objective}</p>}
             <p className="gdt-exam-sub">Năm học: {meta?.academicYear || "................."}</p>
             <p className="gdt-exam-sub">
               Môn: {meta?.subject || "Toán"} &nbsp;-&nbsp; Lớp {meta?.grade || "..."} &nbsp;-&nbsp; Mã đề: {meta?.examCode}

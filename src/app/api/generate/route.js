@@ -29,6 +29,8 @@ export async function POST(request) {
       existingQuestions = [],
       sampleMode = "theo_chuong", // C6: "theo_chuong" | "theo_de_mau" | "ket_hop"
       sampleExamSpec = null, // C6: spec phong cách đã phân tích ở /api/analyze-sample (C4/C5)
+      knowledgeContent = "", // Giai đoạn 1 (mở rộng): "Nội dung kiến thức" giáo viên gõ tay
+      extraRequirements = "", // Giai đoạn 1 (mở rộng): "Yêu cầu bổ sung" giáo viên gõ tay
     } = body;
 
     const chapterIds = Object.keys(chapterMatrix || {});
@@ -53,6 +55,8 @@ export async function POST(request) {
       existingQuestions,
       sampleMode,
       sampleExamSpec,
+      knowledgeContent,
+      extraRequirements,
     });
 
     return NextResponse.json({
