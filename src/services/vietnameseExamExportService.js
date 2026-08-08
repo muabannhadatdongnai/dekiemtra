@@ -2,6 +2,9 @@ import { Document, Packer, Paragraph, TextRun, AlignmentType, convertMillimeters
 import { saveAs } from "file-saver";
 import { listBlocks, BLOCK_KEYS } from "@/data/vietnameseExamBlocks";
 import { buildDocThamDocxParagraphs } from "./vietnameseBlocks/docThamExport";
+import { buildDocThanhTiengDocxParagraphs } from "./vietnameseBlocks/docThanhTiengExport";
+import { buildChinhTaDocxParagraphs } from "./vietnameseBlocks/chinhTaExport";
+import { buildTapLamVanDocxParagraphs } from "./vietnameseBlocks/tapLamVanExport";
 import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 
 /**
@@ -19,7 +22,9 @@ const FONT = "Times New Roman";
 
 const BLOCK_EXPORTERS = {
   [BLOCK_KEYS.DOC_THAM]: buildDocThamDocxParagraphs,
-  // docThanhTieng, chinhTa, tapLamVan: chưa có builder - thêm khi triển khai xong khối đó.
+  [BLOCK_KEYS.DOC_THANH_TIENG]: buildDocThanhTiengDocxParagraphs,
+  [BLOCK_KEYS.CHINH_TA]: buildChinhTaDocxParagraphs,
+  [BLOCK_KEYS.TAP_LAM_VAN]: buildTapLamVanDocxParagraphs,
 };
 
 const VIETNAMESE_EXAM_PAGE_PROPERTIES = {

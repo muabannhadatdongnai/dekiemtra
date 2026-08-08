@@ -30,7 +30,7 @@ export const VIETNAMESE_EXAM_BLOCKS = {
     label: "Đọc thành tiếng",
     description: "Hướng dẫn tĩnh cho giáo viên (không cần AI)",
     isAiGenerated: false,
-    implemented: false, // TODO Giai đoạn 2 (tiếp): khối tĩnh, làm sau khi "Đọc thầm" ổn
+    implemented: true,
   },
   [BLOCK_KEYS.DOC_THAM]: {
     key: BLOCK_KEYS.DOC_THAM,
@@ -48,7 +48,7 @@ export const VIETNAMESE_EXAM_BLOCKS = {
     label: "Chính tả",
     description: "Hướng dẫn tĩnh, trích 1 đoạn có sẵn trong SGK (không cần AI)",
     isAiGenerated: false,
-    implemented: false, // TODO Giai đoạn 2 (tiếp)
+    implemented: true,
   },
   [BLOCK_KEYS.TAP_LAM_VAN]: {
     key: BLOCK_KEYS.TAP_LAM_VAN,
@@ -57,7 +57,7 @@ export const VIETNAMESE_EXAM_BLOCKS = {
     label: "Tập làm văn",
     description: "AI sinh 1 đề bài viết văn (AI nhẹ)",
     isAiGenerated: true,
-    implemented: false, // TODO Giai đoạn 2 (tiếp)
+    implemented: true,
   },
 };
 

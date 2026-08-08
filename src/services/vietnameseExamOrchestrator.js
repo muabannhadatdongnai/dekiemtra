@@ -1,5 +1,8 @@
 import { getBlock } from "@/data/vietnameseExamBlocks";
 import { generateDocThamBlock } from "./vietnameseBlocks/docThamBlock";
+import { generateDocThanhTiengBlock } from "./vietnameseBlocks/docThanhTiengBlock";
+import { generateChinhTaBlock } from "./vietnameseBlocks/chinhTaBlock";
+import { generateTapLamVanBlock } from "./vietnameseBlocks/tapLamVanBlock";
 
 /**
  * vietnameseExamOrchestrator.js
@@ -19,8 +22,9 @@ import { generateDocThamBlock } from "./vietnameseBlocks/docThamBlock";
  */
 const BLOCK_GENERATORS = {
   docTham: generateDocThamBlock,
-  // docThanhTieng, chinhTa, tapLamVan: chưa có hàm sinh - xem `implemented: false` trong
-  // vietnameseExamBlocks.js, thêm dòng tương ứng ở đây khi triển khai xong từng khối.
+  docThanhTieng: generateDocThanhTiengBlock,
+  chinhTa: generateChinhTaBlock,
+  tapLamVan: generateTapLamVanBlock,
 };
 
 export async function orchestrateVietnameseExamGeneration({ grade, selectedBlocks = [], blockInputs = {} }) {
