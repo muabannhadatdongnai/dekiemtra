@@ -179,7 +179,7 @@ Việt Tiểu học") trong lần làm tiếp theo — bắt đầu từ việc 
 
 ---
 
-## 🚧 Giai đoạn 2 — ĐANG LÀM (bước 1 + khối "Đọc thầm" đã xong, 3 khối còn lại CHƯA làm)
+## ✅ Giai đoạn 2 — ĐỦ 4/4 KHỐI (Bước 1 + Bước 2 + Bước 3 đều xong, CHƯA test Gemini thật)
 
 ### Bước 1 — Dựng khung mode thứ 4 "📖 Đề Tiếng Việt Tiểu học" — xong
 Đúng nguyên tắc đã chốt ("mỗi khối 1 file độc lập, ghép tuỳ ý"), theo khuôn `lessonPlanIntegrations.js`
@@ -242,24 +242,73 @@ Việt Tiểu học") trong lần làm tiếp theo — bắt đầu từ việc 
   `word/document.xml` → xác nhận CÓ THẬT: tiêu đề đề thi, tiêu đề+nội dung ngữ liệu, câu hỏi trắc
   nghiệm, đủ 4 lựa chọn A/B/C/D, dòng chấm cho câu tự luận.
 
+### Bước 3 — 3 khối còn lại: "Đọc thành tiếng", "Chính tả", "Tập làm văn" — xong (đủ 4/4 khối)
+
+- **`docThanhTiengBlock.js`** (TĨNH, không AI) — giáo viên chỉ cần nhập "Tên bài tập đọc", hệ
+  thống định dạng lại thành 1 khối có hướng dẫn giám thị cố định (bốc thăm đọc ~90-100 tiếng + trả
+  lời 1 câu hỏi miệng). Có validate: thiếu tên bài → báo lỗi rõ ràng, không tạo ra khối rỗng.
+- **`chinhTaBlock.js`** (TĨNH, không AI - **CỐ Ý**) — khác với "Đọc thầm"/"Tập làm văn", khối này
+  **KHÔNG dùng AI để viết nội dung** vì mục đích bài chính tả là kiểm tra nghe/nhớ ĐÚNG NGUYÊN VĂN
+  1 đoạn có sẵn trong SGK - để AI tự "sáng tác lại" sẽ sai mục đích bài tập VÀ có rủi ro tái tạo
+  văn bản có bản quyền của NXB Giáo dục. Giáo viên tự gõ/dán "Tên bài" + "Nội dung đoạn chính tả"
+  (nguyên văn từ SGK họ đang dùng), hệ thống chỉ hiển thị/xuất lại nguyên vẹn - đã ghi rõ lý do
+  này ngay trong comment đầu file `chinhTaBlock.js` để không ai (kể cả AI ở phiên sau) vô tình
+  "cải tiến" bằng cách thêm AI vào khối này.
+- **`tapLamVanBlock.js`** (AI NHẸ) — CHỈ sinh 1 đề bài (1 câu) + gợi ý dàn ý ngắn 3-4 ý (KHÔNG sinh
+  bài văn mẫu hoàn chỉnh, tránh học sinh chép nguyên) - đúng như đã chốt "AI nhẹ". Giáo viên có thể
+  chỉ định trước "Thể loại" (tả cảnh/tả người/kể chuyện/viết thư) + "Chủ đề", hoặc để AI tự chọn.
+  Cùng cơ chế retry + phân biệt lỗi hết quota/quá tải như `docThamBlock.js`.
+- Mỗi khối có đủ 3 phần TỰ CHỨA đúng nguyên tắc: hàm sinh (`services/vietnameseBlocks/`), hiển thị
+  riêng (`components/vietnameseBlocks/*BlockView.jsx`), builder Word riêng
+  (`services/vietnameseBlocks/*Export.js`) - đã nối cả 3 vào danh bạ/2 "người điều phối"
+  (`vietnameseExamOrchestrator.js` + `VietnameseExamPreview.jsx` + `vietnameseExamExportService.js`)
+  bằng đúng 1 dòng mỗi nơi, không sửa logic điều phối đã có.
+- `vietnameseExamBlocks.js`: cả 4 khối giờ `implemented: true`.
+- `VietnameseExamForm.jsx`: mặc định tick sẵn cả 4 khối (đúng cấu trúc đề Tiếng Việt Tiểu học đầy
+  đủ thật: A. Đọc + B. Viết) - giáo viên tự bỏ tick khối không cần. Mỗi khối có ô input riêng, có
+  validate ở client trước khi gửi (VD: thiếu "Tên bài tập đọc" hoặc "Nội dung chính tả" thì báo lỗi
+  ngay, không tốn lượt gọi API).
+
+### Đã tự xác minh thật (không chỉ đọc code) - LẦN 2
+- `npm run build` + `npm test`: vẫn build sạch, vẫn **38/38 pass**.
+- Gọi thẳng `orchestrateVietnameseExamGeneration()` với 2 khối TĨNH (`docThanhTieng` + `chinhTa`,
+  không cần Gemini) → xác nhận chạy thành công thật, trả đúng dữ liệu, `warnings` rỗng.
+- Gọi lại với `docThanhTieng` thiếu "Tên bài" → xác nhận báo lỗi tiếng Việt rõ ràng, không crash,
+  `results` rỗng (đúng hành vi mong muốn: validate chặn trước khi tạo ra khối vô nghĩa).
+- Gọi với ĐỦ CẢ 4 khối cùng lúc (2 khối AI sẽ fail vì sandbox thiếu `GEMINI_API_KEYS`, 2 khối tĩnh
+  phải vẫn thành công) → xác nhận ĐÚNG: `results` chỉ có 2 khối tĩnh, đúng 2 cảnh báo cho 2 khối
+  AI - **xác nhận thật nguyên tắc "lỗi 1 khối không làm hỏng khối khác"**, không phải chỉ đọc code.
+- Gọi thẳng `buildVietnameseExamDocxSections()` với dữ liệu mẫu ĐỦ CẢ 4 khối → giải nén `.docx`
+  thật, soi `word/document.xml` → xác nhận: cả 4 khối đều CÓ THẬT trong file Word, và **đúng thứ tự
+  A. Đọc thành tiếng → A. Đọc thầm → B. Chính tả → B. Tập làm văn** (kiểm tra bằng vị trí index
+  trong XML thật, không suy đoán).
+
 ### Việc CHƯA làm — quan trọng nhất, cần làm ở phiên tiếp theo hoặc khi có API key thật
-1. **Chưa gọi Gemini THẬT** cho khối "Đọc thầm" — sandbox này không có `GEMINI_API_KEYS` cấu hình
-   VÀ mạng bị giới hạn domain (không có quyền gọi `generativelanguage.googleapis.com`), nên chỉ xác
-   nhận được ĐƯỜNG ĐI đúng (prompt dựng đúng, lỗi được bắt đúng), chưa xác nhận được CHẤT LƯỢNG nội
-   dung AI trả về (ngữ liệu có hay không, câu hỏi có thực sự bám sát đoạn văn không, JSON có đúng
-   schema 100% không qua nhiều lần thử). Cần bạn tự chạy `npm run dev` với `GEMINI_API_KEYS` thật.
-2. Chưa xem bằng mắt trên trình duyệt thật — vị trí 2 ô "Chủ đề"/"Số câu hỏi" khi tick "Đọc thầm",
-   3 khối còn lại hiển thị mờ "sắp có" có rõ ràng dễ hiểu với giáo viên không.
-3. **3 khối còn lại CHƯA làm**: "Đọc thành tiếng" (tĩnh) → "Chính tả" (tĩnh) → "Tập làm văn" (AI
-   nhẹ) — đúng thứ tự đã chốt trong lộ trình D. Theo kế hoạch, làm tiếp sau khi khối "Đọc thầm" đã
-   được xác nhận chạy tốt với Gemini thật (mục 1 ở trên).
-4. Chưa quyết định "4 mã đề" cho mode này, chưa quyết định chống trùng ngữ liệu qua nhiều lần tạo —
-   đúng như đã ghi trong kế hoạch, để bàn sau khi khối "Đọc thầm" chạy ổn với dữ liệu thật.
+1. **Chưa gọi Gemini THẬT** cho cả 2 khối cần AI ("Đọc thầm" + "Tập làm văn") — sandbox này không
+   có `GEMINI_API_KEYS` cấu hình VÀ mạng bị giới hạn domain (không có quyền gọi
+   `generativelanguage.googleapis.com`), nên chỉ xác nhận được ĐƯỜNG ĐI đúng (prompt dựng đúng, lỗi
+   được bắt đúng, không crash), CHƯA xác nhận được CHẤT LƯỢNG nội dung AI trả về thật (ngữ liệu Đọc
+   thầm có hay/đúng lứa tuổi không, câu hỏi có bám sát đoạn văn không, đề Tập làm văn có phù hợp
+   không, JSON có đúng schema 100% qua nhiều lần thử không). **Đây là việc quan trọng nhất cần bạn
+   tự làm** — chạy `npm run dev` với `GEMINI_API_KEYS` thật, thử cả 4 khối, đọc kỹ nội dung AI trả
+   về xem có ổn không trước khi coi là "xong" thật sự.
+2. Chưa xem bằng mắt trên trình duyệt thật (`npm run dev`) — form dài hơn hẳn giờ có đủ 4 khối, cần
+   xác nhận: giao diện có rối không, tick/bỏ tick khối có mượt không, chữ tiếng Việt trong ô
+   "Nội dung đoạn chính tả" (textarea) có hiển thị đẹp không, và đặc biệt **trang preview/Word có
+   bị tràn trang khi đủ cả 4 khối cùng lúc không** (mới test qua script gọi hàm, chưa xem bản in
+   thật).
+3. Chưa quyết định "4 mã đề" (A/B/C/D) cho mode này, chưa quyết định chống trùng ngữ liệu Đọc thầm/
+   đề Tập làm văn qua nhiều lần tạo (giống ngân hàng câu hỏi ở luồng "Đề kiểm tra" chính) — đúng
+   như đã ghi trong kế hoạch gốc, để bàn sau khi có kết quả test Gemini thật (mục 1).
+4. Chưa khảo sát THCS/THPT Ngữ Văn có cần cấu trúc tương tự không — vẫn để sau như kế hoạch gốc.
+5. Chưa viết test tự động (`node --test`) riêng cho 4 khối này — mới verify bằng script gọi hàm thủ
+   công trong phiên làm việc này, chưa có trong bộ `test/*.test.js` chạy lại được mỗi lần `npm test`
+   sau này. Nên cân nhắc thêm ở phiên sau để không phải verify thủ công lại từ đầu mỗi lần sửa.
 
 ---
 
 ## Quy trình khi mở chat mới
 1. Upload lại zip code mới nhất (sandbox reset giữa các phiên) + file `PROJECT_SUMMARY.md` này.
-2. Nói rõ đang muốn tiếp tục việc gì (VD: "đã test Đọc thầm với Gemini thật, làm tiếp khối Đọc
-   thành tiếng" hoặc "review lại lần nữa").
+2. Nói rõ đang muốn tiếp tục việc gì (VD: "đã test cả 4 khối với Gemini thật, ổn rồi, làm tiếp
+   [việc X]" hoặc "review lại lần nữa" hoặc "viết test tự động cho 4 khối Tiếng Việt").
 3. Sau khi hoàn thành, yêu cầu cập nhật lại chính `PROJECT_SUMMARY.md` trước khi đóng gói zip mới.
