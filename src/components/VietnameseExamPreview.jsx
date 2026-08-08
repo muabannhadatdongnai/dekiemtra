@@ -1,6 +1,9 @@
 "use client";
 
 import DocThamBlockView from "./vietnameseBlocks/DocThamBlockView";
+import DocThanhTiengBlockView from "./vietnameseBlocks/DocThanhTiengBlockView";
+import ChinhTaBlockView from "./vietnameseBlocks/ChinhTaBlockView";
+import TapLamVanBlockView from "./vietnameseBlocks/TapLamVanBlockView";
 import { listBlocks, BLOCK_KEYS } from "@/data/vietnameseExamBlocks";
 
 /**
@@ -15,7 +18,9 @@ import { listBlocks, BLOCK_KEYS } from "@/data/vietnameseExamBlocks";
  */
 const BLOCK_VIEWS = {
   [BLOCK_KEYS.DOC_THAM]: DocThamBlockView,
-  // docThanhTieng, chinhTa, tapLamVan: chưa có component hiển thị - thêm khi triển khai xong.
+  [BLOCK_KEYS.DOC_THANH_TIENG]: DocThanhTiengBlockView,
+  [BLOCK_KEYS.CHINH_TA]: ChinhTaBlockView,
+  [BLOCK_KEYS.TAP_LAM_VAN]: TapLamVanBlockView,
 };
 
 export default function VietnameseExamPreview({ results, meta }) {
