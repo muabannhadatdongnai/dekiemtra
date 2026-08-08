@@ -118,6 +118,19 @@ export async function analyzeSampleExamRequest({ username, file }) {
   return handleResponse(res);
 }
 
+/** Phân tích giáo án mẫu (docx/pdf/ảnh) - dùng cho tính năng "Bám sát mẫu"/"Kết hợp mẫu + SGK". */
+export async function analyzeLessonPlanSampleRequest({ username, file }) {
+  const formData = new FormData();
+  formData.set("username", username);
+  formData.set("file", file);
+  const res = await fetch("/api/analyze-lesson-plan-sample", {
+    method: "POST",
+    headers: authHeaders(),
+    body: formData,
+  });
+  return handleResponse(res);
+}
+
 /**
  * @param blueprint - xem cấu trúc "lessonPlanBlueprint" trong src/data/lessonPlanBlueprint.js
  */

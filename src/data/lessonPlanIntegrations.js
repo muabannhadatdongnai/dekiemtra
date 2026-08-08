@@ -8,6 +8,11 @@
  *  - jsonField: tên trường sẽ xuất hiện thêm trong JSON trả về của AI (chỉ khi bật)
  *  - buildPromptFragment(): đoạn hướng dẫn chèn vào prompt khi bật
  *  - isAiGenerated: true nếu cần AI sinh nội dung; false nếu xử lý thuần code (ví dụ Timeline)
+ *  - schemaExample: đoạn JSON MẪU (dạng chuỗi, sẽ nối vào object schema chính) minh hoạ CỤ THỂ
+ *    hình dạng field này - xem giải thích lý do thêm trường này trong buildLessonPlanPrompt()
+ *    (lessonPlanPromptTemplates.js): trước đây field như "mindmap" CHỈ được mô tả bằng lời trong
+ *    buildPromptFragment(), không xuất hiện trong ví dụ JSON chính -> AI hay quên trả về field
+ *    này dù đã đọc yêu cầu, vì ví dụ cụ thể luôn "neo" hành vi mô hình tốt hơn mô tả bằng lời.
  */
 
 export const INTEGRATION_KEYS = {
@@ -33,6 +38,7 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  động cụ thể trong bài có ứng dụng công nghệ số/kỹ năng số phù hợp lứa tuổi (tra cứu thông tin an \n` +
       `  toàn, dùng phần mềm/app học tập phù hợp, kỹ năng gõ phím, nhận biết thông tin đúng-sai trên mạng...).\n` +
       `  Trả về trong trường JSON "tichHopNLS" (dạng đoạn văn ngắn, KHÔNG lặp lại y hệt nội dung hoạt động chính).`,
+    schemaExample: `"tichHopNLS": "..."`,
   },
   [INTEGRATION_KEYS.KHOI_DONG_SOI_NOI]: {
     key: INTEGRATION_KEYS.KHOI_DONG_SOI_NOI,
@@ -65,6 +71,7 @@ export const LESSON_PLAN_INTEGRATIONS = {
     buildPromptFragment: () =>
       `- Thêm 1 bộ 3-5 câu hỏi củng cố nhanh cuối bài (trắc nghiệm hoặc hỏi nhanh), kèm đáp án ngắn gọn.\n` +
       `  Trả về trong trường JSON "cungCoQuestions": mảng các object { "cauHoi": "...", "dapAn": "..." }.`,
+    schemaExample: `"cungCoQuestions": [ { "cauHoi": "...", "dapAn": "..." } ]`,
   },
   [INTEGRATION_KEYS.TICH_HOP_GDQPAN]: {
     key: INTEGRATION_KEYS.TICH_HOP_GDQPAN,
@@ -77,6 +84,7 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  NGẮN GỌN 1 nội dung phù hợp với bài học (tinh thần yêu nước, ý thức bảo vệ Tổ quốc, kỷ luật, an\n` +
       `  toàn cộng đồng...), KHÔNG biến bài học thành 1 tiết Giáo dục Quốc phòng riêng biệt.\n` +
       `  Trả về trong trường JSON "tichHopGDQPAN".`,
+    schemaExample: `"tichHopGDQPAN": "..."`,
   },
   [INTEGRATION_KEYS.TICH_HOP_HSKT]: {
     key: INTEGRATION_KEYS.TICH_HOP_HSKT,
@@ -89,6 +97,7 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  ngắn gọn cách điều chỉnh mục tiêu/phương pháp/hình thức đánh giá cho phù hợp với học sinh khuyết\n` +
       `  tật học hoà nhập trong lớp (ví dụ: giảm yêu cầu, tăng hỗ trợ trực quan, cho thêm thời gian...).\n` +
       `  Trả về trong trường JSON "tichHopHSKT".`,
+    schemaExample: `"tichHopHSKT": "..."`,
   },
   [INTEGRATION_KEYS.TIMELINE]: {
     key: INTEGRATION_KEYS.TIMELINE,
@@ -107,7 +116,10 @@ export const LESSON_PLAN_INTEGRATIONS = {
     buildPromptFragment: () =>
       `- Thêm 1 sơ đồ tư duy (mindmap) tóm tắt kiến thức trọng tâm của bài, dạng 1 chủ đề trung tâm và\n` +
       `  2-5 nhánh chính, mỗi nhánh có 2-4 ý phụ NGẮN GỌN (vài từ, không viết thành câu dài).\n` +
-      `  Trả về trong trường JSON "mindmap": { "chuDe": "...", "nhanh": [ { "nhan": "...", "y": ["...", "..."] } ] }.`,
+      `  Trả về trong trường JSON "mindmap": { "chuDe": "...", "nhanh": [ { "nhan": "...", "y": ["...", "..."] } ] }.\n` +
+      `  BẮT BUỘC phải có trường "mindmap" này trong JSON trả về - đây KHÔNG phải trường tuỳ chọn.`,
+    schemaExample:
+      `"mindmap": { "chuDe": "...", "nhanh": [ { "nhan": "...", "y": ["...", "..."] }, { "nhan": "...", "y": ["...", "..."] } ] }`,
   },
 };
 
@@ -128,4 +140,18 @@ export function buildIntegrationsPromptBlock(selectedKeys = []) {
     .map((i) => i.buildPromptFragment());
   if (fragments.length === 0) return "";
   return `\nTÍCH HỢP/NÂNG CAO ĐƯỢC GIÁO VIÊN YÊU CẦU THÊM (BẮT BUỘC tuân thủ đầy đủ):\n${fragments.join("\n")}\n`;
+}
+
+/**
+ * Gộp các đoạn "schemaExample" của những tích hợp đang BẬT có field riêng (jsonField) - dùng để
+ * chèn TRỰC TIẾP vào ví dụ JSON chính trong buildLessonPlanPrompt(), giúp AI thấy được hình dạng
+ * CỤ THỂ của field thay vì chỉ đọc mô tả bằng lời (xem giải thích đầy đủ trong JSDoc đầu file).
+ * Trả về mảng các dòng string, KHÔNG phải 1 chuỗi đã nối, để nơi gọi tự quyết định cách nối dấu
+ * phẩy/xuống dòng cho khớp với phần còn lại của object JSON mẫu.
+ */
+export function collectIntegrationSchemaExamples(selectedKeys = []) {
+  return selectedKeys
+    .map((key) => getIntegration(key))
+    .filter((i) => i && i.isAiGenerated && i.jsonField && i.schemaExample)
+    .map((i) => i.schemaExample);
 }

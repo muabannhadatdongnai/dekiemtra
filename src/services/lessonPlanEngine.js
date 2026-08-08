@@ -23,6 +23,9 @@ export async function generateLessonPlanContent({
   sourceMarkdown,
   chapterLabel,
   integrations,
+  sampleMode,
+  sampleSpec,
+  sampleReferenceText,
   maxRetries = 2,
 }) {
   let attempt = 0;
@@ -38,6 +41,9 @@ export async function generateLessonPlanContent({
       sourceMarkdown,
       chapterLabel,
       integrations,
+      sampleMode,
+      sampleSpec,
+      sampleReferenceText,
     });
 
     try {

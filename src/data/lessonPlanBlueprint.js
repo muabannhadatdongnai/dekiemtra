@@ -13,6 +13,13 @@
  * @property {"one_column"|"two_column"} columnMode
  * @property {string} noiDungCotLoi - giáo viên tự gõ ý chính/kiến thức trọng tâm
  * @property {string[]} integrations - danh sách key bật trong lessonPlanIntegrations.js
+ * @property {"theo_chuong"|"theo_mau"|"ket_hop"} [sampleMode] - "theo_chuong" (mặc định, không
+ *   dùng giáo án mẫu) | "theo_mau" (ưu tiên bám sát cách trình bày mẫu) | "ket_hop" (áp dụng cách
+ *   trình bày mẫu nhưng vẫn ưu tiên SGK cho nội dung) - xem lessonPlanSampleSchema.js
+ * @property {Object|null} [sampleSpec] - spec cấu trúc/trình bày đã phân tích từ file mẫu (null
+ *   nếu sampleMode = "theo_chuong")
+ * @property {string|null} [sampleReferenceText] - đoạn trích văn bản mẫu (nếu trích được bằng
+ *   docx-text/pdf-text), chỉ dùng khi sampleMode = "theo_mau"
  */
 
 export function buildLessonPlanBlueprint({
@@ -25,6 +32,9 @@ export function buildLessonPlanBlueprint({
   columnMode = "one_column",
   noiDungCotLoi = "",
   integrations = [],
+  sampleMode = "theo_chuong",
+  sampleSpec = null,
+  sampleReferenceText = null,
 }) {
   return {
     tenBai,
@@ -36,5 +46,8 @@ export function buildLessonPlanBlueprint({
     columnMode,
     noiDungCotLoi,
     integrations,
+    sampleMode,
+    sampleSpec,
+    sampleReferenceText,
   };
 }

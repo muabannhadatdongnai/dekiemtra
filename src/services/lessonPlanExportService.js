@@ -36,6 +36,14 @@ function textRun(text, opts = {}) {
   return new TextRun({ text: String(text ?? ""), font: FONT, size: 24, ...opts });
 }
 
+// Chuyển 1 chuỗi có thể chứa "\n" (do AI viết nhiều ý gạch đầu dòng trong 1 bước, xem
+// stepClarityRule trong lessonPlanPromptTemplates.js) thành mảng TextRun có ngắt dòng thật
+// trong Word (dùng "break", KHÔNG in ký tự "\n" thô ra file - lỗi này từng gặp ở nơi khác).
+function multilineTextRuns(text, opts = {}) {
+  const lines = String(text ?? "").split("\n");
+  return lines.flatMap((line, i) => (i === 0 ? [textRun(line, opts)] : [textRun(line, { ...opts, break: 1 })]));
+}
+
 function paragraph(text, opts = {}) {
   return new Paragraph({ children: [textRun(text, opts.run)], spacing: { after: 100 }, ...opts.paragraph });
 }
@@ -63,10 +71,13 @@ function cell(text, widthPercent, opts = {}) {
     width: { size: widthPercent, type: WidthType.PERCENTAGE },
     borders: ALL_BORDERS,
     verticalAlign: VerticalAlign.TOP,
-    children: [new Paragraph({ children: [textRun(text, { bold: opts.bold })] })],
+    children: [new Paragraph({ children: opts.children || [textRun(text, { bold: opts.bold })] })],
   });
 }
 
+// ⚠️ Đánh số "Bước N:" THUẦN CODE (không phụ thuộc AI) cho từng bước trong "tienTrinh" - giáo
+// viên phản ánh mục III (CÁC HOẠT ĐỘNG DẠY HỌC CHỦ YẾU) trước đây không rõ ràng ranh giới giữa
+// các bước. Đảm bảo LUÔN đánh số nhất quán dù AI trả về bao nhiêu bước.
 function buildTwoColumnActivityTable(steps) {
   const headerRow = new TableRow({
     children: [
@@ -75,14 +86,25 @@ function buildTwoColumnActivityTable(steps) {
     ],
   });
   const bodyRows = (steps || []).map(
-    (s) => new TableRow({ children: [cell(s.hoatDongGVHS, 60), cell(s.sanPhamDuKien, 40)] })
+    (s, i) =>
+      new TableRow({
+        children: [
+          cell(null, 60, {
+            children: [textRun(`Bước ${i + 1}: `, { bold: true }), ...multilineTextRuns(s.hoatDongGVHS)],
+          }),
+          cell(s.sanPhamDuKien, 40),
+        ],
+      })
   );
   return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...bodyRows] });
 }
 
 function buildOneColumnActivityParagraphs(steps) {
-  return (steps || []).flatMap((s) => [
-    paragraph(s.hoatDongGVHS),
+  return (steps || []).flatMap((s, i) => [
+    new Paragraph({
+      children: [textRun(`Bước ${i + 1}: `, { bold: true }), ...multilineTextRuns(s.hoatDongGVHS)],
+      spacing: { after: 40 },
+    }),
     ...(s.sanPhamDuKien
       ? [
           new Paragraph({

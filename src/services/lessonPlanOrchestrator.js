@@ -3,6 +3,7 @@ import { generateLessonPlanContent } from "./lessonPlanEngine";
 import { isPreschoolGrade, computeActivityTimeline } from "@/data/lessonPlanTemplates";
 import { ADVANCED_BOOK_MARKER } from "@/data/constants";
 import { getIntegration } from "@/data/lessonPlanIntegrations";
+import { isUsableLessonPlanSampleSpec } from "@/data/lessonPlanSampleSchema";
 
 /**
  * lessonPlanOrchestrator.js
@@ -22,10 +23,27 @@ export async function orchestrateLessonPlanGeneration({
   soTiet = 1,
   noiDungCotLoi = "",
   integrations = [],
+  sampleMode = "theo_chuong",
+  sampleSpec = null,
+  sampleReferenceText = null,
 }) {
   const warnings = [];
   let sourceMarkdown = "";
   let chapterLabel = "";
+
+  // Giống examOrchestrator.js: nếu chế độ dùng mẫu được chọn nhưng spec không đủ dùng (chưa
+  // phân tích xong/lỗi phân tích lọt qua validate client) - tự động fallback về không dùng mẫu,
+  // KHÔNG chặn cả lượt soạn giáo án chỉ vì phần mẫu bị thiếu.
+  let effectiveSampleMode = sampleMode;
+  let effectiveSampleSpec = sampleSpec;
+  if (sampleMode !== "theo_chuong" && !isUsableLessonPlanSampleSpec(sampleSpec)) {
+    effectiveSampleMode = "theo_chuong";
+    effectiveSampleSpec = null;
+    warnings.push(
+      `Không có giáo án mẫu hợp lệ để áp dụng (chưa phân tích thành công hoặc mẫu không đủ thông ` +
+        `tin) - hệ thống đã tự động soạn theo khung mặc định, bỏ qua mẫu cho lượt soạn này.`
+    );
+  }
 
   if (!isPreschoolGrade(grade) && chapterId) {
     try {
@@ -53,6 +71,9 @@ export async function orchestrateLessonPlanGeneration({
       sourceMarkdown,
       chapterLabel,
       integrations,
+      sampleMode: effectiveSampleMode,
+      sampleSpec: effectiveSampleSpec,
+      sampleReferenceText,
     }));
   } catch (err) {
     // ⚠️ MỚI: chặn lỗi bất ngờ (JSON hỏng nhiều lần, lỗi mạng...) tại đây - KHÔNG để lọt nguyên
