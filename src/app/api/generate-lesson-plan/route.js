@@ -17,6 +17,9 @@ export async function POST(request) {
       soTiet = 1,
       noiDungCotLoi = "",
       integrations = [],
+      sampleMode = "theo_chuong",
+      sampleSpec = null,
+      sampleReferenceText = null,
     } = body;
 
     if (!tenBai || !grade) {
@@ -35,6 +38,9 @@ export async function POST(request) {
       soTiet,
       noiDungCotLoi,
       integrations,
+      sampleMode,
+      sampleSpec,
+      sampleReferenceText,
     });
 
     if (!lessonPlan) {

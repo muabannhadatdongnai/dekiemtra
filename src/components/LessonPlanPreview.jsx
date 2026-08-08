@@ -41,8 +41,10 @@ function ActivityBlock({ activity, columnMode, minutes }) {
           <tbody>
             {steps.map((s, i) => (
               <tr key={i}>
-                <td style={cellStyle}>{s.hoatDongGVHS}</td>
-                <td style={cellStyle}>{s.sanPhamDuKien}</td>
+                <td style={{ ...cellStyle, whiteSpace: "pre-line" }}>
+                  <b>Bước {i + 1}:</b> {s.hoatDongGVHS}
+                </td>
+                <td style={{ ...cellStyle, whiteSpace: "pre-line" }}>{s.sanPhamDuKien}</td>
               </tr>
             ))}
           </tbody>
@@ -50,8 +52,8 @@ function ActivityBlock({ activity, columnMode, minutes }) {
       ) : (
         <div>
           {steps.map((s, i) => (
-            <p key={i} style={{ fontSize: 13.5, margin: "0 0 6px" }}>
-              {s.hoatDongGVHS}
+            <p key={i} style={{ fontSize: 13.5, margin: "0 0 6px", whiteSpace: "pre-line" }}>
+              <b>Bước {i + 1}:</b> {s.hoatDongGVHS}
               {s.sanPhamDuKien ? (
                 <span style={{ color: "#475569" }}> — Sản phẩm dự kiến: {s.sanPhamDuKien}</span>
               ) : null}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
 import { SUBJECTS } from "@/data/config";
 import {
   LESSON_PLAN_GRADES,
@@ -13,9 +13,21 @@ import {
 import { listIntegrations } from "@/data/lessonPlanIntegrations";
 import { buildLessonPlanBlueprint } from "@/data/lessonPlanBlueprint";
 import { buildLessonPlanResult } from "@/data/lessonPlanResult";
-import { fetchChaptersRequest, generateLessonPlanRequest } from "@/services/apiClient";
+import { getSession } from "@/services/authService";
+import {
+  fetchChaptersRequest,
+  generateLessonPlanRequest,
+  analyzeLessonPlanSampleRequest,
+} from "@/services/apiClient";
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
+
+// Khớp sampleMode phía server (lessonPlanOrchestrator.js/lessonPlanPromptTemplates.js).
+const SAMPLE_MODES = [
+  { value: "theo_chuong", label: "Không dùng mẫu", hint: "Mặc định - soạn theo khung chuẩn" },
+  { value: "theo_mau", label: "Bám sát mẫu", hint: "Ưu tiên cách trình bày của giáo án mẫu" },
+  { value: "ket_hop", label: "Kết hợp mẫu + SGK", hint: "Trình bày theo mẫu, nội dung bám SGK" },
+];
 
 function Field({ label, required, children }) {
   return (
@@ -37,6 +49,14 @@ export default function LessonPlanForm({ onGenerated }) {
   const [columnMode, setColumnMode] = useState(LESSON_PLAN_COLUMN_MODES.ONE_COLUMN);
   const [noiDungCotLoi, setNoiDungCotLoi] = useState("");
   const [selectedIntegrations, setSelectedIntegrations] = useState(["khoiDongSoiNoi", "phuongPhapTichCuc", "cungCo"]);
+
+  const [sampleMode, setSampleMode] = useState("theo_chuong");
+  const [sampleFile, setSampleFile] = useState(null);
+  const [sampleSpec, setSampleSpec] = useState(null);
+  const [sampleReferenceText, setSampleReferenceText] = useState(null);
+  const [sampleFromCache, setSampleFromCache] = useState(false);
+  const [analyzingSample, setAnalyzingSample] = useState(false);
+  const [sampleError, setSampleError] = useState("");
 
   const [availableChapters, setAvailableChapters] = useState([]);
   const [chapterId, setChapterId] = useState("");
@@ -85,6 +105,35 @@ export default function LessonPlanForm({ onGenerated }) {
     );
   }
 
+  // Phân tích giáo án mẫu ngay khi giáo viên chọn file - cùng tinh thần handleSampleFileChange()
+  // bên ExamMatrixForm.jsx: báo lỗi/kết quả ngay, không chờ tới lúc bấm "Tạo bài dạy".
+  async function handleSampleFileChange(e) {
+    const file = e.target.files?.[0] || null;
+    setSampleFile(file);
+    setSampleSpec(null);
+    setSampleReferenceText(null);
+    setSampleError("");
+    if (!file) return;
+
+    const session = getSession();
+    if (!session) {
+      setSampleError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
+      return;
+    }
+
+    setAnalyzingSample(true);
+    try {
+      const data = await analyzeLessonPlanSampleRequest({ username: session.username, file });
+      setSampleSpec(data.spec);
+      setSampleReferenceText(data.referenceText || null);
+      setSampleFromCache(Boolean(data.fromCache));
+    } catch (err) {
+      setSampleError(err.message);
+    } finally {
+      setAnalyzingSample(false);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -95,6 +144,14 @@ export default function LessonPlanForm({ onGenerated }) {
     }
     if (!noiDungCotLoi.trim()) {
       setError("Vui lòng nhập Nội dung cốt lõi.");
+      return;
+    }
+    if (sampleMode !== "theo_chuong" && !sampleSpec) {
+      setError(
+        analyzingSample
+          ? "Đang phân tích giáo án mẫu, vui lòng đợi xong rồi bấm Tạo bài dạy lại."
+          : "Vui lòng upload giáo án mẫu và chờ phân tích xong, hoặc chuyển về \"Không dùng mẫu\"."
+      );
       return;
     }
 
@@ -108,6 +165,9 @@ export default function LessonPlanForm({ onGenerated }) {
       columnMode,
       noiDungCotLoi,
       integrations: selectedIntegrations,
+      sampleMode,
+      sampleSpec: sampleMode !== "theo_chuong" ? sampleSpec : null,
+      sampleReferenceText: sampleMode === "theo_mau" ? sampleReferenceText : null,
     });
 
     setLoading(true);
@@ -245,6 +305,76 @@ export default function LessonPlanForm({ onGenerated }) {
             );
           })}
         </div>
+      </div>
+
+      {/* ============ GIÁO ÁN MẪU (TUỲ CHỌN) ============ */}
+      <div className="space-y-3 border-b border-slate-100 pb-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Giáo án mẫu (tuỳ chọn)</p>
+        <div className="flex flex-wrap gap-2">
+          {SAMPLE_MODES.map((m) => (
+            <label
+              key={m.value}
+              className={`cursor-pointer rounded-md border px-3 py-2 text-xs transition ${
+                sampleMode === m.value
+                  ? "border-brand-600 bg-brand-50 text-brand-700"
+                  : "border-slate-300 text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              <input
+                type="radio"
+                name="lessonPlanSampleMode"
+                value={m.value}
+                checked={sampleMode === m.value}
+                onChange={(e) => setSampleMode(e.target.value)}
+                className="sr-only"
+              />
+              <span className="block font-medium">{m.label}</span>
+              <span className="block text-slate-500">{m.hint}</span>
+            </label>
+          ))}
+        </div>
+
+        {sampleMode !== "theo_chuong" && (
+          <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+              <Upload size={15} />
+              <span>{sampleFile ? sampleFile.name : "Chọn file giáo án mẫu (.docx, .pdf, hoặc ảnh chụp)"}</span>
+              <input
+                type="file"
+                accept=".docx,.pdf,image/*"
+                onChange={handleSampleFileChange}
+                className="sr-only"
+              />
+            </label>
+
+            {analyzingSample && (
+              <p className="flex items-center gap-2 text-xs text-slate-500">
+                <Loader2 size={13} className="animate-spin" /> Đang phân tích cách trình bày giáo án mẫu...
+              </p>
+            )}
+
+            {sampleError && (
+              <p className="flex items-start gap-2 text-xs text-red-600">
+                <XCircle size={13} className="mt-0.5 shrink-0" /> {sampleError}
+              </p>
+            )}
+
+            {sampleSpec && !analyzingSample && (
+              <div className="flex items-start gap-2 text-xs text-emerald-700">
+                <CheckCircle2 size={13} className="mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-medium">
+                    Đã phân tích xong{sampleFromCache ? " (lấy từ cache, không tốn thêm lượt AI)" : ""}.
+                  </p>
+                  {sampleSpec.sectionHeadings?.length > 0 && (
+                    <p>Đề mục: {sampleSpec.sectionHeadings.join(" → ")}</p>
+                  )}
+                  {sampleSpec.presentationNotes && <p>Trình bày: {sampleSpec.presentationNotes}</p>}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
