@@ -13,6 +13,9 @@
  * @property {"one_column"|"two_column"} columnMode
  * @property {string} noiDungCotLoi - giáo viên tự gõ ý chính/kiến thức trọng tâm
  * @property {string[]} integrations - danh sách key bật trong lessonPlanIntegrations.js
+ * @property {"bai_moi"|"on_tap"|"thuc_hanh"} [lessonType] - "loại bài" - xem LESSON_TYPES trong
+ *   lessonPlanTemplates.js, ảnh hưởng tên gọi hoạt động "Khám phá" (VD đổi thành "Hệ thống hoá
+ *   kiến thức" khi là bài ôn tập, thay vì luôn gắn cứng "Khám phá" cho MỌI bài như trước đây)
  * @property {"theo_chuong"|"theo_mau"|"ket_hop"} [sampleMode] - "theo_chuong" (mặc định, không
  *   dùng giáo án mẫu) | "theo_mau" (ưu tiên bám sát cách trình bày mẫu) | "ket_hop" (áp dụng cách
  *   trình bày mẫu nhưng vẫn ưu tiên SGK cho nội dung) - xem lessonPlanSampleSchema.js
@@ -32,6 +35,7 @@ export function buildLessonPlanBlueprint({
   columnMode = "one_column",
   noiDungCotLoi = "",
   integrations = [],
+  lessonType = "bai_moi",
   sampleMode = "theo_chuong",
   sampleSpec = null,
   sampleReferenceText = null,
@@ -46,6 +50,7 @@ export function buildLessonPlanBlueprint({
     columnMode,
     noiDungCotLoi,
     integrations,
+    lessonType,
     sampleMode,
     sampleSpec,
     sampleReferenceText,

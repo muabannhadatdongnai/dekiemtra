@@ -11,16 +11,28 @@
  */
 
 import { getSubjectProfile } from "./subjectProfiles";
-import { getCircularForGrade, isPreschoolGrade, STANDARD_ACTIVITIES } from "./lessonPlanTemplates";
+import {
+  getCircularForGrade,
+  isPreschoolGrade,
+  getActivityLabels,
+  computeMultiPeriodTimeline,
+} from "./lessonPlanTemplates";
 import { buildIntegrationsPromptBlock, collectIntegrationSchemaExamples } from "./lessonPlanIntegrations";
 
 export const LESSON_PLAN_MODEL = "gemini-3.5-flash"; // đồng bộ FREE_TIER_MODEL bên promptTemplates.js
 
-function buildActivitySchemaBlock() {
-  return STANDARD_ACTIVITIES.map(
-    (a) => `      { "ten": "${a.label}", "mucTieu": "...", "tienTrinh": [ { "hoatDongGVHS": "...", "sanPhamDuKien": "..." } ] }`
-  ).join(",\n");
+// multiPeriod=true -> mỗi bước trong "tienTrinh" cần thêm trường "tiet" (số tiết bước đó diễn ra),
+// xem buildMultiPeriodGuidance() để biết lý do (đủ 2 tiết trở lên cần ranh giới rõ ràng giữa các tiết).
+function buildActivitySchemaBlock(activities, multiPeriod) {
+  const stepExample = multiPeriod
+    ? `{ "tiet": 1, "hoatDongGVHS": "...", "sanPhamDuKien": "..." }`
+    : `{ "hoatDongGVHS": "...", "sanPhamDuKien": "..." }`;
+  return activities
+    .map((a) => `      { "ten": "${a.label}", "mucTieu": "...", "tienTrinh": [ ${stepExample} ] }`)
+    .join(",\n");
 }
+
+
 
 const NUMBERING_STYLE_LABELS = {
   buoc_so_va_abcd: 'có đủ cả "Bước 1/2/3..." và tiểu mục "a)/b)/c)..."',
@@ -84,6 +96,53 @@ ${priorityNote}${referenceBlock}
 `;
 }
 
+/**
+ * buildMultiPeriodGuidance()
+ * Cung cấp cho AI "khung thời lượng" đã tính SẴN THUẦN CODE theo từng tiết học (xem
+ * computeMultiPeriodTimeline() trong lessonPlanTemplates.js) - LUÔN đưa vào prompt (không phụ
+ * thuộc tuỳ chọn "Timeline" có bật hiển thị hay không), để nội dung AI viết ra thực tế/khả thi
+ * ngay cả khi giáo viên không bật hiển thị số phút. Khắc phục 2 phản ánh của giáo viên:
+ * 1. Hoạt động "Khởi động" quá dài (11 phút) do trước đây không có trần thời lượng hợp lý.
+ * 2. Bài dạy nhiều tiết bị gộp thành 1 mạch, không rõ điểm dừng giữa các tiết.
+ */
+function buildMultiPeriodGuidance(soTiet, grade, lessonType) {
+  const periods = computeMultiPeriodTimeline(soTiet, grade, lessonType);
+  const multiPeriod = periods.length > 1;
+  const lines = periods.map(
+    (p) =>
+      `  Tiết ${p.period} (${p.totalMinutes} phút): ` +
+      p.segments.map((s) => `${s.label} ~${s.minutes}'`).join(" → ")
+  );
+
+  if (!multiPeriod) {
+    return {
+      multiPeriod: false,
+      text: `- Gợi ý phân bổ thời lượng cho tiết học (KHÔNG bắt buộc viết số phút vào nội dung, nhưng nội
+  dung từng hoạt động PHẢI vừa đủ trong khoảng thời gian này, đặc biệt KHÔNG thiết kế "Khởi động"
+  dài quá 7 phút dù là trò chơi hấp dẫn thế nào):
+${lines.join("\n")}`,
+    };
+  }
+
+  return {
+    multiPeriod: true,
+    text: `- ⚠️ BÀI DẠY NÀY CÓ ${periods.length} TIẾT - PHẢI CHIA RÕ RANH GIỚI GIỮA CÁC TIẾT, KHÔNG viết dồn
+  thành 1 mạch liên tục như 1 tiết duy nhất. Gợi ý phân bổ hoạt động/thời lượng THEO TỪNG TIẾT
+  (nội dung viết ra phải vừa đủ trong khoảng thời gian này):
+${lines.join("\n")}
+- Mỗi bước trong mảng "tienTrinh" của MỌI hoạt động PHẢI có thêm trường số nguyên "tiet" (1..${periods.length})
+  cho biết bước đó diễn ra ở tiết thứ mấy - dựa theo gợi ý phân bổ ở trên (VD nếu "Luyện tập" được
+  gợi ý vừa có ở Tiết 1 vừa có ở Tiết 2, hãy tách "tienTrinh" của hoạt động "Luyện tập" thành các
+  bước có "tiet":1 (bài tập dễ/khởi đầu) và các bước có "tiet":2 (bài tập khó hơn/tổng hợp) - KHÔNG
+  để tất cả các bước cùng dồn vào 1 tiết).
+- "Khởi động" ở Tiết 1 là khởi động CHÍNH (đầy đủ, tạo hứng thú vào bài). "Khởi động" ở các tiết
+  SAU đó (nếu "tienTrinh" của hoạt động "Khởi động" có bước với "tiet" > 1) PHẢI là "khởi động lại"
+  RẤT NGẮN GỌN (trò chơi nhỏ/câu hỏi nhanh nhắc lại tiết trước), TUYỆT ĐỐI KHÔNG lặp lại y hệt nội
+  dung khởi động của Tiết 1.
+- Hoạt động "Vận dụng" CHỈ đặt ở tiết cuối cùng (tienTrinh chỉ có "tiet": ${periods.length}).`,
+  };
+}
+
 export function buildLessonPlanPrompt({
   tenBai,
   grade,
@@ -93,6 +152,7 @@ export function buildLessonPlanPrompt({
   sourceMarkdown = "", // "" nếu Mầm non hoặc không tải được - vẫn tạo được, chỉ kém bám sát SGK hơn
   chapterLabel = "",
   integrations = [],
+  lessonType = "bai_moi", // "bai_moi" | "on_tap" | "thuc_hanh" - xem LESSON_TYPES (lessonPlanTemplates.js)
   sampleMode = "theo_chuong", // "theo_chuong" | "theo_mau" | "ket_hop"
   sampleSpec = null,
   sampleReferenceText = null,
@@ -101,10 +161,22 @@ export function buildLessonPlanPrompt({
   const circular = getCircularForGrade(grade);
   const subjectProfile = preschool ? null : getSubjectProfile(subject);
   const gradeLabel = preschool ? "Mầm non" : `Lớp ${grade}`;
+  const activities = getActivityLabels(lessonType);
+  const secondActivityLabel = activities.find((a) => a.key === "kham_pha")?.label || "Khám phá";
+  const multiPeriodGuidance = buildMultiPeriodGuidance(soTiet, grade, lessonType);
 
   const roleLine = preschool
     ? "BẠN LÀ MỘT CHUYÊN GIA THIẾT KẾ HOẠT ĐỘNG GIÁO DỤC MẦM NON GIÀU KINH NGHIỆM."
     : `BẠN LÀ ${subjectProfile.expertRole.toUpperCase()}, ĐỒNG THỜI LÀ CHUYÊN GIA SOẠN KẾ HOẠCH BÀI DẠY (GIÁO ÁN) THEO ĐÚNG ${circular.label.toUpperCase()}.`;
+
+  const lessonTypeNote =
+    !preschool && lessonType !== "bai_moi"
+      ? `- ⚠️ Đây là bài "${
+          lessonType === "on_tap" ? "Ôn tập/Luyện tập" : "Thực hành/Trải nghiệm"
+        }", KHÔNG PHẢI bài hình thành kiến thức mới: hoạt động "${secondActivityLabel}" phải tập trung
+  NHẮC LẠI/HỆ THỐNG HOÁ/CỦNG CỐ kiến thức học sinh ĐÃ HỌC trước đó, KHÔNG giới thiệu khái niệm/kiến
+  thức hoàn toàn mới, KHÔNG dùng giọng văn kiểu "khám phá điều mới lạ".`
+      : "";
 
   const structureRule = preschool
     ? `- Kế hoạch hoạt động Mầm non gồm: Mục tiêu, Chuẩn bị (đồ dùng/học liệu), Tiến trình hoạt động
@@ -112,22 +184,24 @@ export function buildLessonPlanPrompt({
   cấu trúc "hoatDong" như schema bên dưới (đặt tên hoạt động phù hợp Mầm non thay vì 4 tên chuẩn
   Tiểu học).`
     : `- Kế hoạch bài dạy PHẢI có đủ 4 hoạt động chuẩn theo Mục III của ${circular.label}: Khởi động,
-  Khám phá (Hình thành kiến thức mới), Luyện tập, Vận dụng - đúng tên gọi, đúng thứ tự, không gộp
-  hay bỏ bớt hoạt động nào.
+  ${secondActivityLabel}, Luyện tập, Vận dụng - đúng tên gọi, đúng thứ tự, không gộp hay bỏ bớt hoạt
+  động nào.
+${lessonTypeNote}
 - Mục "Yêu cầu cần đạt" PHẢI tách rõ 3 nhóm: Kiến thức, Năng lực (năng lực chung + năng lực đặc thù
   môn học), Phẩm chất - đúng định hướng phát triển năng lực-phẩm chất của chương trình GDPT 2018.`;
 
   const stepClarityRule = `- Mỗi hoạt động PHẢI chia thành NHIỀU BƯỚC RÕ RÀNG trong mảng "tienTrinh" (hệ thống sẽ tự đánh
   số "Bước 1", "Bước 2"... khi hiển thị/xuất - AI KHÔNG cần tự viết chữ "Bước..." vào đầu
-  "hoatDongGVHS", chỉ cần tách đúng ranh giới từng bước). Với hoạt động "Khám phá"/"Luyện tập",
-  nên chia theo đúng tinh thần 4 bước quen thuộc: (1) Giao nhiệm vụ, (2) Thực hiện nhiệm vụ,
+  "hoatDongGVHS", chỉ cần tách đúng ranh giới từng bước). Với hoạt động "${secondActivityLabel}"/"Luyện
+  tập", nên chia theo đúng tinh thần 4 bước quen thuộc: (1) Giao nhiệm vụ, (2) Thực hiện nhiệm vụ,
   (3) Báo cáo - thảo luận, (4) Kết luận - nhận định (có thể gộp bớt với hoạt động ngắn như
   "Khởi động"/"Vận dụng", không bắt buộc đủ 4 bước ở mọi hoạt động).
 - Trong nội dung "hoatDongGVHS" của 1 bước, nếu có NHIỀU Ý/THAO TÁC khác nhau (VD giáo viên vừa
   chiếu hình ảnh, vừa đặt câu hỏi, vừa yêu cầu học sinh làm việc nhóm), hãy viết rõ từng ý bằng
   gạch đầu dòng "- " ở đầu mỗi câu (xuống dòng bằng \\n giữa các ý) thay vì viết dồn thành 1 đoạn
   văn dài liền mạch, để giáo viên đọc và làm theo dễ dàng, tương tự cách trình bày giáo án chuẩn
-  nộp cho Ban Giám hiệu.`;
+  nộp cho Ban Giám hiệu.
+${multiPeriodGuidance.text}`;
 
   const sourceBlock = sourceMarkdown
     ? `NGUỒN TÀI LIỆU SGK (bám sát nội dung này, KHÔNG bịa kiến thức ngoài chương trình):\n"""\n${sourceMarkdown}\n"""`
@@ -152,7 +226,7 @@ giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình ph
   "yeuCauCanDat": { "kienThuc": ["..."], "nangLuc": ["..."], "phamChat": ["..."] },
   "doDungDayHoc": { "giaoVien": ["..."], "hocSinh": ["..."] },
   "hoatDong": [
-${buildActivitySchemaBlock()}
+${buildActivitySchemaBlock(activities, multiPeriodGuidance.multiPeriod)}
   ]${integrationSchemaBlock}
 }`;
 

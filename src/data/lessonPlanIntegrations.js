@@ -24,6 +24,7 @@ export const INTEGRATION_KEYS = {
   TICH_HOP_HSKT: "tichHopHSKT",
   TIMELINE: "timeline",
   INFOGRAPHIC_MINDMAP: "infographicMindmap",
+  PHIEU_HOC_TAP: "phieuHocTap",
 };
 
 export const LESSON_PLAN_INTEGRATIONS = {
@@ -37,6 +38,13 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `- Thêm mục "Tích hợp Năng lực số" (theo Thông tư 02/2025 & Công văn 3456/BGDĐT): đề xuất 1-2 hoạt \n` +
       `  động cụ thể trong bài có ứng dụng công nghệ số/kỹ năng số phù hợp lứa tuổi (tra cứu thông tin an \n` +
       `  toàn, dùng phần mềm/app học tập phù hợp, kỹ năng gõ phím, nhận biết thông tin đúng-sai trên mạng...).\n` +
+      `  ⚠️ BẮT BUỘC ưu tiên phương án KHẢ THI với điều kiện cơ sở vật chất phổ biến ở trường Tiểu học/Mầm\n` +
+      `  non Việt Nam hiện nay: MẶC ĐỊNH thiết kế theo hướng "giáo viên trình chiếu/thao tác trên 1 màn\n` +
+      `  hình/máy chiếu chung cho cả lớp cùng quan sát", KHÔNG mặc định mỗi học sinh có sẵn máy tính bảng/\n` +
+      `  điện thoại riêng để tự thao tác tại lớp (trừ khi "Nội dung cốt lõi" giáo viên nêu rõ tiết học diễn\n` +
+      `  ra tại phòng Tin học/phòng máy). Nếu hoạt động cần học sinh TỰ thao tác trên thiết bị số, hãy gợi ý\n` +
+      `  chuyển thành nhiệm vụ ở phần "Vận dụng" để thực hiện Ở NHÀ dưới sự hướng dẫn của phụ huynh, thay vì\n` +
+      `  bắt buộc thực hiện ngay tại lớp.\n` +
       `  Trả về trong trường JSON "tichHopNLS" (dạng đoạn văn ngắn, KHÔNG lặp lại y hệt nội dung hoạt động chính).`,
     schemaExample: `"tichHopNLS": "..."`,
   },
@@ -49,7 +57,8 @@ export const LESSON_PLAN_INTEGRATIONS = {
     buildPromptFragment: () =>
       `- Hoạt động "Khởi động" PHẢI thiết kế dưới dạng trò chơi/hoạt động sôi nổi, vui nhộn (hát, đố vui,\n` +
       `  trò chơi vận động ngắn, thi đua theo nhóm...) để thu hút sự chú ý ngay đầu tiết học, KHÔNG viết\n` +
-      `  khởi động dưới dạng hỏi-đáp khô khan thông thường.`,
+      `  khởi động dưới dạng hỏi-đáp khô khan thông thường. Vẫn PHẢI gọn trong khoảng thời gian gợi ý\n` +
+      `  (thường 5-7 phút) - trò chơi sôi nổi không đồng nghĩa với kéo dài, tránh "cháy giáo án".`,
   },
   [INTEGRATION_KEYS.PHUONG_PHAP_TICH_CUC]: {
     key: INTEGRATION_KEYS.PHUONG_PHAP_TICH_CUC,
@@ -120,6 +129,23 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  BẮT BUỘC phải có trường "mindmap" này trong JSON trả về - đây KHÔNG phải trường tuỳ chọn.`,
     schemaExample:
       `"mindmap": { "chuDe": "...", "nhanh": [ { "nhan": "...", "y": ["...", "..."] }, { "nhan": "...", "y": ["...", "..."] } ] }`,
+  },
+  [INTEGRATION_KEYS.PHIEU_HOC_TAP]: {
+    key: INTEGRATION_KEYS.PHIEU_HOC_TAP,
+    label: "Phiếu học tập",
+    description: "Đính kèm phụ lục để photo dùng ngay",
+    isAiGenerated: true,
+    jsonField: "phieuHocTap",
+    buildPromptFragment: () =>
+      `- Soạn CỤ THỂ nội dung "Phiếu học tập" đính kèm cuối giáo án (KHÔNG chỉ ghi "giao phiếu học tập"\n` +
+      `  mà không có nội dung phiếu) - giáo viên cần in/photo ra dùng NGAY, không phải tự soạn thêm.\n` +
+      `  Phiếu gồm 4-8 bài tập/câu hỏi ngắn bám sát đúng nội dung bài học (không lấy lại nguyên văn ví dụ\n` +
+      `  đã dùng ở phần Luyện tập trên lớp - nên đổi số liệu/ngữ cảnh để học sinh tự làm được), phù hợp\n` +
+      `  để học sinh viết trực tiếp câu trả lời vào phiếu (không yêu cầu vẽ hình phức tạp hay tra cứu).\n` +
+      `  Trả về trong trường JSON "phieuHocTap": { "tieuDe": "Phiếu học tập số 1", "huongDan": "...",\n` +
+      `  "baiTap": ["...", "..."] } - "baiTap" là mảng CHUỖI, mỗi phần tử là 1 đề bài/câu hỏi hoàn chỉnh\n` +
+      `  (không đánh số thứ tự trong chuỗi, hệ thống sẽ tự đánh số khi hiển thị/in).`,
+    schemaExample: `"phieuHocTap": { "tieuDe": "Phiếu học tập số 1", "huongDan": "...", "baiTap": ["...", "..."] }`,
   },
 };
 

@@ -23,6 +23,7 @@ export async function orchestrateLessonPlanGeneration({
   soTiet = 1,
   noiDungCotLoi = "",
   integrations = [],
+  lessonType = "bai_moi",
   sampleMode = "theo_chuong",
   sampleSpec = null,
   sampleReferenceText = null,
@@ -71,6 +72,7 @@ export async function orchestrateLessonPlanGeneration({
       sourceMarkdown,
       chapterLabel,
       integrations,
+      lessonType,
       sampleMode: effectiveSampleMode,
       sampleSpec: effectiveSampleSpec,
       sampleReferenceText,
@@ -115,7 +117,23 @@ export async function orchestrateLessonPlanGeneration({
     }
   });
 
-  const timeline = integrations.includes("timeline") ? computeActivityTimeline(soTiet, grade) : [];
+  // ⚠️ MỚI: nếu bài dạy có từ 2 tiết trở lên nhưng AI không gắn trường "tiet" (>1) cho bất kỳ bước
+  // nào - có thể AI đã bỏ qua yêu cầu chia ranh giới tiết (xem buildMultiPeriodGuidance() trong
+  // lessonPlanPromptTemplates.js) - cảnh báo nhẹ, KHÔNG chặn cả lượt soạn (giáo án vẫn dùng được,
+  // chỉ là chưa tách rõ điểm dừng giữa các tiết như mong muốn).
+  if (soTiet >= 2) {
+    const hasPeriodTagging = (lessonPlan.hoatDong || []).some((a) =>
+      (a.tienTrinh || []).some((s) => Number(s.tiet) > 1)
+    );
+    if (!hasPeriodTagging) {
+      warnings.push(
+        `Bài dạy khai báo ${soTiet} tiết nhưng AI chưa tách rõ ranh giới giữa các tiết trong nội dung ` +
+          `- có thể thử tạo lại để có điểm dừng/giải lao rõ ràng giữa các tiết.`
+      );
+    }
+  }
+
+  const timeline = integrations.includes("timeline") ? computeActivityTimeline(soTiet, grade, lessonType) : [];
 
   return { lessonPlan, timeline, warnings };
 }

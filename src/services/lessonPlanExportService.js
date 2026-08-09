@@ -14,7 +14,7 @@ import {
   convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
-import { LESSON_PLAN_COLUMN_MODES } from "@/data/lessonPlanTemplates";
+import { LESSON_PLAN_COLUMN_MODES, computeMultiPeriodTimeline } from "@/data/lessonPlanTemplates";
 import { getSubjectLabel } from "@/data/config";
 import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 
@@ -75,9 +75,62 @@ function cell(text, widthPercent, opts = {}) {
   });
 }
 
+// Ranh giới giữa 2 tiết học (paragraph) - dùng ở chế độ 1 cột; giáo viên phản ánh trước đây bài
+// dạy nhiều tiết bị in liền mạch, không rõ điểm dừng của từng tiết để chèn giải lao.
+function periodBoundaryParagraph(tiet) {
+  return new Paragraph({
+    alignment: AlignmentType.CENTER,
+    border: {
+      top: { style: BorderStyle.DASHED, size: 6, color: "FB923C" },
+      bottom: { style: BorderStyle.DASHED, size: 6, color: "FB923C" },
+    },
+    children: [
+      textRun(`── Hết Tiết ${tiet - 1} (nghỉ giải lao) — Chuyển sang Tiết ${tiet} ──`, {
+        bold: true,
+        size: 20,
+        color: "9A3412",
+      }),
+    ],
+    spacing: { before: 120, after: 120 },
+  });
+}
+
+// Ranh giới giữa 2 tiết học (1 hàng bảng, gộp 2 cột) - dùng ở chế độ 2 cột.
+function periodBoundaryTableRow(tiet) {
+  return new TableRow({
+    children: [
+      new TableCell({
+        columnSpan: 2,
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.DASHED, size: 6, color: "FB923C" },
+          bottom: { style: BorderStyle.DASHED, size: 6, color: "FB923C" },
+          left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        },
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              textRun(`── Hết Tiết ${tiet - 1} (nghỉ giải lao) — Chuyển sang Tiết ${tiet} ──`, {
+                bold: true,
+                size: 20,
+                color: "9A3412",
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
+}
+
 // ⚠️ Đánh số "Bước N:" THUẦN CODE (không phụ thuộc AI) cho từng bước trong "tienTrinh" - giáo
 // viên phản ánh mục III (CÁC HOẠT ĐỘNG DẠY HỌC CHỦ YẾU) trước đây không rõ ràng ranh giới giữa
 // các bước. Đảm bảo LUÔN đánh số nhất quán dù AI trả về bao nhiêu bước.
+// Đồng thời chèn "ranh giới tiết" (periodBoundary*) THUẦN CODE ngay trước bước đầu tiên có "tiet"
+// lớn hơn bước liền trước - xem giải thích đầy đủ trong buildMultiPeriodGuidance() (data/
+// lessonPlanPromptTemplates.js) và PeriodBoundary trong LessonPlanPreview.jsx (bản xem trước web).
 function buildTwoColumnActivityTable(steps) {
   const headerRow = new TableRow({
     children: [
@@ -85,36 +138,45 @@ function buildTwoColumnActivityTable(steps) {
       cell("Sản phẩm dự kiến", 40, { bold: true }),
     ],
   });
-  const bodyRows = (steps || []).map(
-    (s, i) =>
-      new TableRow({
-        children: [
-          cell(null, 60, {
-            children: [textRun(`Bước ${i + 1}: `, { bold: true }), ...multilineTextRuns(s.hoatDongGVHS)],
-          }),
-          cell(s.sanPhamDuKien, 40),
-        ],
-      })
-  );
+  let lastTiet = null;
+  const bodyRows = (steps || []).flatMap((s, i) => {
+    const showBoundary = s.tiet && lastTiet && s.tiet > lastTiet;
+    lastTiet = s.tiet || lastTiet;
+    const row = new TableRow({
+      children: [
+        cell(null, 60, {
+          children: [textRun(`Bước ${i + 1}: `, { bold: true }), ...multilineTextRuns(s.hoatDongGVHS)],
+        }),
+        cell(s.sanPhamDuKien, 40),
+      ],
+    });
+    return showBoundary ? [periodBoundaryTableRow(s.tiet), row] : [row];
+  });
   return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...bodyRows] });
 }
 
 function buildOneColumnActivityParagraphs(steps) {
-  return (steps || []).flatMap((s, i) => [
-    new Paragraph({
-      children: [textRun(`Bước ${i + 1}: `, { bold: true }), ...multilineTextRuns(s.hoatDongGVHS)],
-      spacing: { after: 40 },
-    }),
-    ...(s.sanPhamDuKien
-      ? [
-          new Paragraph({
-            children: [textRun(`Sản phẩm dự kiến: ${s.sanPhamDuKien}`, { italics: true })],
-            spacing: { after: 120 },
-            indent: { left: 200 },
-          }),
-        ]
-      : []),
-  ]);
+  let lastTiet = null;
+  return (steps || []).flatMap((s, i) => {
+    const showBoundary = s.tiet && lastTiet && s.tiet > lastTiet;
+    lastTiet = s.tiet || lastTiet;
+    return [
+      ...(showBoundary ? [periodBoundaryParagraph(s.tiet)] : []),
+      new Paragraph({
+        children: [textRun(`Bước ${i + 1}: `, { bold: true }), ...multilineTextRuns(s.hoatDongGVHS)],
+        spacing: { after: 40 },
+      }),
+      ...(s.sanPhamDuKien
+        ? [
+            new Paragraph({
+              children: [textRun(`Sản phẩm dự kiến: ${s.sanPhamDuKien}`, { italics: true })],
+              spacing: { after: 120 },
+              indent: { left: 200 },
+            }),
+          ]
+        : []),
+    ];
+  });
 }
 
 function buildActivitySection(activity, columnMode, minutes) {
@@ -173,6 +235,21 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
     ...(lessonPlan.doDungDayHoc?.hocSinh?.length ? [paragraph("Học sinh", { run: { bold: true } }), ...bulletList(lessonPlan.doDungDayHoc.hocSinh)] : []),
 
     heading("III. CÁC HOẠT ĐỘNG DẠY HỌC CHỦ YẾU"),
+    ...(meta?.soTiet > 1
+      ? [
+          new Paragraph({
+            children: [
+              textRun(
+                `Gợi ý phân bổ theo tiết: ${computeMultiPeriodTimeline(meta.soTiet, meta.grade, meta.lessonType)
+                  .map((p) => `Tiết ${p.period} (${p.totalMinutes}')`)
+                  .join(" — ")}`,
+                { italics: true, size: 20, color: "9A3412" }
+              ),
+            ],
+            spacing: { after: 80 },
+          }),
+        ]
+      : []),
     ...(lessonPlan.hoatDong || []).flatMap((a, i) =>
       buildActivitySection(a, columnMode, minutesByKey[activityKeyByIndex[i]])
     ),
@@ -200,6 +277,37 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
   children.push(heading("IV. ĐIỀU CHỈNH SAU BÀI DẠY"));
   children.push(paragraph("............................................................................"));
   children.push(paragraph("............................................................................"));
+
+  if (lessonPlan.phieuHocTap?.tieuDe || lessonPlan.phieuHocTap?.baiTap?.length) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun(`PHỤ LỤC: ${lessonPlan.phieuHocTap.tieuDe || "Phiếu học tập"}`, { bold: true, size: 26 })],
+        spacing: { before: 100, after: 60 },
+      })
+    );
+    if (lessonPlan.phieuHocTap.huongDan) {
+      children.push(
+        new Paragraph({
+          alignment: AlignmentType.CENTER,
+          children: [textRun(lessonPlan.phieuHocTap.huongDan, { italics: true })],
+          spacing: { after: 160 },
+        })
+      );
+    }
+    (lessonPlan.phieuHocTap.baiTap || []).forEach((bai, i) => {
+      children.push(
+        new Paragraph({
+          children: [textRun(`${i + 1}. `, { bold: true }), ...multilineTextRuns(bai)],
+          spacing: { after: 40 },
+        })
+      );
+      // Dòng chấm để học sinh viết câu trả lời trực tiếp vào phiếu (photo dùng ngay).
+      children.push(paragraph("...................................................................................."));
+      children.push(paragraph("...................................................................................."));
+    });
+  }
 
   return children;
 }
