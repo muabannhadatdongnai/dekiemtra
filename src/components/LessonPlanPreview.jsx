@@ -1,6 +1,7 @@
 "use client";
 
-import { LESSON_PLAN_COLUMN_MODES } from "@/data/lessonPlanTemplates";
+import React from "react";
+import { LESSON_PLAN_COLUMN_MODES, computeMultiPeriodTimeline } from "@/data/lessonPlanTemplates";
 import { getSubjectLabel } from "@/data/config";
 
 const cellStyle = { border: "1px solid #94a3b8", padding: "6px 10px", verticalAlign: "top", fontSize: 13 };
@@ -20,8 +21,33 @@ function ListBlock({ title, items }) {
   );
 }
 
+// Ranh giới giữa 2 tiết học - chèn ngay TRƯỚC bước đầu tiên có "tiet" lớn hơn bước liền trước
+// (trong CÙNG 1 hoạt động) - giáo viên phản ánh trước đây giáo án nhiều tiết bị gộp thành 1 mạch,
+// không biết điểm dừng của tiết 1 ở đâu để chèn giải lao.
+function PeriodBoundary({ tiet }) {
+  return (
+    <div
+      style={{
+        margin: "10px 0",
+        padding: "5px 10px",
+        textAlign: "center",
+        fontWeight: 700,
+        fontSize: 12.5,
+        color: "#9A3412",
+        background: "#FFF7ED",
+        border: "1px dashed #FDBA74",
+        borderRadius: 6,
+      }}
+    >
+      ── Hết Tiết {tiet - 1} (nghỉ giải lao) — Chuyển sang Tiết {tiet} ──
+    </div>
+  );
+}
+
 function ActivityBlock({ activity, columnMode, minutes }) {
   const steps = activity.tienTrinh || [];
+  let lastTiet = null;
+
   return (
     <div style={{ marginBottom: 14, breakInside: "avoid" }}>
       <p style={{ fontWeight: 700, fontSize: 14.5, margin: "8px 0 2px" }}>
@@ -39,28 +65,70 @@ function ActivityBlock({ activity, columnMode, minutes }) {
             </tr>
           </thead>
           <tbody>
-            {steps.map((s, i) => (
-              <tr key={i}>
-                <td style={{ ...cellStyle, whiteSpace: "pre-line" }}>
-                  <b>Bước {i + 1}:</b> {s.hoatDongGVHS}
-                </td>
-                <td style={{ ...cellStyle, whiteSpace: "pre-line" }}>{s.sanPhamDuKien}</td>
-              </tr>
-            ))}
+            {steps.map((s, i) => {
+              const showBoundary = s.tiet && lastTiet && s.tiet > lastTiet;
+              lastTiet = s.tiet || lastTiet;
+              return (
+                <React.Fragment key={i}>
+                  {showBoundary && (
+                    <tr key={`b-${i}`}>
+                      <td colSpan={2} style={{ padding: 0, border: "none" }}>
+                        <PeriodBoundary tiet={s.tiet} />
+                      </td>
+                    </tr>
+                  )}
+                  <tr>
+                    <td style={{ ...cellStyle, whiteSpace: "pre-line" }}>
+                      <b>Bước {i + 1}:</b> {s.hoatDongGVHS}
+                    </td>
+                    <td style={{ ...cellStyle, whiteSpace: "pre-line" }}>{s.sanPhamDuKien}</td>
+                  </tr>
+                </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
       ) : (
         <div>
-          {steps.map((s, i) => (
-            <p key={i} style={{ fontSize: 13.5, margin: "0 0 6px", whiteSpace: "pre-line" }}>
-              <b>Bước {i + 1}:</b> {s.hoatDongGVHS}
-              {s.sanPhamDuKien ? (
-                <span style={{ color: "#475569" }}> — Sản phẩm dự kiến: {s.sanPhamDuKien}</span>
-              ) : null}
-            </p>
-          ))}
+          {steps.map((s, i) => {
+            const showBoundary = s.tiet && lastTiet && s.tiet > lastTiet;
+            lastTiet = s.tiet || lastTiet;
+            return (
+              <div key={i}>
+                {showBoundary && <PeriodBoundary tiet={s.tiet} />}
+                <p style={{ fontSize: 13.5, margin: "0 0 6px", whiteSpace: "pre-line" }}>
+                  <b>Bước {i + 1}:</b> {s.hoatDongGVHS}
+                  {s.sanPhamDuKien ? (
+                    <span style={{ color: "#475569" }}> — Sản phẩm dự kiến: {s.sanPhamDuKien}</span>
+                  ) : null}
+                </p>
+              </div>
+            );
+          })}
         </div>
       )}
+    </div>
+  );
+}
+
+function PhieuHocTapBlock({ phieu }) {
+  if (!phieu?.tieuDe && !(phieu?.baiTap || []).length) return null;
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 2px" }}>
+        PHỤ LỤC: {phieu.tieuDe || "Phiếu học tập"}
+      </p>
+      {phieu.huongDan && (
+        <p style={{ fontStyle: "italic", fontSize: 13, textAlign: "center", margin: "0 0 8px" }}>{phieu.huongDan}</p>
+      )}
+      <ol style={{ margin: 0, paddingLeft: 20 }}>
+        {(phieu.baiTap || []).map((b, i) => (
+          <li key={i} style={{ fontSize: 13.5, marginBottom: 12, whiteSpace: "pre-line" }}>
+            {b}
+            <div style={{ borderBottom: "1px dashed #94a3b8", height: 22, marginTop: 4 }} />
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
@@ -146,6 +214,14 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         <ListBlock title="Học sinh" items={lessonPlan.doDungDayHoc?.hocSinh} />
 
         <p style={{ fontWeight: 700, margin: "10px 0 2px" }}>III. CÁC HOẠT ĐỘNG DẠY HỌC CHỦ YẾU</p>
+        {meta?.soTiet > 1 && (
+          <p style={{ fontSize: 12, color: "#9A3412", margin: "0 0 8px", fontStyle: "italic" }}>
+            Gợi ý phân bổ theo tiết:{" "}
+            {computeMultiPeriodTimeline(meta.soTiet, meta.grade, meta.lessonType)
+              .map((p) => `Tiết ${p.period} (${p.totalMinutes}')`)
+              .join(" — ")}
+          </p>
+        )}
         {(lessonPlan.hoatDong || []).map((a, i) => (
           <ActivityBlock key={i} activity={a} columnMode={columnMode} minutes={minutesByKey[activityKeyByIndex[i]]} />
         ))}
@@ -171,6 +247,8 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
 
         <p style={{ fontWeight: 700, margin: "14px 0 2px" }}>IV. ĐIỀU CHỈNH SAU BÀI DẠY</p>
         <p style={{ fontSize: 13, color: "#94a3b8" }}>(Giáo viên tự ghi chú sau khi dạy thực tế)</p>
+
+        <PhieuHocTapBlock phieu={lessonPlan.phieuHocTap} />
       </div>
     </div>
   );

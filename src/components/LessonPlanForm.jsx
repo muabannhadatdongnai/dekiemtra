@@ -7,6 +7,7 @@ import {
   LESSON_PLAN_GRADES,
   COLUMN_MODE_OPTIONS,
   LESSON_PLAN_COLUMN_MODES,
+  LESSON_TYPES,
   isPreschoolGrade,
   getCircularForGrade,
 } from "@/data/lessonPlanTemplates";
@@ -47,8 +48,14 @@ export default function LessonPlanForm({ onGenerated }) {
   const [volume, setVolume] = useState(1);
   const [soTiet, setSoTiet] = useState(2);
   const [columnMode, setColumnMode] = useState(LESSON_PLAN_COLUMN_MODES.ONE_COLUMN);
+  const [lessonType, setLessonType] = useState("bai_moi");
   const [noiDungCotLoi, setNoiDungCotLoi] = useState("");
-  const [selectedIntegrations, setSelectedIntegrations] = useState(["khoiDongSoiNoi", "phuongPhapTichCuc", "cungCo"]);
+  const [selectedIntegrations, setSelectedIntegrations] = useState([
+    "khoiDongSoiNoi",
+    "phuongPhapTichCuc",
+    "cungCo",
+    "phieuHocTap",
+  ]);
 
   const [sampleMode, setSampleMode] = useState("theo_chuong");
   const [sampleFile, setSampleFile] = useState(null);
@@ -165,6 +172,7 @@ export default function LessonPlanForm({ onGenerated }) {
       columnMode,
       noiDungCotLoi,
       integrations: selectedIntegrations,
+      lessonType: preschool ? "bai_moi" : lessonType,
       sampleMode,
       sampleSpec: sampleMode !== "theo_chuong" ? sampleSpec : null,
       sampleReferenceText: sampleMode === "theo_mau" ? sampleReferenceText : null,
@@ -180,6 +188,7 @@ export default function LessonPlanForm({ onGenerated }) {
           subject: preschool ? null : subject,
           soTiet,
           columnMode,
+          lessonType: preschool ? "bai_moi" : lessonType,
           circularLabel: circular?.label || "Khung Kế hoạch hoạt động Mầm non",
         })
       );
@@ -266,13 +275,30 @@ export default function LessonPlanForm({ onGenerated }) {
         </Field>
       )}
 
-      <Field label="Số cột kế hoạch bài dạy">
-        <select value={columnMode} onChange={(e) => setColumnMode(e.target.value)} className={inputClass}>
-          {COLUMN_MODE_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Số cột kế hoạch bài dạy">
+          <select value={columnMode} onChange={(e) => setColumnMode(e.target.value)} className={inputClass}>
+            {COLUMN_MODE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </Field>
+        {!preschool && (
+          <Field label="Loại bài">
+            <select value={lessonType} onChange={(e) => setLessonType(e.target.value)} className={inputClass}>
+              {LESSON_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-slate-400">
+              {LESSON_TYPES.find((t) => t.value === lessonType)?.hint}
+              {" — hoạt động thứ 2 sẽ đổi tên thành \""}
+              {LESSON_TYPES.find((t) => t.value === lessonType)?.activityLabel}
+              {"\" cho đúng bản chất bài dạy."}
+            </p>
+          </Field>
+        )}
+      </div>
 
       <Field label="Nội dung cốt lõi" required>
         <textarea
