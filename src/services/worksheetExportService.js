@@ -163,6 +163,8 @@ function buildNoiPhepTinhParagraphs(data, showAnswers) {
 
 // Ký tự Unicode dạng VIỀN NÉT (không tô đặc) đứng trước tên hình, để bản Word cũng gợi ý
 // hình dáng cho bé tô màu, chứ không chỉ có chữ - khớp tên với SHAPES trong worksheetSchemas.js.
+// GIAI ĐOẠN 9: mở rộng theo đúng kho SHAPES mới (14 hình) trong worksheetSchemas.js - hình nào
+// chưa map (không nên xảy ra) sẽ fallback về "○" như cũ.
 const SHAPE_GLYPHS = {
   "Hình tròn": "○",
   "Hình vuông": "□",
@@ -170,6 +172,14 @@ const SHAPE_GLYPHS = {
   "Hình chữ nhật": "▭",
   "Hình ngôi sao": "☆",
   "Hình trái tim": "♡",
+  "Hình thoi": "◇",
+  "Hình ê-líp": "⬭",
+  "Hình ngũ giác": "⬠",
+  "Hình lục giác": "⬡",
+  "Hình bán nguyệt": "◠",
+  "Hình thang": "⏢",
+  "Hình mũi tên": "➤",
+  "Hình đám mây": "☁",
 };
 
 function buildNhanDienHinhParagraphs(shapes) {

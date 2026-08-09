@@ -31,23 +31,82 @@ import { fetchMarkdownFromGitHub, fetchAdvancedBook } from "./githubService";
 
 const WORD_PROBLEM_MODEL = "gemini-3.5-flash";
 
-function buildWordProblemPrompt({ gradeLabel, maxNumber, count, includeAnswers, referenceContext }) {
+/**
+ * ================== GIAI ĐOẠN 9 (sửa bài toán có lời văn bị "công thức hoá") ==================
+ * TRƯỚC ĐÂY prompt chỉ dặn chung chung "bối cảnh đa dạng" -> AI có "vùng an toàn" từ vựng hẹp khi
+ * tự sáng tác cho mầm non/lớp 1, dẫn đến mô-típ thỏ+cà rốt+gà lặp lại xuyên suốt nhiều phiếu (xác
+ * nhận qua đối chiếu 3 PDF thật giáo viên gửi).
+ *
+ * Giải pháp: CODE (không phải AI) chọn ngẫu nhiên - đảm bảo phân bố đều, không lệ thuộc "thói
+ * quen" của AI - đúng `count` chủ đề PHÂN BIỆT từ 1 ngân hàng đủ đa dạng (đồ vật, con vật, con
+ * người, bối cảnh khác nhau), rồi BẮT BUỘC AI viết đúng theo từng chủ đề đã chọn sẵn, chỉ tự do
+ * ở số liệu/câu chữ - không còn để AI tự "bốc" chủ đề (dễ lặp lại lối mòn quen thuộc).
+ */
+const WORD_PROBLEM_THEME_BANK = [
+  "bạn An và bạn Bình xếp ghế trong buổi lễ chào cờ ở sân trường",
+  "chú thợ mộc đóng những chiếc ghế gỗ nhỏ trong xưởng",
+  "cô bán hàng bày những quả xoài lên kệ ở chợ",
+  "đàn cá heo bơi tung tăng ngoài biển",
+  "bạn Minh gấp những chiếc thuyền giấy để thả ở hồ nước",
+  "bác nông dân thu hoạch những trái bí ngô trong vườn",
+  "chị Hoa cắm những bông hoa hướng dương vào lọ",
+  "đàn chim cánh cụt đứng thành hàng trên tảng băng",
+  "bạn Tùng xếp những viên bi màu vào hộp",
+  "mẹ mua những quả trứng ở siêu thị",
+  "các bạn nhỏ thả diều trên bãi cỏ công viên",
+  "chú voi con tha những khúc gỗ nhỏ trong rừng",
+  "bà làm những chiếc bánh cho cả nhà nhân dịp lễ",
+  "bạn Hà dán những ngôi sao giấy trang trí lớp học",
+  "đàn kiến tha những hạt gạo về tổ",
+  "chú hải cẩu bắt được những con cá trong hồ nuôi",
+  "bạn Lam sưu tầm những chiếc lá khô mùa thu",
+  "cô giáo phát những quyển vở mới cho học sinh",
+  "chú sóc nhỏ nhặt những hạt dẻ trong rừng",
+  "các bạn xếp những chiếc ô tô đồ chơi vào giá",
+  "bạn Phương tưới nước cho những chậu cây trên ban công",
+  "đàn ong bay đi lấy mật ở vườn hoa",
+  "bạn Khoa xếp những cuốn truyện tranh lên giá sách",
+  "chú thủy thủ xếp những thùng hàng lên tàu ở bến cảng",
+];
+
+/** Chọn ngẫu nhiên đúng `count` chủ đề PHÂN BIỆT từ ngân hàng (nếu count > kích thước ngân
+ * hàng, cho phép lặp lại sau khi đã dùng hết 1 lượt, vẫn xáo trộn để không theo thứ tự cố định).
+ * Export (dù chỉ dùng nội bộ) để có thể tự verify bằng script gọi hàm trực tiếp - cùng tinh thần
+ * buildLessonPlanPrompt() bên module giáo án. */
+export function pickWordProblemThemes(count) {
+  const shuffled = [...WORD_PROBLEM_THEME_BANK].sort(() => Math.random() - 0.5);
+  if (count <= shuffled.length) return shuffled.slice(0, count);
+  const themes = [...shuffled];
+  while (themes.length < count) {
+    themes.push(...[...WORD_PROBLEM_THEME_BANK].sort(() => Math.random() - 0.5));
+  }
+  return themes.slice(0, count);
+}
+
+export function buildWordProblemPrompt({ gradeLabel, maxNumber, count, includeAnswers, referenceContext, themes }) {
+  const themeListBlock = themes
+    .map((theme, i) => `${i + 1}. ${theme}`)
+    .join("\n");
   return `
 Bạn là giáo viên Tiểu học Việt Nam giàu kinh nghiệm, soạn bài toán có lời văn cho học sinh ${gradeLabel}.
 
 YÊU CẦU:
 - Soạn ĐÚNG ${count} bài toán có lời văn, mức độ 1 PHÉP TÍNH duy nhất (cộng hoặc trừ), số liệu trong
   phạm vi 0-${maxNumber}, kết quả không âm.
-- Bối cảnh gần gũi, đa dạng (đồ chơi, hoa quả, con vật, sách vở...), MỖI bài 1 bối cảnh khác nhau.
+- Dưới đây là ĐÚNG ${count} CHỦ ĐỀ đã được chọn NGẪU NHIÊN SẴN cho từng bài theo thứ tự - bài toán
+  thứ i BẮT BUỘC phải dùng ĐÚNG nhân vật/bối cảnh của chủ đề thứ i, KHÔNG được đổi chéo, KHÔNG
+  được thay bằng chủ đề khác ngoài danh sách, KHÔNG được quay lại các mô-típ quen thuộc (thỏ ăn cà rốt,
+  gà con...) nếu chủ đề không yêu cầu. Chỉ được TỰ DO sáng tạo thêm số liệu cụ thể và cách
+  hành văn cho từng bài:\n${themeListBlock}
 - Ngôn ngữ đơn giản, câu ngắn, đúng lứa tuổi.
 - Số liệu "đẹp" (số nguyên, kết quả tròn, dễ tính nhẩm).
 ${includeAnswers ? "- Kèm đáp số cuối cùng cho mỗi bài." : ""}
 ${
   referenceContext
-    ? `- GIAI ĐOẠN 2: giáo viên có cung cấp 1 đoạn TÀI LIỆU THAM KHẢO bên dưới (ngữ cảnh) - hãy để ý
-  ĐỀ TÀI/CHỦ ĐỀ/TỪ VỰNG xuất hiện trong đó và ưu tiên dùng bối cảnh tương tự cho bài toán, giúp
-  bài tập gắn liền với những gì học sinh đang học. TUYỆT ĐỐI KHÔNG chép nguyên văn câu chữ từ tài
-  liệu tham khảo, chỉ lấy CẢM HỨNG chủ đề/từ vựng.\n\nTÀI LIỆU THAM KHẢO:\n${referenceContext}`
+    ? `- GIAI ĐOẠN 2: giáo viên có cung cấp 1 đoạn TÀI LIỆU THAM KHẢO bên dưới (ngữ cảnh) - nếu có
+  thể lồng ghép TỪ VỰNG liên quan vào bài toán mà KHÔNG làm sai lệch chủ đề đã chọn ở trên thì ưu
+  tiên làm vậy, nhưng chủ đề của từng bài vẫn phải đúng danh sách đã cho. TUYỆT ĐỐI KHÔNG chép
+  nguyên văn câu chữ từ tài liệu tham khảo.\n\nTÀI LIỆU THAM KHẢO:\n${referenceContext}`
     : ""
 }
 
@@ -63,12 +122,14 @@ Trả về JSON đúng schema (không thêm trường khác):
 async function generateWordProblems({ grade, count, includeAnswers, referenceContext }) {
   if (count <= 0) return [];
   const gradeConfig = WORKSHEET_GRADES[grade];
+  const themes = pickWordProblemThemes(count);
   const prompt = buildWordProblemPrompt({
     gradeLabel: gradeConfig.label,
     maxNumber: gradeConfig.maxNumber,
     count,
     includeAnswers,
     referenceContext,
+    themes,
   });
 
   try {

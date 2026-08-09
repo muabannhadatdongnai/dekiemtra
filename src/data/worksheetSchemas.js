@@ -23,8 +23,35 @@ export const EXERCISE_TYPES = {
   DEM_HINH_UNG_DUNG: "dem_hinh_ung_dung", // GIAI ĐOẠN 2 - hoạt động ứng dụng đi kèm NHAN_DIEN_HINH
 };
 
-const ICONS = ["🍎", "⭐", "🚗", "🐥", "🌻", "🦋", "🥕"];
-const SHAPES = ["Hình tròn", "Hình vuông", "Hình tam giác", "Hình chữ nhật", "Hình ngôi sao", "Hình trái tim"];
+// ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
+// TRƯỚC ĐÂY chỉ 7 icon cố định -> generateDemVaVietSo() (slice ngẫu nhiên) hay trùng lặp icon
+// giữa các lần tạo phiếu. Mở rộng lên 16 icon, đa dạng chủ đề (trái cây, con vật, đồ vật, đồ ăn).
+const ICONS = [
+  "🍎", "⭐", "🚗", "🐥", "🌻", "🦋", "🥕",
+  "🐟", "🎈", "🍭", "🚀", "🐢", "🧸", "🍪", "🌸", "🐝",
+];
+
+// ================== GIAI ĐOẠN 9 (sửa lỗi "Nhận diện hình"/"Đếm hình" luôn lặp y hệt) ==================
+// TRƯỚC ĐÂY kho có ĐÚNG 6 hình, trùng khớp defaultCount=6 -> slice(0,6) trên mảng 6 phần tử luôn
+// lấy hết cả mảng, random chỉ đảo thứ tự chứ không đổi nội dung. Mở rộng lên 14 hình + đổi
+// defaultCount xuống 5 (xem worksheetExerciseCatalog.js) để LUÔN có phần hình "vắng mặt", tạo
+// khác biệt thật giữa các lần tạo phiếu.
+const SHAPES = [
+  "Hình tròn",
+  "Hình vuông",
+  "Hình tam giác",
+  "Hình chữ nhật",
+  "Hình ngôi sao",
+  "Hình trái tim",
+  "Hình thoi",
+  "Hình ê-líp",
+  "Hình ngũ giác",
+  "Hình lục giác",
+  "Hình bán nguyệt",
+  "Hình thang",
+  "Hình mũi tên",
+  "Hình đám mây",
+];
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -131,9 +158,13 @@ export function generateNoiPhepTinh(grade, count = 5) {
   return { pairs, shuffledResults };
 }
 
-/** Nhận diện hình - chọn ngẫu nhiên 1 tập con hình cơ bản để học sinh gọi tên + tô màu. */
-export function generateNhanDienHinh(count = 6) {
-  return [...SHAPES].sort(() => Math.random() - 0.5).slice(0, count);
+/** Nhận diện hình - chọn ngẫu nhiên 1 tập con hình cơ bản để học sinh gọi tên + tô màu.
+ * GIAI ĐOẠN 9: `count` giờ LUÔN nhỏ hơn kích thước kho (mặc định 5/14, xem defaultCount trong
+ * worksheetExerciseCatalog.js) nên slice() không còn khả năng lấy trọn cả kho như bug cũ - vẫn
+ * chốt Math.min ở đây để an toàn tuyệt đối dù giáo viên tự gõ số lớn hơn kho vào ô số lượng. */
+export function generateNhanDienHinh(count = 5) {
+  const safeCount = Math.min(count, SHAPES.length);
+  return [...SHAPES].sort(() => Math.random() - 0.5).slice(0, safeCount);
 }
 
 /**
@@ -167,10 +198,26 @@ export function generateSapXepThuTu(grade, count = 3) {
  * QUAN TRỌNG: nhận `shapes` là CHÍNH danh sách hình đã chọn cho "Nhận diện hình" (không tự
  * chọn hình khác) - để 2 khối bài liên kết với nhau (hình bé vừa gọi tên/tô màu ở trên, giờ
  * đếm lại đúng những hình đó trong 1 "khay hình" trộn lẫn), không phải 2 hoạt động rời rạc.
+ *
+ * ================== GIAI ĐOẠN 9 (thêm hình gây nhiễu trong khay đếm) ==================
+ * Khoảng 50% số lần tạo phiếu, trộn thêm 1-2 hình KHÔNG nằm trong `shapes` (lấy từ phần còn lại
+ * của kho SHAPES) vào khay - CHỈ xuất hiện trong khay, KHÔNG có câu hỏi "Có bao nhiêu Hình X?"
+ * tương ứng (không tính vào questions/answer) - giúp học sinh phải thực sự phân biệt đúng hình
+ * cần đếm thay vì đếm máy móc mọi thứ có trong khay.
  */
 export function generateDemHinhUngDung(shapes, count = 3) {
   const targets = [...shapes].sort(() => Math.random() - 0.5).slice(0, Math.min(count, shapes.length));
   const tray = shapes.map((shape) => ({ shape, qty: randInt(2, 5) }));
+
+  const distractorPool = SHAPES.filter((s) => !shapes.includes(s));
+  if (distractorPool.length > 0 && Math.random() < 0.5) {
+    const distractorCount = randInt(1, Math.min(2, distractorPool.length));
+    const distractors = [...distractorPool].sort(() => Math.random() - 0.5).slice(0, distractorCount);
+    for (const shape of distractors) {
+      tray.push({ shape, qty: randInt(1, 3) });
+    }
+  }
+
   const trayIcons = tray.flatMap(({ shape, qty }) => Array(qty).fill(shape)).sort(() => Math.random() - 0.5);
   const questions = targets.map((shape) => ({
     shape,

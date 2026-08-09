@@ -164,7 +164,11 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     source: "code",
     minGrade: "MAM_NON",
     maxGrade: "LOP_2",
-    defaultCount: 6,
+    // ================== GIAI ĐOẠN 9 (sửa lỗi luôn lặp y hệt) ==================
+    // Kho hình đã mở rộng lên 14 (xem worksheetSchemas.js) - defaultCount giờ CHỦ Ý nhỏ hơn hẳn
+    // kích thước kho (5/14, không phải 6/6 như trước) để mỗi lần tạo phiếu luôn có hình "vắng
+    // mặt" khác nhau, tạo khác biệt thật giữa các lần thay vì chỉ đảo thứ tự.
+    defaultCount: 5,
     instructionVariants: [
       "Bé nhận biết hình và tô màu.",
       "Gọi tên các hình rồi tô màu thật đẹp nhé!",
