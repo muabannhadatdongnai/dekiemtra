@@ -16,6 +16,9 @@ import {
 // generator thật) và "hiddenFromForm" (hoạt động tự động, không phải ô chọn riêng - VD
 // "dem_hinh_ung_dung" luôn tự kèm theo "nhan_dien_hinh", xem worksheetGenerator.js).
 import { getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
+// GIAI ĐOẠN 9: logic thuần (áp dụng/đảo cấu trúc phiếu mẫu) tách riêng để tự verify được bằng
+// script gọi hàm trực tiếp (xem worksheetSampleStructureUtils.js).
+import { defaultCountsFor, applyDetectedExercisesToCounts } from "@/services/worksheetSampleStructureUtils";
 // GIAI ĐOẠN 5: mapping khối lớp phiếu bài tập -> số lớp SGK (chỉ LOP_1/LOP_2, Mầm non không có
 // SGK theo chương) - module dữ liệu thuần, an toàn phía client giống worksheetExerciseCatalog.js.
 import { WORKSHEET_GRADE_TO_SGK_GRADE } from "@/data/constants";
@@ -38,10 +41,6 @@ const WORKSHEET_SUBJECTS = [
 ];
 const DEFAULT_TITLE_BY_SUBJECT = { TOAN: "BÀI TẬP TOÁN", TIENG_VIET: "BÀI TẬP TIẾNG VIỆT" };
 
-function defaultCountsFor(grade, subject) {
-  return Object.fromEntries(getSelectableCatalogFor(grade, subject).map((item) => [item.key, item.defaultCount ?? 0]));
-}
-
 export default function WorksheetForm({ onGenerated }) {
   const [grade, setGrade] = useState("LOP_1");
   const [subject, setSubject] = useState("TOAN");
@@ -60,6 +59,13 @@ export default function WorksheetForm({ onGenerated }) {
   const [sampleFromCache, setSampleFromCache] = useState(false);
   const [analyzingSample, setAnalyzingSample] = useState(false);
   const [sampleError, setSampleError] = useState("");
+  // ================== GIAI ĐOẠN 9 (tự động áp dụng cấu trúc phiếu mẫu) ==================
+  // TRƯỚC ĐÂY detectedExercises chỉ áp dụng khi giáo viên TỰ BẤM 1 nút phụ - nếu quên bấm, phiếu
+  // vẫn sinh theo exerciseCounts mặc định cũ, không liên quan gì đến mẫu vừa tải lên (đúng điều
+  // giáo viên phản ánh "hệ thống phớt lờ mẫu tôi đưa vào"). Giờ áp dụng NGAY sau khi phân tích
+  // xong (ghi đè hẳn, không cộng dồn), kèm banner rõ ràng + nút đảo lại nếu giáo viên muốn.
+  const [sampleStructureApplied, setSampleStructureApplied] = useState(false);
+  const [preSampleExerciseCounts, setPreSampleExerciseCounts] = useState(null); // snapshot để đảo lại
   const [lastLayoutId, setLastLayoutId] = useState(null); // để tránh random trùng layout 2 lần liên tiếp
 
   // ================== GIAI ĐOẠN 3: tiện lợi giáo viên ==================
@@ -212,6 +218,8 @@ export default function WorksheetForm({ onGenerated }) {
     setSampleSpec(null);
     setSampleReferenceContext(null);
     setSampleError("");
+    setSampleStructureApplied(false);
+    setPreSampleExerciseCounts(null);
     if (!file) return;
 
     const session = getSession();
@@ -226,6 +234,16 @@ export default function WorksheetForm({ onGenerated }) {
       setSampleSpec(data.spec);
       setSampleReferenceContext(data.referenceContext || null);
       setSampleFromCache(Boolean(data.fromCache));
+      // GIAI ĐOẠN 9: tự động áp dụng NGAY nếu phân tích ra được cấu trúc hữu ích - không còn chờ
+      // giáo viên bấm nút phụ. Lưu snapshot exerciseCounts HIỆN TẠI (trước khi ghi đè) để có thể
+      // đảo lại đúng như cũ nếu giáo viên bấm "Dùng cấu hình mặc định thay vào đó".
+      if (data.spec?.detectedExercises?.length > 0) {
+        setExerciseCounts((prevCounts) => {
+          setPreSampleExerciseCounts(prevCounts);
+          return applyDetectedExercisesToCounts(data.spec, visibleExercises);
+        });
+        setSampleStructureApplied(true);
+      }
     } catch (err) {
       setSampleError(err.message);
     } finally {
@@ -238,6 +256,13 @@ export default function WorksheetForm({ onGenerated }) {
     setSampleSpec(null);
     setSampleReferenceContext(null);
     setSampleError("");
+    // Bỏ mẫu -> nếu vừa tự động áp dụng cấu trúc mẫu, đảo lại đúng cấu hình trước đó để tránh
+    // giáo viên bối rối vì số liệu trên form không còn liên quan đến file vừa bỏ đi.
+    if (sampleStructureApplied && preSampleExerciseCounts) {
+      setExerciseCounts(preSampleExerciseCounts);
+    }
+    setSampleStructureApplied(false);
+    setPreSampleExerciseCounts(null);
   }
 
   // Hàm sinh phiếu DÙNG CHUNG cho cả submit form lần đầu VÀ nút "🔄 Tạo phiên bản khác" - cùng
@@ -288,22 +313,24 @@ export default function WorksheetForm({ onGenerated }) {
     generate();
   }
 
-  /** "Áp dụng cấu trúc từ phiếu mẫu" - THAY THẾ hoàn toàn lựa chọn hiện tại bằng đúng cấu trúc
-   * quan sát được (giống hành vi applySavedFormula() ở trên: reset về 0 rồi điền lại theo
-   * detectedExercises, không PHẢI cộng dồn vào lựa chọn đang có - tránh gây nhầm lẫn "sao số
-   * không khớp mẫu"). Chỉ áp cho key hiện có trong visibleExercises (đúng khối lớp đang chọn) -
-   * dạng bài mẫu có nhưng khối lớp hiện tại không hỗ trợ thì bỏ qua (an toàn, không lỗi). */
-  function applyDetectedExercises() {
+  /** GIAI ĐOẠN 9: nút "Áp dụng lại cấu trúc từ phiếu mẫu" - dùng khi giáo viên đã bấm "Dùng cấu
+   * hình mặc định thay vào đó" trước đó nhưng đổi ý muốn quay lại đúng cấu trúc mẫu. Hành vi y
+   * hệt lúc tự động áp dụng lần đầu (THAY THẾ hoàn toàn, không cộng dồn). */
+  function reapplySampleStructure() {
     if (!sampleSpec?.detectedExercises?.length) return;
-    const visibleKeys = new Set(visibleExercises.map((item) => item.key));
-    setExerciseCounts(() => {
-      const next = {};
-      for (const item of visibleExercises) next[item.key] = 0;
-      for (const d of sampleSpec.detectedExercises) {
-        if (visibleKeys.has(d.key)) next[d.key] = d.approxCount;
-      }
-      return next;
+    setExerciseCounts((prevCounts) => {
+      setPreSampleExerciseCounts(prevCounts);
+      return applyDetectedExercisesToCounts(sampleSpec, visibleExercises);
     });
+    setSampleStructureApplied(true);
+  }
+
+  /** GIAI ĐOẠN 9: "Dùng cấu hình mặc định thay vào đó" - đảo lại đúng exerciseCounts TRƯỚC khi hệ
+   * thống tự động áp dụng cấu trúc mẫu (snapshot lưu trong preSampleExerciseCounts). Nếu vì lý do
+   * nào đó không có snapshot (VD dữ liệu cũ), fallback về defaultCount chuẩn của catalog. */
+  function revertToDefaultStructure() {
+    setExerciseCounts(preSampleExerciseCounts || defaultCountsFor(grade, subject));
+    setSampleStructureApplied(false);
   }
 
   // "⭐ Lưu bố cục này làm yêu thích" - lưu layoutId của phiếu VỪA tạo (lastLayoutId), để những
@@ -483,20 +510,33 @@ export default function WorksheetForm({ onGenerated }) {
                 {sampleSpec.exerciseTypeHints?.length > 0 && (
                   <p>Dạng bài quan sát thấy: {sampleSpec.exerciseTypeHints.join(", ")}</p>
                 )}
-                {/* ================== GIAI ĐOẠN 4 MỚI (content-aware theo mẫu thật) ==================
-                    TRƯỚC ĐÂY exerciseTypeHints chỉ hiện CHO ĐỌC THAM KHẢO, không áp dụng được vào
-                    phiếu. detectedExercises (key thật + số lượng) giờ THỰC SỰ áp dụng được - nút
-                    này CHỦ ĐỘNG để giáo viên bấm (không tự động ghi đè số liệu đang chỉnh tay),
-                    cùng nguyên tắc với "Dùng công thức đã lưu" ở Giai đoạn 3. LƯU Ý: thứ tự khối
-                    bài đã tự động theo mẫu NGẦM (không cần bấm gì) - nút này chỉ áp dụng SỐ LƯỢNG. */}
-                {sampleSpec.detectedExercises?.length > 0 && (
+                {/* ================== GIAI ĐOẠN 9 (tự động áp dụng cấu trúc phiếu mẫu) ==================
+                    TRƯỚC ĐÂY detectedExercises chỉ áp dụng khi giáo viên TỰ BẤM 1 nút phụ - quên
+                    bấm thì phiếu vẫn sinh theo cấu hình cũ, không liên quan gì mẫu vừa tải lên.
+                    Giờ áp dụng NGAY (xem handleSampleFileChange), banner dưới đây chỉ để THÔNG
+                    BÁO đã áp dụng + cho phép đảo lại, không còn là hành động giáo viên PHẢI nhớ
+                    bấm mới có tác dụng. */}
+                {sampleSpec.detectedExercises?.length > 0 && sampleStructureApplied && (
+                  <p className="mt-1 flex items-center gap-1 font-medium text-emerald-800">
+                    <ClipboardCheck size={13} /> Đã áp dụng cấu trúc từ phiếu mẫu ({sampleSpec.detectedExercises.length} dạng bài).{" "}
+                    <button
+                      type="button"
+                      onClick={revertToDefaultStructure}
+                      className="underline decoration-dotted"
+                      title="Đảo lại số lượng câu về cấu hình trước khi áp dụng mẫu"
+                    >
+                      Dùng cấu hình mặc định thay vào đó
+                    </button>
+                  </p>
+                )}
+                {sampleSpec.detectedExercises?.length > 0 && !sampleStructureApplied && (
                   <button
                     type="button"
-                    onClick={applyDetectedExercises}
+                    onClick={reapplySampleStructure}
                     className="mt-1 flex items-center gap-1 font-medium text-emerald-800 underline decoration-dotted"
-                    title="Điền số lượng câu theo đúng cấu trúc quan sát được từ phiếu mẫu (thay thế lựa chọn hiện tại)"
+                    title="Điền lại số lượng câu theo đúng cấu trúc quan sát được từ phiếu mẫu"
                   >
-                    <ClipboardCheck size={13} /> Áp dụng cấu trúc từ phiếu mẫu ({sampleSpec.detectedExercises.length} dạng bài)
+                    <ClipboardCheck size={13} /> Áp dụng lại cấu trúc từ phiếu mẫu ({sampleSpec.detectedExercises.length} dạng bài)
                   </button>
                 )}
               </div>

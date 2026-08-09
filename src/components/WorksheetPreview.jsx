@@ -328,6 +328,35 @@ function ShapeIcon({ name, accent }) {
         />
       );
       break;
+    case "Hình thoi":
+      shape = <polygon points="28,4 52,28 28,52 4,28" {...common} />;
+      break;
+    case "Hình ê-líp":
+      shape = <ellipse cx="28" cy="28" rx="25" ry="16" {...common} />;
+      break;
+    case "Hình ngũ giác":
+      shape = <polygon points="28,4 50.8,20.6 42.1,47.4 13.9,47.4 5.2,20.6" {...common} />;
+      break;
+    case "Hình lục giác":
+      shape = <polygon points="52,28 40,48.8 16,48.8 4,28 16,7.2 40,7.2" {...common} />;
+      break;
+    case "Hình bán nguyệt":
+      shape = <path d="M4,32 A24,24 0 0 1 52,32 Z" {...common} />;
+      break;
+    case "Hình thang":
+      shape = <polygon points="18,10 38,10 50,46 6,46" {...common} />;
+      break;
+    case "Hình mũi tên":
+      shape = <polygon points="4,22 30,22 30,10 52,28 30,46 30,34 4,34" {...common} />;
+      break;
+    case "Hình đám mây":
+      shape = (
+        <path
+          d="M15,40 C8,40 4,35 6,29 C3,23 8,17 15,18 C16,11 24,7 31,10 C36,6 45,8 46,15 C52,15 55,21 51,26 C55,30 53,38 46,40 Z"
+          {...common}
+        />
+      );
+      break;
     case "Hình tròn":
     default:
       shape = <circle cx="28" cy="28" r="22" {...common} />;
@@ -601,6 +630,49 @@ function DatCauTheoMauSection({ items, accent }) {
   );
 }
 
+/** Chia mảng sections thành 2 cột theo kiểu "đọc hết cột trái rồi mới sang cột phải" (giống báo
+ * in truyền thống) - nửa đầu vào cột trái, nửa sau vào cột phải. Giữ nguyên index gốc (i) để
+ * key/props render (VD accent/mascot theo index) không đổi so với trước khi chia cột. */
+function splitIntoTwoColumns(sections) {
+  const withIndex = sections.map((section, i) => ({ section, i }));
+  const mid = Math.ceil(withIndex.length / 2);
+  return { left: withIndex.slice(0, mid), right: withIndex.slice(mid) };
+}
+
+/** Render 1 ExerciseBox hoàn chỉnh theo section.type - tách riêng thành component để dùng
+ * chung được ở cả nhánh 1 cột và 2 cột (GIAI ĐOẠN 9), tránh lặp lại y hệt 1 khối JSX dài 2 lần. */
+function RenderedExerciseBox({ section, index, layout }) {
+  const t = getTheme(layout, section, index);
+  return (
+    <ExerciseBox
+      index={index}
+      type={section.type}
+      title={section.title}
+      mascot={t.mascot}
+      accent={t.border}
+      bg={t.bg}
+      badge={t.badge}
+      badgeDark={t.badgeDark}
+      titleColor={t.title}
+      cardStyle={layout.sectionCardStyle}
+    >
+      {section.type === "tinh_nham" && <TinhNhamSection items={section.items} accent={t.border} />}
+      {section.type === "dem_va_viet_so" && <DemVaVietSoSection items={section.items} accent={t.border} />}
+      {section.type === "so_sanh" && <SoSanhSection items={section.items} accent={t.border} />}
+      {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
+      {section.type === "sap_xep_thu_tu" && <SapXepThuTuSection items={section.items} accent={t.border} />}
+      {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
+      {section.type === "nhan_dien_hinh" && <NhanDienHinhSection shapes={section.shapes} accent={t.border} />}
+      {section.type === "dem_hinh_ung_dung" && <DemHinhUngDungSection data={section.data} accent={t.border} />}
+      {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}
+      {section.type === "khoanh_tu_loai" && <KhoanhTuLoaiSection items={section.items} accent={t.border} />}
+      {section.type === "noi_tu_nhom" && <NoiTuNhomSection data={section.data} accent={t.border} />}
+      {section.type === "dien_tu_cho_san" && <DienTuChoSanSection data={section.data} accent={t.border} />}
+      {section.type === "dat_cau_theo_mau" && <DatCauTheoMauSection items={section.items} accent={t.border} />}
+    </ExerciseBox>
+  );
+}
+
 export default function WorksheetPreview({ worksheet, meta }) {
   if (!worksheet?.sections?.length) {
     return (
@@ -617,6 +689,7 @@ export default function WorksheetPreview({ worksheet, meta }) {
   const corners = layout.cornerDecor?.length === 4 ? layout.cornerDecor : ["☀️", "🌈", "✏️", "⭐"];
   const isRibbonHeader = layout.headerStyle === "ribbon_corner";
   const isUnderlineHeader = layout.headerStyle === "simple_underline";
+  const twoColumns = layout.columns === 2 ? splitIntoTwoColumns(worksheet.sections) : null;
 
   return (
     <div id="print-area">
@@ -664,54 +737,38 @@ export default function WorksheetPreview({ worksheet, meta }) {
               </span>
             </div>
 
-            <div
-              style={
-                layout.columns === 2
-                  ? { columnCount: 2, columnGap: 22 }
-                  : undefined
-              }
-            >
-              {worksheet.sections.map((section, i) => {
-                const t = getTheme(layout, section, i);
-                return (
-                  <ExerciseBox
-                    key={i}
-                    index={i}
-                    type={section.type}
-                    title={section.title}
-                    mascot={t.mascot}
-                    accent={t.border}
-                    bg={t.bg}
-                    badge={t.badge}
-                    badgeDark={t.badgeDark}
-                    titleColor={t.title}
-                    cardStyle={layout.sectionCardStyle}
-                  >
-                    {section.type === "tinh_nham" && <TinhNhamSection items={section.items} accent={t.border} />}
-                    {section.type === "dem_va_viet_so" && (
-                      <DemVaVietSoSection items={section.items} accent={t.border} />
-                    )}
-                    {section.type === "so_sanh" && <SoSanhSection items={section.items} accent={t.border} />}
-                    {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
-                    {section.type === "sap_xep_thu_tu" && (
-                      <SapXepThuTuSection items={section.items} accent={t.border} />
-                    )}
-                    {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
-                    {section.type === "nhan_dien_hinh" && (
-                      <NhanDienHinhSection shapes={section.shapes} accent={t.border} />
-                    )}
-                    {section.type === "dem_hinh_ung_dung" && (
-                      <DemHinhUngDungSection data={section.data} accent={t.border} />
-                    )}
-                    {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}
-                    {section.type === "khoanh_tu_loai" && <KhoanhTuLoaiSection items={section.items} accent={t.border} />}
-                    {section.type === "noi_tu_nhom" && <NoiTuNhomSection data={section.data} accent={t.border} />}
-                    {section.type === "dien_tu_cho_san" && <DienTuChoSanSection data={section.data} accent={t.border} />}
-                    {section.type === "dat_cau_theo_mau" && <DatCauTheoMauSection items={section.items} accent={t.border} />}
-                  </ExerciseBox>
-                );
-              })}
-            </div>
+            {/*
+             * ================== GIAI ĐOẠN 9 (sửa lỗi vỡ layout 2 cột) ==================
+             * TRƯỚC ĐÂY dùng CSS `column-count: 2` (kiểu "đổ chữ như báo") - kỹ thuật này chỉ phù
+             * hợp với văn bản thuần, KHÔNG đảm bảo giữ nguyên hình dạng 1 khối HTML: khi cột báo
+             * cắt ngang qua giữa 1 ExerciseBox (đặc biệt khối "Nhận diện hình"/"Đếm hình" chứa
+             * nhiều icon SVG nhỏ xếp flex-wrap), khối bị tràn ra ngoài biên cột/khỏi trang - đúng
+             * hiện tượng giáo viên chụp ảnh gửi. `breakInside: avoid` trên ExerciseBox không cứu
+             * được vì đó là thuộc tính cho ngắt TRANG in, không áp dụng cho ngắt CỘT kiểu multi-
+             * column. Giờ thay bằng chia 2 CỘT THẬT (2 mảng con của `sections`, mỗi cột là 1
+             * flex-column riêng) - mỗi ExerciseBox luôn nằm TRỌN VẸN trong đúng 1 cột, không thể
+             * bị cắt ngang giữa chừng.
+             */}
+            {layout.columns === 2 ? (
+              <div style={{ display: "flex", gap: 22, alignItems: "flex-start" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {twoColumns.left.map(({ section, i }) => (
+                    <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
+                  ))}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {twoColumns.right.map(({ section, i }) => (
+                    <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div>
+                {worksheet.sections.map((section, i) => (
+                  <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
+                ))}
+              </div>
+            )}
 
             {worksheet.answerKeyText && <AnswerQrCode text={worksheet.answerKeyText} accent={layout.palette.border} />}
 
