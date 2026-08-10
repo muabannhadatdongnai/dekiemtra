@@ -228,3 +228,101 @@ export function generateDemHinhUngDung(shapes, count = 3) {
 
 /** Danh sách icon dùng chung (để component render dùng lại, tránh lệch giữa các hàm sinh). */
 export const AVAILABLE_ICONS = ICONS;
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - catalog theo chủ đề SGK) ==================
+ * Trước đây catalog chỉ có các dạng bài "kỹ năng chung" (tính nhẩm, so sánh...) không bám theo
+ * MẠCH NỘI DUNG thật của SGK (đo lường, tiền tệ, thời gian...) - xem PROJECT_SUMMARY.md mục 0.5
+ * để rõ bối cảnh. Bước 2 bắt đầu với 2 chủ đề Lớp 1 (đơn giản hơn, làm trước theo yêu cầu giáo
+ * viên): "Độ dài" và "Thời gian" - đúng 2 mạch nội dung Lớp 1 có trong chương trình GDPT 2018
+ * (Lớp 1 CHƯA học "Tiền Việt Nam" hay "chu vi hình", những chủ đề đó dành cho Lớp 2 - làm ở lượt
+ * sau). Toàn bộ vẫn sinh THUẦN BẰNG CODE (không cần AI), giữ đúng triết lý "rẻ, nhanh, không lo
+ * AI tính sai" của cả file này.
+ */
+
+// ===== Chủ đề "Độ dài" =====
+
+/** Tên gọi các "băng giấy"/đoạn thẳng minh hoạ cho bài so sánh độ dài - dùng chữ cái để không
+ * lẫn với số đo (khác hẳn phong cách "Băng A/Băng B" khô khan, gần với cách gọi trong SGK thật:
+ * "băng giấy màu xanh/băng giấy màu đỏ" v.v.) */
+const LENGTH_BAND_NAMES = [
+  ["băng giấy xanh", "băng giấy đỏ"],
+  ["băng giấy vàng", "băng giấy tím"],
+  ["sợi dây xanh", "sợi dây cam"],
+  ["cây bút chì xanh", "cây bút chì đỏ"],
+  ["que tính xanh", "que tính vàng"],
+];
+
+/** So sánh độ dài 2 "băng giấy" (có ghi sẵn số đo cm) - điền dấu >, <, =. Phạm vi 3-20cm khớp
+ * đúng phạm vi số Lớp 1 đã học (WORKSHEET_GRADES.LOP_1.maxNumber = 20). */
+export function generateDoDaiSoSanh(count = 4) {
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const [nameA, nameB] = pick(LENGTH_BAND_NAMES);
+    const cmA = randInt(3, 20);
+    // Khoảng 20% số câu ra kết quả BẰNG NHAU (cmB = cmA) - còn lại random độc lập, để không lúc
+    // nào cũng có dấu > hoặc < (đa dạng cả 3 loại dấu như bài "so_sanh" gốc).
+    const cmB = Math.random() < 0.2 ? cmA : randInt(3, 20);
+    const answer = cmA === cmB ? "=" : cmA > cmB ? ">" : "<";
+    items.push({ nameA, cmA, nameB, cmB, answer });
+  }
+  return items;
+}
+
+/** Sắp xếp 3 "băng giấy" theo thứ tự độ dài (bé -> lớn hoặc lớn -> bé) - CÙNG khuôn dữ liệu với
+ * generateSapXepThuTu() (numbers/sortedAnswer/direction) để tái dùng được nguyên xi
+ * SapXepThuTuSection (web) / buildSapXepThuTuParagraphs (Word) mà KHÔNG cần viết component mới -
+ * chỉ khác đơn vị hiển thị là "cm" đi kèm mỗi số (xử lý ở tầng hiển thị, xem WorksheetPreview.jsx/
+ * worksheetExportService.js). */
+export function generateDoDaiSapXep(count = 3) {
+  const sets = [];
+  for (let i = 0; i < count; i++) {
+    const cmSet = new Set();
+    while (cmSet.size < 3) cmSet.add(randInt(3, 30));
+    const ascending = [...cmSet].sort((a, b) => a - b);
+    const direction = Math.random() < 0.5 ? "asc" : "desc";
+    const sortedAnswer = direction === "asc" ? ascending : [...ascending].reverse();
+    const shuffled = [...cmSet].sort(() => Math.random() - 0.5);
+    sets.push({ numbers: shuffled, sortedAnswer, direction, unit: "cm" });
+  }
+  return sets;
+}
+
+// ===== Chủ đề "Thời gian" =====
+
+/** Xem đồng hồ - CHỈ giờ đúng (phút luôn chỉ số 12) - đúng mức độ chương trình Lớp 1 ("Thời
+ * gian, giờ và lịch" chỉ dạy giờ đúng, giờ-phút để dành Lớp 2). `count` giờ PHÂN BIỆT lấy từ
+ * 1-12 (xáo trộn rồi cắt, giống generateNhanDienHinh) - tránh lặp y hệt 1 giờ nhiều lần trong
+ * cùng 1 phiếu khi count <= 12. */
+export function generateXemDongHoGioDung(count = 4) {
+  const allHours = Array.from({ length: 12 }, (_, i) => i + 1);
+  const shuffled = [...allHours].sort(() => Math.random() - 0.5);
+  if (count <= shuffled.length) return shuffled.slice(0, count).map((hour) => ({ hour }));
+  // count > 12 (hiếm khi giáo viên cần nhiều vậy) - lặp lại sau khi hết 1 vòng, vẫn an toàn.
+  const hours = [...shuffled];
+  while (hours.length < count) hours.push(...[...allHours].sort(() => Math.random() - 0.5));
+  return hours.slice(0, count).map((hour) => ({ hour }));
+}
+
+export const DAYS_OF_WEEK = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
+
+/** Điền (các) ngày còn thiếu trong 1 đoạn liên tiếp của tuần - CÙNG khuôn dữ liệu với
+ * generateDaySo() (sequence có null = chỗ trống, answer = giá trị đúng) để tái dùng được
+ * DaySoSection/buildDaySoParagraphs, chỉ khác sequence chứa TÊN NGÀY (string) thay vì SỐ. Chỉ hỗ
+ * trợ ẩn ĐÚNG 1 vị trí/câu (khác generateDaySo cho phép nhiều cấu hình) vì chuỗi 7 ngày trong
+ * tuần ngắn, ẩn nhiều vị trí cùng lúc dễ làm bài mất hết đầu mối suy luận thứ tự. */
+export function generateCacNgayTrongTuan(count = 3) {
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const length = randInt(4, 6); // đoạn liên tiếp dài 4-6 ngày (không wrap qua Chủ Nhật -> Thứ Hai, giữ đơn giản)
+    const maxStart = DAYS_OF_WEEK.length - length;
+    const start = randInt(0, maxStart);
+    const sequence = DAYS_OF_WEEK.slice(start, start + length);
+    const hideIndex = randInt(1, length - 2); // không ẩn ngày đầu/cuối - còn đầu mối suy luận
+    const answer = sequence[hideIndex];
+    const display = sequence.map((d, idx) => (idx === hideIndex ? null : d));
+    items.push({ sequence: display, hideIndex, answer });
+  }
+  return items;
+}
+

@@ -124,16 +124,81 @@ function buildDaySoParagraphs(items, showAnswers) {
  * ================== GIAI ĐOẠN 2 (đa dạng hoá dạng hoạt động) ==================
  * Sắp xếp thứ tự: in 3 số xáo trộn -> mũi tên -> kết quả (đã sắp xếp nếu showAnswers, ngược
  * lại chỗ trống ngăn cách bởi dấu < hoặc > tương ứng chiều sắp xếp của bộ đó).
+ *
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (tái dùng cho chủ đề "Độ dài", Lớp 1) ==================
+ * `it.unit` ("cm") nếu có sẽ in kèm ngay sau mỗi số - khớp đúng hành vi SapXepThuTuSection bên
+ * WorksheetPreview.jsx (web). Dữ liệu CŨ không có `unit` -> giữ nguyên hành vi cũ, không đổi.
  */
 function buildSapXepThuTuParagraphs(items, showAnswers) {
   return items.map((it) => {
     const symbol = it.direction === "asc" ? " < " : " > ";
+    const unitSuffix = it.unit ? ` ${it.unit}` : "";
+    const numbersText = it.numbers.map((n) => `${n}${unitSuffix}`).join(" ;  ");
     const resultText = showAnswers ? it.sortedAnswer.join(symbol) : it.sortedAnswer.map(() => BLANK).join(symbol);
     return {
-      children: [new TextRun({ text: `${it.numbers.join(" ;  ")}   ➜   ${resultText}`, font: FONT, size: 24 })],
+      children: [new TextRun({ text: `${numbersText}   ➜   ${resultText}`, font: FONT, size: 24 })],
       spacing: { after: 120 },
     };
   });
+}
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Độ dài", Lớp 1) ==================
+ * Word không vẽ được thanh màu tỉ lệ như bản web (ClockFace/DoDaiSoSanhSection dùng SVG) - giữ
+ * đúng tinh thần bài tập bằng văn bản thuần: liệt kê rõ tên + số đo mỗi băng giấy, sau đó đến
+ * chỗ trống/dấu so sánh đúng.
+ */
+function buildDoDaiSoSanhParagraphs(items, showAnswers) {
+  return items.map((it) => ({
+    children: [
+      new TextRun({
+        text: `${it.nameA}: ${it.cmA} cm   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${it.nameB}: ${it.cmB} cm`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 120 },
+  }));
+}
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
+ * Word không vẽ được SVG mặt đồng hồ có kim - dùng ĐÚNG emoji Unicode "đồng hồ chỉ giờ" (mỗi
+ * emoji ứng với ĐÚNG 1 giờ tròn, sẵn có trong bảng mã Unicode 🕐-🕛) thay vì tự vẽ - vừa đơn
+ * giản vừa chính xác 100% (không có sai số vẽ tay như hình).
+ */
+const CLOCK_EMOJI_BY_HOUR = {
+  1: "🕐", 2: "🕑", 3: "🕒", 4: "🕓", 5: "🕔", 6: "🕕",
+  7: "🕖", 8: "🕗", 9: "🕘", 10: "🕙", 11: "🕚", 12: "🕛",
+};
+
+function buildXemDongHoGioDungParagraphs(items, showAnswers) {
+  return chunkArray(items, 4).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const text = `${CLOCK_EMOJI_BY_HOUR[it.hour] || "🕐"}  ${showAnswers ? `${it.hour} giờ` : `${BLANK} giờ`}`;
+      const run = new TextRun({ text, font: FONT, size: 30 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 140 },
+  }));
+}
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
+ * Điền ngày còn thiếu - nối bằng " — " giống bản web (CacNgayTrongTuanSection), thay dấu phẩy
+ * bằng gạch ngang để rõ đây là 1 CHUỖI liên tiếp có thứ tự, không phải danh sách rời rạc.
+ */
+function buildCacNgayTrongTuanParagraphs(items, showAnswers) {
+  return items.map((it) => ({
+    children: [
+      new TextRun({
+        text: it.sequence.map((d) => (d === null ? (showAnswers ? it.answer : BLANK) : d)).join("  —  "),
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 120 },
+  }));
 }
 
 /**
@@ -342,6 +407,14 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildSapXepThuTuParagraphs(section.items, showAnswers);
     case "noi_phep_tinh":
       return buildNoiPhepTinhParagraphs(section.data, showAnswers);
+    case "do_dai_so_sanh":
+      return buildDoDaiSoSanhParagraphs(section.items, showAnswers);
+    case "do_dai_sap_xep":
+      return buildSapXepThuTuParagraphs(section.items, showAnswers);
+    case "xem_dong_ho_gio_dung":
+      return buildXemDongHoGioDungParagraphs(section.items, showAnswers);
+    case "cac_ngay_trong_tuan":
+      return buildCacNgayTrongTuanParagraphs(section.items, showAnswers);
     case "nhan_dien_hinh":
       return buildNhanDienHinhParagraphs(section.shapes);
     case "dem_hinh_ung_dung":
@@ -492,8 +565,11 @@ async function buildAnswerQrParagraphs(answerKeyText) {
   }
 }
 
-/** Dựng Blob .docx - hàm lõi dùng chung, KHÔNG tự tải file (không gọi saveAs), giống quy ước exportService.js. */
-async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = false }) {
+/** Dựng Blob .docx - hàm lõi dùng chung, KHÔNG tự tải file (không gọi saveAs), giống quy ước
+ * exportService.js. Export (dù bình thường chỉ dùng nội bộ) để có thể tự verify bằng script gọi
+ * hàm trực tiếp + giải nén .docx thật soi XML - cùng tinh thần buildLessonPlanDocxSections() bên
+ * module giáo án (xem PROJECT_SUMMARY.md, giai đoạn 8). */
+export async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = false }) {
   const layout = worksheet?.layout || getDefaultLayout();
   const headerParagraphs = buildHeaderParagraphs(meta.title);
   const sectionParagraphs = (worksheet?.sections || []).flatMap((section, i) =>

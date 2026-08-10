@@ -9,6 +9,10 @@ import {
   generateNhanDienHinh,
   generateSapXepThuTu,
   generateDemHinhUngDung,
+  generateDoDaiSoSanh,
+  generateDoDaiSapXep,
+  generateXemDongHoGioDung,
+  generateCacNgayTrongTuan,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -382,8 +386,16 @@ const DEFAULT_SECTION_ORDER = [
   "so_sanh",
   "day_so",
   "sap_xep_thu_tu",
+  // ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Độ dài"/"Thời gian", Lớp 1) ==================
+  // Xếp gần "sap_xep_thu_tu" (cùng nhóm so sánh/sắp xếp) và ngay trước "giai_toan" (cùng nhóm
+  // thời gian/vận dụng) để khi giáo viên bấm áp dụng CẢ 1 "gói chủ đề" cùng lúc, các dạng bài
+  // cùng chủ đề vẫn đứng gần nhau trong phiếu thay vì bị các dạng bài khác chen giữa.
+  "do_dai_so_sanh",
+  "do_dai_sap_xep",
   "noi_phep_tinh",
   "nhan_dien_hinh",
+  "xem_dong_ho_gio_dung",
+  "cac_ngay_trong_tuan",
   "giai_toan",
 ];
 
@@ -476,6 +488,35 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("noi_phep_tinh") || "Nối phép tính với kết quả đúng.",
         mascot: mascotFor("noi_phep_tinh"),
         data: generateNoiPhepTinh(grade, safeCounts.noi_phep_tinh),
+      };
+    // ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Độ dài"/"Thời gian", Lớp 1) ==================
+    case "do_dai_so_sanh":
+      return {
+        type: "do_dai_so_sanh",
+        title: pickInstructionVariant("do_dai_so_sanh") || "So sánh độ dài rồi điền dấu >, <, = thích hợp.",
+        mascot: mascotFor("do_dai_so_sanh"),
+        items: generateDoDaiSoSanh(safeCounts.do_dai_so_sanh),
+      };
+    case "do_dai_sap_xep":
+      return {
+        type: "do_dai_sap_xep",
+        title: pickInstructionVariant("do_dai_sap_xep") || "Sắp xếp độ dài các băng giấy theo thứ tự.",
+        mascot: mascotFor("do_dai_sap_xep"),
+        items: generateDoDaiSapXep(safeCounts.do_dai_sap_xep),
+      };
+    case "xem_dong_ho_gio_dung":
+      return {
+        type: "xem_dong_ho_gio_dung",
+        title: pickInstructionVariant("xem_dong_ho_gio_dung") || "Xem đồng hồ rồi viết giờ thích hợp vào chỗ trống.",
+        mascot: mascotFor("xem_dong_ho_gio_dung"),
+        items: generateXemDongHoGioDung(safeCounts.xem_dong_ho_gio_dung),
+      };
+    case "cac_ngay_trong_tuan":
+      return {
+        type: "cac_ngay_trong_tuan",
+        title: pickInstructionVariant("cac_ngay_trong_tuan") || "Điền tên ngày còn thiếu vào chỗ trống.",
+        mascot: mascotFor("cac_ngay_trong_tuan"),
+        items: generateCacNgayTrongTuan(safeCounts.cac_ngay_trong_tuan),
       };
     default:
       return null;

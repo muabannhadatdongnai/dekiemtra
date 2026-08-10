@@ -160,18 +160,3 @@ export async function fetchUsageSummaryRequest() {
   const res = await fetch("/api/usage", { headers: authHeaders() });
   return handleResponse(res);
 }
-
-/**
- * Tab "Tập tô màu": upload 1 ảnh (nhân vật/ảnh gia đình) -> nhận về ảnh line-art tô màu +
- * bảng màu gợi ý. Dùng FormData vì cần gửi file ảnh nhị phân, giống analyzeSampleExamRequest.
- */
-export async function generateColoringPageRequest({ image }) {
-  const formData = new FormData();
-  formData.set("image", image);
-  const res = await fetch("/api/generate-coloring-page", {
-    method: "POST",
-    headers: authHeaders(),
-    body: formData,
-  });
-  return handleResponse(res);
-}

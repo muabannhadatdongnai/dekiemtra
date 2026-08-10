@@ -213,6 +213,83 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     colorThemeTags: ["orange", "brown", "green"],
   },
 
+  // ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - chủ đề "Độ dài"/"Thời gian", Lớp 1) ========
+  // 4 dạng bài MỚI, bám theo đúng mạch nội dung SGK Lớp 1 (chương trình GDPT 2018: "Độ dài và đo
+  // độ dài", "Thời gian, giờ và lịch") thay vì chỉ luyện "kỹ năng chung" như các dạng phía trên.
+  // CHỦ Ý giới hạn minGrade=maxGrade="LOP_1" (không mở rộng sang Lớp 2) - Lớp 2 có nội dung đo
+  // lường/thời gian PHỨC TẠP HƠN hẳn (đổi đơn vị dm/m/km, giờ-phút, tiền Việt Nam...), cần dạng
+  // bài + generator RIÊNG, sẽ làm ở 1 lượt Bước 2 kế tiếp - không dùng chung 4 dạng đơn giản này
+  // cho Lớp 2 để tránh vừa sai đối tượng vừa gây rối khi phân biệt "chủ đề" nào giáo viên đang
+  // chọn (xem worksheetTopicPackages.js - đúng 1 "gói" ứng với đúng 1 khối lớp).
+  {
+    key: "do_dai_so_sanh",
+    subject: "TOAN",
+    label: "So sánh độ dài (băng giấy)",
+    skillGroup: "do_luong",
+    source: "code",
+    minGrade: "LOP_1",
+    maxGrade: "LOP_1",
+    defaultCount: 4,
+    instructionVariants: [
+      "So sánh độ dài rồi điền dấu >, <, = thích hợp.",
+      "Quan sát số đo rồi so sánh thật kỹ nhé!",
+      "Em hãy so sánh độ dài hai băng giấy.",
+    ],
+    mascotPool: ["📏", "🎗️", "🧵"],
+    colorThemeTags: ["teal", "blue", "green"],
+  },
+  {
+    key: "do_dai_sap_xep",
+    subject: "TOAN",
+    label: "Sắp xếp độ dài theo thứ tự",
+    skillGroup: "do_luong",
+    source: "code",
+    minGrade: "LOP_1",
+    maxGrade: "LOP_1",
+    defaultCount: 3,
+    instructionVariants: [
+      "Sắp xếp độ dài các băng giấy theo thứ tự.",
+      "Em hãy sắp xếp các số đo sau theo đúng thứ tự.",
+      "Quan sát rồi sắp xếp từ ngắn đến dài (hoặc ngược lại) nhé!",
+    ],
+    mascotPool: ["📏", "🐌", "🦔"],
+    colorThemeTags: ["brown", "teal", "blue"],
+  },
+  {
+    key: "xem_dong_ho_gio_dung",
+    subject: "TOAN",
+    label: "Xem đồng hồ (giờ đúng)",
+    skillGroup: "thoi_gian",
+    source: "code",
+    minGrade: "LOP_1",
+    maxGrade: "LOP_1",
+    defaultCount: 4,
+    instructionVariants: [
+      "Xem đồng hồ rồi viết giờ thích hợp vào chỗ trống.",
+      "Đồng hồ chỉ mấy giờ? Em hãy viết vào chỗ trống nhé!",
+      "Quan sát kim đồng hồ rồi ghi lại đúng giờ.",
+    ],
+    mascotPool: ["⏰", "🐰", "🦉"],
+    colorThemeTags: ["orange", "yellow", "purple"],
+  },
+  {
+    key: "cac_ngay_trong_tuan",
+    subject: "TOAN",
+    label: "Các ngày trong tuần",
+    skillGroup: "thoi_gian",
+    source: "code",
+    minGrade: "LOP_1",
+    maxGrade: "LOP_1",
+    defaultCount: 3,
+    instructionVariants: [
+      "Điền tên ngày còn thiếu vào chỗ trống.",
+      "Em hãy điền đúng thứ trong tuần vào chỗ trống.",
+      "Quan sát rồi điền tên ngày còn thiếu nhé!",
+    ],
+    mascotPool: ["📅", "🐥", "🌤️"],
+    colorThemeTags: ["blue", "yellow", "green"],
+  },
+
   // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn
   // ngữ - từ vựng/câu văn, không tính toán được bằng code như các dạng Toán). Trước đây chỉ
   // khai báo "chỗ đứng" (source:"planned") để schema layout/mascot dùng chung được ngay - giờ
