@@ -1,9 +1,127 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi SỬA LỖI chữ đè lên nhau khi xuất PDF,
-# phát hiện qua vòng test THỰC TẾ lần 2 của giáo viên sau Bước 1/3 - Tầng A, giai đoạn 9)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi LÀM Bước 2/3 - Tầng B: catalog theo
+# chủ đề SGK cho Lớp 1 (Toán), giai đoạn 9)
 
 > ⚠️ Bản này thay thế mọi bản `PROJECT_SUMMARY.md` cũ hơn (kể cả bản đóng gói sẵn trong
-> `ai-exam-generator-giaidoan9-buoc1.zip` trước lần sửa này). Dùng bản này làm nguồn tin cậy khi mở
-> chat mới.
+> `ai-exam-generator-giaidoan9-buoc1-fix2.zip` trước lần làm Bước 2 này). Dùng bản này làm nguồn
+> tin cậy khi mở chat mới.
+
+## 0.-3. MỚI NHẤT (giai đoạn 9, Bước 2/3 — Tầng B, ĐỢT 1: Lớp 1) — Catalog "Phiếu bài tập" theo
+## CHỦ ĐỀ SGK thay vì chỉ "kỹ năng chung"
+
+**Bối cảnh**: theo đúng kế hoạch đã thống nhất ở mục 0.5 (bên dưới), Bước 2 mở rộng catalog Phiếu
+bài tập theo MẠCH NỘI DUNG SGK thật (đo lường, thời gian, tiền tệ...) thay vì chỉ luyện "kỹ năng
+chung" (tính nhẩm, so sánh số trần trụi...) như trước. Trước khi code, đã thống nhất lại với giáo
+viên: (1) dùng đúng danh sách chủ đề đã đề xuất (Lớp 1: Độ dài + Thời gian; Lớp 2: Đo lường +
+Tiền Việt Nam + Thời gian + Hình học có số đo - xem đầy đủ ở mục 0.5), (2) làm **Lớp 1 trước**
+(đơn giản hơn, làm nhanh) - Lớp 2 sẽ làm ở 1 lượt Bước 2 kế tiếp.
+
+### 1. 4 dạng bài MỚI (thuần code, không cần AI) - đúng 2 mạch nội dung Lớp 1 trong chương trình
+### GDPT 2018 ("Độ dài và đo độ dài", "Thời gian, giờ và lịch")
+- **`do_dai_so_sanh`** (chủ đề Độ dài) - so sánh độ dài 2 "băng giấy" đã ghi sẵn số đo (cm, phạm
+  vi 3-20 khớp đúng phạm vi số Lớp 1), điền dấu >, <, =. Web: vẽ 2 thanh màu có độ rộng tỉ lệ thô
+  minh hoạ (KHÔNG cần đúng tỉ lệ vật lý tuyệt đối - đây là bài đọc/so sánh số đã cho sẵn, không
+  phải tự đo bằng thước thật trên giấy in, tránh rủi ro sai lệch khi in/PDF không giữ đúng tỉ lệ
+  mm mong muốn). Word: liệt kê tên + số đo bằng văn bản thuần.
+- **`do_dai_sap_xep`** (chủ đề Độ dài) - sắp xếp 3 số đo (cm) theo thứ tự. **Tái dùng NGUYÊN
+  `SapXepThuTuSection`/`buildSapXepThuTuParagraphs` đã có** (cùng khuôn dữ liệu
+  numbers/sortedAnswer/direction, chỉ thêm field `unit: "cm"` hiển thị kèm mỗi số nếu có) - không
+  viết component mới, giảm trùng lặp code.
+- **`xem_dong_ho_gio_dung`** (chủ đề Thời gian) - xem đồng hồ CHỈ giờ đúng (đúng mức độ chương
+  trình Lớp 1, giờ-phút để dành Lớp 2). Web: `ClockFace` - mặt đồng hồ SVG vẽ bằng lượng giác
+  (tính toán vị trí kim giờ/kim phút/12 số NGAY TẠI thời điểm render theo tham số `hour`, không
+  hardcode toạ độ như `ShapeIcon`, vì mỗi đồng hồ cần góc kim khác nhau tuỳ dữ liệu). Word: dùng
+  ĐÚNG emoji Unicode "đồng hồ chỉ giờ" có sẵn (🕐-🕛, mỗi emoji ứng với ĐÚNG 1 giờ tròn) - chính
+  xác 100%, không cần tự vẽ.
+- **`cac_ngay_trong_tuan`** (chủ đề Thời gian) - điền (đúng 1) ngày còn thiếu trong 1 đoạn liên
+  tiếp 4-6 ngày của tuần (không ẩn ngày đầu/cuối - còn đầu mối suy luận thứ tự). Cùng khuôn dữ
+  liệu với `day_so` (sequence có `null` = chỗ trống) nhưng chứa TÊN NGÀY thay vì SỐ.
+- Cả 4 dạng đăng ký trong `worksheetExerciseCatalog.js` với **`minGrade=maxGrade="LOP_1"`** (CHỦ
+  Ý không mở rộng sang Lớp 2 - Lớp 2 cần dạng bài phức tạp hơn hẳn, đổi đơn vị dm/m/km, giờ-phút,
+  sẽ có generator RIÊNG ở lượt Bước 2 kế tiếp, không dùng chung 4 dạng đơn giản này).
+
+### 2. "Gói chủ đề" (`src/data/worksheetTopicPackages.js`, MỚI) - bấm 1 nút bật cả nhóm dạng bài
+- 2 gói cho Lớp 1/Toán: **"📏 Độ dài"** (`do_dai_so_sanh` + `do_dai_sap_xep`), **"⏰ Thời gian"**
+  (`xem_dong_ho_gio_dung` + `cac_ngay_trong_tuan`).
+- `WorksheetForm.jsx`: thêm dãy nút tròn "Chủ đề SGK (tuỳ chọn)" ngay sau ô "Bài/Chương SGK" -
+  bấm 1 nút sẽ **CỘNG DỒN** (đặt = defaultCount) các dạng bài trong gói vào `exerciseCounts` hiện
+  tại, **KHÔNG ghi đè/xoá** các dạng bài khác giáo viên đã chọn trước đó (khác hẳn cơ chế "Áp
+  dụng cấu trúc từ phiếu mẫu" ở Bước 1 - phiếu mẫu là tín hiệu CHẮC CHẮN nên ghi đè hợp lý, còn
+  bấm 1 gói chủ đề chỉ là "tôi muốn THÊM phần này", ghi đè sẽ gây bất ngờ khó chịu).
+- `DEFAULT_SECTION_ORDER` trong `worksheetGenerator.js`: xếp 2 dạng bài cùng 1 gói ĐỨNG CẠNH NHAU
+  (đã tự xác nhận qua script) - để khi giáo viên bấm cả gói, phiếu ra vẫn có cảm giác "1 chủ đề
+  liền mạch" chứ không bị dạng bài khác chen giữa.
+
+### 3. ⚠️ QUYẾT ĐỊNH CÓ CHỦ Ý: KHÔNG làm tự động dò khớp "Bài/Chương SGK" ↔ "gói chủ đề" đợt này
+Kế hoạch gốc (mục 0.5) có ghi "Ô 'Bài/Chương SGK' hiện có sẽ thực sự điều khiển catalog nào hiện
+ra". Đã đọc code `githubService.js`/`WorksheetForm.jsx` để đánh giá tính khả thi: ô "Bài/Chương
+SGK" hiển thị nhãn `Chương/Bài ${c.chapter}`, trong đó `c.chapter` là 1 SLUG được trích từ TÊN
+FILE markdown trong 1 **repo GitHub RIÊNG TƯ bên ngoài** (biến môi trường `GITHUB_KNOWLEDGE_REPO`
+- KHÔNG cấu hình trong sandbox này, và mình không có quyền truy cập để xem thật tên file/nội dung
+bên trong). Xây dựng logic "dò từ khoá" khớp slug này với chủ đề SGK trong tình trạng KHÔNG BIẾT
+định dạng thật của dữ liệu là **đoán mò, rủi ro cao** (có thể không khớp gì do slug không chứa từ
+khoá tiếng Việt có dấu, hoặc khớp sai) - tốn công viết mà không chắc chạy đúng, đúng loại "lãng
+phí công sức" cần tránh. Quyết định: làm "gói chủ đề" thành 1 bộ chọn ĐỘC LẬP (mục 2 ở trên), vẫn
+mang lại đúng giá trị cốt lõi (bấm 1 phát ra cả nhóm bài liên quan) mà KHÔNG phụ thuộc dữ liệu
+không kiểm chứng được. Nếu giáo viên muốn nối 2 ô này thật sự, cần cho biết CHÍNH XÁC văn bản hiện
+ra trong ô "Bài/Chương SGK" (chụp ảnh dropdown) để biết đúng định dạng slug thật rồi mới viết logic
+khớp đáng tin cậy.
+
+### Đã tự xác minh thật (không chỉ đọc code)
+- `npm run build`: build sạch, không lỗi type/lint.
+- `npm test`: vẫn **47/47 pass** - không có test cũ nào bị hỏng.
+- 4 script riêng, chạy `node --import ./test/register-loader.mjs` (đã xoá sau khi verify xong,
+  không nằm trong repo):
+  1. **4 generator mới**: `generateDoDaiSoSanh(20)` - đáp án >,<,= đúng 100% khi đối chiếu lại
+     bằng tay, đủ cả 3 loại dấu xuất hiện trong mẫu lớn, cm luôn trong 3-20, 2 tên băng giấy luôn
+     khác nhau. `generateDoDaiSapXep(30)` - 3 số luôn PHÂN BIỆT, cm trong 3-30, `sortedAnswer`
+     khớp đúng thứ tự thật khi tự sắp xếp lại độc lập để đối chiếu, luôn có `unit="cm"`.
+     `generateXemDongHoGioDung`: count≤12 → giờ luôn PHÂN BIỆT (không lặp), count=20 (>12) vẫn an
+     toàn không lỗi. `generateCacNgayTrongTuan(30)`: luôn ẩn ĐÚNG 1 vị trí, không ẩn đầu/cuối, và
+     XÁC NHẬN CHẶT chuỗi (kể cả phần bị ẩn) đúng là 1 đoạn LIÊN TIẾP THẬT trong `DAYS_OF_WEEK` khi
+     đối chiếu lại bằng `indexOf`/`slice` độc lập (không chỉ tin dữ liệu do generator tự khai).
+  2. **Tích hợp catalog + generateWorksheet + topic packages**: 4 dạng bài mới CHỈ hiện cho LOP_1
+     (không có ở LOP_2/MAM_NON); đúng 2 gói chủ đề cho LOP_1/TOAN, 0 gói cho LOP_2; mọi
+     `exerciseKeys` trong 2 gói đều tồn tại thật trong catalog (không lỗi tham chiếu "key ma");
+     gọi `generateWorksheet()` thật sinh đủ cả 4 dạng bài, đúng số câu theo `exerciseCounts`, và
+     **xác nhận 2 dạng bài cùng gói "Độ dài" đứng NGAY CẠNH NHAU** trong `sections` sinh ra; gửi
+     thẳng `do_dai_so_sanh` cho `grade=LOP_2` (không hợp lệ) → xác nhận bị LỌC BỎ hoàn toàn, không
+     lọt lỗ hổng an toàn phía server (đúng cơ chế đã có từ trước, chỉ verify vẫn hoạt động đúng
+     với dạng bài mới); `listAvailableExercises()` cũng thấy đủ 4 dạng bài mới.
+  3. **Công thức lượng giác `ClockFace`**: mô phỏng lại chính xác công thức trong component (vì
+     không thể render JSX trực tiếp trong Node thuần - xem lý do ở Bước 1) để kiểm tra ĐỘC LẬP:
+     giờ 12/3/6/9 → kim giờ chỉ đúng hướng (lên/phải/xuống/trái); kim phút (giờ đúng) LUÔN chỉ
+     thẳng lên bất kể giờ nào; số "12" trên mặt đồng hồ nằm đúng ở đỉnh.
+  4. **Xuất Word THẬT** (`buildWorksheetDocxBlob()`, giải nén bằng JSZip soi `word/document.xml`,
+     cùng kỹ thuật đã dùng ở giai đoạn 8): bản giáo viên (showAnswers=true) chứa ĐÚNG số đo cm của
+     câu so sánh độ dài đầu tiên, ĐÚNG emoji đồng hồ + text giờ của câu xem đồng hồ đầu tiên, ĐÚNG
+     đáp án ngày bị ẩn của câu "các ngày trong tuần" đầu tiên - tất cả đối chiếu bằng cách ĐỌC LẠI
+     dữ liệu gốc từ `worksheet.sections`, không suy đoán. **Quan trọng nhất**: xác nhận bản HỌC
+     SINH (showAnswers=false) KHÔNG LỘ đáp án ngày bị ẩn khi đáp án đó không trùng với ngày khác
+     đã hiện sẵn trong chuỗi - tránh đúng loại lỗi "lộ đáp án qua khe hở logic" dễ bị bỏ sót nếu
+     chỉ đọc code mà không test bằng dữ liệu thật.
+
+### Việc CHƯA làm — cần bạn tự làm ở phiên tiếp theo
+1. **Chưa xem bằng mắt trên trình duyệt thật** - đặc biệt: (a) mặt đồng hồ SVG có đẹp/rõ ràng với
+   trẻ Lớp 1 không (form dáng số, độ dày kim...), dù công thức toán đã xác nhận đúng; (b) dãy nút
+   "Chủ đề SGK" mới có gây rối bố cục form không, có rõ ràng là "cộng dồn" (không phải ghi đè)
+   không; (c) 2 thanh màu minh hoạ độ dài trong `DoDaiSoSanhSection` có nhìn dễ hiểu/không bị vỡ
+   layout ở màn hình nhỏ/khi in không.
+2. **Chưa in PDF thật** với các dạng bài mới - đặc biệt đồng hồ SVG (nhiều mặt đồng hồ xếp
+   `flex-wrap` trong 1 khối) cần xác nhận không tái diễn đúng loại lỗi tràn/đè đã sửa ở "0.-2." vì
+   đây là nội dung SVG dày đặc mới, khác hẳn hình học đơn giản đã test trước đó.
+3. **Bước 2 - ĐỢT 2 (Lớp 2): Đo lường (dm/m/km, kg, lít) + Tiền Việt Nam + Thời gian (giờ-phút,
+   ngày-tháng) + Hình học có số đo (chu vi) CHƯA làm** - đây là phần LỚN HƠN nhiều so với đợt 1
+   (Lớp 1), cần thêm generator riêng cho từng chủ đề, làm ở lượt kế tiếp theo đúng thứ tự đã thống
+   nhất.
+4. **Bước 3 (Tiếng Việt) CHƯA làm** - theo đúng thứ tự đã thống nhất (làm SAU Bước 2 để tái dùng
+   khuôn kiến trúc đã kiểm chứng), chưa đến lượt.
+5. Chưa viết test tự động (`node --test`) chính thức cho 4 generator + tích hợp mới vào bộ
+   `test/*.test.js` - mới verify bằng 4 script gọi hàm thủ công trong phiên làm việc (đã xoá sau
+   khi verify xong, không nằm trong repo).
+6. `.gitignore` - vẫn cần bạn tự xác nhận đã có trên máy/repo GitHub thật hay chưa (nhắc lại từ
+   nhiều phiên trước, vẫn ưu tiên cao nếu chưa làm).
+
+---
 
 ## 0.-2. MỚI NHẤT — SỬA LỖI CHỮ ĐÈ LÊN NHAU KHI XUẤT PDF (phát hiện qua test thực tế lần 2, SAU
 ## khi đã đóng gói Bước 1/3 - Tầng A)
@@ -283,6 +401,9 @@ gian, hình học có số đo, và bên Tiếng Việt là các chủ điểm/b
    khi sang Bước 2.
 
 **Bước 2 — Tầng B: mở rộng catalog "Phiếu bài tập" theo CHỦ ĐỀ SGK (việc lớn, kiến trúc mới)**
+> ✅ ĐỢT 1 (Lớp 1: "Độ dài" + "Thời gian") ĐÃ LÀM - xem mục "0.-3." ở đầu file. ĐỢT 2 (Lớp 2: Đo
+> lường + Tiền Việt Nam + Thời gian + Hình học có số đo) CHƯA làm - còn nguyên kế hoạch gốc bên
+> dưới, làm ở lượt kế tiếp.
 - Thêm nhóm "dạng bài theo chủ đề" mới cho môn Toán, đi theo tiến độ SGK Lớp 1-2 thật, ví dụ: Đo
   lường (đổi đơn vị độ dài m/dm/cm, khối lượng kg/g, dung tích l/ml), Tiền Việt Nam (đọc/đổi mệnh
   giá, tính tiền mua-bán đơn giản), Thời gian (xem đồng hồ, ngày-tháng, thứ trong tuần), Hình học
@@ -418,6 +539,7 @@ src/
 │        vietnameseExamOrchestrator,vietnameseBlocks/*}
 └── data/{config,constants,gradeProfiles,subjectProfiles,promptTemplates,visualSchemas,
         sampleExamSchema,worksheetSampleSchema,worksheetSchemas,worksheetExerciseCatalog,
+        worksheetTopicPackages [MỚI - GĐ9 Bước 2],
         worksheetLayoutTemplates,lessonPlanBlueprint (sửa),lessonPlanResult,
         lessonPlanTemplates,lessonPlanPromptTemplates (sửa),lessonPlanIntegrations (sửa),
         lessonPlanSampleSchema [MỚI],examBlueprint,examResult,vietnameseExamBlocks,
