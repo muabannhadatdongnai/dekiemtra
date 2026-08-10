@@ -743,20 +743,37 @@ export default function WorksheetPreview({ worksheet, meta }) {
              * hợp với văn bản thuần, KHÔNG đảm bảo giữ nguyên hình dạng 1 khối HTML: khi cột báo
              * cắt ngang qua giữa 1 ExerciseBox (đặc biệt khối "Nhận diện hình"/"Đếm hình" chứa
              * nhiều icon SVG nhỏ xếp flex-wrap), khối bị tràn ra ngoài biên cột/khỏi trang - đúng
-             * hiện tượng giáo viên chụp ảnh gửi. `breakInside: avoid` trên ExerciseBox không cứu
-             * được vì đó là thuộc tính cho ngắt TRANG in, không áp dụng cho ngắt CỘT kiểu multi-
-             * column. Giờ thay bằng chia 2 CỘT THẬT (2 mảng con của `sections`, mỗi cột là 1
-             * flex-column riêng) - mỗi ExerciseBox luôn nằm TRỌN VẸN trong đúng 1 cột, không thể
-             * bị cắt ngang giữa chừng.
+             * hiện tượng giáo viên chụp ảnh gửi lần 1.
+             *
+             * ================== SỬA LẦN 2 (đổi từ flex sang float) ==================
+             * Lần sửa đầu dùng `display: flex` (2 cột flex ngang, mỗi cột 1 mảng con riêng) -
+             * hết lỗi tràn ngang, NHƯNG lộ ra lỗi MỚI khi xuất PDF (giáo viên chụp ảnh gửi lần 2,
+             * chữ đè lên nhau ở đúng khu vực gần ranh giới trang in): "In / Tải PDF" ở app này
+             * KHÔNG dùng thư viện PDF riêng - chỉ gọi `window.print()` (xem exportService.js), tức
+             * là trình duyệt tự động NGẮT TRANG dựa trên nội dung HTML/CSS thật. `display: flex`
+             * (và `display: grid`) có hỗ trợ ngắt trang khi in RẤT KHÔNG ổn định giữa các trình
+             * duyệt - khi nội dung dài hơn 1 trang, 2 flex-column có thể ngắt trang KHÔNG đồng bộ
+             * với nhau, khiến phần còn lại của 1 cột đè lên phần đầu trang mới của cột kia.
+             *
+             * Giải pháp ĐÚNG (kỹ thuật `float` cổ điển - CHỦ Ý dùng lại, KHÔNG lỗi thời): CSS
+             * `float: left/right` + `width` cố định là cách DUY NHẤT trong 3 kỹ thuật chia cột
+             * (multicol/flex/float) được các trình duyệt hỗ trợ ngắt trang khi in ỔN ĐỊNH qua
+             * nhiều trang - đây là kỹ thuật tiêu chuẩn cho báo cáo/tài liệu in nhiều cột từ trước
+             * khi flexbox/grid ra đời, và vẫn là lựa chọn AN TOÀN NHẤT cho in ấn đến nay. Mỗi cột
+             * vẫn là 1 mảng con riêng (giữ nguyên cách chia từ lần sửa đầu, mỗi ExerciseBox luôn
+             * nằm TRỌN VẸN trong đúng 1 cột) - chỉ đổi kỹ thuật CSS chia cột, không đổi cách chia
+             * dữ liệu. `overflow: hidden` trên khối bọc ngoài để "clear" 2 cột float (khối bọc tự
+             * cao đúng bằng cột cao nhất), tránh phần QR đáp án/footer bên dưới bị đẩy lên đè vào
+             * cột đang float.
              */}
             {layout.columns === 2 ? (
-              <div style={{ display: "flex", gap: 22, alignItems: "flex-start" }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ overflow: "hidden" }}>
+                <div style={{ float: "left", width: "47%" }}>
                   {twoColumns.left.map(({ section, i }) => (
                     <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
                   ))}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ float: "right", width: "47%" }}>
                   {twoColumns.right.map(({ section, i }) => (
                     <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
                   ))}
