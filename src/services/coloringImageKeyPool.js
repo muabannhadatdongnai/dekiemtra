@@ -132,6 +132,14 @@ export async function generateColoringContentWithFailover(params) {
       if (isLastAttempt) {
         if (quotaFailureCount === order.length) err.allKeysExhausted = true;
         if (overloadFailureCount === order.length) err.allKeysOverloaded = true;
+        // ⚠️ "limit: 0" trong thông báo lỗi Google KHÁC hẳn "đã dùng hết quota trong ngày" -
+        // nghĩa là model này CHƯA TỪNG được cấp hạn mức free tier nào cho key/project đó (vd
+        // tên model bị resolve sang biến thể preview chưa mở free tier, hoặc project chưa bật
+        // đúng API) - báo sai thành "hết hạn mức hôm nay" sẽ khiến người dùng chờ qua ngày mai
+        // vô ích, không bao giờ hết lỗi vì bản chất không phải do dùng hết.
+        if (/limit["\s:]*0\b/i.test(`${err?.message || ""}`)) {
+          err.zeroFreeQuota = true;
+        }
         throw err;
       }
 
