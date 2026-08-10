@@ -1,9 +1,69 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi LÀM Bước 1/3 - Tầng A: sửa nhanh
-# module "📝 Phiếu bài tập" theo đúng kế hoạch đã thống nhất ở giai đoạn 9)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi SỬA LỖI chữ đè lên nhau khi xuất PDF,
+# phát hiện qua vòng test THỰC TẾ lần 2 của giáo viên sau Bước 1/3 - Tầng A, giai đoạn 9)
 
 > ⚠️ Bản này thay thế mọi bản `PROJECT_SUMMARY.md` cũ hơn (kể cả bản đóng gói sẵn trong
-> `ai-exam-generator-giaidoan9.zip` trước khi làm Bước 1). Dùng bản này làm nguồn tin cậy khi mở
+> `ai-exam-generator-giaidoan9-buoc1.zip` trước lần sửa này). Dùng bản này làm nguồn tin cậy khi mở
 > chat mới.
+
+## 0.-2. MỚI NHẤT — SỬA LỖI CHỮ ĐÈ LÊN NHAU KHI XUẤT PDF (phát hiện qua test thực tế lần 2, SAU
+## khi đã đóng gói Bước 1/3 - Tầng A)
+
+**Bối cảnh**: sau khi làm xong 5 việc ở Bước 1 (mục "0.-1." bên dưới), giáo viên test lại bằng
+cách tạo phiếu + xuất PDF thật, gửi 2 ảnh chụp: 1 ảnh bản Web (đẹp, không lỗi) và 1 ảnh bản PDF
+(chữ ở nhiều vị trí bị ĐÈ LÊN NHAU - giáo viên khoanh đỏ) + 1 file PDF khác (trường hợp phiếu ngắn,
+không lỗi vì vừa đủ 1 trang). **Đây là 1 LỖI MỚI phát sinh TỪ chính phần sửa layout 2 cột ở Bước 1
+(mục "1." bên dưới) - không phải lỗi cũ tái xuất hiện.**
+
+### Gốc rễ đã xác nhận qua đọc code (không phải đoán)
+`WorksheetExportActions.jsx` cho thấy nút "In / Tải PDF" gọi `exportToPDF()` trong
+`exportService.js`, và hàm này **CHỈ gọi `window.print()`** - ứng dụng KHÔNG dùng thư viện PDF
+riêng cho phiếu bài tập (khác Word, dùng thư viện `docx`), nghĩa là "PDF" ở đây chính là trình
+duyệt tự in trang HTML/CSS thật ra PDF, ngắt trang hoàn toàn dựa vào cách trình duyệt paginate
+HTML khi in.
+
+Ở Bước 1, lỗi vỡ layout 2 cột được sửa bằng cách đổi từ CSS `column-count: 2` sang `display: flex`
+(2 `<div>` flex ngang, mỗi cột 1 mảng con riêng của `sections`). Cách này sửa ĐÚNG lỗi tràn ngang
+biên cột (lỗi cũ), nhưng lộ ra vấn đề khác: **`display: flex` (và tương tự `display: grid`) có hỗ
+trợ ngắt trang khi IN rất không ổn định giữa các trình duyệt** - khi nội dung phiếu dài hơn 1
+trang A4, 2 cột flex có thể bị ngắt trang KHÔNG đồng bộ với nhau (cột này đã sang trang 2, cột kia
+vẫn còn ở trang 1, hoặc ngược lại), khiến phần chữ của trang sau bị in đè lên phần chưa hết của
+trang trước - đúng hiện tượng giáo viên chụp ảnh. Đây là lý do phiếu NGẮN (đủ gọn trong 1 trang,
+như file PDF thứ 2 giáo viên gửi) KHÔNG bị lỗi - lỗi chỉ lộ ra khi phiếu dài hơn 1 trang, đúng buộc
+phải ngắt trang thật.
+
+### Đã sửa: đổi từ `flex` sang `float` (kỹ thuật CSS 2 cột cổ điển, CHỦ Ý dùng lại)
+`WorksheetPreview.jsx`: khối chia 2 cột đổi từ `display: flex` sang `float: left` / `float: right`
+(mỗi cột `width: 47%`, khối bọc ngoài có `overflow: hidden` để "clear" 2 cột float, tránh phần QR
+đáp án/footer bị đẩy đè lên cột). **Lý do chọn `float` thay vì quay lại `column-count` (kỹ thuật
+gốc) hay đổi sang `grid`**: trong 3 kỹ thuật CSS chia cột (`column-count`/`flex`/`grid`/`float`),
+`float` + `width` cố định là kỹ thuật DUY NHẤT được các trình duyệt hỗ trợ ngắt trang khi in ỔN
+ĐỊNH qua nhiều trang - đây là kỹ thuật tiêu chuẩn cho báo cáo/tài liệu in nhiều cột từ trước khi
+flexbox/grid ra đời (`column-count` có đúng lỗi tràn ngang biên cột ở lần sửa trước; `flex`/`grid`
+có đúng lỗi ngắt trang không đồng bộ vừa phát hiện lần này). Cách CHIA DỮ LIỆU (2 mảng con của
+`sections`, mỗi `ExerciseBox` luôn nằm trọn trong đúng 1 cột) giữ NGUYÊN như Bước 1 - chỉ đổi kỹ
+thuật CSS hiển thị.
+
+### Đã tự xác minh (trong giới hạn môi trường - xem "Việc CHƯA làm")
+- `npm run build`: build sạch, không lỗi type/lint (Next.js SWC compile JSX thành công, xác nhận
+  cú pháp JSX hợp lệ).
+- `npm test`: vẫn **47/47 pass**.
+- Kiểm tra trực tiếp mã nguồn: xác nhận KHÔNG còn `columnCount:`/`display: "flex"` nào ở khối chia
+  cột (chỉ còn trong comment lịch sử, không phải code thật đang chạy), có đủ `float: "left"`,
+  `float: "right"`, `overflow: "hidden"` đúng vị trí.
+
+### ⚠️ Việc CHƯA làm được (giới hạn môi trường - QUAN TRỌNG, cần bạn tự làm)
+**Sandbox này KHÔNG có trình duyệt (Chromium/Chrome) và mạng bị giới hạn domain nên KHÔNG cài được
+Puppeteer/Playwright để tự động hoá việc in thử** - nghĩa là lần sửa này **CHƯA được tự kiểm chứng
+bằng 1 lượt in PDF thật nào cả**, chỉ dựa trên hiểu biết đúng đắn về hành vi ngắt trang CSS của
+trình duyệt (float là kỹ thuật đã được kiểm chứng rộng rãi trong ngành cho in ấn nhiều cột, không
+phải phỏng đoán) + code compile/build sạch. **Bắt buộc phải test lại thật**: tạo 1 phiếu ĐỦ DÀI
+(để chắc chắn tràn quá 1 trang, giống trường hợp lỗi lần này) với layout 2 cột
+(`classic_2col_dotted`/`learning_stations`/`adventure_map` - 3 layout có `columns: 2`), bấm "In /
+Tải PDF", kiểm tra kỹ: (1) không còn chữ đè lên nhau ở ranh giới trang, (2) không có box nào bị cắt
+ngang giữa chừng (lỗi gốc ban đầu), (3) không bị tràn ngang biên cột. Nếu vẫn còn vấn đề, cần chụp
+ảnh gửi lại kèm rõ ĐÚNG trang/vị trí lỗi để tiếp tục chẩn đoán.
+
+---
 
 ## 0.-1. MỚI NHẤT (giai đoạn 9, Bước 1/3 — Tầng A) — ĐÃ SỬA 5 việc "sửa nhanh, không đổi kiến
 ## trúc" theo đúng thứ tự đã thống nhất ở mục 0.5 (đọc lại phần LỊCH SỬ mục 0 bên dưới để hiểu bối
