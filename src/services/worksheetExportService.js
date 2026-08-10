@@ -7,7 +7,6 @@ import {
   BorderStyle,
   ShadingType,
   TabStopType,
-  TabStopPosition,
   ImageRun,
   convertMillimetersToTwip,
 } from "docx";
@@ -40,6 +39,22 @@ import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
  *   bản web có thể hiển thị 2 cột - đổi lại, kiểu viền khung (border style) vẫn biến hoá theo
  *   layout.frameStyle để bản in ra giấy cũng không bị rập khuôn.
  */
+
+/**
+ * ================== GIAI ĐOẠN 9, PHÁT HIỆN MỚI (sửa lỗi "layout xô lệch" ở mục Nối) ==================
+ * Trước đây dùng `TabStopPosition.MAX` (hằng số CỨNG 9026 twip ~ 15.93cm của docx.js, tính theo
+ * khổ giấy/lề MẶC ĐỊNH của thư viện) để đẩy cột đáp án "Nối phép tính"/"Nối từ" sát lề phải.
+ * Nhưng khổ giấy + lề THẬT của phiếu là A4 (210mm) với lề trái/phải 18mm (PAGE_A4_MM/
+ * PAGE_MARGIN_MM ở trên) -> vùng chữ thật rộng ~174mm (~9853 twip), RỘNG HƠN 9026 twip khoảng
+ * 8mm -> cột đáp án bên phải bị dừng SỚM, lơ lửng cách viền khung phải ~8mm thay vì áp sát như
+ * bản web (dùng CSS flex `justify-content: space-between` đẩy đúng sát mép) - đúng loại lỗi
+ * "xô lệch" giáo viên phản ánh (chỉ lộ ra ở BẢN HỌC SINH - showAnswers=false - vì bản giáo viên
+ * không dùng tab-stop, in thẳng "biểu thức = kết quả" trên 1 dòng). Sửa: tự tính đúng vị trí tab
+ * dừng phải theo CHÍNH khổ giấy/lề đang dùng, không phụ thuộc hằng số mặc định của thư viện.
+ */
+const CONTENT_WIDTH_TWIP = convertMillimetersToTwip(
+  PAGE_A4_MM.width - PAGE_MARGIN_MM.left - PAGE_MARGIN_MM.right
+);
 
 const FRAME_BORDER_STYLE = {
   dotted_border_thick_card: BorderStyle.SINGLE,
@@ -221,7 +236,7 @@ function buildNoiPhepTinhParagraphs(data, showAnswers) {
       new TextRun({ text: "\t", font: FONT, size: 24 }),
       new TextRun({ text: `●   ${data.shuffledResults[i]}`, font: FONT, size: 24 }),
     ],
-    tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+    tabStops: [{ type: TabStopType.RIGHT, position: CONTENT_WIDTH_TWIP }],
     spacing: { after: 100 },
   }));
 }
@@ -344,7 +359,7 @@ function buildNoiTuNhomParagraphs(data, showAnswers) {
       new TextRun({ text: "\t", font: FONT, size: 24 }),
       new TextRun({ text: `●   ${data.shuffledRight[i]}`, font: FONT, size: 24 }),
     ],
-    tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
+    tabStops: [{ type: TabStopType.RIGHT, position: CONTENT_WIDTH_TWIP }],
     spacing: { after: 100 },
   }));
 }
@@ -452,16 +467,43 @@ function applyBoxStyling(rawOptions, colors, frameStyle) {
   });
 }
 
+/** "#2F80ED" -> "2F80ED" (docx yêu cầu mã màu KHÔNG có dấu #, khác CSS). */
+function hexNoHash(hex) {
+  return (hex || "").replace(/^#/, "");
+}
+
 function buildSectionParagraphs(section, index, showAnswers, layout) {
   const colors = getTheme(layout, section, index);
   const badge = CIRCLED_DIGITS[index] ?? `(${index + 1})`;
 
+  // ================== GIAI ĐOẠN 9, PHÁT HIỆN MỚI (sửa "icon nhỏ") ==================
+  // Trước đây số thứ tự chỉ là CHỮ THƯỜNG cùng cỡ/cùng dòng với tiêu đề (size 26 = 13pt, không
+  // có gì làm nó nổi bật) - khác hẳn bản Web (ExerciseBox trong WorksheetPreview.jsx) có hẳn 1
+  // "huy hiệu" hình tròn nền màu đậm, chữ trắng, đổ bóng. Word không vẽ được hình tròn/box-shadow,
+  // nhưng CÓ hỗ trợ tô nền cho RIÊNG 1 run chữ (run-level shading, khác shading của cả khung) ->
+  // dùng để mô phỏng 1 "viên thuốc" (pill) nền đậm cùng màu badge của khối, chữ trắng, cỡ chữ
+  // TO HƠN hẳn (32 thay vì 26) - để nó thực sự nổi bật như 1 icon/huy hiệu, không lẫn vào chữ.
+  const badgePill = new TextRun({
+    text: ` ${badge} `,
+    bold: true,
+    color: "FFFFFF",
+    font: FONT,
+    size: 32,
+    shading: { fill: hexNoHash(colors.badge), type: ShadingType.CLEAR, color: "auto" },
+  });
+  // Mascot (emoji) tách RIÊNG khỏi run có rFonts="Times New Roman" - Times New Roman không có
+  // glyph màu cho emoji, để Word tự chọn font thay thế theo đúng hành vi mặc định (giống các chỗ
+  // khác trong file này đã in emoji thuần không gán font, VD buildDemVaVietSoParagraphs) thay vì
+  // ép chung 1 rFonts với chữ số/badge - tránh lệch baseline giữa glyph màu và chữ thường.
+  const mascotRun = new TextRun({ text: `  ${colors.mascot}  `, size: 30 });
+
   const headerOptions = {
     children: [
-      new TextRun({ text: `${badge} ${colors.mascot}  `, bold: true, color: colors.badge, font: FONT, size: 26 }),
+      badgePill,
+      mascotRun,
       new TextRun({ text: section.title, bold: true, color: colors.title, font: FONT, size: 26 }),
     ],
-    spacing: { before: 80, after: 100 },
+    spacing: { before: 100, after: 120 },
   };
 
   const contentOptions = buildSectionContentOptions(section, showAnswers);
