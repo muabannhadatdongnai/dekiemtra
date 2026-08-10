@@ -1,9 +1,102 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi LÀM Bước 2/3 - Tầng B: catalog theo
-# chủ đề SGK cho Lớp 1 (Toán), giai đoạn 9)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi SỬA 3 lỗi phát hiện qua test thật
+# module "Phiếu bài tập" catalog Lớp 1 - giai đoạn 9, Bước 2 ĐỢT 1, hậu kiểm)
 
 > ⚠️ Bản này thay thế mọi bản `PROJECT_SUMMARY.md` cũ hơn (kể cả bản đóng gói sẵn trong
-> `ai-exam-generator-giaidoan9-buoc1-fix2.zip` trước lần làm Bước 2 này). Dùng bản này làm nguồn
-> tin cậy khi mở chat mới.
+> `ai-exam-generator-giaidoan9-buoc2-lop1.zip` trước lần sửa này). Dùng bản này làm nguồn tin cậy
+> khi mở chat mới.
+
+## 0.-4. MỚI NHẤT — SỬA 3 lỗi giáo viên phản ánh sau khi test thật catalog Lớp 1 (web/Word/PDF)
+
+**Bối cảnh**: sau khi đóng gói Bước 2 - ĐỢT 1 (mục "0.-3." bên dưới), giáo viên test thật cả 3
+bản (Web, Word, PDF) và gửi: 1 ảnh chụp mục 6 "So sánh độ dài" trên Web (đẹp, có 2 thanh màu minh
+hoạ), 1 file Word đã xuất, 1 file PDF đã xuất, kèm đánh giá: "Web đẹp - Word rất tệ (icon nhỏ,
+layout xô lệch) - PDF tương đối ổn nhưng vẫn mất layout ở mục 6 giống ảnh Web". Đã đọc trực tiếp
+code + GIẢI NÉN THẬT cả 2 file Word/PDF giáo viên gửi (không chỉ đọc code) để xác nhận đúng gốc rễ
+trước khi sửa.
+
+### 1. PDF mất 2 thanh màu minh hoạ ở mục "So sánh độ dài" (ĐÃ SỬA)
+**Gốc rễ xác nhận qua đối chiếu XML/HTML thật**: "PDF" của phiếu bài tập KHÔNG dùng thư viện PDF
+riêng - chỉ là `window.print()` in thẳng HTML/CSS (xem `exportService.js`). `DoDaiSoSanhSection`
+(`WorksheetPreview.jsx`) vẽ 2 thanh màu bằng `background: accent` (CSS background-color thuần) -
+đây CHÍNH LÀ loại thuộc tính mà trình duyệt **mặc định KHÔNG in ra** khi in trang (để tiết kiệm
+mực), trừ khi người dùng tự tay tick "Background graphics" trong hộp thoại in - dễ bị bỏ sót và
+ứng dụng không có cách nào tự bật hộ qua JavaScript. Border thì KHÔNG bị ảnh hưởng (không tính là
+"background") - đúng lý do khung viền màu mục 1-13 vẫn lên PDF bình thường, chỉ riêng 2 thanh màu
+(dùng `background`, không phải `border`) bị mất, để lại đúng 3 dòng chữ trần trụi - khớp 100% với
+ảnh giáo viên gửi.
+
+**Đã sửa** (`src/app/globals.css`): thêm rule `@media print` ép TOÀN BỘ phần tử trong `#print-area`
+LUÔN in nền (`-webkit-print-color-adjust: exact` / `print-color-adjust: exact` / `color-adjust:
+exact`, có `!important`) - đây là cách chuẩn để "khoá" hành vi in nền, trình duyệt sẽ in đúng như
+trên màn hình dù người dùng có tick "Background graphics" hay không. Phòng luôn các mảng màu nền
+khác (dải cầu vồng, khung tiêu đề...) khỏi gặp lại đúng loại lỗi này, không chỉ riêng mục 6.
+
+### 2. Word: "icon nhỏ" ở huy hiệu số thứ tự mỗi khối bài (ĐÃ SỬA)
+**Gốc rễ xác nhận qua giải nén thật file `.docx` giáo viên gửi**: số thứ tự (①②③...) + mascot chỉ
+là CHỮ THƯỜNG cùng cỡ/cùng dòng với tiêu đề (13pt, không tô nền/không nổi bật) - khác hẳn bản Web
+có hẳn 1 "huy hiệu" hình tròn nền màu đậm, chữ trắng, đổ bóng (`ExerciseBox` trong
+`WorksheetPreview.jsx`). Word không vẽ được hình tròn/box-shadow, nhưng CÓ hỗ trợ tô nền riêng cho
+1 đoạn chữ (run-level shading, khác `shading` của cả khung) - đã tự xác nhận bằng script build thử
+`docx` v9.0.2 rằng tính năng này hoạt động đúng trước khi dùng.
+
+**Đã sửa** (`worksheetExportService.js`, `buildSectionParagraphs()`): số thứ tự giờ là 1 "viên
+thuốc" (pill) nền màu đậm CÙNG MÀU badge của khối (`colors.badge`), chữ trắng đậm, cỡ 16pt (to hơn
+hẳn 13pt cũ) - nổi bật rõ như 1 icon/huy hiệu thay vì lẫn vào chữ thường. Mascot (emoji) tách
+RIÊNG khỏi run có `rFonts="Times New Roman"` (Times New Roman không có glyph màu cho emoji) để
+Word tự chọn đúng font thay thế, tránh lệch baseline giữa glyph màu và chữ thường.
+
+### 3. Word: "layout xô lệch" ở các mục "Nối" (bản học sinh) (ĐÃ SỬA)
+**Gốc rễ xác nhận qua đọc code + tính toán lại**: 2 mục "Nối phép tính" (Toán) và "Nối từ theo
+nhóm" (Tiếng Việt) dùng `TabStopPosition.MAX` của thư viện `docx` để đẩy cột đáp án xáo trộn sát
+lề phải - nhưng đây là 1 **hằng số CỨNG 9026 twip (~15.93cm)**, tính theo khổ giấy/lề MẶC ĐỊNH của
+thư viện, KHÔNG PHẢI khổ giấy/lề THẬT của phiếu (A4 210mm, lề trái/phải 18mm -> vùng chữ thật rộng
+~174mm ≈ 9864 twip, RỘNG HƠN gần 8mm). Hệ quả: cột đáp án bị dừng SỚM khoảng 8mm, lơ lửng cách
+viền khung phải thay vì áp sát như bản Web (dùng CSS flex đẩy đúng sát mép) - đúng loại "xô lệch"
+giáo viên phản ánh. **Lỗi này CHỈ LỘ RA ở bản học sinh** (`showAnswers=false`) - bản giáo viên in
+thẳng "biểu thức = kết quả" trên 1 dòng, không dùng tab-stop nên không bị ảnh hưởng (giải thích vì
+sao file giáo viên gửi kiểm tra không thấy rõ lỗi này qua mắt thường nếu chỉ xem bản có đáp án).
+
+**Đã sửa**: thay `TabStopPosition.MAX` bằng hằng số MỚI `CONTENT_WIDTH_TWIP` tự tính từ CHÍNH
+`PAGE_A4_MM`/`PAGE_MARGIN_MM` đang dùng (không phụ thuộc giá trị mặc định của thư viện) - áp dụng
+cho cả 2 chỗ dùng tab-stop trong file (`buildNoiPhepTinhParagraphs`, `buildNoiTuNhomParagraphs`).
+
+### Đã tự xác minh thật (không chỉ đọc code)
+- `npm run build`: build sạch, không lỗi type/lint.
+- `npm test`: vẫn **47/47 pass**.
+- Giải nén THẬT 2 file `.docx`/`.pdf` giáo viên gửi để xác nhận đúng gốc rễ TRƯỚC khi sửa (không
+  đoán) - xem "Gốc rễ xác nhận" ở mỗi mục trên.
+- Sau khi sửa, gọi thẳng `generateWorksheet()` + `buildWorksheetDocxBlob()` qua
+  `test/register-loader.mjs`, giải nén lại `.docx` MỚI sinh ra bằng JSZip, soi `word/document.xml`:
+  (1) xác nhận run huy hiệu số thứ tự CÓ THẬT `<w:shd w:fill="..."/>` bên trong `<w:rPr>` (tô nền
+  RIÊNG cho run đó, khác `shd` của cả khung), cỡ chữ `32` (16pt, to hơn cỡ cũ `26`), màu chữ
+  `FFFFFF`, fill TRÙNG đúng mã màu badge của khối; (2) xác nhận tab-stop mới có `w:pos="9864"` (khớp
+  đúng tính toán từ khổ giấy/lề thật) THAY VÌ `9026` cũ, và CHỈ xuất hiện ở bản `showAnswers=false`
+  (đúng như phân tích - bản giáo viên không dùng tab-stop).
+- Đã xuất thử 2 file `.docx` mẫu (bản giáo viên + bản học sinh, đủ các dạng bài Lớp 1 mới) gửi kèm
+  để giáo viên tự mở bằng Word thật kiểm tra bằng mắt (xem "Việc CHƯA làm" bên dưới).
+
+### ⚠️ Việc CHƯA làm được (giới hạn môi trường - QUAN TRỌNG, cần bạn tự làm)
+1. **Sandbox không có trình duyệt lẫn Word thật** nên CHƯA thể tự xác nhận bằng mắt: (a) 2 thanh
+   màu mục 6 có thực sự lên PDF sau khi thêm CSS `print-color-adjust` hay không - CSS này là kỹ
+   thuật chuẩn/được hỗ trợ rộng rãi (Chrome, Edge, Firefox mới) nhưng KHÔNG loại trừ khả năng 1 số
+   trình duyệt/phiên bản cũ vẫn cần người dùng tự tick "Background graphics" thủ công thêm; (b)
+   huy hiệu số thứ tự dạng "viên thuốc" mới trong Word có thực sự trông giống 1 icon nổi bật/không
+   bị vỡ dòng hay không; (c) cột đáp án mục "Nối" ở bản học sinh có thực sự áp sát viền khung phải
+   sau khi sửa tab-stop hay không. Đã gửi kèm 2 file `.docx` mẫu (mau-giao-vien.docx,
+   mau-hoc-sinh.docx) - **bắt buộc mở bằng Word thật để xác nhận cả 3 điểm trên**, và thử lại "In
+   / Tải PDF" trên trình duyệt thật với 1 phiếu có mục "So sánh độ dài" để xác nhận PDF không còn
+   mất thanh màu.
+2. Phiếu mẫu gửi kèm KHÔNG có mục "Giải toán có lời văn" hiển thị đầy đủ - sandbox không có
+   `GEMINI_API_KEYS` nên mục này bị lỗi khi sinh thử (đã thấy dòng cảnh báo trong log khi tạo file
+   mẫu) - không liên quan gì đến 3 lỗi vừa sửa, đây là giới hạn môi trường đã biết từ trước.
+3. Chưa viết test tự động (`node --test`) riêng cho 3 việc sửa lần này vào bộ `test/*.test.js` -
+   mới verify bằng script gọi hàm thủ công trong phiên làm việc (đã xoá sau khi verify xong, không
+   nằm trong repo).
+4. `.gitignore` - vẫn cần bạn tự xác nhận đã có trên máy/repo GitHub thật hay chưa (nhắc lại từ
+   nhiều phiên trước, vẫn ưu tiên cao nếu chưa làm).
+
+---
+
 
 ## 0.-3. MỚI NHẤT (giai đoạn 9, Bước 2/3 — Tầng B, ĐỢT 1: Lớp 1) — Catalog "Phiếu bài tập" theo
 ## CHỦ ĐỀ SGK thay vì chỉ "kỹ năng chung"
