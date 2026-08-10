@@ -255,23 +255,31 @@ function DaySoSection({ items, accent }) {
  * ================== GIAI ĐOẠN 2 (đa dạng hoá dạng hoạt động) ==================
  * Sắp xếp thứ tự: hiển thị 3 số xáo trộn -> mũi tên -> 3 ô trống cách nhau bởi dấu < hoặc >
  * (tuỳ it.direction), mô phỏng đúng bố cục "30 cm < ⬜ < ⬜" trong phiếu mẫu lớp 2.
+ *
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (tái dùng cho chủ đề "Độ dài", Lớp 1) ==================
+ * generateDoDaiSapXep() trả về CÙNG khuôn dữ liệu (numbers/sortedAnswer/direction) + thêm field
+ * `unit` ("cm") - nếu có, hiển thị kèm đơn vị ngay sau mỗi số để rõ đây là số đo độ dài, không
+ * đổi gì với dữ liệu CŨ (sap_xep_thu_tu số trần trụi, không có `unit` -> giữ nguyên hành vi cũ).
  */
 function SapXepThuTuSection({ items, accent }) {
   const symbol = (direction) => (direction === "asc" ? "<" : ">");
   return (
     <div>
-      {items.map((it, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 14 }}>
-          <span style={{ marginRight: 10 }}>{it.numbers.join(" ;  ")}</span>
-          <span style={{ color: accent, fontWeight: 700 }}>➜</span>
-          {it.sortedAnswer.map((_, idx) => (
-            <span key={idx} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              {blankBox(accent)}
-              {idx < it.sortedAnswer.length - 1 && <span style={{ color: accent, fontWeight: 700 }}>{symbol(it.direction)}</span>}
-            </span>
-          ))}
-        </div>
-      ))}
+      {items.map((it, i) => {
+        const unitSuffix = it.unit ? ` ${it.unit}` : "";
+        return (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 14 }}>
+            <span style={{ marginRight: 10 }}>{it.numbers.map((n) => `${n}${unitSuffix}`).join(" ;  ")}</span>
+            <span style={{ color: accent, fontWeight: 700 }}>➜</span>
+            {it.sortedAnswer.map((_, idx) => (
+              <span key={idx} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                {blankBox(accent)}
+                {idx < it.sortedAnswer.length - 1 && <span style={{ color: accent, fontWeight: 700 }}>{symbol(it.direction)}</span>}
+              </span>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -293,6 +301,149 @@ function NoiPhepTinhSection({ data, accent }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Độ dài", Lớp 1) ==================
+ * So sánh độ dài 2 "băng giấy" đã ghi sẵn số đo (cm) - vẽ 1 thanh màu có ĐỘ RỘNG tỉ lệ thô với
+ * số cm (chỉ mang tính minh hoạ trực quan, KHÔNG cần đúng tỉ lệ vật lý tuyệt đối vì đây là bài
+ * tập đọc-so sánh số đo đã cho sẵn, không phải bài tự đo bằng thước thật trên giấy in - tránh
+ * rủi ro sai lệch khi in/PDF không giữ đúng tỉ lệ mm mong muốn) + nhãn số đo bên cạnh.
+ */
+function DoDaiSoSanhSection({ items, accent }) {
+  const maxCm = 20; // đúng phạm vi randInt(3,20) trong generateDoDaiSoSanh()
+  const barWidth = (cm) => 40 + (cm / maxCm) * 90; // px, chỉ mang tính minh hoạ tỉ lệ thô
+  const bar = (label, cm) => (
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div
+        style={{
+          width: barWidth(cm),
+          height: 14,
+          borderRadius: 7,
+          background: accent,
+          opacity: 0.75,
+          flexShrink: 0,
+        }}
+      />
+      <span style={{ whiteSpace: "nowrap" }}>
+        {label}: <strong>{cm} cm</strong>
+      </span>
+    </div>
+  );
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 13 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          {bar(it.nameA, it.cmA)}
+          {bar(it.nameB, it.cmB)}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+            <span>{it.nameA}</span>
+            <span
+              style={{
+                display: "inline-block",
+                width: 24,
+                height: 24,
+                border: `1.5px solid ${accent}`,
+                borderRadius: "50%",
+                background: "#fff",
+              }}
+            />
+            <span>{it.nameB}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
+ * Mặt đồng hồ SVG đơn giản (đủ 12 số, kim giờ + kim phút) - tính toán vị trí bằng lượng giác
+ * NGAY TẠI thời điểm render theo `hour` truyền vào (không hardcode toạ độ như ShapeIcon, vì mỗi
+ * đồng hồ cần 1 góc kim khác nhau tuỳ dữ liệu, không phải hữu hạn hình cố định). "Giờ đúng"
+ * (đúng mức độ chương trình Lớp 1) -> kim phút LUÔN chỉ đúng số 12.
+ */
+function ClockFace({ hour, size = 88 }) {
+  const cx = 50;
+  const cy = 50;
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const pointAt = (angleDeg, r) => ({
+    x: cx + r * Math.cos(toRad(angleDeg)),
+    y: cy + r * Math.sin(toRad(angleDeg)),
+  });
+  const hourAngle = ((hour % 12) * 30) - 90;
+  const minuteAngle = -90; // giờ đúng -> kim phút luôn chỉ số 12
+  const hourTip = pointAt(hourAngle, 19);
+  const minuteTip = pointAt(minuteAngle, 30);
+  const numbers = Array.from({ length: 12 }, (_, idx) => {
+    const n = idx + 1;
+    const { x, y } = pointAt((n % 12) * 30 - 90, 34);
+    return { n, x, y };
+  });
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size}>
+      <circle cx={cx} cy={cy} r={42} fill="#fff" stroke="#334155" strokeWidth="3" />
+      {numbers.map(({ n, x, y }) => (
+        <text key={n} x={x} y={y + 3.5} fontSize="10" textAnchor="middle" fill="#334155" fontFamily="Baloo 2, sans-serif" fontWeight="700">
+          {n}
+        </text>
+      ))}
+      <line x1={cx} y1={cy} x2={hourTip.x} y2={hourTip.y} stroke="#334155" strokeWidth="4.5" strokeLinecap="round" />
+      <line x1={cx} y1={cy} x2={minuteTip.x} y2={minuteTip.y} stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx={cx} cy={cy} r="3" fill="#334155" />
+    </svg>
+  );
+}
+
+function XemDongHoGioDungSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          <ClockFace hour={it.hour} />
+          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13 }}>
+            {blankBox(accent)} <span>giờ</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
+ * Điền tên ngày còn thiếu trong 1 đoạn liên tiếp của tuần - CÙNG khuôn dữ liệu với DaySoSection
+ * (sequence có null = chỗ trống) nhưng nối bằng " — " thay vì dấu phẩy (tên ngày dài hơn số, dấu
+ * phẩy dễ đọc nhầm là 1 danh sách rời rạc thay vì 1 CHUỖI có thứ tự liên tiếp).
+ */
+function CacNgayTrongTuanSection({ items, accent }) {
+  return (
+    <div>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12, fontSize: 13, alignItems: "center" }}>
+          {it.sequence.map((d, idx) => (
+            <span key={idx} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {d === null ? (
+                <span
+                  style={{
+                    display: "inline-block",
+                    minWidth: 76,
+                    height: 26,
+                    border: `1.5px solid ${accent}`,
+                    borderRadius: 6,
+                    background: "#fff",
+                  }}
+                />
+              ) : (
+                <strong>{d}</strong>
+              )}
+              {idx < it.sequence.length - 1 && <span style={{ color: accent }}>—</span>}
+            </span>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
@@ -662,6 +813,10 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
       {section.type === "sap_xep_thu_tu" && <SapXepThuTuSection items={section.items} accent={t.border} />}
       {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
+      {section.type === "do_dai_so_sanh" && <DoDaiSoSanhSection items={section.items} accent={t.border} />}
+      {section.type === "do_dai_sap_xep" && <SapXepThuTuSection items={section.items} accent={t.border} />}
+      {section.type === "xem_dong_ho_gio_dung" && <XemDongHoGioDungSection items={section.items} accent={t.border} />}
+      {section.type === "cac_ngay_trong_tuan" && <CacNgayTrongTuanSection items={section.items} accent={t.border} />}
       {section.type === "nhan_dien_hinh" && <NhanDienHinhSection shapes={section.shapes} accent={t.border} />}
       {section.type === "dem_hinh_ung_dung" && <DemHinhUngDungSection data={section.data} accent={t.border} />}
       {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}

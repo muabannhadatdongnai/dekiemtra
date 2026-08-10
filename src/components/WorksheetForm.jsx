@@ -22,6 +22,11 @@ import { defaultCountsFor, applyDetectedExercisesToCounts } from "@/services/wor
 // GIAI ĐOẠN 5: mapping khối lớp phiếu bài tập -> số lớp SGK (chỉ LOP_1/LOP_2, Mầm non không có
 // SGK theo chương) - module dữ liệu thuần, an toàn phía client giống worksheetExerciseCatalog.js.
 import { WORKSHEET_GRADE_TO_SGK_GRADE } from "@/data/constants";
+// ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - catalog theo chủ đề SGK) ==================
+// Module dữ liệu thuần (không import gì từ worksheetGenerator.js) - an toàn phía client giống
+// worksheetExerciseCatalog.js. Xem worksheetTopicPackages.js để rõ danh sách gói + dạng bài liên
+// quan; xem PROJECT_SUMMARY.md mục "Bước 2" để rõ phạm vi (đợt này CHỈ có Lớp 1).
+import { getTopicPackagesFor } from "@/data/worksheetTopicPackages";
 
 const GRADES = [
   { value: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)" },
@@ -132,6 +137,29 @@ export default function WorksheetForm({ onGenerated }) {
   // CẢ khối lớp LẪN môn - catalog có minGrade/maxGrade riêng từng dạng, và giờ có cả 2 môn
   // (TOAN/TIENG_VIET) với key hoàn toàn khác nhau.
   const visibleExercises = useMemo(() => getSelectableCatalogFor(grade, subject), [grade, subject]);
+
+  // ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - catalog theo chủ đề SGK) ==================
+  // Danh sách "gói chủ đề" khả dụng cho ĐÚNG khối lớp/môn đang chọn - rỗng ([]) với hầu hết tổ
+  // hợp (đợt này CHỈ có 2 gói cho Lớp 1/Toán, xem worksheetTopicPackages.js), UI bên dưới tự ẩn
+  // khi rỗng nên không cần điều kiện hasSgkForGrade riêng.
+  const topicPackages = useMemo(() => getTopicPackagesFor(grade, subject), [grade, subject]);
+
+  /** Bấm 1 "gói chủ đề" -> BẬT (đặt = defaultCount) toàn bộ dạng bài trong gói đó - CỘNG DỒN vào
+   * lựa chọn hiện tại (KHÔNG ghi đè/xoá các dạng bài khác đang chọn, khác hẳn cơ chế "Áp dụng cấu
+   * trúc từ phiếu mẫu" ở mục phiếu mẫu tham khảo bên dưới). Lý do chọn CỘNG DỒN thay vì GHI ĐÈ:
+   * phiếu mẫu upload là tín hiệu CHẮC CHẮN "đây là cấu trúc thật giáo viên đang dùng" nên ghi đè
+   * hợp lý; còn bấm 1 gói chủ đề chỉ là "tôi muốn thêm phần này vào phiếu" - ghi đè sẽ xoá mất
+   * lựa chọn giáo viên đã tự chỉnh trước đó, gây bất ngờ khó chịu hơn là hữu ích. */
+  function applyTopicPackage(topic) {
+    setExerciseCounts((prev) => {
+      const next = { ...prev };
+      for (const key of topic.exerciseKeys) {
+        const catalogItem = visibleExercises.find((item) => item.key === key);
+        if (catalogItem) next[key] = catalogItem.defaultCount ?? 1;
+      }
+      return next;
+    });
+  }
 
   // Đổi khối lớp HOẶC môn học -> đồng bộ lại exerciseCounts: giữ số đã nhập cho dạng bài vẫn còn
   // hiện, dùng defaultCount cho dạng bài MỚI xuất hiện, bỏ dạng bài không còn phù hợp. LƯU Ý:
@@ -416,6 +444,34 @@ export default function WorksheetForm({ onGenerated }) {
           </div>
         </div>
       )}
+
+      {/* ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - catalog theo chủ đề SGK) ==================
+          "Gói chủ đề" - bấm 1 nút bật NGAY cả nhóm dạng bài liên quan (VD "Thời gian" = xem đồng
+          hồ + các ngày trong tuần) thay vì phải tự nhớ bật rời rạc từng ô bên dưới. CHỈ hiện khi
+          có gói khả dụng cho đúng khối lớp/môn đang chọn (đợt này CHỈ có Lớp 1/Toán - xem
+          worksheetTopicPackages.js). CỘNG DỒN vào lựa chọn hiện tại, không xoá lựa chọn cũ (xem
+          applyTopicPackage() ở trên). */}
+      {topicPackages.length > 0 && (
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">
+            Chủ đề SGK (tuỳ chọn) - bấm để bật nhanh cả nhóm dạng bài liên quan
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {topicPackages.map((topic) => (
+              <button
+                key={topic.id}
+                type="button"
+                onClick={() => applyTopicPackage(topic)}
+                title={topic.description}
+                className="rounded-full border border-teal-300 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-800 hover:bg-teal-100"
+              >
+                {topic.icon} {topic.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
