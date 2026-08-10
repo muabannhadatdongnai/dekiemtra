@@ -44,7 +44,11 @@ export async function POST(request) {
     console.error("[/api/generate-coloring-page] error:", err);
 
     let message = err.message || "Đã có lỗi xảy ra khi tạo tranh tô màu.";
-    if (err.allKeysExhausted) {
+    if (err.zeroFreeQuota) {
+      message =
+        "Model tạo ảnh hiện KHÔNG có hạn mức miễn phí cho API key này (không phải do dùng hết, mà là chưa từng được cấp - có thể do tên model bị Google chuyển sang bản preview khác, hoặc project chưa bật đúng tính năng). " +
+        "Hãy vào https://aistudio.google.com/app/apikey để xem model nào đang hiển thị \"Free tier\" cho tài khoản này, rồi đặt tên model đó vào biến COLORING_IMAGE_MODEL trong .env.local.";
+    } else if (err.allKeysExhausted) {
       message = "Tất cả API key tạo ảnh đã hết hạn mức miễn phí hôm nay. Vui lòng thử lại vào ngày mai hoặc thêm key mới.";
     } else if (err.allKeysOverloaded) {
       message = "Hệ thống tạo ảnh của Google đang quá tải tạm thời. Vui lòng thử lại sau vài phút.";
