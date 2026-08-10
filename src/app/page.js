@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "@/components/Header";
 import LoginForm from "@/components/LoginForm";
 import ExamMatrixForm from "@/components/ExamMatrixForm";
@@ -15,22 +15,28 @@ import LessonPlanExportActions from "@/components/LessonPlanExportActions";
 import VietnameseExamForm from "@/components/VietnameseExamForm";
 import VietnameseExamPreview from "@/components/VietnameseExamPreview";
 import VietnameseExamExportActions from "@/components/VietnameseExamExportActions";
+import ColoringPageForm from "@/components/ColoringPageForm";
+import ColoringPagePreview from "@/components/ColoringPagePreview";
+import ColoringExportActions from "@/components/ColoringExportActions";
 import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
 import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
 
-// A2/A3/Giai đoạn 2: 4 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12), "worksheet" (Phiếu bài
-// tập, Mầm non - Lớp 2), "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5) và "vietnameseExam" (Đề
-// Tiếng Việt Tiểu học, Lớp 1-5 - xem PROJECT_SUMMARY.md Phần B). Chỉ 1 trong 4 được mount tại 1
-// thời điểm vì cả 4 đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount
-// nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung.
+// A2/A3/Giai đoạn 2: 5 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12), "worksheet" (Phiếu bài
+// tập, Mầm non - Lớp 2), "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5), "vietnameseExam" (Đề
+// Tiếng Việt Tiểu học, Lớp 1-5 - xem PROJECT_SUMMARY.md Phần B) và "coloring" (Tập tô màu cho
+// phụ huynh - tạo tranh line-art từ ảnh gia đình/nhân vật upload, dùng Gemini image generation
+// riêng, KHÔNG dùng chung API key với 4 mode kia - xem coloringImageKeyPool.js). Chỉ 1 trong 5
+// được mount tại 1 thời điểm vì cả 5 đều dùng chung id="print-area" (CSS in ấn @media print chọn
+// theo id) - mount nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung.
 const MODES = {
   EXAM: "exam",
   WORKSHEET: "worksheet",
   LESSON_PLAN: "lessonPlan",
   VIETNAMESE_EXAM: "vietnameseExam",
+  COLORING: "coloring",
 };
 
 export default function HomePage() {
@@ -53,6 +59,13 @@ export default function HomePage() {
   const [lessonPlanResult, setLessonPlanResult] = useState(EMPTY_LESSON_PLAN_RESULT);
   const [vietnameseExamResult, setVietnameseExamResult] = useState(EMPTY_VIETNAMESE_EXAM_RESULT);
 
+  // Tab "Tập tô màu": lineArtImage/originalImage là data URL base64 trả về từ
+  // /api/generate-coloring-page, palette là mảng mã HEX gợi ý. null khi chưa tạo tranh nào.
+  const [coloringResult, setColoringResult] = useState(null);
+  // Ref trỏ vào khung .a4-page thật đang hiển thị - dùng để html2canvas chụp xuất PNG
+  // (xem ColoringExportActions.jsx), KHÔNG dựng lại layout lần 2 bằng canvas thủ công.
+  const coloringPageRef = useRef(null);
+
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
     setUser(getSession());
@@ -68,6 +81,7 @@ export default function HomePage() {
     setWorksheetResult(null);
     setLessonPlanResult(EMPTY_LESSON_PLAN_RESULT);
     setVietnameseExamResult(EMPTY_VIETNAMESE_EXAM_RESULT);
+    setColoringResult(null);
     setMode(MODES.EXAM);
   }
 
@@ -158,6 +172,17 @@ export default function HomePage() {
           >
             📖 Đề Tiếng Việt Tiểu học
           </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.COLORING)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.COLORING
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            🎨 Tập tô màu
+          </button>
         </div>
 
         {/* Split-screen: Trái 40% (Bảng điều khiển) - Phải 60% (Xem trước A4) */}
@@ -167,9 +192,12 @@ export default function HomePage() {
             {mode === MODES.WORKSHEET && <WorksheetForm onGenerated={handleWorksheetGenerated} />}
             {mode === MODES.LESSON_PLAN && <LessonPlanForm onGenerated={handleLessonPlanGenerated} />}
             {mode === MODES.VIETNAMESE_EXAM && <VietnameseExamForm onGenerated={handleVietnameseExamGenerated} />}
-            <div className="mt-4">
-              <UsageWidget />
-            </div>
+            {mode === MODES.COLORING && <ColoringPageForm onGenerated={setColoringResult} />}
+            {mode !== MODES.COLORING && (
+              <div className="mt-4">
+                <UsageWidget />
+              </div>
+            )}
           </aside>
 
           {mode === MODES.EXAM ? (
@@ -237,7 +265,7 @@ export default function HomePage() {
                 />
               </div>
             </section>
-          ) : (
+          ) : mode === MODES.VIETNAMESE_EXAM ? (
             <section className="space-y-4">
               {vietnameseExamResult.warnings.length > 0 && (
                 <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
@@ -252,6 +280,20 @@ export default function HomePage() {
               <VietnameseExamExportActions results={vietnameseExamResult.results} meta={vietnameseExamResult.meta} />
               <div className="overflow-auto rounded-xl bg-slate-100 p-4">
                 <VietnameseExamPreview results={vietnameseExamResult.results} meta={vietnameseExamResult.meta} />
+              </div>
+            </section>
+          ) : (
+            <section className="space-y-4">
+              <ColoringExportActions pageRef={coloringPageRef} disabled={!coloringResult} />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <ColoringPagePreview
+                  ref={coloringPageRef}
+                  lineArtImage={coloringResult?.lineArtImage}
+                  originalImage={coloringResult?.originalImage}
+                  palette={coloringResult?.palette}
+                  title={coloringResult?.title}
+                  subtitle={coloringResult?.subtitle}
+                />
               </div>
             </section>
           )}
