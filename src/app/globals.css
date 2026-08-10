@@ -293,6 +293,29 @@ body {
   }
 }
 
+/* ================== GIAI ĐOẠN 9, PHÁT HIỆN MỚI (PDF mất màu nền/thanh minh hoạ) ==================
+   Giáo viên phản ánh: bản Web mục "6. So sánh độ dài" hiển thị đẹp (2 thanh màu xanh minh hoạ tỉ
+   lệ độ dài), nhưng bản PDF (xuất qua window.print()) chỉ còn lại chữ, MẤT HẲN 2 thanh màu -
+   đối chiếu đúng: PDF ở đây thực chất là trình duyệt tự in HTML/CSS ra giấy (không dùng thư viện
+   PDF riêng - xem exportService.js), và HÀNH VI MẶC ĐỊNH của trình duyệt khi in là KHÔNG in
+   background-color/background-image (để tiết kiệm mực) TRỪ KHI người dùng tự tick "Background
+   graphics" trong hộp thoại in - việc này rất dễ bị bỏ sót, và ứng dụng không thể tự động tick hộ
+   qua JS. Border thì VẪN in bình thường (không bị coi là "background") - đúng lý do vì sao khung
+   viền màu của mục 1-13 vẫn lên PDF, chỉ riêng "thanh màu" (1 div dùng CSS background-color, ở
+   DoDaiSoSanhSection trong WorksheetPreview.jsx) bị mất.
+   SỬA: ép trình duyệt LUÔN in background dù người dùng không tick, bằng
+   -webkit-print-color-adjust / print-color-adjust: exact - đây là cách chuẩn để "khoá" hành vi in
+   nền cho web app, áp dụng cho MỌI phần tử trong #print-area (không chỉ riêng thanh độ dài) để
+   phòng luôn các mảng màu nền khác (dải cầu vồng, huy hiệu số thứ tự...) không bị mất tương tự. */
+@media print {
+  #print-area,
+  #print-area * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+
 /* ===== In PDF chuẩn khổ A4 ===== */
 @media print {
   body * {
