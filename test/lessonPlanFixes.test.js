@@ -9,6 +9,12 @@ import {
 } from "../src/data/lessonPlanTemplates.js";
 import { buildLessonPlanPrompt } from "../src/data/lessonPlanPromptTemplates.js";
 import { buildLessonPlanDocxSections } from "../src/services/lessonPlanExportService.js";
+import {
+  LESSON_PLAN_STYLE_IDS,
+  CUSTOM_STYLE_MAX_LENGTH,
+  listLessonPlanStyles,
+  buildLessonPlanStylePromptFragment,
+} from "../src/data/lessonPlanStyles.js";
 
 /**
  * lessonPlanFixes.test.js
@@ -155,6 +161,115 @@ test("buildLessonPlanDocxSections: docx nhiều tiết CÓ ranh giới 'Hết Ti
   assert.match(xml, /<w:br\/>/, "phải có ít nhất 1 <w:br/> thật cho nội dung nhiều dòng");
   assert.match(xml, /Bước 1:/);
   assert.match(xml, /Bước 2:/);
+});
+
+test('buildLessonPlanPrompt: bật tích hợp "tinNhanPhuHuynh" phải có hướng dẫn + schema JSON tương ứng', () => {
+  const promptOn = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: ["tinNhanPhuHuynh"],
+  });
+  assert.match(promptOn, /Tin nhắn gửi phụ huynh/, "phải có hướng dẫn soạn tin nhắn phụ huynh khi bật");
+  assert.match(promptOn, /"tinNhanPhuHuynh":/, 'ví dụ JSON schema chính phải có field "tinNhanPhuHuynh"');
+  assert.match(promptOn, /KHÔNG dùng thuật ngữ chuyên môn/, "phải cấm dùng thuật ngữ sư phạm khó hiểu với phụ huynh");
+
+  const promptOff = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: [],
+  });
+  assert.doesNotMatch(promptOff, /Tin nhắn gửi phụ huynh/, "KHÔNG bật thì KHÔNG có hướng dẫn này trong prompt");
+  assert.doesNotMatch(promptOff, /"tinNhanPhuHuynh":/, 'KHÔNG bật thì schema JSON KHÔNG có field "tinNhanPhuHuynh"');
+});
+
+test("buildLessonPlanDocxSections: có tinNhanPhuHuynh thì xuất hiện đúng phụ lục riêng trong file Word, không có thì không chèn trang thừa", async () => {
+  const baseLessonPlan = {
+    tenBai: "Bài test tin nhắn phụ huynh",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+
+  // Có tin nhắn phụ huynh -> phải thấy đúng tiêu đề phụ lục + nội dung, xuống dòng thật (không "\n" thô).
+  const withMsg = {
+    ...baseLessonPlan,
+    tinNhanPhuHuynh: "Chào Quý phụ huynh 👋\nHôm nay con đã học...\nBố mẹ cùng con ôn lại nhé!",
+  };
+  const childrenWith = buildLessonPlanDocxSections({ lessonPlan: withMsg, timeline: [], meta });
+  const docWith = new Document({ sections: [{ children: childrenWith }] });
+  const bufWith = await Packer.toBuffer(docWith);
+  const zipWith = await JSZip.loadAsync(bufWith);
+  const xmlWith = await zipWith.file("word/document.xml").async("string");
+  assert.match(xmlWith, /PHỤ LỤC: TIN NHẮN GỬI PHỤ HUYNH/, "phải có tiêu đề phụ lục tin nhắn phụ huynh");
+  assert.match(xmlWith, /Ch.o Qu./, "phải có nội dung tin nhắn trong file");
+  assert.ok(!xmlWith.includes("\\n"), "KHÔNG được còn ký tự \\n thô trong nội dung tin nhắn");
+
+  // Không có tin nhắn phụ huynh -> KHÔNG được tự chèn phụ lục rỗng.
+  const childrenWithout = buildLessonPlanDocxSections({ lessonPlan: baseLessonPlan, timeline: [], meta });
+  const docWithout = new Document({ sections: [{ children: childrenWithout }] });
+  const bufWithout = await Packer.toBuffer(docWithout);
+  const zipWithout = await JSZip.loadAsync(bufWithout);
+  const xmlWithout = await zipWithout.file("word/document.xml").async("string");
+  assert.ok(!xmlWithout.includes("TIN NHẮN GỬI PHỤ HUYNH"), "không bật thì không được có phụ lục tin nhắn phụ huynh");
+});
+
+test('lessonPlanStyles: ĐÃ CHỐT đúng 3 preset (Sáng tạo/Nhẹ nhàng/Năng động), không thêm - test canh gác quyết định', () => {
+  const presets = listLessonPlanStyles();
+  assert.equal(presets.length, 3, "ĐÃ CHỐT giữ nguyên 3 preset - nếu test này FAIL nghĩa là có ai thêm/bớt preset ngoài kế hoạch");
+  assert.deepEqual(
+    presets.map((p) => p.label).sort(),
+    ["Nhẹ nhàng", "Năng động", "Sáng tạo"].sort()
+  );
+  assert.equal(CUSTOM_STYLE_MAX_LENGTH, 150, "ĐÃ CHỐT giới hạn ô tự do là 150 ký tự");
+});
+
+test("buildLessonPlanStylePromptFragment: không chọn / chọn rỗng thì không chèn gì (không phá vỡ hành vi cũ)", () => {
+  assert.equal(buildLessonPlanStylePromptFragment(null), "");
+  assert.equal(buildLessonPlanStylePromptFragment({}), "");
+  assert.equal(
+    buildLessonPlanStylePromptFragment({ styleId: LESSON_PLAN_STYLE_IDS.TU_DO, customStyleText: "   " }),
+    ""
+  );
+});
+
+test("buildLessonPlanStylePromptFragment: preset và tự do đều PHẢI có câu khoanh phạm vi 'chỉ ảnh hưởng hình thức mềm'", () => {
+  for (const id of [LESSON_PLAN_STYLE_IDS.SANG_TAO, LESSON_PLAN_STYLE_IDS.NHE_NHANG, LESSON_PLAN_STYLE_IDS.NANG_DONG]) {
+    const frag = buildLessonPlanStylePromptFragment({ styleId: id });
+    assert.match(frag, /KHÔNG được vì phong cách này mà thay đổi khung/, `preset "${id}" thiếu câu khoanh phạm vi`);
+  }
+  const customFrag = buildLessonPlanStylePromptFragment({
+    styleId: LESSON_PLAN_STYLE_IDS.TU_DO,
+    customStyleText: "Vui vẻ, dí dỏm",
+  });
+  assert.match(customFrag, /KHÔNG được vì phong cách này mà thay đổi khung/);
+  assert.match(customFrag, /Vui vẻ, dí dỏm/, "phải chèn đúng nội dung giáo viên tự mô tả");
+});
+
+test("buildLessonPlanStylePromptFragment: tự do bị cắt phòng thân về đúng 150 ký tự dù truyền dài hơn", () => {
+  const frag = buildLessonPlanStylePromptFragment({ styleId: LESSON_PLAN_STYLE_IDS.TU_DO, customStyleText: "x".repeat(500) });
+  const match = frag.match(/x+/);
+  assert.equal(match[0].length, CUSTOM_STYLE_MAX_LENGTH);
+});
+
+test("buildLessonPlanPrompt: bật lessonPlanStyle thì prompt có đúng block phong cách; không truyền thì không có (tương thích ngược)", () => {
+  const withStyle = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc",
+    lessonPlanStyle: { styleId: LESSON_PLAN_STYLE_IDS.NANG_DONG },
+  });
+  assert.match(withStyle, /PHONG CÁCH SOẠN GIÁO ÁN/);
+  assert.match(withStyle, /vận động/);
+
+  const withoutStyle = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc",
+  });
+  assert.doesNotMatch(withoutStyle, /PHONG CÁCH SOẠN GIÁO ÁN/);
 });
 
 test("buildLessonPlanDocxSections: bài 1 tiết KHÔNG chèn ranh giới 'Hết Tiết' thừa", async () => {

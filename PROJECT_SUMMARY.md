@@ -783,8 +783,157 @@ cao nhất cần làm khi có API key thật.)*
 
 ---
 
+# GIAI ĐOẠN 10 — Nâng cấp module "📘 Soạn Giáo Án" theo góp ý giáo viên
+
+> Kế hoạch đầy đủ (6 đề xuất gốc, đánh giá/điều chỉnh, thứ tự 7 việc, nguyên tắc kỹ thuật) nằm ở
+> file riêng `KE_HOACH_GIAI_DOAN_10.md` - mục này chỉ ghi lại NHỮNG GÌ ĐÃ LÀM THẬT, không lặp lại
+> toàn bộ kế hoạch. **Quyết định đã chốt đầu phiên**: làm Giai đoạn 10 TRƯỚC, để nguyên Giai đoạn 9
+> (Phiếu bài tập, mục 0.-3. phía trên) dở dang đúng như hiện trạng - không đụng vào.
+
+## Việc 1/7 — Tin nhắn Zalo phụ huynh — ĐÃ XONG
+
+**Cơ chế**: tái dùng ĐÚNG khuôn "plugin" đã có sẵn ở `lessonPlanIntegrations.js`
+(`LESSON_PLAN_INTEGRATIONS` registry) - y hệt cách các tích hợp cũ (Mindmap, Củng cố, Phiếu học
+tập...) đã hoạt động. Nhờ vậy **chỉ cần thêm 1 entry mới** vào registry, KHÔNG phải sửa
+`lessonPlanPromptTemplates.js` hay `LessonPlanForm.jsx` - cả 2 nơi này đều tự động "nhìn thấy"
+tích hợp mới qua `listIntegrations()` (UI tự có thêm checkbox), `buildIntegrationsPromptBlock()` +
+`collectIntegrationSchemaExamples()` (prompt tự có thêm hướng dẫn + ví dụ JSON), và
+`lessonPlanOrchestrator.js` (cảnh báo tự động nếu AI quên trả field, dựa theo `jsonField`).
+
+- **`lessonPlanIntegrations.js`**: thêm key `TIN_NHAN_PHU_HUYNH: "tinNhanPhuHuynh"` +
+  entry đầy đủ (`buildPromptFragment`, `schemaExample`). Nội dung yêu cầu AI viết: 1 tin nhắn liền
+  mạch (không đầu mục) gồm lời chào + tóm tắt bài học bằng NGÔN NGỮ ĐỜI THƯỜNG (cấm dùng thuật ngữ
+  sư phạm như "yêu cầu cần đạt"/"năng lực"/"phẩm chất") + đúng 1 gợi ý hoạt động ở nhà đơn giản,
+  dài khoảng 60-120 từ, tối đa 1-2 emoji, sẵn sàng copy-paste thẳng vào Zalo.
+- **`LessonPlanPreview.jsx`**: thêm `TinNhanPhuHuynhBlock` - hiển thị dạng phụ lục (đặt SAU mục IV
+  chuẩn, đúng nguyên tắc "phụ lục có thể bật/tắt, không chèn xen giữa Mục I-IV"), có nút **"Sao
+  chép"** riêng (Clipboard API + fallback `execCommand` cho trình duyệt/webview cũ), nút này bọc
+  `className="no-print"` nên không xuất hiện khi in/xuất PDF.
+- **`lessonPlanExportService.js`** (`buildLessonPlanDocxSections`): thêm phụ lục tương ứng trong
+  file Word, tách trang riêng (`pageBreakBefore: true`) như `phieuHocTap`, dùng lại
+  `multilineTextRuns()` sẵn có để xuống dòng thật (`<w:br/>`) thay vì in ký tự `\n` thô.
+- **`test/lessonPlanFixes.test.js`**: thêm 2 test mới (prompt bật/tắt đúng nội dung + schema;
+  docx có/không có phụ lục đúng, không chèn phụ lục rỗng, đứng đúng vị trí sau Phiếu học tập nếu
+  cả 2 cùng bật).
+
+### Đã tự verify thật (không chỉ đọc code) - LƯU Ý QUAN TRỌNG về giới hạn sandbox phiên này
+Sandbox phiên này **KHÔNG có mạng** (kể cả `npm install`/`registry.npmjs.org` cũng bị chặn hẳn,
+khác các phiên trước vẫn tải được gói) → **KHÔNG chạy được `npm test` thật** (thiếu gói `docx`,
+`jszip` chưa cài). Đã tự viết 2 script xác minh độc lập, KHÔNG dùng npm, chạy thẳng bằng
+`node` + cùng cơ chế resolve alias `@/...` có sẵn (`test/resolve-alias-hooks.mjs`):
+
+1. **Verify phần prompt** (gọi thẳng `buildLessonPlanPrompt()`, không cần gói ngoài vì
+   `subjectProfiles.js`/`lessonPlanTemplates.js`/`lessonPlanIntegrations.js` đều thuần JS nội bộ):
+   xác nhận bật `"tinNhanPhuHuynh"` → prompt có đủ hướng dẫn + `"tinNhanPhuHuynh":` trong schema
+   JSON mẫu + có câu cấm thuật ngữ chuyên môn; KHÔNG bật → hoàn toàn không có 2 thứ trên (5/5 PASS).
+2. **Verify phần xuất Word** (gọi thẳng `buildLessonPlanDocxSections()`): vì gói `docx` thật không
+   cài được, đã viết 1 SHIM tối giản (chỉ lưu lại object graph, không tạo XML thật) để tự kiểm tra
+   LOGIC JS - xác nhận: có đúng paragraph tiêu đề phụ lục + `pageBreakBefore: true`; nội dung tin
+   nhắn nhiều dòng được tách đúng thành nhiều `TextRun` với `break: 1` (không phải 1 khối `\n` thô);
+   KHÔNG bật thì không tự chèn phụ lục rỗng; khi bật cùng lúc với Phiếu học tập thì cả 2 phụ lục
+   đều còn nguyên và đúng thứ tự (Tin nhắn PH đứng sau) (11/11 PASS).
+3. **Verify registry**: `listIntegrations()` có entry mới (UI Form tự động thấy checkbox, đúng cơ
+   chế `listIntegrations().map()` có sẵn trong `LessonPlanForm.jsx`), không trùng `key` với entry
+   nào khác, `collectIntegrationSchemaExamples()` trả đúng schema khi bật (4/4 PASS).
+4. Các script/shim verify tạm thời (`verify_*.mjs`, thư mục `verify-shims/`) đã **XOÁ sau khi xong**
+   - không nằm trong zip đóng gói, chỉ dùng để tự kiểm chứng ngay trong phiên làm việc này.
+
+**Việc CHƯA làm được do giới hạn sandbox (cần bạn tự làm)**:
+- Chưa chạy được `npm test` thật với gói `docx`/`jszip` thật (để soi XML `.docx` thật như các test
+  cũ vẫn làm) - cần bạn tự chạy trên máy có mạng để có xác nhận đầy đủ nhất (2 test mới đã viết sẵn
+  trong `test/lessonPlanFixes.test.js`, chỉ cần `npm install && npm test`).
+- Chưa gọi Gemini thật để xem AI có thực sự tuân thủ đúng văn phong "tin nhắn Zalo" (ngắn gọn,
+  không thuật ngữ chuyên môn, đúng 60-120 từ) hay không - cần thử trên `npm run dev` với API key
+  thật, bật tuỳ chọn "Tin nhắn phụ huynh" và đọc kết quả bằng mắt.
+- Chưa xem bằng mắt trên trình duyệt thật: nút "Sao chép" (đổi trạng thái/màu khi bấm, hoạt động
+  đúng trên Clipboard API) và giao diện phụ lục màu xanh lá trong bản xem trước.
+- Mặc định KHÔNG tự bật sẵn tuỳ chọn "Tin nhắn phụ huynh" trong `selectedIntegrations` của
+  `LessonPlanForm.jsx` (giáo viên cần tự tick) - nếu muốn mặc định bật sẵn (giống `phieuHocTap`),
+  đây là 1 dòng sửa rất nhỏ, có thể làm ngay khi cần.
+
+## Việc 2/7 — Phong cách soạn giáo án (3 preset + tự do) — ĐÃ XONG
+
+**Thiết kế**: 1 file registry MỚI `lessonPlanStyles.js` (cùng khuôn "registry" với
+`lessonPlanIntegrations.js`/`subjectProfiles.js`, nhưng đây là LỰA CHỌN DUY NHẤT - radio, không
+phải checkbox bật/tắt nhiều cái như integrations) + mở rộng `teacherPreferenceStore.js` (namespace
+Redis/file HOÀN TOÀN RIÊNG với phần Phiếu bài tập cũ) + 1 API route mới + luồng chèn vào prompt.
+
+- **`lessonPlanStyles.js`** (MỚI): 3 preset ĐÃ CHỐT - Sáng tạo/Nhẹ nhàng/Năng động (mỗi preset có
+  `buildPromptFragment()` riêng: giọng văn, cách chọn ví dụ, kiểu hoạt động Khởi động/Luyện tập) +
+  1 tuỳ chọn "Tự do" (giáo viên tự mô tả, giới hạn `CUSTOM_STYLE_MAX_LENGTH = 150` ký tự - ĐÃ CHỐT).
+  Hàm `buildLessonPlanStylePromptFragment()` LUÔN chèn kèm 1 câu "khoanh phạm vi" CỐ ĐỊNH (áp dụng
+  cho MỌI phong cách, kể cả tự do): phong cách CHỈ được đổi giọng văn/ví dụ/kiểu khởi động, TUYỆT
+  ĐỐI KHÔNG được đụng khung mục I-IV/thời lượng/yêu cầu chuyên môn - đúng giới hạn phạm vi đã chốt
+  ở mục 4 kế hoạch. Không chọn gì / chọn "Tự do" nhưng để trống → trả về `""`, không phá hành vi cũ.
+- **`lessonPlanPromptTemplates.js`**: thêm tham số `lessonPlanStyle`, chèn `styleBlock` ngay sau
+  `integrationsBlock`, trước `sampleGuidanceBlock`. Không truyền gì → prompt giữ nguyên y hệt trước
+  khi có tính năng này (đã test riêng để đảm bảo tương thích ngược).
+- **`lessonPlanEngine.js` / `lessonPlanOrchestrator.js`**: threading tham số `lessonPlanStyle`
+  xuyên suốt, giống cách `integrations`/`sampleMode` đã được truyền từ trước.
+- **`generate-lesson-plan/route.js`**: thêm `sanitizeLessonPlanStyle()` - validate `styleId` phải
+  nằm trong 4 giá trị hợp lệ (không tin client tuyệt đối, đúng nguyên tắc đã áp dụng ở
+  `worksheet-preference/route.js`), và CẮT PHÒNG THÂN `customStyleText` về đúng 150 ký tự ở phía
+  SERVER (không chỉ tin giới hạn `maxLength` phía client, phòng trường hợp gọi thẳng API).
+- **`teacherPreferenceStore.js`**: thêm `getLessonPlanPreference()`/`setLessonPlanPreference()` -
+  namespace RIÊNG hoàn toàn (Redis key `teacher_pref:lessonplan:*` + thư mục file local
+  `.data/teacher-preference-lessonplan/`, KHÁC với `teacher_pref:worksheet:*` của Phiếu bài tập) -
+  đã tự verify xác nhận lưu phong cách giáo án KHÔNG xoá/đè dữ liệu Phiếu bài tập của cùng giáo
+  viên (xem mục verify bên dưới).
+- **`lesson-plan-preference/route.js`** (MỚI): GET/POST lưu bền vững theo giáo viên (dùng token
+  đăng nhập, không tin username client gửi) - cùng khuôn `worksheet-preference/route.js`.
+- **`apiClient.js`**: thêm `getLessonPlanPreferenceRequest()`/`saveLessonPlanPreferenceRequest()`.
+- **`lessonPlanBlueprint.js`**: thêm field `lessonPlanStyle` vào "1 nguồn duy nhất" định nghĩa input.
+- **`LessonPlanForm.jsx`**: thêm khối UI "Phong cách soạn giáo án (tuỳ chọn)" - 3 nút preset + nút
+  "Tự do" (hiện textarea giới hạn 150 ký tự kèm bộ đếm khi chọn) + nút "Bỏ chọn" + nút "Lưu phong
+  cách này" (giống nút "Lưu bố cục"/"Lưu công thức đề" bên Phiếu bài tập) + tự tải phong cách đã
+  lưu khi mở form (giống `favoriteLayoutId`). KHÔNG ép buộc giáo viên phải chọn - mặc định `null`,
+  hành vi soạn giáo án giữ nguyên như trước nếu giáo viên không đụng vào mục này.
+- **`test/lessonPlanFixes.test.js`**: thêm 5 test mới, trong đó có 1 **test "canh gác quyết định"**
+  cố ý kiểm tra CHÍNH XÁC 3 preset + không được thêm/bớt - nếu sau này ai vô tình thêm preset thứ 4
+  (trái với "ĐÃ CHỐT" ở mục 7 kế hoạch), test này sẽ FAIL ngay để cảnh báo.
+
+### Đã tự verify thật (không chỉ đọc code) - CÙNG giới hạn sandbox không mạng như Việc 1
+Đã viết 3 script xác minh độc lập bằng `node` thuần (không cần npm), xoá sau khi dùng xong:
+1. **`lessonPlanStyles.js` + tích hợp vào prompt** (15/15 PASS): đúng 3 preset không hơn không kém,
+   `CUSTOM_STYLE_MAX_LENGTH=150`, không chọn → `""`, mỗi preset/tự do đều có câu khoanh phạm vi,
+   tự do bị cắt đúng 150 ký tự dù truyền chuỗi 500 ký tự, `buildLessonPlanPrompt()` có/không có
+   block phong cách đúng theo tham số truyền vào, KHÔNG truyền gì → prompt y hệt trước đây.
+2. **`teacherPreferenceStore.js`** (9/9 PASS, dùng file JSON local thật - ép `UPSTASH_REDIS_REST_URL=""`
+   để test fallback, không cần Upstash thật): lưu/đọc preset đúng, lưu/đọc tự do đúng, "Bỏ chọn"
+   ghi đè về `null` đúng, và **quan trọng nhất**: lưu phong cách giáo án cho 1 giáo viên KHÔNG làm
+   mất `favoriteLayoutId` (Phiếu bài tập) đã lưu trước đó của CHÍNH giáo viên đó - xác nhận 2
+   namespace hoàn toàn độc lập như thiết kế.
+3. **Hàm `sanitizeLessonPlanStyle()` trong route.js** (7/7 PASS) - verify bằng cách TRÍCH ĐÚNG
+   NGUYÊN VĂN hàm từ file thật (không gõ lại tay, dùng script Python đọc file + regex trích hàm),
+   rồi import và test độc lập (route.js đầy đủ không import được vì dây chuyền phụ thuộc tới gói
+   `@google/genai` chưa cài) - xác nhận: chặn đúng `styleId` lạ, giữ nguyên preset hợp lệ, tự do
+   rỗng → `null`, tự do hợp lệ → trim đúng, tự do quá dài → cắt đúng 150 ký tự.
+
+**Việc CHƯA làm được do giới hạn sandbox (cần bạn tự làm)** - giống hệt lưu ý ở Việc 1:
+- Chưa chạy được `npm test` thật (thiếu `docx`/`jszip`/`@google/genai` chưa cài do sandbox không
+  có mạng) - 5 test mới đã viết sẵn trong `test/lessonPlanFixes.test.js`, cần bạn tự chạy
+  `npm install && npm test` trên máy có mạng.
+- Chưa gọi Gemini thật để xem AI có thực sự tuân thủ đúng "giọng văn" theo từng preset hay không
+  (VD phong cách "Năng động" ra giáo án có thực sự nhiều hoạt động vận động hơn "Nhẹ nhàng" không)
+  - cần thử trên `npm run dev` với API key thật, so sánh 2-3 lần soạn với các phong cách khác nhau.
+- Chưa xem bằng mắt trên trình duyệt thật: UI chọn phong cách (đổi màu khi chọn, textarea + bộ đếm
+  ký tự khi chọn "Tự do", nút "Lưu phong cách này"/"Bỏ chọn" hoạt động đúng, tự tải lại phong cách
+  đã lưu khi mở form lại).
+- **CHƯA làm phần "vai trò kép (b)" ở mục 4 kế hoạch** - "phong cách góp phần giảm trùng lặp giữa
+  các giáo viên khác phong cách" - đây là hệ quả TỰ NHIÊN một phần (2 giáo viên chọn phong cách
+  khác nhau sẽ ra giáo án khác nhau hơn), nhưng CƠ CHẾ CHỐNG TRÙNG THẬT SỰ (ngân hàng đa dạng, lưu
+  lịch sử theo tổ hợp khối+môn+bài) vẫn là Việc 3 riêng, CHƯA làm - đúng thứ tự đã chốt.
+
+## Việc 3-7/7 — CHƯA LÀM
+Theo đúng thứ tự đã chốt trong `KE_HOACH_GIAI_DOAN_10.md` (mục 5): Cơ chế chống trùng liên giáo
+viên (3) → Checklist NL-PC (4) → Bài tập phân hóa 3 mức (5) → Lời dẫn/Teacher Script (6) → Slide
+Outline (7). Đi tiếp theo đúng thứ tự này ở phiên sau.
+
+---
+
 ## Quy trình khi mở chat mới
-1. Upload lại zip code mới nhất (sandbox reset giữa các phiên) + file `PROJECT_SUMMARY.md` này.
-2. Nói rõ đang muốn tiếp tục việc gì (VD: "đã test Gemini thật với giáo án mẫu, ổn rồi, làm tiếp
-   [việc X]" hoặc "review lại lần nữa" hoặc "viết test tự động cho phần giáo án mẫu").
+1. Upload lại zip code mới nhất (sandbox reset giữa các phiên) + file `PROJECT_SUMMARY.md` này (+
+   `KE_HOACH_GIAI_DOAN_10.md` nếu đang làm tiếp Giai đoạn 10).
+2. Nói rõ đang muốn tiếp tục việc gì (VD: "làm tiếp Việc 2 Giai đoạn 10 - Phong cách soạn giáo án"
+   hoặc "đã test Gemini thật, ổn rồi, làm tiếp [việc X]" hoặc "review lại lần nữa").
 3. Sau khi hoàn thành, yêu cầu cập nhật lại chính `PROJECT_SUMMARY.md` trước khi đóng gói zip mới.
