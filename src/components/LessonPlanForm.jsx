@@ -12,6 +12,7 @@ import {
   getCircularForGrade,
 } from "@/data/lessonPlanTemplates";
 import { listIntegrations } from "@/data/lessonPlanIntegrations";
+import { listLessonPlanStyles, LESSON_PLAN_STYLE_IDS, CUSTOM_STYLE_MAX_LENGTH } from "@/data/lessonPlanStyles";
 import { buildLessonPlanBlueprint } from "@/data/lessonPlanBlueprint";
 import { buildLessonPlanResult } from "@/data/lessonPlanResult";
 import { getSession } from "@/services/authService";
@@ -19,6 +20,8 @@ import {
   fetchChaptersRequest,
   generateLessonPlanRequest,
   analyzeLessonPlanSampleRequest,
+  getLessonPlanPreferenceRequest,
+  saveLessonPlanPreferenceRequest,
 } from "@/services/apiClient";
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
@@ -65,6 +68,13 @@ export default function LessonPlanForm({ onGenerated }) {
   const [analyzingSample, setAnalyzingSample] = useState(false);
   const [sampleError, setSampleError] = useState("");
 
+  // GIAI ĐOẠN 10, Việc 2/7: "Phong cách soạn giáo án" - styleId=null nghĩa là chưa chọn gì (KHÔNG
+  // ép buộc giáo viên phải chọn, hành vi mặc định giữ nguyên như trước khi có tính năng này).
+  const [styleId, setStyleId] = useState(null);
+  const [customStyleText, setCustomStyleText] = useState("");
+  const [savingStyle, setSavingStyle] = useState(false);
+  const [styleSavedNotice, setStyleSavedNotice] = useState("");
+
   const [availableChapters, setAvailableChapters] = useState([]);
   const [chapterId, setChapterId] = useState("");
   const [loadingChapters, setLoadingChapters] = useState(false);
@@ -105,6 +115,43 @@ export default function LessonPlanForm({ onGenerated }) {
       cancelled = true;
     };
   }, [grade, subject, volume, preschool]);
+
+  // Tải "Phong cách soạn giáo án" đã lưu (nếu có) ngay khi mở form - cùng tinh thần tải
+  // favoriteLayoutId bên WorksheetForm.jsx: không chặn giáo viên thao tác gì, chỉ để sẵn lựa chọn
+  // cho lần soạn đầu tiên đã có thể thiên vị theo phong cách quen dùng.
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getLessonPlanPreferenceRequest();
+        setStyleId(data?.preference?.styleId || null);
+        setCustomStyleText(data?.preference?.customStyleText || "");
+      } catch {
+        // Im lặng bỏ qua - chưa có phong cách đã lưu cũng không sao, soạn giáo án vẫn chạy bình thường.
+      }
+    })();
+  }, []);
+
+  /** "Lưu phong cách này" - giáo viên chủ động bấm, KHÔNG tự động âm thầm lưu mỗi lần đổi lựa
+   * chọn (đúng nguyên tắc đã áp dụng cho "Lưu bố cục"/"Lưu công thức đề" bên Phiếu bài tập). */
+  async function handleSaveStyle() {
+    setSavingStyle(true);
+    setStyleSavedNotice("");
+    try {
+      await saveLessonPlanPreferenceRequest({
+        styleId,
+        customStyleText: styleId === LESSON_PLAN_STYLE_IDS.TU_DO ? customStyleText : null,
+      });
+      setStyleSavedNotice(
+        styleId
+          ? "Đã lưu phong cách! Lần sau mở form sẽ tự chọn sẵn phong cách này."
+          : "Đã bỏ chọn phong cách đã lưu trước đó."
+      );
+    } catch (err) {
+      setStyleSavedNotice(`Lỗi khi lưu: ${err.message}`);
+    } finally {
+      setSavingStyle(false);
+    }
+  }
 
   function toggleIntegration(key) {
     setSelectedIntegrations((prev) =>
@@ -176,6 +223,14 @@ export default function LessonPlanForm({ onGenerated }) {
       sampleMode,
       sampleSpec: sampleMode !== "theo_chuong" ? sampleSpec : null,
       sampleReferenceText: sampleMode === "theo_mau" ? sampleReferenceText : null,
+      lessonPlanStyle:
+        styleId === LESSON_PLAN_STYLE_IDS.TU_DO
+          ? customStyleText.trim()
+            ? { styleId, customStyleText: customStyleText.trim() }
+            : null
+          : styleId
+          ? { styleId, customStyleText: null }
+          : null,
     });
 
     setLoading(true);
@@ -331,6 +386,93 @@ export default function LessonPlanForm({ onGenerated }) {
             );
           })}
         </div>
+      </div>
+
+      {/* ============ PHONG CÁCH SOẠN GIÁO ÁN (TUỲ CHỌN) - GIAI ĐOẠN 10, Việc 2/7 ============ */}
+      <div className="space-y-3 border-b border-slate-100 pb-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Phong cách soạn giáo án (tuỳ chọn)
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {listLessonPlanStyles().map((s) => (
+            <label
+              key={s.id}
+              className={`cursor-pointer rounded-md border px-3 py-2 text-xs transition ${
+                styleId === s.id
+                  ? "border-brand-600 bg-brand-50 text-brand-700"
+                  : "border-slate-300 text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              <input
+                type="radio"
+                name="lessonPlanStyle"
+                value={s.id}
+                checked={styleId === s.id}
+                onChange={() => setStyleId(s.id)}
+                className="sr-only"
+              />
+              <span className="block font-medium">{s.label}</span>
+              <span className="block text-slate-500">{s.hint}</span>
+            </label>
+          ))}
+          <label
+            className={`cursor-pointer rounded-md border px-3 py-2 text-xs transition ${
+              styleId === LESSON_PLAN_STYLE_IDS.TU_DO
+                ? "border-brand-600 bg-brand-50 text-brand-700"
+                : "border-slate-300 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            <input
+              type="radio"
+              name="lessonPlanStyle"
+              value={LESSON_PLAN_STYLE_IDS.TU_DO}
+              checked={styleId === LESSON_PLAN_STYLE_IDS.TU_DO}
+              onChange={() => setStyleId(LESSON_PLAN_STYLE_IDS.TU_DO)}
+              className="sr-only"
+            />
+            <span className="block font-medium">Tự do</span>
+            <span className="block text-slate-500">Tự mô tả phong cách riêng</span>
+          </label>
+          {styleId && (
+            <button
+              type="button"
+              onClick={() => setStyleId(null)}
+              className="rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-500 hover:bg-slate-50"
+            >
+              Bỏ chọn
+            </button>
+          )}
+        </div>
+
+        {styleId === LESSON_PLAN_STYLE_IDS.TU_DO && (
+          <div>
+            <textarea
+              value={customStyleText}
+              onChange={(e) => setCustomStyleText(e.target.value.slice(0, CUSTOM_STYLE_MAX_LENGTH))}
+              maxLength={CUSTOM_STYLE_MAX_LENGTH}
+              rows={2}
+              placeholder="VD: Hài hước, hay dùng ví dụ về động vật, nói chuyện như đang trò chuyện với học sinh"
+              className={inputClass}
+            />
+            <p className="mt-1 text-right text-xs text-slate-400">
+              {customStyleText.length}/{CUSTOM_STYLE_MAX_LENGTH} ký tự
+            </p>
+          </div>
+        )}
+
+        {styleId && (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSaveStyle}
+              disabled={savingStyle || (styleId === LESSON_PLAN_STYLE_IDS.TU_DO && !customStyleText.trim())}
+              className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+            >
+              {savingStyle ? "Đang lưu..." : "Lưu phong cách này"}
+            </button>
+            {styleSavedNotice && <p className="text-xs text-emerald-600">{styleSavedNotice}</p>}
+          </div>
+        )}
       </div>
 
       {/* ============ GIÁO ÁN MẪU (TUỲ CHỌN) ============ */}

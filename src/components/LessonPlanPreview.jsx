@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { LESSON_PLAN_COLUMN_MODES, computeMultiPeriodTimeline } from "@/data/lessonPlanTemplates";
 import { getSubjectLabel } from "@/data/config";
 
@@ -179,6 +179,75 @@ function CungCoBlock({ questions }) {
   );
 }
 
+// Phụ lục "Tin nhắn gửi phụ huynh" - giáo viên cần COPY-PASTE ngay vào Zalo, nên có nút "Sao chép"
+// riêng (dùng Clipboard API, có fallback execCommand cho trình duyệt/webview cũ). Nút này bọc
+// trong className="no-print" để không xuất hiện khi in/xuất PDF (đúng quy ước đã dùng cho các nút
+// hành động khác trong LessonPlanExportActions.jsx).
+function TinNhanPhuHuynhBlock({ text }) {
+  const [copied, setCopied] = useState(false);
+  if (!text) return null;
+
+  async function handleCopy() {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Im lặng bỏ qua - giáo viên vẫn có thể tự bôi đen + Ctrl+C nếu trình duyệt chặn clipboard.
+    }
+  }
+
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+        <p style={{ fontWeight: 700, margin: "8px 0 4px" }}>PHỤ LỤC: Tin nhắn gửi phụ huynh (Zalo)</p>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="no-print"
+          style={{
+            fontSize: 12.5,
+            fontWeight: 600,
+            padding: "4px 10px",
+            borderRadius: 6,
+            border: "1px solid #cbd5e1",
+            background: copied ? "#dcfce7" : "#f8fafc",
+            color: copied ? "#15803d" : "#334155",
+            cursor: "pointer",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {copied ? "✓ Đã sao chép" : "Sao chép"}
+        </button>
+      </div>
+      <div
+        style={{
+          fontSize: 13.5,
+          whiteSpace: "pre-line",
+          background: "#F0FDF4",
+          border: "1px solid #BBF7D0",
+          borderRadius: 8,
+          padding: "10px 12px",
+        }}
+      >
+        {text}
+      </div>
+    </div>
+  );
+}
+
 export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
   if (!lessonPlan) {
     return (
@@ -249,6 +318,7 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         <p style={{ fontSize: 13, color: "#94a3b8" }}>(Giáo viên tự ghi chú sau khi dạy thực tế)</p>
 
         <PhieuHocTapBlock phieu={lessonPlan.phieuHocTap} />
+        <TinNhanPhuHuynhBlock text={lessonPlan.tinNhanPhuHuynh} />
       </div>
     </div>
   );
