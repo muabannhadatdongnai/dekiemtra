@@ -309,6 +309,23 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
     });
   }
 
+  if (lessonPlan.tinNhanPhuHuynh) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun("PHỤ LỤC: TIN NHẮN GỬI PHỤ HUYNH (ZALO)", { bold: true, size: 26 })],
+        spacing: { before: 100, after: 120 },
+      })
+    );
+    children.push(
+      new Paragraph({
+        children: multilineTextRuns(lessonPlan.tinNhanPhuHuynh),
+        spacing: { after: 100 },
+      })
+    );
+  }
+
   return children;
 }
 

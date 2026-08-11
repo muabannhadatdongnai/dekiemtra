@@ -18,6 +18,7 @@ import {
   computeMultiPeriodTimeline,
 } from "./lessonPlanTemplates";
 import { buildIntegrationsPromptBlock, collectIntegrationSchemaExamples } from "./lessonPlanIntegrations";
+import { buildLessonPlanStylePromptFragment } from "./lessonPlanStyles";
 
 export const LESSON_PLAN_MODEL = "gemini-3.5-flash"; // đồng bộ FREE_TIER_MODEL bên promptTemplates.js
 
@@ -156,6 +157,7 @@ export function buildLessonPlanPrompt({
   sampleMode = "theo_chuong", // "theo_chuong" | "theo_mau" | "ket_hop"
   sampleSpec = null,
   sampleReferenceText = null,
+  lessonPlanStyle = null, // { styleId, customStyleText } | null - xem lessonPlanStyles.js (GĐ10 Việc 2)
 }) {
   const preschool = isPreschoolGrade(grade);
   const circular = getCircularForGrade(grade);
@@ -209,6 +211,7 @@ ${multiPeriodGuidance.text}`;
 giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình phổ thông Việt Nam hiện hành.`;
 
   const integrationsBlock = buildIntegrationsPromptBlock(integrations);
+  const styleBlock = buildLessonPlanStylePromptFragment(lessonPlanStyle);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
 
   // ⚠️ Trước đây các field do tích hợp thêm vào (VD "mindmap") CHỈ được mô tả bằng lời trong
@@ -258,7 +261,7 @@ ${stepClarityRule}
 ${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
 
 ${sourceBlock}
-${integrationsBlock}${sampleGuidanceBlock}
+${integrationsBlock}${styleBlock}${sampleGuidanceBlock}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema và các trường tích
 hợp đã liệt kê ở trên nếu có):
 ${outputSchema}

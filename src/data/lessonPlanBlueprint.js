@@ -23,6 +23,8 @@
  *   nếu sampleMode = "theo_chuong")
  * @property {string|null} [sampleReferenceText] - đoạn trích văn bản mẫu (nếu trích được bằng
  *   docx-text/pdf-text), chỉ dùng khi sampleMode = "theo_mau"
+ * @property {{styleId: string, customStyleText: string|null}|null} [lessonPlanStyle] - "Phong
+ *   cách soạn giáo án" GIAI ĐOẠN 10 (xem lessonPlanStyles.js) - null nếu giáo viên không chọn.
  */
 
 export function buildLessonPlanBlueprint({
@@ -39,6 +41,7 @@ export function buildLessonPlanBlueprint({
   sampleMode = "theo_chuong",
   sampleSpec = null,
   sampleReferenceText = null,
+  lessonPlanStyle = null,
 }) {
   return {
     tenBai,
@@ -54,5 +57,6 @@ export function buildLessonPlanBlueprint({
     sampleMode,
     sampleSpec,
     sampleReferenceText,
+    lessonPlanStyle,
   };
 }

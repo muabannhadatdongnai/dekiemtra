@@ -27,6 +27,7 @@ export async function orchestrateLessonPlanGeneration({
   sampleMode = "theo_chuong",
   sampleSpec = null,
   sampleReferenceText = null,
+  lessonPlanStyle = null,
 }) {
   const warnings = [];
   let sourceMarkdown = "";
@@ -76,6 +77,7 @@ export async function orchestrateLessonPlanGeneration({
       sampleMode: effectiveSampleMode,
       sampleSpec: effectiveSampleSpec,
       sampleReferenceText,
+      lessonPlanStyle,
     }));
   } catch (err) {
     // ⚠️ MỚI: chặn lỗi bất ngờ (JSON hỏng nhiều lần, lỗi mạng...) tại đây - KHÔNG để lọt nguyên

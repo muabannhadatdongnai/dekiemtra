@@ -27,6 +27,7 @@ export async function generateLessonPlanContent({
   sampleMode,
   sampleSpec,
   sampleReferenceText,
+  lessonPlanStyle,
   maxRetries = 2,
 }) {
   let attempt = 0;
@@ -46,6 +47,7 @@ export async function generateLessonPlanContent({
       sampleMode,
       sampleSpec,
       sampleReferenceText,
+      lessonPlanStyle,
     });
 
     try {

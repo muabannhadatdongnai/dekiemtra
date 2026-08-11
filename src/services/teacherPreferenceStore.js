@@ -13,6 +13,12 @@ import { isUpstashConfigured, upstashCommand } from "./upstashClient.js";
  *     so sánh + 2 giải toán" thì lần sau mở form lên, khối Lớp 1 sẽ tự điền sẵn đúng công thức
  *     đó thay vì defaultCount chung chung trong catalog.
  *
+ * ================== GIAI ĐOẠN 10, Việc 2/7 (MỚI - module Soạn giáo án) ==================
+ * Thêm phần lưu "Phong cách soạn giáo án" (xem lessonPlanStyles.js), NẰM RIÊNG hoàn toàn với phần
+ * Phiếu bài tập ở trên (khác Redis key/khác file JSON local: `teacher_pref:lessonplan:*` thay vì
+ * `teacher_pref:worksheet:*`) - tránh mọi rủi ro 2 tính năng đè/lẫn dữ liệu của nhau, dù chỉ 1
+ * giáo viên dùng cả 2 module. Xem getLessonPlanPreference()/setLessonPlanPreference() ở cuối file.
+ *
  * Kiến trúc 2-backend GIỐNG HỆT questionBankStore.js (Upstash Redis khi có cấu hình, fallback
  * file JSON local khi chưa cấu hình - chỉ dùng để test ở máy cá nhân) - tái sử dụng đúng khuôn
  * đã kiểm định thay vì phát minh lại cách lưu trữ khác. Khác biệt duy nhất: đây là 1 GIÁ TRỊ
@@ -135,6 +141,86 @@ export async function setWorksheetPreference(username, updates) {
     return true;
   } catch (err) {
     console.warn("[teacherPreferenceStore] Lỗi lưu tuỳ chọn, bỏ qua:", err.message);
+    return false;
+  }
+}
+
+// ================== GIAI ĐOẠN 10, Việc 2/7 (MỚI) - "Phong cách soạn giáo án" ==================
+// Namespace HOÀN TOÀN RIÊNG với phần Phiếu bài tập ở trên (key khác, thư mục file local khác) -
+// xem giải thích đầy đủ ở JSDoc đầu file.
+
+const LESSON_PLAN_LOCAL_DATA_DIR = path.join(process.cwd(), ".data", "teacher-preference-lessonplan");
+
+function lessonPlanPrefKey(username) {
+  return `teacher_pref:lessonplan:${sanitizeKeyPart(username)}`;
+}
+
+async function lessonPlanLocalFilePath(username) {
+  await fs.mkdir(LESSON_PLAN_LOCAL_DATA_DIR, { recursive: true });
+  return path.join(LESSON_PLAN_LOCAL_DATA_DIR, `${sanitizeKeyPart(username)}.json`);
+}
+
+let hasWarnedLessonPlanLocalFallback = false;
+function warnLessonPlanLocalFallbackOnce() {
+  if (hasWarnedLessonPlanLocalFallback) return;
+  hasWarnedLessonPlanLocalFallback = true;
+  console.warn(
+    "[teacherPreferenceStore] ⚠️ Chưa cấu hình Upstash - đang dùng file JSON local " +
+      "(.data/teacher-preference-lessonplan/) cho phong cách giáo án. KHÔNG bền vững trên Vercel serverless."
+  );
+}
+
+/** @returns {Promise<{ styleId: string|null, customStyleText: string|null } | null>}
+ * null nếu chưa lưu gì / lỗi đọc. Có lưu rồi thì styleId luôn là 1 trong 4 giá trị của
+ * LESSON_PLAN_STYLE_IDS (lessonPlanStyles.js), customStyleText chỉ khác null khi styleId="tu_do". */
+export async function getLessonPlanPreference(username) {
+  try {
+    const useUpstash = isUpstashConfigured();
+    if (!useUpstash) warnLessonPlanLocalFallbackOnce();
+
+    const raw = useUpstash
+      ? await upstashCommand(["GET", lessonPlanPrefKey(username)])
+      : await fs
+          .readFile(await lessonPlanLocalFilePath(username), "utf8")
+          .catch(() => null);
+
+    if (!raw) return null;
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    return {
+      styleId: parsed?.styleId || null,
+      customStyleText: parsed?.customStyleText || null,
+    };
+  } catch (err) {
+    console.warn("[teacherPreferenceStore] Lỗi đọc phong cách giáo án, bỏ qua:", err.message);
+    return null;
+  }
+}
+
+/**
+ * Lưu (GHI ĐÈ TOÀN BỘ, không phải cập nhật 1 phần như setWorksheetPreference() - vì phong cách
+ * giáo án chỉ có 2 trường luôn đi cùng nhau, không có khái niệm "cập nhật riêng lẻ" như layout
+ * yêu thích/công thức đề bên Phiếu bài tập).
+ * @param updates { styleId: string|null, customStyleText?: string|null }
+ * styleId=null nghĩa là giáo viên chủ động "Bỏ chọn" phong cách đã lưu trước đó.
+ */
+export async function setLessonPlanPreference(username, updates) {
+  try {
+    const useUpstash = isUpstashConfigured();
+    const merged = {
+      styleId: updates?.styleId || null,
+      customStyleText: updates?.styleId ? updates?.customStyleText || null : null,
+      updatedAt: Date.now(),
+    };
+
+    const payload = JSON.stringify(merged);
+    if (useUpstash) {
+      await upstashCommand(["SET", lessonPlanPrefKey(username), payload]);
+    } else {
+      await fs.writeFile(await lessonPlanLocalFilePath(username), payload, "utf8");
+    }
+    return true;
+  } catch (err) {
+    console.warn("[teacherPreferenceStore] Lỗi lưu phong cách giáo án, bỏ qua:", err.message);
     return false;
   }
 }

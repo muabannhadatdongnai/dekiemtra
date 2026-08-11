@@ -101,6 +101,24 @@ export async function saveWorksheetPreferenceRequest(payload) {
   return handleResponse(res);
 }
 
+/** GIAI ĐOẠN 10, Việc 2/7: lấy/lưu "Phong cách soạn giáo án" đã lưu của giáo viên hiện tại - xem
+ * lessonPlanStyles.js + teacherPreferenceStore.js. Tách HOÀN TOÀN với 2 hàm preference bên trên
+ * (khác endpoint, khác dữ liệu) - phần Phiếu bài tập không liên quan gì tới phần Giáo án. */
+export async function getLessonPlanPreferenceRequest() {
+  const res = await fetch("/api/lesson-plan-preference", { headers: authHeaders() });
+  return handleResponse(res);
+}
+
+/** payload: { styleId, customStyleText } - gửi styleId=null để "Bỏ chọn" phong cách đã lưu. */
+export async function saveLessonPlanPreferenceRequest(payload) {
+  const res = await fetch("/api/lesson-plan-preference", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse(res);
+}
+
 /**
  * C6: upload file đề mẫu (docx/pdf/ảnh) để phân tích phong cách - xem sampleExamAnalyzer.js.
  * Dùng FormData (không phải JSON) vì cần gửi file nhị phân. KHÔNG tự set "Content-Type" ở đây

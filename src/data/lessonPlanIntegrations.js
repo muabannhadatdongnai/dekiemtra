@@ -25,6 +25,7 @@ export const INTEGRATION_KEYS = {
   TIMELINE: "timeline",
   INFOGRAPHIC_MINDMAP: "infographicMindmap",
   PHIEU_HOC_TAP: "phieuHocTap",
+  TIN_NHAN_PHU_HUYNH: "tinNhanPhuHuynh",
 };
 
 export const LESSON_PLAN_INTEGRATIONS = {
@@ -146,6 +147,28 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  "baiTap": ["...", "..."] } - "baiTap" là mảng CHUỖI, mỗi phần tử là 1 đề bài/câu hỏi hoàn chỉnh\n` +
       `  (không đánh số thứ tự trong chuỗi, hệ thống sẽ tự đánh số khi hiển thị/in).`,
     schemaExample: `"phieuHocTap": { "tieuDe": "Phiếu học tập số 1", "huongDan": "...", "baiTap": ["...", "..."] }`,
+  },
+  [INTEGRATION_KEYS.TIN_NHAN_PHU_HUYNH]: {
+    key: INTEGRATION_KEYS.TIN_NHAN_PHU_HUYNH,
+    label: "Tin nhắn phụ huynh",
+    description: "Mẫu Zalo copy-paste ngay",
+    isAiGenerated: true,
+    jsonField: "tinNhanPhuHuynh",
+    buildPromptFragment: () =>
+      `- Soạn thêm 1 "Tin nhắn gửi phụ huynh" đính kèm cuối giáo án, giáo viên chỉ việc COPY-PASTE\n` +
+      `  nguyên văn vào Zalo nhóm lớp, KHÔNG cần chỉnh sửa gì thêm. Nội dung gồm ĐỦ 3 phần, viết liền\n` +
+      `  mạch như 1 tin nhắn thật (không đánh số 1/2/3, không dùng đầu mục):\n` +
+      `  (1) 1 câu chào phụ huynh thân thiện;\n` +
+      `  (2) tóm tắt NGẮN GỌN nội dung con vừa học hôm nay bằng NGÔN NGỮ ĐỜI THƯỜNG, DỄ HIỂU với phụ\n` +
+      `      huynh không có chuyên môn sư phạm - TUYỆT ĐỐI KHÔNG dùng thuật ngữ chuyên môn kiểu "yêu\n` +
+      `      cầu cần đạt", "năng lực", "phẩm chất", "hoạt động khởi động/luyện tập/vận dụng";\n` +
+      `  (3) gợi ý ĐÚNG 1 hoạt động đơn giản phụ huynh có thể cùng con làm ở nhà để ôn lại bài (không\n` +
+      `      cần dụng cụ đặc biệt, không tốn nhiều thời gian, phù hợp thực hiện ngay trong buổi tối).\n` +
+      `  Độ dài khoảng 60-120 từ (vừa đủ 1 tin nhắn Zalo, KHÔNG viết dài như 1 đoạn văn báo cáo). Có\n` +
+      `  thể dùng tối đa 1-2 emoji phù hợp (VD 📚, 🏠, 👋) để thân thiện, KHÔNG lạm dụng emoji.\n` +
+      `  Kết thúc bằng 1 câu cảm ơn ngắn, KHÔNG cần ký tên cụ thể (để giáo viên tự điền tên khi gửi).\n` +
+      `  Trả về trong trường JSON "tinNhanPhuHuynh" (1 chuỗi văn bản duy nhất, không xuống dòng đầu mục).`,
+    schemaExample: `"tinNhanPhuHuynh": "..."`,
   },
 };
 
