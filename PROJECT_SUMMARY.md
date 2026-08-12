@@ -924,10 +924,96 @@ Redis/file HOÀN TOÀN RIÊNG với phần Phiếu bài tập cũ) + 1 API route
   khác nhau sẽ ra giáo án khác nhau hơn), nhưng CƠ CHẾ CHỐNG TRÙNG THẬT SỰ (ngân hàng đa dạng, lưu
   lịch sử theo tổ hợp khối+môn+bài) vẫn là Việc 3 riêng, CHƯA làm - đúng thứ tự đã chốt.
 
-## Việc 3-7/7 — CHƯA LÀM
-Theo đúng thứ tự đã chốt trong `KE_HOACH_GIAI_DOAN_10.md` (mục 5): Cơ chế chống trùng liên giáo
-viên (3) → Checklist NL-PC (4) → Bài tập phân hóa 3 mức (5) → Lời dẫn/Teacher Script (6) → Slide
-Outline (7). Đi tiếp theo đúng thứ tự này ở phiên sau.
+## Việc 3/7 — Cơ chế chống trùng liên giáo viên/liên phiên — ĐÃ XONG
+
+**Vấn đề gốc** (đã xác minh lại bằng cách đọc code thật ở đầu Giai đoạn 10): `lessonPlanEngine.js`
+trước Việc này HOÀN TOÀN không có cơ chế chống trùng nào, kể cả giữa 2 lần CHÍNH 1 giáo viên tự
+tạo lại cho cùng 1 bài - khác `geminiEngine.js` (đề kiểm tra) đã có "3 lớp chống trùng" nhưng chỉ
+trong phạm vi 1 lượt gọi.
+
+**Thiết kế đã CHỐT phạm vi (tránh hiểu nhầm là bản sao y hệt 3-lớp chống trùng đề kiểm tra)**:
+- CHỈ lưu/so sánh **"Ý TƯỞNG MỞ BÀI"** (nội dung hoạt động ĐẦU TIÊN trong `hoatDong` - luôn là
+  "Khởi động"/tương đương Mầm non theo đúng cấu trúc chuẩn) - KHÔNG lưu toàn bộ giáo án. Trích
+  theo VỊ TRÍ (hoatDong[0]) chứ không so tên nhãn, để không phụ thuộc AI có đặt đúng chữ "Khởi
+  động" hay không (đặc biệt với Mầm non, tên hoạt động do AI tự đặt phù hợp).
+- KHÔNG có vòng lặp "tự sinh lại nếu trùng" như `geminiEngine.js` (batch nhiều câu hỏi/lượt nên
+  retry rẻ) - ở đây mỗi giáo án chỉ sinh 1 lần/lượt gọi, tự động retry sẽ tốn thêm 1 lượt gọi AI
+  mỗi khi phát hiện giống. Thay vào đó: (a) CHÈN GỢI Ý vào prompt để AI tự tránh trùng ngay từ đầu,
+  và (b) sau khi sinh xong, nếu VẪN giống thì CẢNH BÁO cho giáo viên tự quyết định tạo lại hay
+  không - KHÔNG tự ý chặn/sinh lại thay giáo viên.
+- Khoá lưu trữ theo tổ hợp **KHỐI + MÔN + BÀI** (KHÔNG có "trường") - đúng kết luận đã chốt ở mục 3
+  kế hoạch. `tenBai` là text tự do giáo viên gõ nên được CHUẨN HOÁ (bỏ dấu, hạ chữ thường, gộp
+  khoảng trắng) trước khi làm khoá - đã verify 2 cách gõ hơi khác nhau vẫn map đúng 1 tổ hợp.
+
+- **`lessonPlanDiversityStore.js`** (MỚI): kiến trúc 2-backend TÁI DÙNG ĐÚNG khuôn
+  `questionBankStore.js` (Upstash Redis + fallback file JSON local `.data/lesson-plan-diversity/`)
+  - namespace Redis riêng (`lp_diversity:*`), không đụng `qbank:*`/`teacher_pref:*`. Export:
+  `getDiversityEntries()`, `appendDiversityEntry()`, `extractOpeningIdea()`, `jaccardSimilarity()`
+  (n-gram, cùng công thức `geminiEngine.js` nhưng viết lại độc lập, không import chéo domain đề
+  kiểm tra), hằng số `DIVERSITY_SIMILARITY_WARNING_THRESHOLD = 0.5`.
+- **`lessonPlanPromptTemplates.js`**: thêm `buildDiversityGuidance()` - chỉ chèn block "CHỐNG
+  TRÙNG LẶP GIỮA CÁC LẦN SOẠN" khi CÓ ít nhất 1 ý tưởng cũ (lượt đầu tiên cho 1 tổ hợp thì không
+  chèn gì, không phình prompt vô ích); TÁI DÙNG `generateAntiDuplicationSeed()` có sẵn từ
+  `promptTemplates.js` (đề kiểm tra) làm "hạt giống" đa dạng hoá thay vì viết lại logic mới. Đặt
+  ngay trước block Phong cách (Việc 2) trong prompt - đã verify 2 block cùng tồn tại không đè nhau.
+- **`lessonPlanEngine.js` / `lessonPlanOrchestrator.js`**: threading `existingOpeningIdeas` xuyên
+  suốt. Orchestrator: **fetch TRƯỚC khi sinh** (đưa vào prompt), **sau khi sinh xong** trích ý
+  tưởng mở bài mới, tính Jaccard similarity với toàn bộ ý tưởng cũ đã fetch → vượt ngưỡng thì đẩy
+  cảnh báo vào mảng `warnings` có sẵn (tái dùng đúng cơ chế cảnh báo đã có, không tạo cơ chế mới) →
+  LUÔN lưu ý tưởng mới vào ngân hàng (dù trùng hay không) kèm `styleId` đã dùng (Việc 2) để phục vụ
+  phân tích sau này - đúng ý "kết hợp cùng Phong cách ở bước 2" trong kế hoạch.
+- **`test/lessonPlanDiversityStore.test.js`** (MỚI, 6 test) - cùng khuôn `questionBankStore.test.js`
+  (test nhánh file JSON local, tự dọn dẹp sau khi chạy bằng `after()`).
+- **`test/lessonPlanFixes.test.js`**: thêm 4 test (extractOpeningIdea, jaccardSimilarity, prompt có/
+  không block chống trùng, kết hợp đồng thời với block Phong cách).
+
+**Không cần sửa `LessonPlanForm.jsx`/UI** - Việc 3 hoàn toàn ở phía backend, không cần input mới từ
+giáo viên (subject/grade/tenBai đã có sẵn từ trước; cảnh báo hiển thị qua đúng cơ chế `warnings`
+sẵn có trong UI).
+
+### Đã tự verify thật (không chỉ đọc code) - lần này verify SÂU HƠN Việc 1-2: chạy được **THẬT** cả 1 file test bằng chính `node --test` (không cần shim)
+- **`test/lessonPlanDiversityStore.test.js` chạy THẬT 100%** bằng đúng lệnh `node --test` (không
+  cần shim/loader gì, vì file này chỉ phụ thuộc `fs`/`path` built-in) - **6/6 PASS thật**, tự dọn
+  dẹp sạch sau khi chạy (đã xác nhận `.data/` không còn rác của test).
+- Phần còn lại vẫn dùng script verify độc lập bằng `node` thuần (xoá sau khi dùng) do
+  `lessonPlanFixes.test.js` cần gói `docx`/`jszip` chưa cài được (thiếu mạng):
+  - **`extractOpeningIdea`/`jaccardSimilarity`** (9/9 PASS): trích đúng hoạt động đầu tiên, không
+    lấy nhầm hoạt động khác, an toàn với `{}`/`null`, cắt đúng 400 ký tự, similarity đúng tính chất
+    toán học (giống hệt=1, khác hẳn thấp, rỗng không lỗi chia 0).
+  - **Tích hợp vào `buildLessonPlanPrompt()`** (11/11 PASS): không có ý tưởng cũ → không chèn gì;
+    có ý tưởng cũ → chèn đúng danh sách + seed; lọc bỏ giá trị rỗng/null; kết hợp đồng thời với
+    block Phong cách (Việc 2), đúng thứ tự đã thiết kế.
+  - **End-to-end TOÀN BỘ pipeline thật** (7/7 PASS) - verify SÂU NHẤT trong 3 Việc đã làm: viết 1
+    shim tối giản cho gói `@google/genai` (trả về 1 giáo án JSON giả lập cố định), rồi chạy THẬT
+    `orchestrateLessonPlanGeneration()` → `generateLessonPlanContent()` → `buildLessonPlanPrompt()`
+    → `lessonPlanDiversityStore.js` không qua bất kỳ mock nội bộ nào khác - xác nhận: lượt 1 cho 1
+    tổ hợp mới không cảnh báo + tự lưu vào ngân hàng; lượt 2 CÙNG tổ hợp (AI giả lập trả lại y hệt
+    ý tưởng) → CÓ cảnh báo trùng + ngân hàng cộng dồn đúng (không ghi đè); tổ hợp KHÁC hoàn toàn
+    không bị ảnh hưởng.
+  - Tổng cộng phiên này: **34/34 kiểm tra verify PASS** (script tạm, đã xoá) + **6/6 test thật PASS**
+    (file chính thức, chạy được ngay bằng `node --test`, không cần shim).
+
+**Việc CHƯA làm được do giới hạn sandbox (cần bạn tự làm)** - vẫn 1 điểm CHƯA đổi từ Việc 1-2:
+- `test/lessonPlanFixes.test.js` (bao gồm 4 test mới của Việc 3 + toàn bộ test cũ) vẫn CẦN
+  `npm install` gói `docx`/`jszip` thật để chạy - cần bạn tự `npm install && npm test` trên máy có
+  mạng. Riêng `test/lessonPlanDiversityStore.test.js` (Việc 3) đã tự chạy PASS thật ngay trong
+  sandbox này, không cần chờ bạn xác nhận lại phần đó.
+- **Ngưỡng cảnh báo `DIVERSITY_SIMILARITY_WARNING_THRESHOLD = 0.5`** mới là ước lượng hợp lý ban
+  đầu (dựa theo mức "0.55" đề kiểm tra đang dùng, hạ nhẹ vì bản chất văn bản khác nhau) - CHƯA có
+  dữ liệu thật từ nhiều giáo viên để tinh chỉnh; có thể cần điều chỉnh sau khi dùng thật 1 thời
+  gian (quá nhạy → báo động giả nhiều làm giáo viên khó chịu; quá lỏng → bỏ lọt trùng lặp thật).
+- Chưa thử với Upstash Redis thật (chỉ verify nhánh file JSON local) - nên test thủ công 1 lần với
+  Upstash thật sau khi deploy (tạo giáo án 2 lần liên tiếp cho cùng 1 bài, xem lần 2 có cảnh báo
+  đúng không) - đúng khuyến nghị đã ghi trong `questionBankStore.test.js`.
+- Chưa xem bằng mắt trên `npm run dev` với API key Gemini thật: prompt "CHỐNG TRÙNG LẶP GIỮA CÁC
+  LẦN SOẠN" có thực sự khiến AI đổi ý tưởng mở bài khác biệt rõ rệt hay không (khác với việc giả
+  lập cố định trong shim `@google/genai` chỉ chứng minh ĐÚNG LOGIC ĐIỀU PHỐI, không chứng minh AI
+  THẬT có tuân thủ tốt hay không).
+
+## Việc 4-7/7 — CHƯA LÀM
+Theo đúng thứ tự đã chốt trong `KE_HOACH_GIAI_DOAN_10.md` (mục 5): Checklist NL-PC (4) → Bài tập
+phân hóa 3 mức (5) → Lời dẫn/Teacher Script (6) → Slide Outline (7). Đi tiếp theo đúng thứ tự này
+ở phiên sau.
 
 ---
 

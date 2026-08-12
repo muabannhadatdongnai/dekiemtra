@@ -15,6 +15,10 @@ import {
   listLessonPlanStyles,
   buildLessonPlanStylePromptFragment,
 } from "../src/data/lessonPlanStyles.js";
+import {
+  extractOpeningIdea,
+  jaccardSimilarity,
+} from "../src/services/lessonPlanDiversityStore.js";
 
 /**
  * lessonPlanFixes.test.js
@@ -270,6 +274,55 @@ test("buildLessonPlanPrompt: bật lessonPlanStyle thì prompt có đúng block 
     tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc",
   });
   assert.doesNotMatch(withoutStyle, /PHONG CÁCH SOẠN GIÁO ÁN/);
+});
+
+test("extractOpeningIdea: lấy đúng nội dung hoạt động ĐẦU TIÊN (Khởi động), không lấy nhầm hoạt động khác", () => {
+  const lessonPlan = {
+    hoatDong: [
+      { ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "Trò chơi đố vui về con vật." }] },
+      { ten: "Khám phá", tienTrinh: [{ hoatDongGVHS: "Nội dung không liên quan." }] },
+    ],
+  };
+  const idea = extractOpeningIdea(lessonPlan);
+  assert.match(idea, /Trò chơi đố vui về con vật/);
+  assert.doesNotMatch(idea, /Nội dung không liên quan/);
+  assert.equal(extractOpeningIdea({}), "");
+  assert.equal(extractOpeningIdea(null), "");
+});
+
+test("jaccardSimilarity: câu giống hệt = 1, câu khác hẳn thấp, chuỗi rỗng không lỗi", () => {
+  assert.equal(jaccardSimilarity("Trò chơi đố vui về con vật", "Trò chơi đố vui về con vật"), 1);
+  assert.ok(jaccardSimilarity("Trò chơi đố vui về con vật", "Kể chuyện cổ tích công chúa") < 0.3);
+  assert.equal(jaccardSimilarity("", "abc"), 0);
+});
+
+test("buildLessonPlanPrompt: không có existingOpeningIdeas -> KHÔNG chèn block chống trùng liên giáo viên (lượt soạn đầu tiên cho tổ hợp)", () => {
+  const promptNoIdeas = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc",
+  });
+  assert.doesNotMatch(promptNoIdeas, /CHỐNG TRÙNG LẶP GIỮA CÁC LẦN SOẠN/);
+
+  const promptEmptyArr = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc",
+    existingOpeningIdeas: [],
+  });
+  assert.doesNotMatch(promptEmptyArr, /CHỐNG TRÙNG LẶP GIỮA CÁC LẦN SOẠN/);
+});
+
+test("buildLessonPlanPrompt: có existingOpeningIdeas -> chèn đúng danh sách ý tưởng cũ + mã seed đa dạng hoá, kết hợp được với Phong cách (Việc 2)", () => {
+  const prompt = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc",
+    existingOpeningIdeas: ["Trò chơi đố vui về con vật", "", null],
+    lessonPlanStyle: { styleId: LESSON_PLAN_STYLE_IDS.NHE_NHANG },
+  });
+  assert.match(prompt, /CHỐNG TRÙNG LẶP GIỮA CÁC LẦN SOẠN/);
+  assert.match(prompt, /Trò chơi đố vui về con vật/);
+  assert.match(prompt, /Seed_\d+_[a-z0-9]+/);
+  assert.match(prompt, /PHONG CÁCH SOẠN GIÁO ÁN/, "phải kết hợp được đồng thời với block Phong cách (Việc 2)");
+  assert.ok(
+    prompt.indexOf("CHỐNG TRÙNG LẶP GIỮA CÁC LẦN SOẠN") < prompt.indexOf("PHONG CÁCH SOẠN GIÁO ÁN"),
+    "block chống trùng phải đứng TRƯỚC block phong cách theo đúng thiết kế"
+  );
 });
 
 test("buildLessonPlanDocxSections: bài 1 tiết KHÔNG chèn ranh giới 'Hết Tiết' thừa", async () => {
