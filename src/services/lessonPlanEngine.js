@@ -28,6 +28,7 @@ export async function generateLessonPlanContent({
   sampleSpec,
   sampleReferenceText,
   lessonPlanStyle,
+  existingOpeningIdeas,
   maxRetries = 2,
 }) {
   let attempt = 0;
@@ -48,6 +49,7 @@ export async function generateLessonPlanContent({
       sampleSpec,
       sampleReferenceText,
       lessonPlanStyle,
+      existingOpeningIdeas,
     });
 
     try {

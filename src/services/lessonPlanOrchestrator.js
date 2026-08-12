@@ -4,6 +4,13 @@ import { isPreschoolGrade, computeActivityTimeline } from "@/data/lessonPlanTemp
 import { ADVANCED_BOOK_MARKER } from "@/data/constants";
 import { getIntegration } from "@/data/lessonPlanIntegrations";
 import { isUsableLessonPlanSampleSpec } from "@/data/lessonPlanSampleSchema";
+import {
+  getDiversityEntries,
+  appendDiversityEntry,
+  extractOpeningIdea,
+  jaccardSimilarity,
+  DIVERSITY_SIMILARITY_WARNING_THRESHOLD,
+} from "./lessonPlanDiversityStore";
 
 /**
  * lessonPlanOrchestrator.js
@@ -62,6 +69,14 @@ export async function orchestrateLessonPlanGeneration({
     }
   }
 
+  // GIAI ĐOẠN 10, Việc 3/7: lấy trước các "ý tưởng mở bài" đã lưu cho ĐÚNG tổ hợp khối+môn+bài
+  // (có thể do giáo viên khác/phiên trước tạo) để chèn vào prompt giúp AI tự tránh trùng ngay từ
+  // đầu. getDiversityEntries() KHÔNG BAO GIỜ throw (đã bọc try/catch trong store) nên không cần
+  // try/catch ở đây - lỗi backend tối đa chỉ khiến existingOpeningIdeas rỗng, giáo án vẫn soạn
+  // bình thường như trước khi có tính năng này.
+  const diversityEntries = await getDiversityEntries({ subject, grade, tenBai });
+  const existingOpeningIdeas = diversityEntries.map((e) => e.openingIdea).filter(Boolean);
+
   let lessonPlan, quotaExhausted, serverOverloaded, error;
   try {
     ({ lessonPlan, quotaExhausted, serverOverloaded, error } = await generateLessonPlanContent({
@@ -78,6 +93,7 @@ export async function orchestrateLessonPlanGeneration({
       sampleSpec: effectiveSampleSpec,
       sampleReferenceText,
       lessonPlanStyle,
+      existingOpeningIdeas,
     }));
   } catch (err) {
     // ⚠️ MỚI: chặn lỗi bất ngờ (JSON hỏng nhiều lần, lỗi mạng...) tại đây - KHÔNG để lọt nguyên
@@ -136,6 +152,34 @@ export async function orchestrateLessonPlanGeneration({
   }
 
   const timeline = integrations.includes("timeline") ? computeActivityTimeline(soTiet, grade, lessonType) : [];
+
+  // GIAI ĐOẠN 10, Việc 3/7: sau khi sinh thành công - (a) nếu ý tưởng mở bài VẪN khá giống 1 ý
+  // tưởng đã lưu trước đó (dù đã gợi ý AI tránh trong prompt) thì CẢNH BÁO cho giáo viên tự quyết
+  // định có tạo lại hay không (KHÔNG tự ý chặn/sinh lại thay giáo viên - xem giải thích phạm vi đã
+  // chốt ở đầu lessonPlanDiversityStore.js); (b) LUÔN lưu ý tưởng mở bài của lượt này vào ngân
+  // hàng cho các lượt SAU (dù trùng hay không - lượt sau vẫn cần biết để tránh tiếp).
+  const newOpeningIdea = extractOpeningIdea(lessonPlan);
+  if (newOpeningIdea) {
+    const maxSimilarity = existingOpeningIdeas.reduce(
+      (max, old) => Math.max(max, jaccardSimilarity(old, newOpeningIdea)),
+      0
+    );
+    if (maxSimilarity >= DIVERSITY_SIMILARITY_WARNING_THRESHOLD) {
+      warnings.push(
+        `Ý tưởng mở bài/khởi động của giáo án này khá giống 1 lượt soạn TRƯỚC ĐÓ cho ĐÚNG bài học ` +
+          `này (dù hệ thống đã gợi ý AI tránh trùng) - nếu muốn khác biệt hơn, bạn có thể thử tạo lại.`
+      );
+    }
+    // Không await chờ kết quả lưu ảnh hưởng tới trải nghiệm giáo viên - nhưng appendDiversityEntry()
+    // đã tự nuốt mọi lỗi (xem store), nên await ở đây an toàn và đơn giản hơn "fire-and-forget".
+    await appendDiversityEntry({
+      subject,
+      grade,
+      tenBai,
+      openingIdea: newOpeningIdea,
+      styleId: lessonPlanStyle?.styleId || null,
+    });
+  }
 
   return { lessonPlan, timeline, warnings };
 }

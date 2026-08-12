@@ -19,6 +19,7 @@ import {
 } from "./lessonPlanTemplates";
 import { buildIntegrationsPromptBlock, collectIntegrationSchemaExamples } from "./lessonPlanIntegrations";
 import { buildLessonPlanStylePromptFragment } from "./lessonPlanStyles";
+import { generateAntiDuplicationSeed } from "./promptTemplates";
 
 export const LESSON_PLAN_MODEL = "gemini-3.5-flash"; // đồng bộ FREE_TIER_MODEL bên promptTemplates.js
 
@@ -144,6 +145,34 @@ ${lines.join("\n")}
   };
 }
 
+/**
+ * GIAI ĐOẠN 10, Việc 3/7 - Lớp Prompt-level của cơ chế chống trùng liên giáo viên (xem
+ * lessonPlanDiversityStore.js để biết đầy đủ bối cảnh + phạm vi đã chốt). Chỉ chèn block này khi
+ * CÓ ít nhất 1 ý tưởng mở bài đã lưu trước đó cho ĐÚNG tổ hợp khối+môn+bài - nếu đây là lượt soạn
+ * ĐẦU TIÊN cho tổ hợp này thì không có gì để "tránh trùng", trả về "" (không làm phình prompt vô ích).
+ */
+function buildDiversityGuidance(existingOpeningIdeas = []) {
+  const ideas = existingOpeningIdeas.filter(Boolean);
+  if (ideas.length === 0) return "";
+
+  const seed = generateAntiDuplicationSeed();
+  const list = ideas
+    .slice(0, 15)
+    .map((idea, i) => `${i + 1}. ${idea.slice(0, 150)}`)
+    .join("\n");
+
+  return `
+CHỐNG TRÙNG LẶP GIỮA CÁC LẦN SOẠN (RẤT QUAN TRỌNG - bài học này đã từng được soạn trước đây, có
+thể bởi giáo viên khác dùng cùng SGK): dưới đây là các Ý TƯỞNG MỞ BÀI/KHỞI ĐỘNG đã dùng cho ĐÚNG
+bài học này ở những lượt soạn TRƯỚC ĐÓ - PHẢI nghĩ ra ý tưởng KHỞI ĐỘNG KHÁC, KHÔNG lặp lại tình
+huống/trò chơi/ví dụ giống các ý tưởng dưới đây (có thể đổi hẳn hình thức: nếu ý tưởng cũ là trò
+chơi, hãy đổi sang kể chuyện/câu đố/tình huống thực tế khác, hoặc ngược lại):
+${list}
+Mã định danh ngẫu nhiên riêng cho lượt soạn này (dùng làm "hạt giống" đa dạng hoá, KHÔNG in ra
+trong nội dung giáo án): ${seed}
+`;
+}
+
 export function buildLessonPlanPrompt({
   tenBai,
   grade,
@@ -158,6 +187,7 @@ export function buildLessonPlanPrompt({
   sampleSpec = null,
   sampleReferenceText = null,
   lessonPlanStyle = null, // { styleId, customStyleText } | null - xem lessonPlanStyles.js (GĐ10 Việc 2)
+  existingOpeningIdeas = [], // string[] - GĐ10 Việc 3, xem lessonPlanDiversityStore.js
 }) {
   const preschool = isPreschoolGrade(grade);
   const circular = getCircularForGrade(grade);
@@ -212,6 +242,7 @@ giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình ph
 
   const integrationsBlock = buildIntegrationsPromptBlock(integrations);
   const styleBlock = buildLessonPlanStylePromptFragment(lessonPlanStyle);
+  const diversityBlock = buildDiversityGuidance(existingOpeningIdeas);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
 
   // ⚠️ Trước đây các field do tích hợp thêm vào (VD "mindmap") CHỈ được mô tả bằng lời trong
@@ -261,7 +292,7 @@ ${stepClarityRule}
 ${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
 
 ${sourceBlock}
-${integrationsBlock}${styleBlock}${sampleGuidanceBlock}
+${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema và các trường tích
 hợp đã liệt kê ở trên nếu có):
 ${outputSchema}
