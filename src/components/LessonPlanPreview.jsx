@@ -248,6 +248,98 @@ function TinNhanPhuHuynhBlock({ text }) {
   );
 }
 
+// Phụ lục "Checklist đánh giá Năng lực - Phẩm chất" - bảng 4 cột (Tiêu chí | Tốt | Đạt | Cần cố
+// gắng), mỗi hàng ứng với 1 tiêu chí đã liệt kê ở mục I.2/I.3 (yeuCauCanDat.nangLuc/phamChat).
+// Đây là bảng RUBRIC để giáo viên tự đối chiếu khi quan sát học sinh trong tiết học (không phải
+// danh sách theo tên học sinh cụ thể - hệ thống không có sẵn danh sách lớp để điền tự động).
+function ChecklistNLPCBlock({ items }) {
+  if (!items || items.length === 0) return null;
+  const loaiLabel = { nang_luc: "Năng lực", pham_chat: "Phẩm chất" };
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 2px" }}>
+        PHỤ LỤC: Checklist đánh giá Năng lực - Phẩm chất
+      </p>
+      <p style={{ fontSize: 12, color: "#64748b", textAlign: "center", margin: "0 0 8px" }}>
+        (Theo tinh thần Thông tư 27/2020/TT-BGDĐT - giáo viên quan sát và đánh dấu trực tiếp trong tiết học)
+      </p>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr>
+            <th style={{ ...headCellStyle, width: "28%" }}>Tiêu chí</th>
+            <th style={{ ...headCellStyle, width: "24%" }}>Tốt</th>
+            <th style={{ ...headCellStyle, width: "24%" }}>Đạt</th>
+            <th style={{ ...headCellStyle, width: "24%" }}>Cần cố gắng</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((it, i) => (
+            <tr key={i}>
+              <td style={cellStyle}>
+                {it.loai && loaiLabel[it.loai] ? (
+                  <span style={{ display: "block", fontSize: 11, color: "#94a3b8" }}>{loaiLabel[it.loai]}</span>
+                ) : null}
+                <span style={{ fontWeight: 600 }}>{it.tieuChi}</span>
+              </td>
+              <td style={cellStyle}>{it.tot}</td>
+              <td style={cellStyle}>{it.dat}</td>
+              <td style={cellStyle}>{it.canCoGang}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// Phụ lục "Bài tập phân hoá theo 3 mức độ" (Hỗ trợ / Đạt chuẩn / Nâng cao) - 3 cột đặt cạnh nhau
+// để giáo viên nhìn thấy ngay sự khác biệt độ khó giữa 3 nhóm học sinh trong cùng 1 lớp, dùng
+// để phát bài phù hợp cho từng nhóm ở tiết Luyện tập/Vận dụng hoặc làm bài tập về nhà phân hoá.
+function BaiTapPhanHoaBlock({ data }) {
+  const groups = [
+    { key: "hoTro", label: "Mức 1 — Hỗ trợ", color: "#0369A1", bg: "#EFF6FF", border: "#93C5FD" },
+    { key: "datChuan", label: "Mức 2 — Đạt chuẩn", color: "#15803D", bg: "#F0FDF4", border: "#86EFAC" },
+    { key: "nangCao", label: "Mức 3 — Nâng cao", color: "#B45309", bg: "#FFFBEB", border: "#FCD34D" },
+  ];
+  const hasAny = groups.some((g) => (data?.[g.key] || []).length > 0);
+  if (!hasAny) return null;
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 8px" }}>
+        PHỤ LỤC: Bài tập phân hoá theo 3 mức độ
+      </p>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        {groups.map((g) => {
+          const items = data?.[g.key] || [];
+          if (items.length === 0) return null;
+          return (
+            <div
+              key={g.key}
+              style={{
+                flex: "1 1 220px",
+                minWidth: 200,
+                border: `1.5px solid ${g.border}`,
+                background: g.bg,
+                borderRadius: 8,
+                padding: "8px 10px",
+              }}
+            >
+              <p style={{ fontWeight: 700, color: g.color, fontSize: 13, margin: "0 0 6px" }}>{g.label}</p>
+              <ol style={{ margin: 0, paddingLeft: 18 }}>
+                {items.map((it, i) => (
+                  <li key={i} style={{ fontSize: 12.5, marginBottom: 6, whiteSpace: "pre-line" }}>
+                    {it}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
   if (!lessonPlan) {
     return (
@@ -318,6 +410,8 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         <p style={{ fontSize: 13, color: "#94a3b8" }}>(Giáo viên tự ghi chú sau khi dạy thực tế)</p>
 
         <PhieuHocTapBlock phieu={lessonPlan.phieuHocTap} />
+        <BaiTapPhanHoaBlock data={lessonPlan.baiTapPhanHoa} />
+        <ChecklistNLPCBlock items={lessonPlan.checklistNLPC} />
         <TinNhanPhuHuynhBlock text={lessonPlan.tinNhanPhuHuynh} />
       </div>
     </div>
