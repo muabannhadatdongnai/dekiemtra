@@ -179,6 +179,72 @@ function buildOneColumnActivityParagraphs(steps) {
   });
 }
 
+const LOAI_LABEL = { nang_luc: "Năng lực", pham_chat: "Phẩm chất" };
+
+// Bảng "Checklist đánh giá Năng lực - Phẩm chất" (phụ lục) - 4 cột: Tiêu chí | Tốt | Đạt | Cần cố
+// gắng, mỗi hàng ứng đúng 1 tiêu chí đã liệt kê ở mục I.2/I.3 (yeuCauCanDat.nangLuc/phamChat) -
+// xem giải thích đầy đủ trong lessonPlanIntegrations.js (INTEGRATION_KEYS.CHECKLIST_NLPC).
+function buildChecklistNLPCTable(items) {
+  const headerRow = new TableRow({
+    children: [
+      cell("Tiêu chí", 28, { bold: true }),
+      cell("Tốt", 24, { bold: true }),
+      cell("Đạt", 24, { bold: true }),
+      cell("Cần cố gắng", 24, { bold: true }),
+    ],
+  });
+  const bodyRows = (items || []).map((it) => {
+    const loaiLine = it.loai && LOAI_LABEL[it.loai] ? LOAI_LABEL[it.loai] : null;
+    return new TableRow({
+      children: [
+        cell(null, 28, {
+          children: [
+            ...(loaiLine ? [textRun(loaiLine, { italics: true, size: 18, color: "94A3B8" }), textRun("", { break: 1 })] : []),
+            textRun(it.tieuChi, { bold: true }),
+          ],
+        }),
+        cell(it.tot, 24),
+        cell(it.dat, 24),
+        cell(it.canCoGang, 24),
+      ],
+    });
+  });
+  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...bodyRows] });
+}
+
+const PHAN_HOA_GROUPS = [
+  { key: "hoTro", label: "Mức 1 — Hỗ trợ", color: "0369A1" },
+  { key: "datChuan", label: "Mức 2 — Đạt chuẩn", color: "15803D" },
+  { key: "nangCao", label: "Mức 3 — Nâng cao", color: "B45309" },
+];
+
+// Phụ lục "Bài tập phân hoá theo 3 mức độ" - 3 khối liên tiếp (Hỗ trợ/Đạt chuẩn/Nâng cao), mỗi
+// khối là 1 danh sách đánh số riêng - xem giải thích đầy đủ trong lessonPlanIntegrations.js
+// (INTEGRATION_KEYS.BAI_TAP_PHAN_HOA) và BaiTapPhanHoaBlock (LessonPlanPreview.jsx, bản web).
+function buildBaiTapPhanHoaParagraphs(data) {
+  const children = [];
+  PHAN_HOA_GROUPS.forEach((g) => {
+    const items = data?.[g.key] || [];
+    if (items.length === 0) return;
+    children.push(
+      new Paragraph({
+        children: [textRun(g.label, { bold: true, size: 22, color: g.color })],
+        spacing: { before: 120, after: 60 },
+      })
+    );
+    items.forEach((it, i) => {
+      children.push(
+        new Paragraph({
+          children: [textRun(`${i + 1}. `, { bold: true }), ...multilineTextRuns(it)],
+          spacing: { after: 60 },
+          indent: { left: 200 },
+        })
+      );
+    });
+  });
+  return children;
+}
+
 function buildActivitySection(activity, columnMode, minutes) {
   const titleSuffix = minutes ? ` (~${minutes} phút)` : "";
   const children = [
@@ -307,6 +373,44 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
       children.push(paragraph("...................................................................................."));
       children.push(paragraph("...................................................................................."));
     });
+  }
+
+  const hasPhanHoa = PHAN_HOA_GROUPS.some((g) => (lessonPlan.baiTapPhanHoa?.[g.key] || []).length > 0);
+  if (hasPhanHoa) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun("PHỤ LỤC: BÀI TẬP PHÂN HOÁ THEO 3 MỨC ĐỘ", { bold: true, size: 26 })],
+        spacing: { before: 100, after: 60 },
+      })
+    );
+    children.push(...buildBaiTapPhanHoaParagraphs(lessonPlan.baiTapPhanHoa));
+  }
+
+  if (lessonPlan.checklistNLPC?.length) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun("PHỤ LỤC: CHECKLIST ĐÁNH GIÁ NĂNG LỰC - PHẨM CHẤT", { bold: true, size: 26 })],
+        spacing: { before: 100, after: 40 },
+      })
+    );
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          textRun(
+            "(Theo tinh thần Thông tư 27/2020/TT-BGDĐT - giáo viên quan sát và đánh dấu trực tiếp trong tiết học)",
+            { italics: true, size: 20, color: "64748B" }
+          ),
+        ],
+        spacing: { after: 120 },
+      })
+    );
+    children.push(buildChecklistNLPCTable(lessonPlan.checklistNLPC));
+    children.push(new Paragraph({ text: "" }));
   }
 
   if (lessonPlan.tinNhanPhuHuynh) {

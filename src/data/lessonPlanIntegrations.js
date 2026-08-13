@@ -26,6 +26,8 @@ export const INTEGRATION_KEYS = {
   INFOGRAPHIC_MINDMAP: "infographicMindmap",
   PHIEU_HOC_TAP: "phieuHocTap",
   TIN_NHAN_PHU_HUYNH: "tinNhanPhuHuynh",
+  CHECKLIST_NLPC: "checklistNLPC",
+  BAI_TAP_PHAN_HOA: "baiTapPhanHoa",
 };
 
 export const LESSON_PLAN_INTEGRATIONS = {
@@ -169,6 +171,59 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  Kết thúc bằng 1 câu cảm ơn ngắn, KHÔNG cần ký tên cụ thể (để giáo viên tự điền tên khi gửi).\n` +
       `  Trả về trong trường JSON "tinNhanPhuHuynh" (1 chuỗi văn bản duy nhất, không xuống dòng đầu mục).`,
     schemaExample: `"tinNhanPhuHuynh": "..."`,
+  },
+  [INTEGRATION_KEYS.CHECKLIST_NLPC]: {
+    key: INTEGRATION_KEYS.CHECKLIST_NLPC,
+    label: "Checklist NL-PC",
+    description: "Bảng tiêu chí quan sát, đánh giá theo Thông tư 27/2020",
+    isAiGenerated: true,
+    jsonField: "checklistNLPC",
+    buildPromptFragment: () =>
+      `- Thêm 1 "Checklist đánh giá Năng lực - Phẩm chất" đính kèm cuối giáo án, giúp giáo viên quan\n` +
+      `  sát nhanh học sinh NGAY TRONG TIẾT HỌC (không phải phiếu tự luận, không cần chấm điểm số).\n` +
+      `  BẮT BUỘC: mỗi dòng checklist phải ỨNG VỚI ĐÚNG 1 tiêu chí đã liệt kê trong "yeuCauCanDat.nangLuc"\n` +
+      `  hoặc "yeuCauCanDat.phamChat" của CHÍNH giáo án này (giữ nguyên tinh thần/nội dung tiêu chí đó,\n` +
+      `  có thể viết gọn lại) - KHÔNG bịa thêm tiêu chí nằm ngoài 2 danh sách đó, và KHÔNG bỏ sót tiêu\n` +
+      `  chí nào trong 2 danh sách (đủ số dòng = tổng số phần tử của nangLuc + phamChat).\n` +
+      `  Với MỖI tiêu chí, viết 3 mô tả biểu hiện CỤ THỂ, NGẮN GỌN, QUAN SÁT ĐƯỢC TRỰC TIẾP trong tiết\n` +
+      `  học (không viết chung chung kiểu "hiểu bài"/"tích cực"), theo đúng tinh thần 3 mức của Thông tư\n` +
+      `  27/2020/TT-BGDĐT (đánh giá học sinh Tiểu học) - với Mầm non hiểu tương ứng theo mức độ đạt được\n` +
+      `  ở lĩnh vực phát triển liên quan:\n` +
+      `  + "tot": biểu hiện ở mức Tốt (chủ động, thành thạo, có thể giúp bạn khác).\n` +
+      `  + "dat": biểu hiện ở mức Đạt (hoàn thành yêu cầu cơ bản, có thể cần nhắc/hỗ trợ đôi chỗ).\n` +
+      `  + "canCoGang": biểu hiện ở mức Cần cố gắng (chưa hoàn thành, cần giáo viên hỗ trợ nhiều).\n` +
+      `  Trả về trong trường JSON "checklistNLPC": mảng các object { "tieuChi": "...",\n` +
+      `  "loai": "nang_luc" | "pham_chat", "tot": "...", "dat": "...", "canCoGang": "..." }.`,
+    schemaExample:
+      `"checklistNLPC": [ { "tieuChi": "...", "loai": "nang_luc", "tot": "...", "dat": "...", "canCoGang": "..." } ]`,
+  },
+  [INTEGRATION_KEYS.BAI_TAP_PHAN_HOA]: {
+    key: INTEGRATION_KEYS.BAI_TAP_PHAN_HOA,
+    label: "Bài tập phân hoá",
+    description: "3 mức: Hỗ trợ - Đạt chuẩn - Nâng cao",
+    isAiGenerated: true,
+    jsonField: "baiTapPhanHoa",
+    buildPromptFragment: () =>
+      `- Soạn thêm "Bài tập phân hoá theo 3 mức độ" đính kèm phụ lục cuối giáo án, PHỤC VỤ dạy học\n` +
+      `  phân hoá theo năng lực học sinh trong CÙNG 1 lớp (không phải 3 phiếu tách rời cho 3 lớp khác\n` +
+      `  nhau) - giáo viên phát đúng nhóm bài phù hợp cho từng nhóm học sinh trong tiết Luyện tập/Vận\n` +
+      `  dụng, hoặc dùng làm bài tập về nhà phân hoá.\n` +
+      `  BẮT BUỘC cả 3 mức đều XOAY QUANH ĐÚNG 1 NỘI DUNG KIẾN THỨC của bài học này (không lạc đề\n` +
+      `  sang kiến thức khác), CHỈ khác nhau về ĐỘ KHÓ/YÊU CẦU, theo đúng tinh thần:\n` +
+      `  + "hoTro" (Hỗ trợ - dành cho học sinh CHƯA ĐẠT yêu cầu cần đạt): 2-3 bài tập ở MỨC NHẬN BIẾT\n` +
+      `    đơn giản nhất, có thể kèm gợi ý/làm mẫu 1 phần, số liệu/ngữ liệu ít và quen thuộc.\n` +
+      `  + "datChuan" (Đạt chuẩn - dành cho ĐA SỐ học sinh): 2-3 bài tập ĐÚNG mức yêu cầu cần đạt cơ\n` +
+      `    bản của bài học, không kèm gợi ý làm mẫu.\n` +
+      `  + "nangCao" (Nâng cao - dành cho học sinh học TỐT/NHANH hơn): 2-3 bài tập có yêu cầu VẬN\n` +
+      `    DỤNG/tư duy cao hơn (kết hợp nhiều bước, tình huống thực tế, mở rộng nhẹ - KHÔNG vượt quá\n` +
+      `    xa chương trình, vẫn phải giải được bằng đúng kiến thức bài học này).\n` +
+      `  ⚠️ 3 mức PHẢI thực sự khác biệt rõ rệt về độ khó (không chỉ đổi số liệu qua loa) - đây là\n` +
+      `  điểm mấu chốt để giáo viên phân hoá thật sự, không phải 3 bản sao gần giống nhau.\n` +
+      `  Trả về trong trường JSON "baiTapPhanHoa": { "hoTro": ["...", "..."], "datChuan": ["...", "..."],\n` +
+      `  "nangCao": ["...", "..."] } - mỗi mức là mảng CHUỖI, mỗi phần tử là 1 đề bài/câu hỏi hoàn\n` +
+      `  chỉnh (không tự đánh số thứ tự trong chuỗi, hệ thống sẽ tự đánh số khi hiển thị/in).`,
+    schemaExample:
+      `"baiTapPhanHoa": { "hoTro": ["..."], "datChuan": ["..."], "nangCao": ["..."] }`,
   },
 };
 
