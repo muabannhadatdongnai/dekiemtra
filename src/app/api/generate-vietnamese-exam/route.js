@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { orchestrateVietnameseExamGeneration } from "@/services/vietnameseExamOrchestrator";
-import { requireAuth } from "@/services/apiAuth";
+import { requireAuth, requireWithinTeacherGenerateLimit } from "@/services/apiAuth";
 
 export async function POST(request) {
   try {
     const auth = requireAuth(request);
     if (auth.error) return auth.error;
+
+    const limitError = await requireWithinTeacherGenerateLimit(auth.session.username);
+    if (limitError) return limitError;
 
     const body = await request.json();
     const { grade, selectedBlocks = [], blockInputs = {} } = body;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/services/apiAuth";
+import { requireAuth, requireWithinTeacherGenerateLimit } from "@/services/apiAuth";
 import { generateColoringLineArt } from "@/services/coloringPageGenerator";
 
 // Giới hạn kích thước ảnh upload để tránh request quá nặng (5MB đủ dùng cho ảnh chụp điện thoại
@@ -10,6 +10,9 @@ export async function POST(request) {
   try {
     const auth = requireAuth(request);
     if (auth.error) return auth.error;
+
+    const limitError = await requireWithinTeacherGenerateLimit(auth.session.username);
+    if (limitError) return limitError;
 
     const formData = await request.formData();
     const file = formData.get("image");

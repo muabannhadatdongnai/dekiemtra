@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { orchestrateLessonPlanGeneration } from "@/services/lessonPlanOrchestrator";
-import { requireAuth } from "@/services/apiAuth";
+import { requireAuth, requireWithinTeacherGenerateLimit } from "@/services/apiAuth";
 import { LESSON_PLAN_STYLE_IDS, CUSTOM_STYLE_MAX_LENGTH } from "@/data/lessonPlanStyles";
+import { clampSoTiet } from "@/services/contentGenerationLimits";
 
 const VALID_STYLE_IDS = Object.values(LESSON_PLAN_STYLE_IDS);
 
@@ -25,6 +26,9 @@ export async function POST(request) {
   try {
     const auth = requireAuth(request);
     if (auth.error) return auth.error;
+
+    const limitError = await requireWithinTeacherGenerateLimit(auth.session.username);
+    if (limitError) return limitError;
 
     const body = await request.json();
     const {
@@ -50,13 +54,21 @@ export async function POST(request) {
       );
     }
 
+    // ⚠️ Trần tối đa số tiết/lượt gọi (xem contentGenerationLimits.js) - soTiet càng lớn thì nội
+    // dung AI phải sinh (hoạt động, tiến trình...) càng nhiều, cùng rủi ro như số câu/số bài.
+    const clampedSoTiet = clampSoTiet(soTiet);
+    const limitWarnings =
+      clampedSoTiet !== Number(soTiet)
+        ? [`Số tiết đã nhập vượt trần cho phép, hệ thống đã tự động điều chỉnh về ${clampedSoTiet} tiết.`]
+        : [];
+
     const { lessonPlan, timeline, warnings } = await orchestrateLessonPlanGeneration({
       tenBai,
       grade,
       subject,
       volume,
       chapterId,
-      soTiet,
+      soTiet: clampedSoTiet,
       noiDungCotLoi,
       integrations,
       lessonType,
@@ -73,7 +85,7 @@ export async function POST(request) {
       );
     }
 
-    return NextResponse.json({ success: true, lessonPlan, timeline, warnings });
+    return NextResponse.json({ success: true, lessonPlan, timeline, warnings: [...limitWarnings, ...warnings] });
   } catch (err) {
     console.error("[/api/generate-lesson-plan] error:", err);
     return NextResponse.json(
