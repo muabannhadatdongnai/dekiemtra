@@ -1,5 +1,81 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi SỬA 3 lỗi phát hiện qua test thật
-# module "Phiếu bài tập" catalog Lớp 1 - giai đoạn 9, Bước 2 ĐỢT 1, hậu kiểm)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi VÁ 2 lỗi phát hiện qua rà soát tổng thể
+# code — thất lạc Giai đoạn 10 Việc 6/7 + package.json rỗng khiến project không build được)
+
+## 0.-5. MỚI NHẤT — Rà soát tổng thể (bảo mật + bug) theo yêu cầu người dùng, phát hiện 2 lỗi
+## nghiêm trọng KHÔNG nằm trong bất kỳ kế hoạch nào trước đó
+
+**Bối cảnh**: người dùng yêu cầu rà soát lại toàn bộ code tìm lỗi/tối ưu/bảo mật. Đã đọc trực
+tiếp toàn bộ cấu trúc thư mục + các file lõi (auth, session, key pool, rate limiter, export
+service, integrations registry) — không suy đoán. Phát hiện 2 vấn đề nghiêm trọng:
+
+### 1. `KE_HOACH_GIAI_DOAN_10.md` SAI khi ghi "chưa code gì" — thực ra Việc 6/7 ĐÃ được viết
+nhưng LẠC vào 2 thư mục mồ côi `services/`, `data/` ở GỐC repo (ngang hàng `src/`), KHÔNG phải
+`src/services/`, `src/data/` — trong khi `jsconfig.json` khai báo alias `"@/*": ["./src/*"]`, nên
+toàn bộ app thật (kể cả `next build`) CHỈ đọc `src/`, không bao giờ đụng tới 2 thư mục gốc đó.
+Hậu quả xác nhận qua đọc code: `src/components/LessonPlanExportActions.jsx` và
+`LessonPlanPreview.jsx` ĐÃ SẴN SÀNG đọc `lessonPlan.loiDan`/`lessonPlan.slideOutline` (kể cả
+checkbox "Bản đầy đủ có lời dẫn") nhưng `src/data/lessonPlanIntegrations.js` (bản app thật dùng)
+THIẾU hẳn 2 entry `LOI_DAN`/`SLIDE_OUTLINE` nên AI không bao giờ được yêu cầu sinh 2 trường này,
+và `src/services/lessonPlanExportService.js` thật cũng thiếu `buildLoiDanParagraphs`/
+`buildSlideOutlineParagraphs` nên dù có dữ liệu cũng không xuất được ra Word — tính năng bị
+"treo lửng" không có exception nào báo lỗi.
+
+**Đã sửa**: copy đúng 2 entry integrations (`LOI_DAN`, `SLIDE_OUTLINE`) + 2 hàm export
+(`buildLoiDanParagraphs`, `buildSlideOutlineParagraphs`) + cập nhật chữ ký
+`buildLessonPlanDocxSections()`/`exportLessonPlanToWord()` nhận `includeTeacherScript` từ bản mồ
+côi vào ĐÚNG vị trí trong `src/`. Sau đó **xoá hẳn 2 thư mục gốc `services/`, `data/`** để không
+còn ai (kể cả AI ở phiên sau) vô tình sửa nhầm bản chết.
+
+**Đã tự verify bằng script gọi hàm trực tiếp** (đã xoá sau khi verify, không nằm trong repo):
+build `buildLessonPlanDocxSections()` với dữ liệu `loiDan`/`slideOutline` giả, giải nén `.docx`
+sinh ra bằng JSZip, xác nhận: (a) `includeTeacherScript=false` → KHÔNG có phụ lục "LỜI DẪN"
+nhưng CÓ phụ lục "DÀN Ý SLIDE" (đúng thiết kế: Slide Outline không có cờ ẩn/hiện); (b)
+`includeTeacherScript=true` → CÓ CẢ HAI phụ lục, nội dung câu lời dẫn + tiêu đề slide xuất hiện
+đúng trong `word/document.xml`.
+
+### 2. `package.json` GỐC bị rỗng — chỉ còn `{"type": "module"}`, KHÔNG còn `name`/`version`/
+`scripts`/`dependencies`/`devDependencies` — trong khi `package-lock.json` vẫn còn nguyên vẹn dữ
+liệu dependency đầy đủ. Hậu quả xác nhận bằng cách tự cài đặt thử trong sandbox: `npm install`
+không cài được gì (không có `dependencies` để đọc), `npm run build`/`npm test` báo lỗi "missing
+script" — **project ở trạng thái KHÔNG THỂ BUILD/DEPLOY như trong file zip đã đóng gói**, dù mọi
+tài liệu (README, DEPLOY.md, `test/README.md`) đều mô tả các lệnh này hoạt động bình thường →
+xác nhận đây là lỗi phát sinh khi đóng gói/lưu lại project (không phải lỗi cố ý), KHÔNG phải lỗi
+logic nghiệp vụ.
+
+**Đã sửa**: khôi phục lại `name`/`version`/`scripts`/`dependencies`/`devDependencies` cho
+`package.json` gốc, dựa trên dữ liệu CHÍNH XÁC còn nguyên trong `package-lock.json` (không suy
+đoán số phiên bản). ⚠️ Phát hiện thêm 1 chi tiết khi khôi phục: **KHÔNG được thêm `"type":
+"module"` vào package.json GỐC** — `next.config.js`/`tailwind.config.js`/`postcss.config.js` ở
+gốc đều dùng cú pháp CommonJS (`module.exports`), nếu root ở chế độ ESM thì `next build` lập tức
+lỗi `ReferenceError: module is not defined`. Cấu trúc ĐÚNG: root package.json KHÔNG có "type"
+(mặc định CommonJS cho các file config), còn `src/package.json` và `test/package.json` (đã có
+sẵn, không đổi) mới là nơi khoanh vùng riêng `"type": "module"` cho code ứng dụng/test.
+
+**Đã tự verify thật**: `npm install` (212 packages, không lỗi) → `npm test` (**83/83 pass**,
+KHÔNG có test nào hỏng sau khi sửa 2 lỗi trên) → `npm run build` (`✓ Compiled successfully`, đủ
+17 route bao gồm toàn bộ `/api/*`) — chạy LẠI TOÀN BỘ pipeline này 1 lần nữa SAU KHI xoá 2 thư
+mục mồ côi `services/`/`data/` để xác nhận chắc chắn không có chỗ nào âm thầm phụ thuộc vào 2
+thư mục đó (kết quả: vẫn 83/83 pass, build vẫn sạch).
+
+### ⚠️ Việc CHƯA làm (giới hạn môi trường + để ngỏ có chủ đích)
+1. **Chưa xác nhận UI thật trên trình duyệt**: 2 tính năng Lời dẫn/Slide Outline giờ đã sinh dữ
+   liệu + xuất Word đúng theo test tự động, nhưng sandbox không có trình duyệt/Word thật — cần tự
+   bật tích hợp "Lời dẫn (Teacher Script)" và "Slide Outline" khi soạn giáo án thật (cần
+   `GEMINI_API_KEYS` thật, sandbox không có) để xác nhận bằng mắt.
+2. **Chưa xử lý các lỗ hổng bảo mật khác đã nêu khi rà soát** (chưa làm ở lượt này, người dùng
+   sẽ quyết định thứ tự tiếp theo): (a) chưa có rate-limit/giới hạn quota theo giáo viên ở các
+   endpoint sinh nội dung (chỉ `/api/login` có); (b) chưa có trần tối đa số lượng câu hỏi/bài tập
+   mỗi lượt gọi; (c) chưa xác nhận `.gitignore` loại trừ `.env.local`/`.data/` trên repo GitHub
+   thật; (d) chưa thêm security headers cơ bản vào `next.config.js`.
+3. Chưa viết test tự động riêng cho Việc 6/7 vào `test/*.test.js` (mới verify bằng script thủ
+   công, đã xoá sau khi verify) — nên cân nhắc thêm 1 file `lessonPlanExportService.test.js` ở
+   lượt sau để bảo vệ lâu dài khỏi tái diễn đúng loại lỗi "thất lạc" này.
+4. Chưa quyết định làm tiếp Giai đoạn 9 hay phần còn lại của rà soát bảo mật (Mục 2 ở trên) —
+   để người dùng chủ động chọn ở phiên tiếp theo.
+
+---
+
+
 
 > ⚠️ Bản này thay thế mọi bản `PROJECT_SUMMARY.md` cũ hơn (kể cả bản đóng gói sẵn trong
 > `ai-exam-generator-giaidoan9-buoc2-lop1.zip` trước lần sửa này). Dùng bản này làm nguồn tin cậy
