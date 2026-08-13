@@ -1010,10 +1010,67 @@ sẵn có trong UI).
   lập cố định trong shim `@google/genai` chỉ chứng minh ĐÚNG LOGIC ĐIỀU PHỐI, không chứng minh AI
   THẬT có tuân thủ tốt hay không).
 
-## Việc 4-7/7 — CHƯA LÀM
-Theo đúng thứ tự đã chốt trong `KE_HOACH_GIAI_DOAN_10.md` (mục 5): Checklist NL-PC (4) → Bài tập
-phân hóa 3 mức (5) → Lời dẫn/Teacher Script (6) → Slide Outline (7). Đi tiếp theo đúng thứ tự này
-ở phiên sau.
+## Việc 4/7 — Checklist đánh giá Năng lực - Phẩm chất (NL-PC) — ĐÃ XONG
+
+**Cơ chế**: tiếp tục tái dùng ĐÚNG khuôn "plugin" `LESSON_PLAN_INTEGRATIONS` (giống hệt cách làm
+Việc 1 - Tin nhắn phụ huynh) - chỉ thêm 1 entry mới `CHECKLIST_NLPC: "checklistNLPC"`, KHÔNG phải
+sửa `lessonPlanPromptTemplates.js`/`LessonPlanForm.jsx`.
+
+- **`lessonPlanIntegrations.js`**: thêm entry `checklistNLPC`. Nội dung yêu cầu AI: mỗi dòng
+  checklist phải ỨNG VỚI ĐÚNG 1 tiêu chí đã có sẵn trong CHÍNH `yeuCauCanDat.nangLuc`/`phamChat`
+  của giáo án đó (không bịa thêm, không bỏ sót - đủ số dòng = tổng 2 mảng) - đây là điểm THIẾT KẾ
+  QUAN TRỌNG NHẤT: checklist không phải 1 nội dung AI tự nghĩ độc lập, mà PHẢI bám sát đúng những
+  gì chính giáo án đã liệt kê ở mục I.2/I.3, để giáo viên không phải đối chiếu 2 danh sách lệch
+  nhau. Với mỗi tiêu chí, AI viết 3 biểu hiện CỤ THỂ/QUAN SÁT ĐƯỢC NGAY TRONG TIẾT HỌC (không viết
+  chung chung kiểu "hiểu bài") theo đúng 3 mức của **Thông tư 27/2020/TT-BGDĐT** (đánh giá học
+  sinh Tiểu học - mức Tốt/Đạt/Cần cố gắng), có ghi chú Mầm non hiểu tương ứng theo lĩnh vực phát
+  triển. Trả JSON `"checklistNLPC": [ { "tieuChi", "loai": "nang_luc"|"pham_chat", "tot", "dat",
+  "canCoGang" } ]`.
+- **`LessonPlanPreview.jsx`**: thêm `ChecklistNLPCBlock` - hiển thị dạng PHỤ LỤC (đặt SAU Phiếu
+  học tập, TRƯỚC Tin nhắn phụ huynh - đúng nguyên tắc phụ lục có thể bật/tắt độc lập, không chèn
+  xen giữa mục I-IV chuẩn), render thành BẢNG THẬT 4 cột (Tiêu chí | Tốt | Đạt | Cần cố gắng, có
+  nhãn nhỏ "Năng lực"/"Phẩm chất" phía trên mỗi tên tiêu chí) - đây là 1 bảng RUBRIC để giáo viên
+  tự đối chiếu khi quan sát học sinh trong tiết học, KHÔNG phải danh sách theo tên học sinh cụ thể
+  (hệ thống không có sẵn danh sách lớp để tự điền tên - giữ đúng phạm vi dữ liệu thực sự có).
+- **`lessonPlanExportService.js`** (`buildLessonPlanDocxSections`): thêm phụ lục tương ứng trong
+  Word, tách trang riêng (`pageBreakBefore: true`, giống `phieuHocTap`/`tinNhanPhuHuynh`), dựng
+  bảng thật bằng `Table`/`TableRow`/`TableCell` (tái dùng đúng hàm `cell()` đã có sẵn cho bảng
+  hoạt động GV-HS ở mục III, không viết lại logic dựng bảng từ đầu).
+- **`test/lessonPlanFixes.test.js`**: thêm 2 test mới (prompt bật/tắt đúng nội dung + schema, có
+  nhắc đúng "yeuCauCanDat.nangLuc"/"yeuCauCanDat.phamChat" + căn cứ Thông tư 27/2020; docx có/không
+  có phụ lục bảng đúng, render `<w:tbl>` thật, có đủ tên tiêu chí Năng lực lẫn Phẩm chất trong
+  bảng, không tự chèn phụ lục rỗng khi không bật).
+
+### Đã tự verify thật (không chỉ đọc code) — LẦN NÀY sandbox CÓ MẠNG (khác Việc 1-3 trước đó)
+Khác hẳn 3 Việc trước (sandbox không mạng, phải viết shim thủ công) - phiên này `npm install` chạy
+được bình thường, nên đã verify được **ĐẦY ĐỦ NHƯ CÁC GIAI ĐOẠN SỚM HƠN**, không cần shim tạm:
+- `npm test` chạy THẬT bằng đúng lệnh chính thức (`node --import ./test/register-loader.mjs --test
+  test/*.test.js`): **66/66 PASS** (64 test cũ không hỏng + 2 test mới của Việc 4), bao gồm cả việc
+  giải nén `.docx` THẬT bằng `jszip` thật (gói `docx` thật, không phải shim).
+- `npm run build` (Next.js 14.2.35): **build sạch, không lỗi type/lint**, xác nhận cú pháp JSX của
+  `ChecklistNLPCBlock` hợp lệ (phát hiện + tự sửa 1 lỗi gõ nhầm: chuỗi trong JSX bị lẫn dấu `\"`
+  thừa khi soạn thảo, đã dùng `npm test`/kiểm tra assertion để lộ ra rồi sửa lại bằng ký tự `"`
+  thường trước khi build, không phải để lọt bug này sang phiên sau).
+- Ngoài bộ test chính thức, còn tự chạy thêm 1 script verify độc lập (`node` thuần, xoá sau khi
+  dùng) gọi thẳng `buildLessonPlanDocxSections()` với 3 tiêu chí thật (2 Năng lực + 1 Phẩm chất),
+  giải nén `.docx` sinh ra bằng `jszip`, xác nhận: có `<w:tbl>` thật (không phải đoạn văn giả bảng
+  bằng khoảng trắng), đủ tên cả 3 tiêu chí, đủ 2 nhãn "Năng lực"/"Phẩm chất", đúng 4 hàng bảng
+  (1 header + 3 tiêu chí, không thừa/thiếu hàng).
+
+**Việc CHƯA làm được (cần bạn tự làm)**:
+- Chưa gọi Gemini THẬT để xem AI có thực sự tuân thủ ĐÚNG SỐ LƯỢNG tiêu chí (bám khớp hoàn toàn
+  `nangLuc`/`phamChat` mà chính nó vừa viết ra trong cùng 1 lượt JSON) hay có xu hướng viết thừa/
+  thiếu dòng - đây là yêu cầu "tự tham chiếu trong cùng 1 lần sinh" phức tạp hơn các tích hợp
+  trước (vốn chỉ cần AI viết 1 đoạn độc lập), cần thử nhiều lần với `npm run dev` + API key thật
+  để đánh giá tỉ lệ tuân thủ.
+- Chưa xem bằng mắt trên trình duyệt thật: bảng 4 cột trong bản xem trước web có bị chật/tràn khi
+  nội dung mô tả dài không (khác Word có thể tự ngắt trang, web preview cố định khổ A4).
+- Mặc định KHÔNG tự bật sẵn tuỳ chọn "Checklist NL-PC" trong `selectedIntegrations` của
+  `LessonPlanForm.jsx` (giáo viên cần tự tick, giống phần lớn tích hợp khác trừ `phieuHocTap`).
+
+## Việc 5-7/7 — CHƯA LÀM
+Theo đúng thứ tự đã chốt trong `KE_HOACH_GIAI_DOAN_10.md` (mục 5): Bài tập phân hóa 3 mức (5) →
+Lời dẫn/Teacher Script (6) → Slide Outline (7). Đi tiếp theo đúng thứ tự này ở phiên sau.
 
 ---
 

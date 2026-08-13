@@ -343,3 +343,156 @@ test("buildLessonPlanDocxSections: bài 1 tiết KHÔNG chèn ranh giới 'Hết
   const xml = await zip.file("word/document.xml").async("string");
   assert.ok(!xml.includes("Hết Tiết"), "bài 1 tiết không được có ranh giới tiết");
 });
+
+// ============ GIAI ĐOẠN 10, Việc 4/7 — Checklist đánh giá Năng lực - Phẩm chất ============
+
+test('buildLessonPlanPrompt: bật tích hợp "checklistNLPC" phải có hướng dẫn + schema JSON tương ứng, bám vào nangLuc/phamChat', () => {
+  const promptOn = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: ["checklistNLPC"],
+  });
+  assert.match(promptOn, /Checklist đánh giá Năng lực - Phẩm chất/, "phải có hướng dẫn soạn checklist khi bật");
+  assert.match(promptOn, /"checklistNLPC":/, 'ví dụ JSON schema chính phải có field "checklistNLPC"');
+  assert.match(promptOn, /yeuCauCanDat\.nangLuc/, "phải yêu cầu bám đúng danh sách nangLuc đã có");
+  assert.match(promptOn, /yeuCauCanDat\.phamChat/, "phải yêu cầu bám đúng danh sách phamChat đã có");
+  assert.match(promptOn, /Thông tư\s*27\/2020/, "phải nhắc đúng căn cứ Thông tư 27/2020/TT-BGDĐT");
+  assert.match(promptOn, /"tot"/);
+  assert.match(promptOn, /"dat"/);
+  assert.match(promptOn, /"canCoGang"/);
+
+  const promptOff = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: [],
+  });
+  assert.doesNotMatch(promptOff, /Checklist đánh giá Năng lực - Phẩm chất/, "KHÔNG bật thì KHÔNG có hướng dẫn này");
+  assert.doesNotMatch(promptOff, /"checklistNLPC":/, 'KHÔNG bật thì schema JSON KHÔNG có field "checklistNLPC"');
+});
+
+test("buildLessonPlanDocxSections: có checklistNLPC thì xuất hiện đúng phụ lục bảng riêng trong file Word, không có thì không chèn trang thừa", async () => {
+  const baseLessonPlan = {
+    tenBai: "Bài test checklist NL-PC",
+    yeuCauCanDat: { nangLuc: ["Tự chủ và tự học"], phamChat: ["Chăm chỉ"] },
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+
+  const withChecklist = {
+    ...baseLessonPlan,
+    checklistNLPC: [
+      { tieuChi: "Tự chủ và tự học", loai: "nang_luc", tot: "Tự hoàn thành không cần nhắc", dat: "Hoàn thành khi được nhắc", canCoGang: "Cần hỗ trợ nhiều" },
+      { tieuChi: "Chăm chỉ", loai: "pham_chat", tot: "Chủ động, kiên trì", dat: "Hoàn thành cơ bản", canCoGang: "Dễ bỏ cuộc" },
+    ],
+  };
+  const childrenWith = buildLessonPlanDocxSections({ lessonPlan: withChecklist, timeline: [], meta });
+  const docWith = new Document({ sections: [{ children: childrenWith }] });
+  const bufWith = await Packer.toBuffer(docWith);
+  const zipWith = await JSZip.loadAsync(bufWith);
+  const xmlWith = await zipWith.file("word/document.xml").async("string");
+  assert.match(xmlWith, /PHỤ LỤC: CHECKLIST ĐÁNH GIÁ NĂNG LỰC - PHẨM CHẤT/, "phải có tiêu đề phụ lục checklist");
+  assert.match(xmlWith, /Th.ng t. 27\/2020/, "phải có ghi chú căn cứ Thông tư 27/2020");
+  assert.match(xmlWith, /T. ch. v. t. h.c/, "phải có tên tiêu chí năng lực trong bảng");
+  assert.match(xmlWith, /Ch.m ch./, "phải có tên tiêu chí phẩm chất trong bảng");
+  assert.match(xmlWith, /<w:tbl>/, "phải render dưới dạng bảng thật (w:tbl), không phải đoạn văn rời rạc");
+
+  const childrenWithout = buildLessonPlanDocxSections({ lessonPlan: baseLessonPlan, timeline: [], meta });
+  const docWithout = new Document({ sections: [{ children: childrenWithout }] });
+  const bufWithout = await Packer.toBuffer(docWithout);
+  const zipWithout = await JSZip.loadAsync(bufWithout);
+  const xmlWithout = await zipWithout.file("word/document.xml").async("string");
+  assert.ok(!xmlWithout.includes("CHECKLIST ĐÁNH GIÁ"), "không bật thì không được có phụ lục checklist thừa");
+});
+
+// ============ GIAI ĐOẠN 10, Việc 5/7 — Bài tập phân hoá theo 3 mức độ ============
+
+test('buildLessonPlanPrompt: bật tích hợp "baiTapPhanHoa" phải có hướng dẫn + schema JSON 3 mức', () => {
+  const promptOn = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: ["baiTapPhanHoa"],
+  });
+  assert.match(promptOn, /Bài tập phân hoá theo 3 mức độ/, "phải có hướng dẫn soạn bài tập phân hoá khi bật");
+  assert.match(promptOn, /"baiTapPhanHoa":/, 'ví dụ JSON schema chính phải có field "baiTapPhanHoa"');
+  assert.match(promptOn, /"hoTro"/);
+  assert.match(promptOn, /"datChuan"/);
+  assert.match(promptOn, /"nangCao"/);
+
+  const promptOff = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: [],
+  });
+  assert.doesNotMatch(promptOff, /Bài tập phân hoá theo 3 mức độ/, "KHÔNG bật thì KHÔNG có hướng dẫn này");
+  assert.doesNotMatch(promptOff, /"baiTapPhanHoa":/, 'KHÔNG bật thì schema JSON KHÔNG có field "baiTapPhanHoa"');
+});
+
+test("buildLessonPlanDocxSections: có baiTapPhanHoa thì xuất hiện đúng phụ lục 3 nhóm bài trong file Word, không có thì không chèn trang thừa", async () => {
+  const baseLessonPlan = {
+    tenBai: "Bài test phân hoá",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+
+  const withPhanHoa = {
+    ...baseLessonPlan,
+    baiTapPhanHoa: {
+      hoTro: ["Điền số còn thiếu: 1, 2, __, 4"],
+      datChuan: ["Tính 3 + 5 = ?"],
+      nangCao: ["Một cửa hàng có 12 quả táo, bán đi 5 quả rồi nhập thêm 7 quả. Hỏi còn bao nhiêu quả?"],
+    },
+  };
+  const childrenWith = buildLessonPlanDocxSections({ lessonPlan: withPhanHoa, timeline: [], meta });
+  const docWith = new Document({ sections: [{ children: childrenWith }] });
+  const bufWith = await Packer.toBuffer(docWith);
+  const zipWith = await JSZip.loadAsync(bufWith);
+  const xmlWith = await zipWith.file("word/document.xml").async("string");
+  assert.ok(xmlWith.includes("PHỤ LỤC: BÀI TẬP PHÂN HOÁ THEO 3 MỨC ĐỘ"), "phải có tiêu đề phụ lục bài tập phân hoá");
+  assert.ok(xmlWith.includes("Mức 1 — Hỗ trợ"), "phải có nhãn nhóm Hỗ trợ");
+  assert.ok(xmlWith.includes("Mức 2 — Đạt chuẩn"), "phải có nhãn nhóm Đạt chuẩn");
+  assert.ok(xmlWith.includes("Mức 3 — Nâng cao"), "phải có nhãn nhóm Nâng cao");
+  assert.ok(xmlWith.includes("Điền số còn thiếu"), "phải có nội dung bài tập mức Hỗ trợ");
+  assert.ok(xmlWith.includes("cửa hàng có 12 quả táo"), "phải có nội dung bài tập mức Nâng cao");
+
+  const childrenWithout = buildLessonPlanDocxSections({ lessonPlan: baseLessonPlan, timeline: [], meta });
+  const docWithout = new Document({ sections: [{ children: childrenWithout }] });
+  const bufWithout = await Packer.toBuffer(docWithout);
+  const zipWithout = await JSZip.loadAsync(bufWithout);
+  const xmlWithout = await zipWithout.file("word/document.xml").async("string");
+  assert.ok(!xmlWithout.includes("BÀI TẬP PHÂN HOÁ"), "không bật thì không được có phụ lục phân hoá thừa");
+});
+
+test("buildLessonPlanDocxSections: baiTapPhanHoa chỉ có 1/3 mức (VD chỉ hoTro) vẫn xuất phụ lục đúng, không lỗi khi thiếu 2 mức kia", async () => {
+  const lessonPlan = {
+    tenBai: "Bài test phân hoá thiếu mức",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+    baiTapPhanHoa: { hoTro: ["Bài tập mức hỗ trợ duy nhất"] },
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+  const children = buildLessonPlanDocxSections({ lessonPlan, timeline: [], meta });
+  const doc = new Document({ sections: [{ children }] });
+  const buf = await Packer.toBuffer(doc);
+  const zip = await JSZip.loadAsync(buf);
+  const xml = await zip.file("word/document.xml").async("string");
+  assert.ok(xml.includes("PHỤ LỤC: BÀI TẬP PHÂN HOÁ THEO 3 MỨC ĐỘ"));
+  assert.ok(xml.includes("Mức 1 — Hỗ trợ"));
+  assert.ok(!xml.includes("Mức 2"), "không có dữ liệu datChuan thì không được render nhãn Mức 2");
+  assert.ok(!xml.includes("Mức 3"), "không có dữ liệu nangCao thì không được render nhãn Mức 3");
+});
