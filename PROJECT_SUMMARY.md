@@ -1,5 +1,109 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi VÁ 2 lỗi phát hiện qua rà soát tổng thể
-# code — thất lạc Giai đoạn 10 Việc 6/7 + package.json rỗng khiến project không build được)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi hoàn tất 4 việc bảo mật còn thiếu +
+# viết test riêng cho Việc 6/7 Giai đoạn 10 — theo đúng "Việc CHƯA làm" ghi ở mục 0.-5. bên dưới)
+
+## 0.-6. MỚI NHẤT — Hoàn tất rate-limit theo giáo viên, trần số câu/bài/tiết mỗi lượt gọi,
+## security headers, .gitignore + .env.local.example, và test tự động cho Việc 6/7
+
+**Bối cảnh**: tiếp nối đúng 4 việc liệt kê ở mục "⚠️ Việc CHƯA làm" của lần rà soát trước (mục
+0.-5. bên dưới): (a) rate-limit/quota theo giáo viên ở endpoint sinh nội dung, (b) trần tối đa số
+câu/bài mỗi lượt gọi, (c) xác nhận `.gitignore` trên GitHub thật, (d) security headers cơ bản, và
+thêm yêu cầu mới: viết test tự động riêng cho Việc 6/7 (Lời dẫn/Slide Outline) để tránh tái diễn
+lỗi "thất lạc".
+
+### 1. Rate-limit theo giáo viên (`src/services/teacherGenerateRateLimiter.js`, MỚI)
+2 lớp chặn độc lập, gắn vào ĐẦU cả 5 route sinh nội dung (`/api/generate`,
+`/api/generate-worksheet`, `/api/generate-lesson-plan`, `/api/generate-vietnamese-exam`,
+`/api/generate-coloring-page`) qua `requireWithinTeacherGenerateLimit()` (thêm vào `apiAuth.js`,
+dùng ngay sau `requireAuth()`, TRƯỚC khi gọi Gemini/GitHub tốn kém):
+- **Burst**: tối đa 6 lượt/phút/giáo viên - đếm trong bộ nhớ (module-level Map), best-effort,
+  cùng tinh thần `loginRateLimiter.js` (không chia sẻ giữa các serverless instance, nhưng vẫn
+  chặn được spam dồn dập rơi vào 1 instance "ấm").
+- **Daily**: mặc định 40 lượt/ngày/giáo viên (chỉnh qua `TEACHER_DAILY_GENERATE_LIMIT`) - bền
+  vững qua Upstash Redis hoặc file JSON local `.data/teacher-generate-usage.json`, ĐÚNG kiến
+  trúc dual-backend đã có sẵn trong `geminiUsageTracker.js`/`questionBankStore.js` (tái dùng
+  `upstashClient.js` chung, không viết lại logic gọi Upstash).
+- Vượt hạn mức -> route trả `429` kèm `error`/`reason` (`"burst"` hoặc `"daily"`)/`dailyLimit`.
+
+### 2. Trần tối đa số câu/bài/tiết mỗi lượt gọi (`src/services/contentGenerationLimits.js`, MỚI)
+TRƯỚC ĐÂY: `ExamMatrixForm.jsx`/`WorksheetForm.jsx` chỉ chặn số ÂM phía client
+(`Math.max(0, ...)`), KHÔNG có trần phía server - gọi thẳng API (bỏ qua UI) có thể gửi số câu/bài
+bất thường lớn (vd. `NHAN_BIET: 999999`), tốn rất nhiều quota Gemini 1 lượt gọi duy nhất.
+- **Đề kiểm tra** (`/api/generate`): tối đa 20 câu/ô (1 chương × 1 mức độ), tổng tối đa 60
+  câu/lượt tạo — clamp `chapterMatrix` NGAY SAU khi đọc body, trước khi gọi
+  `orchestrateExamGeneration`.
+- **Phiếu bài tập** (`/api/generate-worksheet`): tối đa 30 bài/1 dạng bài, tổng tối đa 80
+  bài/lượt tạo — clamp `exerciseCounts`.
+- **Giáo án** (`/api/generate-lesson-plan`): tối đa 10 tiết/lượt soạn — clamp `soTiet`.
+- **Đề Tiếng Việt Tiểu học**: KHÔNG cần thêm trần mới - `docThamBlock.js` đã tự
+  `Math.min(10, Math.max(7, soCauHoi))` sẵn từ trước.
+- Chiến lược: **clamp (cắt về đúng trần)**, KHÔNG từ chối thẳng cả request - giữ đúng tinh thần
+  "không tin dữ liệu client nhưng vẫn ưu tiên trải nghiệm" đã dùng ở `safeCounts` trong
+  `worksheetGenerator.js`. Route LUÔN đính kèm cảnh báo vào `warnings` khi có clamp xảy ra.
+- Cả 5 hằng số trần đều CHỈNH ĐƯỢC qua biến môi trường (xem `.env.local.example` MỚI), không cần
+  sửa code/redeploy chỉ để đổi số.
+
+### 3. Security headers cơ bản (`next.config.js`)
+Thêm `headers()` áp dụng cho mọi route: `X-Frame-Options: DENY` (chống clickjacking),
+`X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
+`Permissions-Policy` (tắt camera/microphone/geolocation không dùng tới), `X-XSS-Protection: 0`
+(khuyến nghị OWASP hiện tại, thay vì "1; mode=block" đã lỗi thời). **CHƯA thêm CSP** (Content-
+Security-Policy) - cần liệt kê chính xác mọi domain script/style/font đang dùng, dễ chặn nhầm
+app đang chạy nếu làm vội; để dành 1 lượt riêng có thời gian test kỹ.
+
+### 4. `.gitignore` + `.env.local.example` (CẢ 2 đều THẤT LẠC HOÀN TOÀN trong bản zip)
+Xác nhận bằng `find . -iname ".gitignore*"` (không kết quả nào) và đối chiếu README.md (dòng
+`cp .env.local.example .env.local`) với thực tế repo: **CẢ 2 FILE ĐỀU KHÔNG TỒN TẠI** ở bất kỳ
+đâu trong bản zip đã đóng gói - không phải chỉ thiếu 1 dòng, mà thiếu HẲN cả file.
+- Đã tạo lại `.gitignore` ở gốc repo (loại trừ `.env`/`.env.local`, `.data/`, `node_modules/`,
+  `.next/`, `.vercel`, log/OS/editor file thường gặp) - có ghi rõ trong chính file: **BẮT BUỘC
+  bạn tự kiểm tra trên repo GitHub THẬT** xem `.env.local`/`.data/` có từng lọt vào lịch sử
+  commit hay không (sandbox không có mạng để tự xác nhận thay bạn) - nếu CÓ, coi như
+  `GEMINI_API_KEYS`/`SESSION_SECRET`/`GITHUB_TOKEN` đã lộ, phải thu hồi/tạo mới ngay.
+- Đã tạo lại `.env.local.example` dựa trên danh sách CHÍNH XÁC các biến `process.env.*` mà code
+  thật sự đọc (`grep -rhoE "process\.env\.[A-Z_]+" src scripts`), không suy đoán tên biến - gồm
+  cả 2 biến MỚI vừa thêm ở mục 1/2 (`TEACHER_DAILY_GENERATE_LIMIT`, 5 biến trần
+  `EXAM_MAX_*`/`WORKSHEET_MAX_*`/`LESSON_PLAN_MAX_SO_TIET`).
+
+### 5. Test tự động riêng cho Việc 6/7 Giai đoạn 10 (đúng yêu cầu, tránh tái diễn "thất lạc")
+- `test/lessonPlanExportService.test.js` (MỚI, cần `npm install`): dựng file `.docx` thật bằng
+  `exportLessonPlanToWord()`, giải nén bằng JSZip, soi `word/document.xml` — xác nhận
+  `includeTeacherScript` ẩn/hiện ĐÚNG phụ lục "LỜI DẪN"; phụ lục "DÀN Ý SLIDE" LUÔN xuất hiện nếu
+  có dữ liệu (không có cờ); dữ liệu rỗng thì KHÔNG tự vẽ phụ lục trống; CẢ HAI phụ lục cùng lúc
+  không xung đột nhau (đúng kịch bản đã "thất lạc" trước đây - phải test cả 2 CÙNG LÚC, không
+  tách riêng, giống bài học đã rút ra ở `exportService.docx.test.js`).
+- `test/contentGenerationLimits.test.js` (MỚI, JS thuần) + `test/teacherGenerateRateLimiter.test.js`
+  (MỚI, JS thuần) cho 2 tính năng mới ở mục 1/2.
+
+### Đã tự xác minh thật (trong giới hạn môi trường)
+- `node --check` (syntax) sạch trên TOÀN BỘ file mới/đã sửa (route.js × 5, `apiAuth.js`,
+  `next.config.js`, `contentGenerationLimits.js`, `teacherGenerateRateLimiter.js`, 3 file test).
+- Chạy THẬT `node --test test/contentGenerationLimits.test.js test/teacherGenerateRateLimiter.test.js`
+  (2 file KHÔNG cần `npm install`, chỉ dùng module built-in) - **23/23 pass**.
+- **CHƯA chạy được** `test/lessonPlanExportService.test.js` (cần `docx`/`jszip` thật) lẫn
+  `npm run build`/`npm test` đầy đủ: sandbox lần này bị chặn mạng (`npm install` trả `403
+  Forbidden` khi gọi `registry.npmjs.org`) - khác lần rà soát trước (mục 0.-5.) có mạng để tự cài
+  đặt và verify đầy đủ 83/83 test + build.
+
+### ⚠️ Việc CHƯA làm (giới hạn môi trường lần này + để ngỏ có chủ đích)
+1. **BẮT BUỘC bạn tự chạy `npm install && npm test && npm run build`** trên máy có mạng trước
+   khi coi các thay đổi trong PROJECT_SUMMARY.md, mục 0.-6. là "đã verify đầy đủ" - đặc biệt chú
+   ý `lessonPlanExportService.test.js` (test mới, hoàn toàn chưa chạy thật lần nào) và toàn bộ
+   83+ test cũ (đảm bảo 4 thay đổi lần này không làm hỏng gì đã có).
+2. **`.gitignore` trên GitHub thật vẫn cần bạn tự xác nhận** (xem mục 4 ở trên, chi tiết đầy đủ
+   nằm ngay trong file `.gitignore`) - đây là việc DUY NHẤT trong 4 yêu cầu lần này không thể tự
+   động hoá được, kể cả khi có mạng.
+3. **Chưa thêm CSP** (Content-Security-Policy) vào security headers - để ngỏ có chủ đích, xem
+   giải thích ở mục 3.
+4. **Chưa áp rate-limit cho 3 route `/api/analyze-*`** (phân tích đề/phiếu/giáo án mẫu) - các
+   route này ĐÃ có cache theo hash nội dung file (giảm rủi ro gọi AI lặp lại cùng 1 file), rủi ro
+   thấp hơn nhóm `/api/generate*` nên tạm để ngoài phạm vi yêu cầu lần này; có thể thêm sau bằng
+   đúng `requireWithinTeacherGenerateLimit()` đã có sẵn nếu cần.
+5. Test cho security headers (`next.config.js`) chưa tự động hoá được bằng `node --test` thuần -
+   cần `next build && next start` thật rồi `fetch()` kiểm tra response header (xem
+   `test/README.md`, mục "Việc còn thiếu").
+
+---
+
 
 ## 0.-5. MỚI NHẤT — Rà soát tổng thể (bảo mật + bug) theo yêu cầu người dùng, phát hiện 2 lỗi
 ## nghiêm trọng KHÔNG nằm trong bất kỳ kế hoạch nào trước đó
