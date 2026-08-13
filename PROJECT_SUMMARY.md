@@ -1068,9 +1068,206 @@ Khác hẳn 3 Việc trước (sandbox không mạng, phải viết shim thủ c
 - Mặc định KHÔNG tự bật sẵn tuỳ chọn "Checklist NL-PC" trong `selectedIntegrations` của
   `LessonPlanForm.jsx` (giáo viên cần tự tick, giống phần lớn tích hợp khác trừ `phieuHocTap`).
 
-## Việc 5-7/7 — CHƯA LÀM
-Theo đúng thứ tự đã chốt trong `KE_HOACH_GIAI_DOAN_10.md` (mục 5): Bài tập phân hóa 3 mức (5) →
-Lời dẫn/Teacher Script (6) → Slide Outline (7). Đi tiếp theo đúng thứ tự này ở phiên sau.
+## Việc 5/7 — Bài tập phân hoá theo 3 mức độ (Hỗ trợ - Đạt chuẩn - Nâng cao) — ĐÃ XONG
+
+**Cơ chế**: tiếp tục tái dùng ĐÚNG khuôn "plugin" `LESSON_PLAN_INTEGRATIONS` (giống hệt Việc 1/4) -
+chỉ thêm 1 entry mới `BAI_TAP_PHAN_HOA: "baiTapPhanHoa"`, KHÔNG phải sửa `lessonPlanPromptTemplates.js`
+hay `LessonPlanForm.jsx` (UI tự động có thêm checkbox qua `listIntegrations()` sẵn có).
+
+- **`lessonPlanIntegrations.js`**: thêm entry `baiTapPhanHoa`. Yêu cầu AI soạn 3 nhóm bài tập
+  (mỗi nhóm 2-3 bài) BẮT BUỘC cùng xoay quanh ĐÚNG 1 nội dung kiến thức của bài học (không lạc
+  đề sang kiến thức khác) - CHỈ khác nhau về độ khó, theo đúng tinh thần dạy học phân hoá 3 nhóm
+  đối tượng học sinh trong CÙNG 1 lớp (không phải 3 phiếu tách rời cho 3 lớp khác nhau):
+  - `"hoTro"` (Hỗ trợ - học sinh chưa đạt yêu cầu cần đạt): mức Nhận biết đơn giản nhất, có thể
+    kèm gợi ý/làm mẫu 1 phần.
+  - `"datChuan"` (Đạt chuẩn - đa số học sinh): đúng mức yêu cầu cần đạt cơ bản, không kèm gợi ý.
+  - `"nangCao"` (Nâng cao - học sinh học tốt/nhanh hơn): mức Vận dụng cao hơn (kết hợp nhiều
+    bước, tình huống thực tế), không vượt quá xa chương trình.
+  Có câu nhấn mạnh 3 mức PHẢI khác biệt rõ rệt về độ khó (không chỉ đổi số liệu qua loa) - đây là
+  điểm mấu chốt để phân hoá thật sự, tránh AI trả về 3 bản sao gần giống nhau. Trả JSON
+  `"baiTapPhanHoa": { "hoTro": [...], "datChuan": [...], "nangCao": [...] }` (mỗi mức là mảng chuỗi).
+- **`LessonPlanPreview.jsx`**: thêm `BaiTapPhanHoaBlock` - hiển thị dạng PHỤ LỤC (đặt SAU Phiếu
+  học tập, TRƯỚC Checklist NL-PC - đúng nguyên tắc phụ lục bật/tắt độc lập, không chèn xen giữa
+  mục I-IV), render **3 khối màu khác nhau đặt CẠNH NHAU** (flex-wrap, mỗi khối 1 màu: xanh dương
+  nhạt = Hỗ trợ, xanh lá = Đạt chuẩn, vàng = Nâng cao) để giáo viên nhìn thấy NGAY sự khác biệt độ
+  khó giữa 3 nhóm khi lướt mắt qua, mỗi khối tự ẩn nếu rỗng (VD AI chỉ trả về 1-2/3 mức vẫn hiển
+  thị đúng, không vỡ layout).
+- **`lessonPlanExportService.js`** (`buildLessonPlanDocxSections`): thêm phụ lục tương ứng trong
+  Word, tách trang riêng (`pageBreakBefore: true`, giống các phụ lục khác), mỗi mức là 1 đoạn tiêu
+  đề màu (dùng `color` giống bản web) + danh sách đánh số riêng, dùng lại `multilineTextRuns()` có
+  sẵn để xuống dòng thật.
+- **`test/lessonPlanFixes.test.js`**: thêm 3 test mới (prompt bật/tắt đúng nội dung + schema 3
+  field; docx có/không có phụ lục 3 nhóm đúng, không chèn phụ lục rỗng; và 1 test riêng cho
+  trường hợp AI chỉ trả về 1/3 mức - xác nhận vẫn xuất đúng phụ lục, không lỗi/không render nhãn
+  "Mức 2"/"Mức 3" thừa khi không có dữ liệu tương ứng).
+
+### Đã tự verify thật (không chỉ đọc code) — sandbox phiên này CÓ MẠNG (giống Việc 4)
+- `npm install` chạy bình thường (212 packages), không cần shim/script tạm như Việc 1-3.
+- `npm test` chạy THẬT bằng đúng lệnh chính thức: **69/69 PASS** (66 test cũ không hỏng + 3 test
+  mới của Việc 5), bao gồm giải nén `.docx` THẬT bằng `jszip` thật (gói `docx` thật).
+- `npm run build` (Next.js 14.2.35): **build sạch, không lỗi type/lint**, cú pháp JSX của
+  `BaiTapPhanHoaBlock` hợp lệ, route `/api/generate-lesson-plan` không đổi kích thước bất thường.
+- Đã tự soi log test fail đầu tiên (do dùng regex ký tự đại diện `.` sai chỗ để né dấu tiếng Việt
+  trong assertion, khiến 1 test ban đầu FAIL oan dù code đúng) → sửa lại bằng `xml.includes(...)`
+  so khớp CHÍNH XÁC chuỗi Unicode thật thay vì regex - đã chạy lại xác nhận PASS đúng nghĩa (không
+  phải nới lỏng test để né lỗi thật).
+
+**Việc CHƯA làm được (cần bạn tự làm)**:
+- Chưa gọi Gemini THẬT để xem AI có thực sự tạo ra 3 mức ĐỘ KHÓ KHÁC BIỆT RÕ RỆT hay có xu hướng
+  chỉ đổi số liệu qua loa (đây là yêu cầu định tính khó đánh giá bằng test tự động, cần đọc bằng
+  mắt nhiều lần sinh thử với `npm run dev` + API key thật, thử cả môn Toán lẫn môn khác như Tiếng
+  Việt/Tự nhiên Xã hội để xem độ phân hoá có hợp lý theo từng môn không).
+- Chưa xem bằng mắt trên trình duyệt thật: 3 khối màu cạnh nhau trong bản xem trước web có bị vỡ
+  layout ở màn hình hẹp không (dù đã dùng `flexWrap`), và cảm giác thị giác 3 màu có dễ phân biệt/
+  không gây rối mắt so với các phụ lục màu khác đã có (Tin nhắn phụ huynh màu xanh lá, Checklist
+  không màu nền) hay không.
+- Mặc định KHÔNG tự bật sẵn tuỳ chọn "Bài tập phân hoá" trong `selectedIntegrations` của
+  `LessonPlanForm.jsx` (giáo viên cần tự tick, giống phần lớn tích hợp khác trừ `phieuHocTap`).
+
+## Việc 6/7 — Lời dẫn (Teacher Script) — ĐÃ XONG
+
+**Cơ chế**: tiếp tục tái dùng ĐÚNG khuôn "plugin" `LESSON_PLAN_INTEGRATIONS` (giống Việc 1/4/5) -
+chỉ thêm 1 entry mới `LOI_DAN: "loiDan"`, KHÔNG phải sửa `lessonPlanPromptTemplates.js` hay
+`LessonPlanForm.jsx` (UI tự động có thêm checkbox qua `listIntegrations()` sẵn có).
+
+**Điểm khác biệt quan trọng so với Việc 1/4/5** (đúng quyết định đã chốt ở
+`KE_HOACH_GIAI_DOAN_10.md` mục 2, đề xuất #2 - ĐIỀU CHỈNH so với đề xuất gốc của giáo viên): các
+phụ lục trước đây (Tin nhắn PH, Checklist, Phân hoá) LUÔN xuất hiện trong file Word một khi tích
+hợp được bật. Lời dẫn thì KHÔNG - vì rủi ro bị Ban Giám hiệu đánh giá "không đúng chuẩn form
+CV2345" nếu vô tình có mặt trong bản nộp, nên đây là phụ lục có **"cờ ẩn-hiện" RIÊNG ở bước xuất
+Word**, tách biệt với việc tích hợp có bật ở bước soạn hay không:
+- Bước soạn (bật tích hợp "Lời dẫn"): AI vẫn luôn sinh ra dữ liệu `loiDan` như các tích hợp khác.
+- Bản xem trước web: LUÔN hiển thị phụ lục này nếu có dữ liệu (không có rủi ro "sai form" vì đây
+  không phải bản nộp).
+- Xuất Word: **mặc định KHÔNG chèn** ("Bản nộp chuẩn") - giáo viên phải tự tick checkbox mới có
+  ("Bản đầy đủ có lời dẫn"). Đây là lựa chọn tại thời điểm XUẤT, độc lập với lựa chọn tại thời
+  điểm SOẠN, đúng tinh thần "cờ ẩn-hiện" đã chốt trong kế hoạch.
+
+- **`lessonPlanIntegrations.js`**: thêm entry `loiDan`. Yêu cầu AI: với MỖI hoạt động trong mảng
+  `hoatDong`, viết đúng 1 câu (tối đa 2 câu ngắn) lời dẫn dắt/chuyển ý mà giáo viên ĐỌC TO NGUYÊN
+  VĂN trên lớp ngay trước khi bắt đầu hoạt động đó (hoạt động đầu tiên = câu mở đầu tiết học; các
+  hoạt động sau = câu chuyển ý từ hoạt động liền trước). Văn phong PHẢI là lời NÓI trực tiếp với
+  học sinh (xưng "cô/thầy" - gọi "các con"/"các em"), KHÔNG viết giọng văn hành chính của giáo án;
+  nếu giáo viên đã chọn "Phong cách soạn giáo án" (Việc 2) thì lời dẫn PHẢI theo đúng giọng văn đó
+  - tận dụng ĐÚNG hạ tầng Phong cách đã có từ Việc 2, không phát minh cơ chế riêng. Trả JSON
+  `"loiDan"`: mảng object, ĐÚNG SỐ LƯỢNG = số hoạt động, ĐÚNG THỨ TỰ, mỗi phần tử
+  `{ "hoatDong": "<tên hoạt động, trùng "ten">", "loiDan": "<câu dẫn dắt>" }`.
+- **`lessonPlanExportService.js`**: thêm hàm `buildLoiDanParagraphs()` (mỗi hoạt động 1 đoạn tên
+  in đậm + 1 đoạn lời dẫn in nghiêng trong ngoặc kép). `buildLessonPlanDocxSections()` nhận thêm
+  tham số `includeTeacherScript = false` - CHỈ gọi `buildLoiDanParagraphs()` khi
+  `includeTeacherScript === true` VÀ `lessonPlan.loiDan?.length` (logic "ẩn/hiện" nằm DUY NHẤT ở
+  đây, không lặp lại ở nơi khác để tránh lệch nhau). Phụ lục tách trang riêng
+  (`pageBreakBefore: true`, giống các phụ lục khác), có ghi chú nhỏ "(... phần THAM KHẢO, không
+  thuộc khung mẫu CV2345 chuẩn)". `exportLessonPlanToWord()` nhận + truyền tiếp tham số này, và
+  thêm hậu tố `-day-du-loi-dan` vào TÊN FILE khi bật (giúp giáo viên phân biệt 2 phiên bản bằng
+  mắt, tránh nộp nhầm bản có lời dẫn).
+- **`LessonPlanExportActions.jsx`**: thêm checkbox "Kèm phụ lục Lời dẫn khi tải Word (Bản đầy đủ -
+  không dùng để nộp Ban Giám hiệu)" - CHỈ hiển thị khi giáo án thật sự có dữ liệu `loiDan` (tích
+  hợp đã được bật lúc soạn), mặc định **KHÔNG tick** (an toàn - nút "Tải Word" mặc định luôn ra
+  "Bản nộp chuẩn"), state cục bộ trong component (không cần thay đổi gì ở `page.js`).
+- **`LessonPlanPreview.jsx`**: thêm `LoiDanBlock` - hiển thị dạng PHỤ LỤC (đặt sau Checklist NL-PC,
+  trước Tin nhắn phụ huynh), mỗi hoạt động 1 khối màu vàng nhạt gồm tên hoạt động + câu lời dẫn in
+  nghiêng trong ngoặc kép, có ghi chú nhỏ nhắc giáo viên rằng mặc định KHÔNG kèm khi xuất Word.
+- **`test/lessonPlanFixes.test.js`**: thêm 4 test mới - (1) prompt bật/tắt đúng nội dung + schema
+  `"loiDan":`/`"hoatDong":`; (2) có `loiDan` nhưng `includeTeacherScript` mặc định/`false` tường
+  minh → KHÔNG có phụ lục trong Word (đúng "Bản nộp chuẩn"); (3) `includeTeacherScript=true` VÀ có
+  `loiDan` → CÓ phụ lục đúng nội dung (tên hoạt động + câu dẫn) trong Word (đúng "Bản đầy đủ");
+  (4) `includeTeacherScript=true` nhưng KHÔNG có `loiDan` → không chèn phụ lục rỗng.
+
+**Không cần sửa** `lessonPlanPromptTemplates.js`, `lessonPlanEngine.js`, `lessonPlanOrchestrator.js`
+(đã xác nhận: 2 file engine/orchestrator không lọc/whitelist field JSON nào, object AI trả về đi
+thẳng qua nguyên vẹn - `loiDan` tự động "sống sót" tới UI giống mọi field tích hợp khác), hay
+`page.js` (state checkbox nằm gọn trong `LessonPlanExportActions.jsx`).
+
+### Đã tự verify thật (không chỉ đọc code) — sandbox phiên này CÓ MẠNG (giống Việc 4-5)
+- `npm install` chạy bình thường (212 packages), không cần shim/script tạm.
+- `npm test` chạy THẬT bằng đúng lệnh chính thức: **73/73 PASS** (69 test cũ không hỏng + 4 test
+  mới của Việc 6), bao gồm giải nén `.docx` THẬT bằng `jszip` thật (gói `docx` thật).
+- `npm run build` (Next.js 14.2.35): **build sạch, không lỗi type/lint**, cú pháp JSX của
+  `LoiDanBlock` và checkbox mới trong `LessonPlanExportActions.jsx` hợp lệ.
+- Đã tự phát hiện + sửa 1 lỗi ở CHÍNH bộ test mới viết (không phải lỗi code sản phẩm): 2 test ban
+  đầu FAIL OAN vì dữ liệu test tự đặt `tenBai: "Bài test lời dẫn"` → tiêu đề giáo án viết hoa
+  thành "BÀI TEST LỜI DẪN" tình cờ chứa sẵn chuỗi con "LỜI DẪN" khiến assertion
+  `!xml.includes("LỜI DẪN")` sai dù code đúng - đã viết 1 test debug tạm (`node --test`, xoá ngay
+  sau khi dùng) in ra đúng vị trí chuỗi khớp để xác nhận nguyên nhân, rồi sửa assertion so khớp
+  CHÍNH XÁC tiêu đề phụ lục `"PHỤ LỤC: LỜI DẪN"` thay vì chuỗi con chung chung - chạy lại xác nhận
+  PASS đúng nghĩa (không phải nới lỏng test để né lỗi thật).
+
+**Việc CHƯA làm được (cần bạn tự làm)**:
+- Chưa gọi Gemini THẬT để xem AI có thực sự viết lời dẫn ĐÚNG VĂN PHONG "lời nói trực tiếp trên
+  lớp" (không lẫn giọng văn hành chính của giáo án) hay không, và có bám đúng "Phong cách soạn
+  giáo án" đã chọn (Việc 2) hay không - đây là yêu cầu định tính, cần đọc bằng mắt nhiều lần sinh
+  thử với `npm run dev` + API key thật, thử cả 4 phong cách (3 preset + tự do).
+- Chưa xem bằng mắt trên trình duyệt thật: checkbox "Kèm phụ lục Lời dẫn..." trong
+  `LessonPlanExportActions.jsx` có hiển thị/ẩn đúng lúc không (chỉ hiện khi có `loiDan`), tick/bỏ
+  tick có đổi đúng tên file tải về (`-day-du-loi-dan`) và nội dung file Word tương ứng không.
+- Mặc định KHÔNG tự bật sẵn tuỳ chọn "Lời dẫn" trong `selectedIntegrations` của
+  `LessonPlanForm.jsx` (giáo viên cần tự tick, giống phần lớn tích hợp khác trừ `phieuHocTap`).
+
+## Việc 7/7 — Slide Outline — ĐÃ XONG (HOÀN TẤT GIAI ĐOẠN 10, 7/7 việc)
+
+**Cơ chế**: tái dùng đúng khuôn "plugin" `LESSON_PLAN_INTEGRATIONS` - thêm entry
+`SLIDE_OUTLINE: "slideOutline"`, không sửa `lessonPlanPromptTemplates.js`/`LessonPlanForm.jsx`.
+
+**Giới hạn phạm vi có chủ đích** (đúng quyết định đã chốt ở `KE_HOACH_GIAI_DOAN_10.md` mục 2, đề
+xuất #3 - ĐIỀU CHỈNH so với đề xuất gốc của giáo viên): CHỈ dàn ý VĂN BẢN thuần tuý (danh sách
+slide + gạch đầu dòng nội dung gợi ý), **KHÔNG** tạo file `.pptx` thật, **KHÔNG** hứa hẹn hiệu ứng
+trình chiếu/animation như ví dụ giáo viên từng đưa ra ban đầu (ngoài khả năng kiểm soát, rủi ro kỹ
+thuật không tương xứng lợi ích). Có test riêng canh gác việc prompt KHÔNG được nhắc tới `.pptx`.
+
+**Khác với Lời dẫn (Việc 6)**: phụ lục này KHÔNG cần "cờ ẩn-hiện" khi xuất Word - vì đây chỉ là
+dàn ý tham khảo, không đụng khung mục I-IV chuẩn CV2345 nên không có rủi ro "sai form" khi BGH
+duyệt. Luôn xuất hiện trong Word một khi tích hợp được bật, giống Tin nhắn PH/Checklist/Phân hoá.
+
+- **`lessonPlanIntegrations.js`**: thêm entry `slideOutline`. Yêu cầu AI: dàn ý 6-10 slide theo
+  tiến trình bài dạy, BẮT BUỘC có slide "Trang bìa" đầu tiên và slide "Kết thúc/Dặn dò" cuối cùng,
+  các slide giữa bám ĐÚNG THỨ TỰ 4 hoạt động (có thể tách 1 hoạt động dài thành nhiều slide). Mỗi
+  slide: 1 tiêu đề + 2-5 gạch đầu dòng NGẮN GỌN (không viết câu văn hoàn chỉnh dài dòng). Trả JSON
+  `"slideOutline": [ { "tieuDe": "...", "noiDung": ["...", "..."] } ]`.
+- **`lessonPlanExportService.js`**: thêm `buildSlideOutlineParagraphs()` (mỗi slide 1 đoạn tiêu đề
+  đánh số "Slide N: ..." in đậm + danh sách gạch đầu dòng thật của `docx`). Chèn phụ lục tách
+  trang (`pageBreakBefore: true`) khi `lessonPlan.slideOutline?.length` - LUÔN chèn nếu có dữ liệu
+  (không có tham số cờ như `includeTeacherScript` của Việc 6).
+- **`LessonPlanPreview.jsx`**: thêm `SlideOutlineBlock` - hiển thị dạng "storyboard" đơn giản, mỗi
+  slide 1 thẻ màu tím nhạt xếp cạnh nhau (flex-wrap) gồm số thứ tự + tiêu đề + danh sách gạch đầu
+  dòng, đặt sau `TinNhanPhuHuynhBlock` (cuối cùng trong danh sách phụ lục).
+- **`test/lessonPlanFixes.test.js`**: thêm 2 test mới - (1) prompt bật/tắt đúng nội dung + schema
+  `"slideOutline":`/`"tieuDe":`/`"noiDung":`, kèm assertion riêng xác nhận prompt KHÔNG nhắc tới
+  `.pptx` (canh gác đúng quyết định giới hạn phạm vi); (2) docx có/không có phụ lục dàn ý slide
+  đúng, kèm kiểm tra đánh số "Slide 1:"/"Slide 2:" và nội dung gợi ý.
+
+**Không cần sửa** `lessonPlanPromptTemplates.js`, `lessonPlanEngine.js`, `lessonPlanOrchestrator.js`,
+`page.js` - cùng lý do đã xác nhận ở Việc 6 (object AI trả về đi thẳng qua nguyên vẹn, không có
+whitelist field nào chặn `slideOutline`).
+
+### Đã tự verify thật (không chỉ đọc code) — sandbox phiên này CÓ MẠNG (giống Việc 4-6)
+- `npm install` chạy bình thường (212 packages).
+- `npm test` chạy THẬT bằng đúng lệnh chính thức: **75/75 PASS** (73 test cũ không hỏng + 2 test
+  mới của Việc 7), bao gồm giải nén `.docx` THẬT bằng `jszip` thật.
+- `npm run build` (Next.js 14.2.35): **build sạch, không lỗi type/lint**, cú pháp JSX của
+  `SlideOutlineBlock` hợp lệ.
+
+**Việc CHƯA làm được (cần bạn tự làm)**:
+- Chưa gọi Gemini THẬT để xem AI có thực sự chia slide hợp lý (không quá nhiều/quá ít chữ mỗi
+  gạch đầu dòng, có tách hợp lý hoạt động dài thành nhiều slide hay không) - cần đọc bằng mắt
+  nhiều lần sinh thử với `npm run dev` + API key thật.
+- Chưa xem bằng mắt trên trình duyệt thật: các thẻ slide màu tím cạnh nhau có bị vỡ layout ở màn
+  hình hẹp không, và có dễ phân biệt với các phụ lục màu khác đã có hay không.
+- Mặc định KHÔNG tự bật sẵn tuỳ chọn "Slide Outline" trong `selectedIntegrations` của
+  `LessonPlanForm.jsx` (giáo viên cần tự tick, giống phần lớn tích hợp khác trừ `phieuHocTap`).
+
+---
+
+## TỔNG KẾT GIAI ĐOẠN 10 (7/7 việc đã hoàn thành)
+
+Toàn bộ 7 việc trong `KE_HOACH_GIAI_DOAN_10.md` đã hoàn thành theo đúng thứ tự đã chốt: (1) Tin
+nhắn Zalo phụ huynh, (2) Phong cách soạn giáo án, (3) Chống trùng liên giáo viên, (4) Checklist
+NL-PC, (5) Bài tập phân hoá 3 mức, (6) Lời dẫn (Teacher Script), (7) Slide Outline. Tất cả đều
+dùng chung 1 khuôn "plugin" `LESSON_PLAN_INTEGRATIONS` (trừ Việc 2/3 là hạ tầng nền tảng riêng),
+không phá vỡ khung mẫu CV2345 chuẩn (Mục I-IV), mọi phụ lục đều bật/tắt độc lập. Bộ test hiện có
+**75/75 PASS**. Các bước kiểm tra bằng mắt/gọi AI thật còn lại (liệt kê ở từng mục Việc 1-7 phía
+trên) cần bạn tự thực hiện với `npm run dev` + API key thật trước khi đưa vào sử dụng thực tế cho
+giáo viên. Giai đoạn 9 (Phiếu bài tập, còn dở) vẫn để nguyên như đã thống nhất từ đầu.
 
 ---
 

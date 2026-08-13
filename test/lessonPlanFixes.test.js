@@ -496,3 +496,168 @@ test("buildLessonPlanDocxSections: baiTapPhanHoa chỉ có 1/3 mức (VD chỉ h
   assert.ok(!xml.includes("Mức 2"), "không có dữ liệu datChuan thì không được render nhãn Mức 2");
   assert.ok(!xml.includes("Mức 3"), "không có dữ liệu nangCao thì không được render nhãn Mức 3");
 });
+
+// ===================== Giai đoạn 10, Việc 6/7 — Lời dẫn (Teacher Script) =====================
+
+test('buildLessonPlanPrompt: bật tích hợp "loiDan" phải có hướng dẫn + schema JSON mảng { hoatDong, loiDan }', () => {
+  const promptOn = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: ["loiDan"],
+  });
+  assert.match(promptOn, /Lời dẫn/, "phải có hướng dẫn soạn lời dẫn khi bật");
+  assert.match(promptOn, /"loiDan":/, 'ví dụ JSON schema chính phải có field "loiDan"');
+  assert.match(promptOn, /"hoatDong":/, 'schema mẫu phải có field con "hoatDong" (tên hoạt động tương ứng)');
+
+  const promptOff = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: [],
+  });
+  assert.doesNotMatch(promptOff, /Soạn thêm "Lời dẫn"/, "KHÔNG bật thì KHÔNG có hướng dẫn này");
+  assert.doesNotMatch(promptOff, /"loiDan":/, 'KHÔNG bật thì schema JSON KHÔNG có field "loiDan"');
+});
+
+test("buildLessonPlanDocxSections: có loiDan NHƯNG includeTeacherScript=false (mặc định) -> KHÔNG chèn phụ lục (Bản nộp chuẩn)", async () => {
+  const lessonPlan = {
+    tenBai: "Bài test lời dẫn",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+    loiDan: [{ hoatDong: "Khởi động", loiDan: "Nào các con, hôm nay cô có một trò chơi rất thú vị!" }],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+
+  // Không truyền includeTeacherScript -> mặc định false -> "Bản nộp chuẩn", không có phụ lục.
+  const childrenDefault = buildLessonPlanDocxSections({ lessonPlan, timeline: [], meta });
+  const docDefault = new Document({ sections: [{ children: childrenDefault }] });
+  const bufDefault = await Packer.toBuffer(docDefault);
+  const zipDefault = await JSZip.loadAsync(bufDefault);
+  const xmlDefault = await zipDefault.file("word/document.xml").async("string");
+  assert.ok(!xmlDefault.includes("PHỤ LỤC: LỜI DẪN"), "mặc định (Bản nộp chuẩn) KHÔNG được có phụ lục Lời dẫn");
+
+  // Truyền includeTeacherScript=false tường minh -> vẫn không có (Bản nộp chuẩn).
+  const childrenOff = buildLessonPlanDocxSections({
+    lessonPlan,
+    timeline: [],
+    meta,
+    includeTeacherScript: false,
+  });
+  const docOff = new Document({ sections: [{ children: childrenOff }] });
+  const bufOff = await Packer.toBuffer(docOff);
+  const zipOff = await JSZip.loadAsync(bufOff);
+  const xmlOff = await zipOff.file("word/document.xml").async("string");
+  assert.ok(!xmlOff.includes("PHỤ LỤC: LỜI DẪN"), "includeTeacherScript=false thì KHÔNG được có phụ lục Lời dẫn");
+});
+
+test("buildLessonPlanDocxSections: includeTeacherScript=true VÀ có loiDan -> CÓ phụ lục đúng nội dung (Bản đầy đủ)", async () => {
+  const lessonPlan = {
+    tenBai: "Bài test lời dẫn",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [
+      { ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] },
+      { ten: "Luyện tập", tienTrinh: [{ hoatDongGVHS: "C", sanPhamDuKien: "D" }] },
+    ],
+    loiDan: [
+      { hoatDong: "Khởi động", loiDan: "Nào các con, hôm nay cô có một trò chơi rất thú vị!" },
+      { hoatDong: "Luyện tập", loiDan: "Bây giờ chúng ta cùng luyện tập những gì vừa học nhé." },
+    ],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+  const children = buildLessonPlanDocxSections({ lessonPlan, timeline: [], meta, includeTeacherScript: true });
+  const doc = new Document({ sections: [{ children }] });
+  const buf = await Packer.toBuffer(doc);
+  const zip = await JSZip.loadAsync(buf);
+  const xml = await zip.file("word/document.xml").async("string");
+  assert.ok(xml.includes("PHỤ LỤC: LỜI DẪN (TEACHER SCRIPT)"), "phải có tiêu đề phụ lục lời dẫn");
+  assert.ok(xml.includes("Khởi động"), "phải có tên hoạt động Khởi động");
+  assert.ok(xml.includes("Luyện tập"), "phải có tên hoạt động Luyện tập");
+  assert.ok(xml.includes("một trò chơi rất thú vị"), "phải có nội dung lời dẫn hoạt động Khởi động");
+  assert.ok(xml.includes("luyện tập những gì vừa học"), "phải có nội dung lời dẫn hoạt động Luyện tập");
+});
+
+test("buildLessonPlanDocxSections: includeTeacherScript=true NHƯNG lessonPlan không có loiDan -> KHÔNG chèn phụ lục thừa", async () => {
+  const lessonPlan = {
+    tenBai: "Bài test không có lời dẫn",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+  const children = buildLessonPlanDocxSections({ lessonPlan, timeline: [], meta, includeTeacherScript: true });
+  const doc = new Document({ sections: [{ children }] });
+  const buf = await Packer.toBuffer(doc);
+  const zip = await JSZip.loadAsync(buf);
+  const xml = await zip.file("word/document.xml").async("string");
+  assert.ok(!xml.includes("PHỤ LỤC: LỜI DẪN"), "không có dữ liệu loiDan thì dù bật cờ vẫn không được chèn phụ lục rỗng");
+});
+
+// ===================== Giai đoạn 10, Việc 7/7 — Slide Outline =====================
+
+test('buildLessonPlanPrompt: bật tích hợp "slideOutline" phải có hướng dẫn + schema JSON mảng { tieuDe, noiDung }', () => {
+  const promptOn = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: ["slideOutline"],
+  });
+  assert.match(promptOn, /Dàn ý Slide/, "phải có hướng dẫn soạn dàn ý slide khi bật");
+  assert.match(promptOn, /"slideOutline":/, 'ví dụ JSON schema chính phải có field "slideOutline"');
+  assert.match(promptOn, /"tieuDe":/, 'schema mẫu phải có field con "tieuDe"');
+  assert.match(promptOn, /"noiDung":/, 'schema mẫu phải có field con "noiDung"');
+  assert.doesNotMatch(promptOn, /\.pptx/, "KHÔNG được hứa hẹn tạo file .pptx thật");
+
+  const promptOff = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 3,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: [],
+  });
+  assert.doesNotMatch(promptOff, /Soạn thêm "Dàn ý Slide"/, "KHÔNG bật thì KHÔNG có hướng dẫn này");
+  assert.doesNotMatch(promptOff, /"slideOutline":/, 'KHÔNG bật thì schema JSON KHÔNG có field "slideOutline"');
+});
+
+test("buildLessonPlanDocxSections: có slideOutline thì xuất hiện đúng phụ lục riêng trong file Word (LUÔN chèn, không cần cờ), không có thì không chèn trang thừa", async () => {
+  const baseLessonPlan = {
+    tenBai: "Bài test slide",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+  };
+  const meta = { grade: 3, soTiet: 1, columnMode: "one_column" };
+
+  const withSlides = {
+    ...baseLessonPlan,
+    slideOutline: [
+      { tieuDe: "Trang bìa", noiDung: ["Tên bài học", "Lớp 3 - Môn Toán"] },
+      { tieuDe: "Khởi động", noiDung: ["Trò chơi đố vui về phép cộng"] },
+    ],
+  };
+  const childrenWith = buildLessonPlanDocxSections({ lessonPlan: withSlides, timeline: [], meta });
+  const docWith = new Document({ sections: [{ children: childrenWith }] });
+  const bufWith = await Packer.toBuffer(docWith);
+  const zipWith = await JSZip.loadAsync(bufWith);
+  const xmlWith = await zipWith.file("word/document.xml").async("string");
+  assert.ok(xmlWith.includes("PHỤ LỤC: DÀN Ý SLIDE"), "phải có tiêu đề phụ lục dàn ý slide");
+  assert.ok(xmlWith.includes("Slide 1: Trang bìa"), "phải có đánh số + tiêu đề slide 1");
+  assert.ok(xmlWith.includes("Slide 2: Khởi động"), "phải có đánh số + tiêu đề slide 2");
+  assert.ok(xmlWith.includes("Trò chơi đố vui về phép cộng"), "phải có nội dung gợi ý slide");
+
+  const childrenWithout = buildLessonPlanDocxSections({ lessonPlan: baseLessonPlan, timeline: [], meta });
+  const docWithout = new Document({ sections: [{ children: childrenWithout }] });
+  const bufWithout = await Packer.toBuffer(docWithout);
+  const zipWithout = await JSZip.loadAsync(bufWithout);
+  const xmlWithout = await zipWithout.file("word/document.xml").async("string");
+  assert.ok(!xmlWithout.includes("DÀN Ý SLIDE"), "không bật thì không được có phụ lục dàn ý slide thừa");
+});
