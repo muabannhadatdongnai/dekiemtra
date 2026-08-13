@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifySessionToken } from "./sessionToken";
+import { checkTeacherGenerateLimit } from "./teacherGenerateRateLimiter";
 
 /**
  * apiAuth.js
@@ -34,4 +35,28 @@ export function requireAuth(request) {
   }
 
   return { session, error: null };
+}
+
+/**
+ * Dùng NGAY SAU `requireAuth()` ở ĐẦU mỗi route sinh nội dung AI (`/api/generate*`) - TRƯỚC khi
+ * làm việc tốn kém (gọi Gemini, tải SGK từ GitHub...). Xem giải thích đầy đủ 2 lớp chặn (burst +
+ * trần theo ngày) trong `teacherGenerateRateLimiter.js`.
+ *
+ * Cách dùng:
+ *   const auth = requireAuth(request);
+ *   if (auth.error) return auth.error;
+ *   const limitError = await requireWithinTeacherGenerateLimit(auth.session.username);
+ *   if (limitError) return limitError;
+ *
+ * @returns {Promise<import("next/server").NextResponse | null>} null nếu còn trong hạn mức
+ * (và ĐÃ ghi nhận lượt gọi này), NextResponse lỗi 429 nếu vượt hạn mức.
+ */
+export async function requireWithinTeacherGenerateLimit(username) {
+  const result = await checkTeacherGenerateLimit(username);
+  if (result.allowed) return null;
+
+  return NextResponse.json(
+    { error: result.message, rateLimited: true, reason: result.reason, dailyLimit: result.dailyLimit },
+    { status: 429 }
+  );
 }
