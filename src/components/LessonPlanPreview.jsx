@@ -340,6 +340,90 @@ function BaiTapPhanHoaBlock({ data }) {
   );
 }
 
+// Phụ lục "Lời dẫn (Teacher Script)" - GIAI ĐOẠN 10, Việc 6/7. Bản xem trước web LUÔN hiển thị
+// phụ lục này khi tích hợp bật (giống các phụ lục khác) - "cờ ẩn-hiện" chỉ áp dụng khi XUẤT WORD
+// (xem includeTeacherScript trong LessonPlanExportActions.jsx/lessonPlanExportService.js), vì
+// bản xem trước web không phải bản nộp Ban Giám hiệu nên không có rủi ro "sai form CV2345".
+function LoiDanBlock({ items }) {
+  const rows = (items || []).filter((it) => it?.loiDan);
+  if (rows.length === 0) return null;
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 2px" }}>
+        PHỤ LỤC: Lời dẫn (Teacher Script)
+      </p>
+      <p style={{ fontSize: 12, color: "#64748b", textAlign: "center", margin: "0 0 8px" }}>
+        Câu dẫn dắt/chuyển ý mẫu cho từng hoạt động - phần THAM KHẢO, không thuộc khung mẫu CV2345
+        chuẩn (mặc định KHÔNG kèm khi xuất Word, giáo viên tự bật ở nút "Tải Word" nếu muốn).
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {rows.map((it, i) => (
+          <div
+            key={i}
+            style={{
+              background: "#FEFCE8",
+              border: "1px solid #FDE68A",
+              borderRadius: 8,
+              padding: "8px 10px",
+            }}
+          >
+            {it.hoatDong && (
+              <p style={{ fontWeight: 700, fontSize: 12.5, margin: "0 0 2px", color: "#854D0E" }}>
+                {it.hoatDong}
+              </p>
+            )}
+            <p style={{ fontSize: 13.5, fontStyle: "italic", margin: 0 }}>&ldquo;{it.loiDan}&rdquo;</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Phụ lục "Dàn ý Slide" (Slide Outline) - GIAI ĐOẠN 10, Việc 7/7. Mỗi slide 1 thẻ đánh số, tiêu
+// đề in đậm + danh sách gạch đầu dòng nội dung gợi ý - trình bày như 1 "storyboard" đơn giản để
+// giáo viên nhìn lướt là hình dung được cấu trúc bộ slide trước khi tự dựng PowerPoint/Canva.
+function SlideOutlineBlock({ slides }) {
+  const rows = (slides || []).filter((s) => s?.tieuDe || (s?.noiDung || []).length);
+  if (rows.length === 0) return null;
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 2px" }}>
+        PHỤ LỤC: Dàn ý Slide
+      </p>
+      <p style={{ fontSize: 12, color: "#64748b", textAlign: "center", margin: "0 0 8px" }}>
+        Dàn ý văn bản tham khảo để dựng PowerPoint/Canva - không phải file trình chiếu thật.
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        {rows.map((s, i) => (
+          <div
+            key={i}
+            style={{
+              flex: "1 1 220px",
+              minWidth: 200,
+              border: "1px solid #C7D2FE",
+              background: "#EEF2FF",
+              borderRadius: 8,
+              padding: "8px 10px",
+            }}
+          >
+            <p style={{ fontWeight: 700, fontSize: 12.5, margin: "0 0 4px", color: "#3730A3" }}>
+              Slide {i + 1}: {s.tieuDe}
+            </p>
+            <ul style={{ margin: 0, paddingLeft: 16 }}>
+              {(s.noiDung || []).map((line, j) => (
+                <li key={j} style={{ fontSize: 12, marginBottom: 2 }}>
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
   if (!lessonPlan) {
     return (
@@ -412,7 +496,9 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         <PhieuHocTapBlock phieu={lessonPlan.phieuHocTap} />
         <BaiTapPhanHoaBlock data={lessonPlan.baiTapPhanHoa} />
         <ChecklistNLPCBlock items={lessonPlan.checklistNLPC} />
+        <LoiDanBlock items={lessonPlan.loiDan} />
         <TinNhanPhuHuynhBlock text={lessonPlan.tinNhanPhuHuynh} />
+        <SlideOutlineBlock slides={lessonPlan.slideOutline} />
       </div>
     </div>
   );
