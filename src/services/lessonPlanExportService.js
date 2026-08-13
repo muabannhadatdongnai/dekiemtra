@@ -245,6 +245,64 @@ function buildBaiTapPhanHoaParagraphs(data) {
   return children;
 }
 
+// Phụ lục "Lời dẫn (Teacher Script)" - GIAI ĐOẠN 10, Việc 6/7 (xem KE_HOACH_GIAI_DOAN_10.md mục
+// 2, đề xuất #2). CHỦ ĐỘNG ĐIỀU CHỈNH so với đề xuất gốc: KHÔNG chèn thẳng vào Mục III bản chính
+// (rủi ro bị đánh giá "không chuẩn form" khi BGH duyệt CV2345) - đây LUÔN là 1 phụ lục tách trang
+// riêng, và hàm buildLessonPlanDocxSections() CHỈ gọi hàm này khi includeTeacherScript===true
+// ("Bản đầy đủ có lời dẫn") - mặc định xuất "Bản nộp chuẩn" KHÔNG có phụ lục này (xem lời gọi bên
+// dưới + LessonPlanExportActions.jsx là nơi giáo viên chủ động bật cờ này).
+function buildLoiDanParagraphs(items) {
+  const children = [];
+  (items || []).forEach((it) => {
+    if (!it?.loiDan) return;
+    if (it.hoatDong) {
+      children.push(
+        new Paragraph({
+          children: [textRun(it.hoatDong, { bold: true })],
+          spacing: { before: 100, after: 20 },
+        })
+      );
+    }
+    children.push(
+      new Paragraph({
+        children: [textRun(`"${it.loiDan}"`, { italics: true })],
+        spacing: { after: 80 },
+        indent: { left: 200 },
+      })
+    );
+  });
+  return children;
+}
+
+// Phụ lục "Dàn ý Slide" (Slide Outline) - GIAI ĐOẠN 10, Việc 7/7 (xem KE_HOACH_GIAI_DOAN_10.md
+// mục 2, đề xuất #3). KHÔNG có "cờ ẩn-hiện" như Lời dẫn (Việc 6) - đây CHỈ là dàn ý văn bản tham
+// khảo, không đụng khung mục I-IV chuẩn CV2345 nên không có rủi ro "sai form" khi BGH duyệt, vẫn
+// luôn xuất hiện trong file Word như các phụ lục khác (Tin nhắn PH/Checklist/Phân hoá) một khi
+// tích hợp được bật lúc soạn.
+function buildSlideOutlineParagraphs(slides) {
+  const children = [];
+  (slides || []).forEach((s, i) => {
+    if (!s?.tieuDe && !(s?.noiDung || []).length) return;
+    children.push(
+      new Paragraph({
+        children: [textRun(`Slide ${i + 1}: ${s.tieuDe || ""}`, { bold: true })],
+        spacing: { before: 100, after: 20 },
+      })
+    );
+    (s.noiDung || []).forEach((line) => {
+      children.push(
+        new Paragraph({
+          bullet: { level: 0 },
+          children: [textRun(line)],
+          spacing: { after: 20 },
+          indent: { left: 200 },
+        })
+      );
+    });
+  });
+  return children;
+}
+
 function buildActivitySection(activity, columnMode, minutes) {
   const titleSuffix = minutes ? ` (~${minutes} phút)` : "";
   const children = [
@@ -267,7 +325,7 @@ function buildActivitySection(activity, columnMode, minutes) {
   return children;
 }
 
-export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
+export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includeTeacherScript = false }) {
   const columnMode = meta?.columnMode || LESSON_PLAN_COLUMN_MODES.ONE_COLUMN;
   const minutesByKey = Object.fromEntries((timeline || []).map((t) => [t.key, t.minutes]));
   const activityKeyByIndex = ["khoi_dong", "kham_pha", "luyen_tap", "van_dung"];
@@ -430,6 +488,57 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta }) {
     );
   }
 
+  // Chỉ chèn khi giáo viên chủ động bật cờ "Bản đầy đủ có lời dẫn" - xem giải thích đầy đủ ở
+  // buildLoiDanParagraphs() phía trên. KHÔNG kiểm tra riêng includeTeacherScript ở LessonPlan-
+  // ExportActions.jsx - để logic "ẩn/hiện" nằm DUY NHẤT ở đây, tránh 2 nơi có thể lệch nhau.
+  if (includeTeacherScript && lessonPlan.loiDan?.length) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun("PHỤ LỤC: LỜI DẪN (TEACHER SCRIPT)", { bold: true, size: 26 })],
+        spacing: { before: 100, after: 40 },
+      })
+    );
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          textRun(
+            "(Câu dẫn dắt/chuyển ý mẫu cho từng hoạt động - phần THAM KHẢO, không thuộc khung mẫu CV2345 chuẩn)",
+            { italics: true, size: 20, color: "64748B" }
+          ),
+        ],
+        spacing: { after: 120 },
+      })
+    );
+    children.push(...buildLoiDanParagraphs(lessonPlan.loiDan));
+  }
+
+  if (lessonPlan.slideOutline?.length) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun("PHỤ LỤC: DÀN Ý SLIDE", { bold: true, size: 26 })],
+        spacing: { before: 100, after: 40 },
+      })
+    );
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          textRun(
+            "(Dàn ý văn bản tham khảo để dựng PowerPoint/Canva - không phải file trình chiếu thật)",
+            { italics: true, size: 20, color: "64748B" }
+          ),
+        ],
+        spacing: { after: 120 },
+      })
+    );
+    children.push(...buildSlideOutlineParagraphs(lessonPlan.slideOutline));
+  }
+
   return children;
 }
 
@@ -451,10 +560,13 @@ const LESSON_PLAN_PAGE_PROPERTIES = {
   },
 };
 
-export async function exportLessonPlanToWord({ lessonPlan, timeline, meta }) {
-  const children = buildLessonPlanDocxSections({ lessonPlan, timeline, meta });
+export async function exportLessonPlanToWord({ lessonPlan, timeline, meta, includeTeacherScript = false }) {
+  const children = buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includeTeacherScript });
   const doc = new Document({ sections: [{ properties: LESSON_PLAN_PAGE_PROPERTIES, children }] });
   const blob = await Packer.toBlob(doc);
   const fileNameBase = (lessonPlan.tenBai || meta?.tenBai || "giao-an").replace(/[^\p{L}\p{N}]+/gu, "-");
-  saveAs(blob, `Giao-an-${fileNameBase}.docx`);
+  // Hậu tố tên file để giáo viên phân biệt rõ 2 phiên bản (không lỡ nộp nhầm bản có lời dẫn) -
+  // xem quyết định "cờ ẩn-hiện" ở KE_HOACH_GIAI_DOAN_10.md mục 2, đề xuất #2.
+  const suffix = includeTeacherScript ? "-day-du-loi-dan" : "";
+  saveAs(blob, `Giao-an-${fileNameBase}${suffix}.docx`);
 }

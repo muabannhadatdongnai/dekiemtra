@@ -28,6 +28,8 @@ export const INTEGRATION_KEYS = {
   TIN_NHAN_PHU_HUYNH: "tinNhanPhuHuynh",
   CHECKLIST_NLPC: "checklistNLPC",
   BAI_TAP_PHAN_HOA: "baiTapPhanHoa",
+  LOI_DAN: "loiDan",
+  SLIDE_OUTLINE: "slideOutline",
 };
 
 export const LESSON_PLAN_INTEGRATIONS = {
@@ -224,6 +226,62 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  chỉnh (không tự đánh số thứ tự trong chuỗi, hệ thống sẽ tự đánh số khi hiển thị/in).`,
     schemaExample:
       `"baiTapPhanHoa": { "hoTro": ["..."], "datChuan": ["..."], "nangCao": ["..."] }`,
+  },
+  [INTEGRATION_KEYS.LOI_DAN]: {
+    key: INTEGRATION_KEYS.LOI_DAN,
+    label: "Lời dẫn (Teacher Script)",
+    description: "Câu chuyển ý mẫu cho từng hoạt động, đọc trực tiếp trên lớp",
+    isAiGenerated: true,
+    jsonField: "loiDan",
+    // ⚠️ ĐIỀU CHỈNH so với đề xuất gốc của giáo viên (xem KE_HOACH_GIAI_DOAN_10.md mục 2, đề xuất
+    // #2): KHÔNG chèn thẳng vào Mục III bản chính (rủi ro bị đánh giá "không chuẩn form" khi BGH
+    // duyệt CV2345) - luôn xuất ra dưới dạng field JSON riêng ("loiDan"), hiển thị ở bản xem trước
+    // web dưới dạng PHỤ LỤC tách biệt, và khi xuất Word chỉ chèn nếu giáo viên chủ động bật cờ
+    // "Bản đầy đủ có lời dẫn" (xem includeTeacherScript trong lessonPlanExportService.js/
+    // LessonPlanExportActions.jsx) - mặc định xuất "Bản nộp chuẩn" KHÔNG có phụ lục này.
+    buildPromptFragment: () =>
+      `- Soạn thêm "Lời dẫn" (Teacher Script) - với MỖI hoạt động trong mảng "hoatDong" (Khởi động,\n` +
+      `  Khám phá/..., Luyện tập, Vận dụng hoặc tên hoạt động Mầm non tương ứng), viết ĐÚNG 1 câu (hoặc\n` +
+      `  tối đa 2 câu ngắn) LỜI DẪN DẮT/CHUYỂN Ý mà giáo viên có thể ĐỌC TO NGUYÊN VĂN trên lớp ngay\n` +
+      `  TRƯỚC khi bắt đầu hoạt động đó (với hoạt động đầu tiên, đây là câu mở đầu tiết học; với các\n` +
+      `  hoạt động sau, đây là câu chuyển ý từ hoạt động liền trước sang hoạt động này).\n` +
+      `  Yêu cầu VĂN PHONG: đây là lời NÓI trực tiếp với học sinh (xưng "cô/thầy" - gọi "các con"/"các\n` +
+      `  em" tuỳ cấp học), TỰ NHIÊN như giáo viên thật đang nói trên lớp - KHÔNG viết theo giọng văn\n` +
+      `  bản giáo án hành chính (không dùng câu kiểu "Hoạt động này nhằm mục đích..."). Nếu giáo viên\n` +
+      `  đã chọn "Phong cách soạn giáo án" (Sáng tạo/Nhẹ nhàng/Năng động/Tự do), lời dẫn PHẢI thể hiện\n` +
+      `  ĐÚNG giọng văn của phong cách đó.\n` +
+      `  Trả về trong trường JSON "loiDan": mảng object, ĐÚNG SỐ LƯỢNG PHẦN TỬ = số hoạt động trong\n` +
+      `  "hoatDong" (không thừa/thiếu), theo ĐÚNG THỨ TỰ hoạt động, mỗi phần tử { "hoatDong": "<tên\n` +
+      `  hoạt động, TRÙNG KHỚP với trường \\"ten\\" của hoạt động tương ứng>", "loiDan": "<câu dẫn dắt,\n` +
+      `  không tự thêm dấu ngoặc kép>" }.`,
+    schemaExample: `"loiDan": [ { "hoatDong": "...", "loiDan": "..." } ]`,
+  },
+  [INTEGRATION_KEYS.SLIDE_OUTLINE]: {
+    key: INTEGRATION_KEYS.SLIDE_OUTLINE,
+    label: "Slide Outline",
+    description: "Dàn ý từng slide để dựng PowerPoint/Canva nhanh",
+    isAiGenerated: true,
+    jsonField: "slideOutline",
+    // ⚠️ GIỚI HẠN PHẠM VI có chủ đích (xem KE_HOACH_GIAI_DOAN_10.md mục 2, đề xuất #3): CHỈ dàn ý
+    // TEXT đơn giản (danh sách slide + nội dung gợi ý dạng gạch đầu dòng), KHÔNG tạo file .pptx
+    // thật, KHÔNG hứa hẹn "hiệu ứng xuất hiện từng dòng"/animation hay bất kỳ điều gì ngoài khả
+    // năng của 1 dàn ý text (rủi ro kỹ thuật không tương xứng lợi ích nếu làm file .pptx thật).
+    buildPromptFragment: () =>
+      `- Soạn thêm "Dàn ý Slide" (Slide Outline) - CHỈ là dàn ý VĂN BẢN THUẦN TÚY để giáo viên tự\n` +
+      `  dựng PowerPoint/Canva NHANH HƠN (KHÔNG phải file trình chiếu thật, KHÔNG có hiệu ứng/hình\n` +
+      `  ảnh/animation gì - chỉ liệt kê tiêu đề + gợi ý nội dung từng slide).\n` +
+      `  Số lượng slide hợp lý theo tiến trình bài dạy (thường 6-10 slide tuỳ số hoạt động/số tiết):\n` +
+      `  BẮT BUỘC có 1 slide "Trang bìa" đầu tiên (tên bài - lớp - môn) và slide cuối "Cảm ơn/Kết\n` +
+      `  thúc" hoặc "Dặn dò", các slide ở giữa bám sát ĐÚNG THỨ TỰ 4 hoạt động đã soạn ở trên (có\n` +
+      `  thể tách 1 hoạt động dài thành NHIỀU slide nếu nội dung nhiều, ví dụ hoạt động "Khám phá"\n` +
+      `  có thể cần 2-3 slide).\n` +
+      `  Mỗi slide gồm 1 tiêu đề ngắn gọn và 2-5 gạch đầu dòng gợi ý nội dung (mỗi gạch đầu dòng chỉ\n` +
+      `  vài từ/1 cụm ý NGẮN GỌN như dàn ý thật - KHÔNG viết thành câu văn hoàn chỉnh dài dòng, giáo\n` +
+      `  viên sẽ tự triển khai chi tiết khi dựng slide thật).\n` +
+      `  Trả về trong trường JSON "slideOutline": mảng object theo ĐÚNG THỨ TỰ trình chiếu, mỗi phần\n` +
+      `  tử { "tieuDe": "...", "noiDung": ["...", "..."] } - "noiDung" là mảng CHUỖI, mỗi phần tử 1\n` +
+      `  gạch đầu dòng (hệ thống sẽ tự hiển thị dấu gạch đầu dòng, KHÔNG tự thêm "-" vào đầu chuỗi).`,
+    schemaExample: `"slideOutline": [ { "tieuDe": "...", "noiDung": ["...", "..."] } ]`,
   },
 };
 
