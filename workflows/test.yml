@@ -1,0 +1,39 @@
+name: Test & Build
+
+# Chạy mỗi khi push hoặc mở Pull Request vào nhánh main.
+# Mục đích: bắt lỗi sớm (test hỏng / build hỏng) trước khi merge, không cần chạy tay
+# "npm test && npm run build" trên máy mỗi lần.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Build không thực sự gọi Gemini/GitHub/Upstash lúc build-time (đã rà soát: không có
+          # getStaticProps/getServerSideProps nào fetch dữ liệu ngoài lúc build), nên chỉ cần
+          # giá trị giả để next build không cảnh báo/khác hành vi do biến rỗng. Không phải secret
+          # thật -> an toàn để hardcode ở đây, KHÔNG cần thêm gì vào GitHub Secrets.
+          SESSION_SECRET: "ci-build-placeholder-secret-not-used-in-production"
+          GEMINI_API_KEY: "ci-build-placeholder-not-a-real-key"
