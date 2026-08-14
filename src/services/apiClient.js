@@ -178,3 +178,49 @@ export async function fetchUsageSummaryRequest() {
   const res = await fetch("/api/usage", { headers: authHeaders() });
   return handleResponse(res);
 }
+
+/**
+ * TÍNH NĂNG "Nhận xét học bạ" - xem reportCommentConfig.js/reportCommentEngine.js.
+ * @param payload { cap, doDai, hocSinh: [{hoTen, lop, ghiChuPhamChat?, ghiChuNangLuc?, monHocList?, nhanXetChungTho?}] }
+ * hocSinh có thể là mảng 1 phần tử (gõ tay) hoặc nhiều phần tử (hàng loạt) - route xử lý chung.
+ */
+export async function generateReportCommentRequest(payload) {
+  const res = await fetch("/api/generate-report-comment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse(res);
+}
+
+/** Lấy toàn bộ lịch sử nhận xét đã lưu (mới nhất trước) của 1 học sinh. */
+export async function getReportCommentHistoryRequest({ hoTen, lop }) {
+  const params = new URLSearchParams({ hoTen, lop: lop || "" });
+  const res = await fetch(`/api/report-comment-history?${params.toString()}`, { headers: authHeaders() });
+  return handleResponse(res);
+}
+
+/** Upload file Excel/Word danh sách học sinh hàng loạt -> danh sách học sinh + ghi chú thô. */
+export async function parseReportCommentBulkRequest({ file, cap }) {
+  const formData = new FormData();
+  formData.set("file", file);
+  formData.set("cap", cap);
+  const res = await fetch("/api/parse-report-comment-bulk", {
+    method: "POST",
+    headers: authHeaders(),
+    body: formData,
+  });
+  return handleResponse(res);
+}
+
+/** Tải file Excel mẫu để điền danh sách học sinh hàng loạt - trả về Blob (không phải JSON, nên
+ * KHÔNG dùng handleResponse()). Component tự tạo link tải xuống từ Blob này. */
+export async function downloadReportCommentTemplateRequest(cap) {
+  const params = new URLSearchParams({ cap });
+  const res = await fetch(`/api/report-comment-template?${params.toString()}`, { headers: authHeaders() });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "Không tải được file mẫu, vui lòng thử lại.");
+  }
+  return res.blob();
+}
