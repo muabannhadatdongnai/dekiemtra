@@ -138,6 +138,21 @@ function classifyGeminiError(err) {
 }
 
 /**
+ * ⚠️ MỚI - SỬA LỖI PHÁT HIỆN KHI TEST TÍNH NĂNG "NHẬN XÉT HỌC BẠ" HÀNG LOẠT (2 học sinh):
+ * khi Google đang quá tải (503) trên diện rộng, lỗi này KHÔNG liên quan tới từng key riêng lẻ -
+ * thử hết toàn bộ pool (VD 7 key) gần như chắc chắn vẫn thất bại toàn bộ, nhưng MỖI lần thử vẫn
+ * bị tính là "1 lượt gọi" trong bộ đếm quota CHUNG của TOÀN BỘ ứng dụng (geminiUsageTracker.js -
+ * dùng chung cho mọi tính năng, không riêng gì nhận xét học bạ). Kết hợp với lớp retry ở
+ * reportCommentEngine.js (thử lại thêm 1-2 lần nữa cho MỖI học sinh), số lượt gọi bị NHÂN LÊN
+ * GẤP BỘI trong vài giây (VD: 2 học sinh × 3 lần thử × 7 key = tới 42 lượt gọi chỉ để thất bại),
+ * dồn dập đủ để chạm giới hạn requests-per-minute thật của Google -> biến quá tải TẠM THỜI thành
+ * lỗi 429 "hết hạn mức" THẬT trên nhiều key cùng lúc, ảnh hưởng lây sang cả các tính năng khác
+ * (đề kiểm tra, phiếu bài tập...) dùng chung pool key này. Vì vậy: GIỚI HẠN CỨNG số key thử liên
+ * tiếp khi lỗi là "quá tải" xuống còn vài key, KHÔNG cố thử hết cả pool trong trường hợp này.
+ */
+const MAX_KEY_ATTEMPTS_ON_OVERLOAD = 3;
+
+/**
  * Gọi Gemini generateContent, tự động thử qua các API key đã cấu hình theo thứ tự ngẫu nhiên.
  * Ném lỗi CUỐI CÙNG ra ngoài nếu tất cả key trong lượt thử đều thất bại, hoặc gặp lỗi KHÔNG
  * liên quan đến quota/key (ví dụ model không tồn tại) - trường hợp đó thử key khác cũng vô ích
@@ -180,7 +195,6 @@ export async function generateContentWithFailover(params, options = {}) {
       if (overloaded) overloadFailureCount++;
       await recordGeminiCall({ rawKey: order[i].key, outcome });
 
-      const isLastAttempt = i === order.length - 1;
       const maskedKeyLabel = maskKey(order[i].key);
 
       if (!isRetryableWithOtherKey(err)) {
@@ -188,6 +202,12 @@ export async function generateContentWithFailover(params, options = {}) {
         // -> thử key khác cũng sẽ lỗi y hệt, ném lỗi ra ngay để không tốn thời gian.
         throw err;
       }
+
+      // ⚠️ MỚI: nếu lỗi là "quá tải tạm thời" (503) và đã chạm giới hạn cứng
+      // MAX_KEY_ATTEMPTS_ON_OVERLOAD, DỪNG SỚM dù pool còn key khác chưa thử - xem giải thích ở
+      // JSDoc phía trên. Tránh dội thêm request vô ích vào lúc Google đang nghẽn diện rộng.
+      const hitOverloadCap = overloaded && overloadFailureCount >= MAX_KEY_ATTEMPTS_ON_OVERLOAD;
+      const isLastAttempt = i === order.length - 1 || hitOverloadCap;
 
       if (isLastAttempt) {
         // priority="analyze" dừng sớm ở đây dù pool còn key khác chưa thử - CHỦ Ý, không phải bug:
@@ -202,7 +222,9 @@ export async function generateContentWithFailover(params, options = {}) {
         // đây KHÔNG phải lỗi hết quota của bạn, mà do phía Google đang nghẽn tạm thời. Phân biệt
         // rõ để orchestrator hiển thị đúng lời khuyên ("chờ vài phút rồi thử lại") thay vì lẫn lộn
         // với "hết hạn mức hôm nay" (khiến giáo viên tưởng nhầm phải đợi qua ngày mai).
-        if (overloadFailureCount === order.length) {
+        // Dùng >= thay vì === vì có thể dừng sớm do chạm MAX_KEY_ATTEMPTS_ON_OVERLOAD (hitOverloadCap)
+        // trước khi thử hết order.length key.
+        if (overloadFailureCount === order.length || hitOverloadCap) {
           err.allKeysOverloaded = true;
         }
         throw err;
