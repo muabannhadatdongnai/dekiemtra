@@ -103,6 +103,11 @@ export default function UsageWidget() {
           gián đoạn, hãy thử lại sau hoặc thêm API key mới vào GEMINI_API_KEYS.
         </p>
       )}
+
+      <p className="mt-1.5 text-slate-400">
+        Lưu ý: số "lượt gọi" tính CẢ những lần thử lại tự động khi máy chủ AI quá tải (kể cả thất
+        bại), dùng chung cho mọi tính năng - không phải riêng 1 lượt tạo là 1 lượt gọi.
+      </p>
     </div>
   );
 }
