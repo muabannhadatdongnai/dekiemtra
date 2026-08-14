@@ -569,4 +569,12 @@ export async function exportLessonPlanToWord({ lessonPlan, timeline, meta, inclu
   // xem quyết định "cờ ẩn-hiện" ở KE_HOACH_GIAI_DOAN_10.md mục 2, đề xuất #2.
   const suffix = includeTeacherScript ? "-day-du-loi-dan" : "";
   saveAs(blob, `Giao-an-${fileNameBase}${suffix}.docx`);
+  // ⚠️ FIX (rà soát tổng thể): trước đây hàm KHÔNG return blob -> mọi lời gọi await
+  // exportLessonPlanToWord(...) chỉ nhận về undefined. UI thực tế (LessonPlanExportActions.jsx)
+  // không dùng giá trị trả về nên không lộ lỗi khi dùng bình thường, nhưng test/lessonPlanExportService.js
+  // (giải nén lại .docx thật để kiểm tra nội dung phụ lục LỜI DẪN/DÀN Ý SLIDE) cần blob thật ->
+  // 7/7 test trong file đó FAIL với "Cannot read properties of undefined (reading 'arrayBuffer')".
+  // Trả blob về vừa sửa lỗi test, vừa cho phép code khác tái sử dụng blob (VD xuất đồng thời
+  // nhiều bản như exportBothVersions() trong exportService.js) nếu cần sau này.
+  return blob;
 }
