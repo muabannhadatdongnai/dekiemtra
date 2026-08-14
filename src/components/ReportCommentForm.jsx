@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Sparkles, Upload, Download, Plus, Trash2, User, Users } from "lucide-react";
+import { Loader2, Sparkles, Upload, Download, Plus, Trash2, User, Users, AlertTriangle } from "lucide-react";
 import {
   REPORT_COMMENT_LEVEL_LIST,
   REPORT_COMMENT_LENGTH_LIST,
   REPORT_COMMENT_LENGTHS,
   REPORT_COMMENT_INPUT_MODES,
   getReportCommentLevelConfig,
+  QUICK_TAGS_PHAM_CHAT,
+  QUICK_TAGS_NANG_LUC,
+  QUICK_TAGS_NHAN_XET_CHUNG,
+  QUICK_TAGS_MON_HOC,
+  containsSubjectName,
 } from "@/data/reportCommentConfig";
 import {
   generateReportCommentRequest,
@@ -18,14 +23,45 @@ import {
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
 const textareaClass = `${inputClass} min-h-[70px] resize-y`;
 
-function Field({ label, hint, children }) {
+function Field({ label, hint, warning, children }) {
   return (
     <div>
       <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {warning && (
+        <p className="mt-1 flex items-start gap-1 text-xs font-medium text-amber-600">
+          <AlertTriangle size={13} className="mt-0.5 shrink-0" /> {warning}
+        </p>
+      )}
     </div>
   );
+}
+
+/** Từ khóa nhanh (Quick-tags): bấm để nối cụm từ vào ô nhập, không cần tự gõ - đúng phản hồi
+ * thực tế "thao tác click luôn nhanh hơn gõ bàn phím". */
+function QuickTags({ tags, onPick }) {
+  return (
+    <div className="mt-1.5 flex flex-wrap gap-1.5">
+      {tags.map((tag) => (
+        <button
+          key={tag}
+          type="button"
+          onClick={() => onPick(tag)}
+          className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs text-slate-600 transition hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700"
+        >
+          + {tag}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function appendTag(current, tag) {
+  const trimmed = (current || "").trim();
+  if (!trimmed) return tag;
+  if (trimmed.toLowerCase().includes(tag.toLowerCase())) return trimmed; // tránh trùng lặp
+  return `${trimmed}, ${tag}`;
 }
 
 function emptySubject() {
@@ -49,6 +85,7 @@ export default function ReportCommentForm({ onGenerated }) {
   const [inputMode, setInputMode] = useState(REPORT_COMMENT_INPUT_MODES.SINGLE);
 
   const [student, setStudent] = useState(emptySingleStudent());
+  const [activeSubjectIdx, setActiveSubjectIdx] = useState(0);
 
   const [bulkFile, setBulkFile] = useState(null);
   const [bulkStudents, setBulkStudents] = useState(null); // null = chưa đọc file
@@ -240,18 +277,44 @@ export default function ReportCommentForm({ onGenerated }) {
 
           {isTieuHoc ? (
             <>
-              <Field label="Phẩm chất (ý thô)" hint="VD: chưa tự giác dọn dẹp, hay quên đồ dùng...">
+              <Field
+                label="Phẩm chất (ý thô)"
+                hint='Chỉ ghi biểu hiện đạo đức/thái độ (VD: chưa tự giác dọn dẹp, hay quên đồ dùng...) - KHÔNG ghi kết quả học tập theo môn, phần đó nhập ở mục "Môn học" bên dưới.'
+                warning={
+                  containsSubjectName(student.ghiChuPhamChat)
+                    ? 'Hình như bạn đang nhắc tới một môn học ở đây - kết quả học tập theo môn nên ghi ở mục "Môn học" bên dưới để AI không nhầm lẫn.'
+                    : null
+                }
+              >
                 <textarea
                   className={textareaClass}
                   value={student.ghiChuPhamChat}
                   onChange={(e) => setStudent((s) => ({ ...s, ghiChuPhamChat: e.target.value }))}
                 />
+                <QuickTags
+                  tags={QUICK_TAGS_PHAM_CHAT}
+                  onPick={(tag) =>
+                    setStudent((s) => ({ ...s, ghiChuPhamChat: appendTag(s.ghiChuPhamChat, tag) }))
+                  }
+                />
               </Field>
-              <Field label="Năng lực (ý thô)" hint="VD: ngại phát biểu, làm việc nhóm còn thụ động...">
+              <Field
+                label="Năng lực (ý thô)"
+                hint="VD: ngại phát biểu, làm việc nhóm còn thụ động..."
+                warning={
+                  containsSubjectName(student.ghiChuNangLuc)
+                    ? 'Hình như bạn đang nhắc tới một môn học ở đây - kết quả học tập theo môn nên ghi ở mục "Môn học" bên dưới để AI không nhầm lẫn.'
+                    : null
+                }
+              >
                 <textarea
                   className={textareaClass}
                   value={student.ghiChuNangLuc}
                   onChange={(e) => setStudent((s) => ({ ...s, ghiChuNangLuc: e.target.value }))}
+                />
+                <QuickTags
+                  tags={QUICK_TAGS_NANG_LUC}
+                  onPick={(tag) => setStudent((s) => ({ ...s, ghiChuNangLuc: appendTag(s.ghiChuNangLuc, tag) }))}
                 />
               </Field>
             </>
@@ -261,6 +324,12 @@ export default function ReportCommentForm({ onGenerated }) {
                 className={textareaClass}
                 value={student.nhanXetChungTho}
                 onChange={(e) => setStudent((s) => ({ ...s, nhanXetChungTho: e.target.value }))}
+              />
+              <QuickTags
+                tags={QUICK_TAGS_NHAN_XET_CHUNG}
+                onPick={(tag) =>
+                  setStudent((s) => ({ ...s, nhanXetChungTho: appendTag(s.nhanXetChungTho, tag) }))
+                }
               />
             </Field>
           )}
@@ -289,6 +358,7 @@ export default function ReportCommentForm({ onGenerated }) {
                     className={inputClass}
                     placeholder='VD: "Học dở, làm toán sai bét"'
                     value={m.ghiChu}
+                    onFocus={() => setActiveSubjectIdx(idx)}
                     onChange={(e) => updateSubject(idx, "ghiChu", e.target.value)}
                   />
                   {student.monHocList.length > 1 && (
@@ -303,6 +373,20 @@ export default function ReportCommentForm({ onGenerated }) {
                 </div>
               ))}
             </div>
+            <p className="mt-1.5 text-xs text-slate-500">
+              Từ khóa nhanh cho môn{" "}
+              <span className="font-semibold text-slate-600">
+                {student.monHocList[activeSubjectIdx]?.ten || `#${activeSubjectIdx + 1}`}
+              </span>{" "}
+              (bấm vào ô ghi chú của môn muốn thêm rồi chọn):
+            </p>
+            <QuickTags
+              tags={QUICK_TAGS_MON_HOC}
+              onPick={(tag) => {
+                const idx = Math.min(activeSubjectIdx, student.monHocList.length - 1);
+                updateSubject(idx, "ghiChu", appendTag(student.monHocList[idx]?.ghiChu, tag));
+              }}
+            />
           </div>
         </div>
       ) : (

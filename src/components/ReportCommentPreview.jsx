@@ -8,9 +8,28 @@ const textareaClass =
   "w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed focus:border-brand-400 focus:outline-none";
 
 function EditableField({ label, value, onChange }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopyField() {
+    await navigator.clipboard.writeText(value || "");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+  }
+
   return (
     <div>
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <div className="mb-1 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+        <button
+          type="button"
+          onClick={handleCopyField}
+          title={`Sao chép riêng mục ${label}`}
+          className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-medium text-slate-400 hover:bg-slate-100 hover:text-brand-600"
+        >
+          {copied ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} />}
+          {copied ? "Đã chép" : "Chép"}
+        </button>
+      </div>
       <textarea className={textareaClass} rows={2} value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
@@ -122,7 +141,9 @@ export default function ReportCommentPreview({ cap, results, onResultsChange }) 
           <BadgeCheck size={14} /> {levelConfig.circularLabel}
         </div>
       )}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {/* Chỉ chia 2 cột khi có từ 2 học sinh trở lên - 1 học sinh thì chiếm full bề rộng khung
+          bên phải (bug đã phát hiện khi test: thẻ kết quả bị bó hẹp dù khung ngoài đã rộng). */}
+      <div className={`grid grid-cols-1 gap-4 ${results.length > 1 ? "md:grid-cols-2" : ""}`}>
         {results.map((r, idx) => (
           <StudentCard key={`${r.hoTen}-${idx}`} result={r} onEdit={(c) => handleEdit(idx, c)} />
         ))}
