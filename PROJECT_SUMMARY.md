@@ -1451,9 +1451,138 @@ giáo viên. Giai đoạn 9 (Phiếu bài tập, còn dở) vẫn để nguyên 
 
 ---
 
+## GIAI ĐOẠN 11 — Rà soát tổng thể sau phản ánh giáo viên (PDF Phiếu bài tập Toán bị nền đen +
+lề chưa full A4 + mục "Xem đồng hồ" không bấm chọn được)
+
+Giáo viên gửi file `toan_1.pdf` (xuất từ "Phiếu bài tập") kèm ảnh chụp Foxit PDF Reader: trang 1
+hiển thị NỀN ĐEN (chữ/khung màu vẫn đọc được), phản ánh thêm 2 việc: (a) phiếu "chưa full tờ giấy
+A4, bị margin 4 phía", (b) mục 11 "Xem đồng hồ" (thời gian) "không bấm chọn được". Yêu cầu rà soát
+tổng thể xem còn sai sót gì khác không.
+
+### 11.1. Đã tự verify thật (không chỉ đọc code) — sandbox phiên này CÓ MẠNG
+- `npm install`: chạy sạch, 221 packages.
+- `npm test` (LẦN ĐẦU, trước khi sửa gì): **107/114 PASS, 7 FAIL** — toàn bộ 7 test fail đều nằm
+  trong `test/lessonPlanExportService.test.js` (phụ lục Lời dẫn/Slide Outline của Giai đoạn 10,
+  Việc 6-7), lỗi giống hệt nhau: `Cannot read properties of undefined (reading 'arrayBuffer')`.
+  → Đây là **lỗi thật, không liên quan gì đến "Phiếu bài tập"** giáo viên đang phản ánh, nhưng vì
+  yêu cầu là "kiểm tra tổng thể" nên đã tìm ra và sửa luôn (xem 11.2 bên dưới).
+- `npm run build` (Next.js 14.2.35): build sạch, không lỗi type/lint. Các dòng
+  `Dynamic server usage: ... couldn't be rendered statically because it used request.headers` in
+  ra trong log là BÌNH THƯỜNG (các route `/api/*` cố ý dùng `request.headers` để đọc token đăng
+  nhập, Next.js chỉ đang giải thích lý do không prerender tĩnh được — không phải lỗi build).
+- `npm test` (SAU khi sửa): **114/114 PASS**.
+- Đọc toàn bộ `WorksheetPreview.jsx` (953 dòng), `globals.css` (khối `.worksheet-*` +
+  `@media print`), `worksheetLayoutTemplates.js` (bảng màu `COLOR_PALETTES`), `constants.js`
+  (`PAGE_A4_MM`, `PAGE_MARGIN_MM`) để xác nhận **không có màu đen/tối nào trong toàn bộ hệ thống
+  màu của "Phiếu bài tập"** — 9 bảng màu trong `COLOR_PALETTES` đều là tông sáng (xanh, hồng,
+  vàng, cam, xanh lá, tím, nâu, đỏ), nền `.worksheet-outer`/`.worksheet-inner` là trắng/kem
+  (`#fffefb`, `#fff`). Kết luận ở 11.3.
+
+### 11.2. Bug thật tìm thấy khi rà soát tổng thể — ĐÃ SỬA: `exportLessonPlanToWord()` không
+`return blob`
+- **File**: `src/services/lessonPlanExportService.js`.
+- **Lỗi**: hàm dựng xong file `.docx` (`Packer.toBlob(doc)`), gọi `saveAs(blob, ...)` để tải file
+  nhưng **không `return blob`** ở cuối hàm (khác với khuôn mẫu `buildExamDocxBlob()` trong
+  `exportService.js` — hàm đó LUÔN return blob). Hệ quả: bất kỳ đoạn code nào `await
+  exportLessonPlanToWord(...)` để lấy lại blob (VD test tự giải nén `.docx` ra kiểm tra nội dung)
+  chỉ nhận về `undefined`.
+- **Vì sao KHÔNG ảnh hưởng giáo viên khi dùng bình thường**: `LessonPlanExportActions.jsx` (nút
+  "Tải Word" của giáo án) gọi hàm này nhưng KHÔNG dùng giá trị trả về (`saveAs()` bên trong hàm đã
+  tự tải file rồi) → giáo viên tải file giáo án bình thường vẫn ra file `.docx` đúng, không lỗi gì
+  thấy được trên UI. Đây đúng kiểu lỗi "im lặng" chỉ lộ ra khi có test tự động giải nén file thật
+  để kiểm tra nội dung — lý do `npm test` bắt được còn test tay qua UI 1-2 lần thì không.
+- **Sửa**: thêm `return blob;` vào cuối hàm (sau dòng `saveAs(...)`) — không đổi hành vi tải file
+  hiện có, chỉ bổ sung giá trị trả về. Đã verify: 7/7 test trong
+  `test/lessonPlanExportService.test.js` chuyển từ FAIL sang PASS, không có test nào khác bị ảnh
+  hưởng (114/114 PASS toàn bộ suite).
+
+### 11.3. Nền đen khi xuất/xem PDF — KHÔNG PHẢI lỗi code, nghi nhiều nhất do "Night mode"/"chế độ
+tối" của Foxit PDF Reader
+- Cơ chế xuất PDF của app (`exportToPDF()` trong `exportService.js`) chỉ gọi `window.print()` —
+  KHÔNG dùng thư viện tạo PDF riêng, tức PDF thật ra là trình duyệt tự "in" đúng HTML/CSS đang
+  hiển thị trên `#print-area` ra file. Đã đọc lại toàn bộ màu sắc dùng trong `.worksheet-*`
+  (globals.css) và `COLOR_PALETTES` (9 bảng màu) — **không có bất kỳ giá trị màu đen/tối nào**
+  được gán làm nền cho trang hay khung phiếu, kể cả khi ép `print-color-adjust: exact` (khối CSS ở
+  dòng ~296-317 globals.css, được thêm từ Giai đoạn 9 để sửa lỗi MẤT màu nền khi in — không phải
+  nguyên nhân sinh ra màu đen, chỉ giữ đúng màu nền ĐÃ CÓ, mà ở đây các nền đều sáng).
+  → Với dữ liệu này, nguyên nhân hợp lý nhất nằm ở NGOÀI code: ảnh chụp màn hình bạn gửi ghi rõ
+  "Foxit PDF Reader" — phần mềm này có tính năng **"Night Reading"/chế độ đọc ban đêm** hay bị bật
+  nhầm (đảo màu nền sáng ⇄ tối để đỡ chói mắt khi đọc, KHÔNG sửa lại file PDF thật, chỉ đổi cách
+  HIỂN THỊ) — khớp chính xác với hiện tượng bạn mô tả: khung viền màu, chữ vẫn đọc được bình
+  thường, chỉ riêng phần NỀN bị đổi thành đen.
+- **Cách kiểm tra nhanh để xác nhận** (không cần sửa code):
+  1. Mở lại đúng file `toan_1.pdf` bằng phần mềm khác (trình duyệt Chrome/Edge, hoặc Microsoft
+     Edge PDF viewer) — nếu nền lại thành trắng bình thường thì chắc chắn lỗi nằm ở Foxit, không
+     phải ở file.
+  2. Trong Foxit: menu **View → Color Mode** (hoặc icon "Night Reading"/mặt trăng ở thanh công cụ)
+     → chọn lại **"Normal"/"Original Colors"** rồi mở lại file.
+  3. Nếu vẫn xuất hiện nền đen ngay TRÊN TRÌNH DUYỆT lúc bấm "In / Tải PDF" (chưa mở bằng Foxit) —
+     kiểm tra máy tính có đang bật "Force Dark Mode"/"Dark theme for web contents" trong
+     `chrome://flags` không (tính năng thử nghiệm, ép mọi trang web hiển thị tối, có thể ảnh hưởng
+     cả nội dung in) — tắt cờ này nếu có.
+  → Nếu làm đủ 3 bước trên mà nền VẪN đen, báo lại kèm bạn đã thử phần mềm/cách nào, khi đó mới
+  cần đào sâu thêm ở phía code (khả năng rất thấp dựa trên bằng chứng đã có).
+
+### 11.4. Phiếu "chưa full A4, bị margin 4 phía" — ĐÚNG NHƯ THIẾT KẾ (không phải bug), nhưng CÓ 1
+điểm giáo viên cần tự chỉnh khi in để tránh lề bị NHÂN ĐÔI
+- Trang phiếu có 2 lớp "lề" CHỒNG lên nhau, cả 2 đều CHỦ Ý, không phải lỗi:
+  1. **Lề vật lý trang in** (`@page { margin: 20mm 18mm }` trong `globals.css`, khớp
+     `PAGE_MARGIN_MM` trong `constants.js`) — lề an toàn bắt buộc phải có để máy in không cắt mất
+     nội dung sát mép giấy, đã thống nhất giá trị này ở CẢ 3 nơi (CSS `.a4-page`/`@page` + JS
+     `constants.js`) từ Giai đoạn 1, xác nhận lại lần này vẫn khớp, không lệch.
+  2. **"Khung thẻ" trang trí bên trong** (`.worksheet-outer` viền trắng dày 10px + đổ bóng, rồi
+     mới tới `.worksheet-inner` viền chấm màu + padding 30px/26px) — đây là hiệu ứng "tờ giấy dán
+     nổi trên nền" CHỦ Ý của thiết kế phiếu (giống 1 tấm thiệp/khung ảnh), khiến phần nội dung
+     thực tế bị "lùi vào" thêm 1 lớp nữa so với mép trang, CỘNG DỒN với lề vật lý ở trên → tổng lề
+     nhìn thấy lớn hơn 20mm/18mm khá nhiều, đúng cảm giác "chưa full A4" bạn thấy.
+  → Đây là lựa chọn thẩm mỹ (matting/khung ảnh) đã có từ đầu dự án, áp dụng ĐỀU cho mọi phiếu bài
+  tập, không phải lỗi phát sinh riêng ở file này.
+- **Điểm cần giáo viên tự kiểm tra khi in/lưu PDF** (rất hay bị bỏ sót, làm lề nhìn còn to hơn cả
+  2 lớp trên cộng lại): hộp thoại in của trình duyệt (Chrome/Edge) có mục **"Margins/Lề"** riêng
+  của trình duyệt, KHÁC với `@page` margin trong CSS — nếu để **"Default/Mặc định"**, trình duyệt
+  sẽ CHÈN THÊM lề của riêng nó ĐÈ LÊN lề đã khai báo trong CSS (2 lớp lề cộng dồn); phải chọn
+  **"None/Không có"** trong mục Margins của hộp thoại in thì lề thực tế mới đúng CHÍNH XÁC 20mm/
+  18mm như CSS đã định, không bị nhân đôi. Đây là hành vi tiêu chuẩn của Chrome khi in trang web
+  bất kỳ (không riêng app này) và JS không có cách nào tự động chọn hộ mục này vì lý do bảo mật
+  trình duyệt.
+- Nếu SAU KHI đã chọn Margins = "None" mà giáo viên vẫn muốn phiếu "sát mép" hơn nữa (giảm hẳn lớp
+  khung thẻ trắng/viền chấm cho gần full-bleed) thì đó là 1 thay đổi THIẾT KẾ thật sự (không phải
+  sửa lỗi) — cần bạn xác nhận muốn đổi trước khi làm, vì sẽ ảnh hưởng đồng loạt mọi phiếu bài tập,
+  không chỉ riêng đề Toán này.
+
+### 11.5. Mục 11 "Xem đồng hồ" không bấm chọn được — ĐÚNG NHƯ THIẾT KẾ, giống HỆT mọi mục khác
+trong "Phiếu bài tập" (không phải lỗi riêng của mục này)
+- Đã đọc kỹ toàn bộ `WorksheetPreview.jsx`: **không có bất kỳ `onClick`/`contentEditable`/input
+  tương tác nào** trong cả 953 dòng, ở TẤT CẢ 17 dạng bài (kể cả mục 3 "Điền dấu >, <, =" trông
+  giống nút tròn có thể bấm, hay mục 8 "Nối phép tính" trông giống có thể kéo-nối) — toàn bộ khung
+  xem trước chỉ gồm `<div>`/`<span>` tĩnh vẽ hình khung/vòng tròn/ô trống RỖNG để học sinh **tự
+  viết/tô bằng bút sau khi in ra giấy**, không phải 1 bài tập tương tác làm trực tiếp trên máy.
+  → Mục 11 "Xem đồng hồ" (kim đồng hồ SVG + ô trống ghi giờ) hoạt động ĐÚNG Y HỆT logic này, không
+  hề bị thiếu tính năng so với các mục khác — cả phiếu vốn KHÔNG mục nào bấm chọn được.
+- Nếu ý bạn là **muốn có 1 phiên bản làm bài tương tác trên máy** (bấm chọn đáp án, kéo-nối, tô
+  màu bằng chuột...) thay vì chỉ để in ra giấy, đây sẽ là 1 TÍNH NĂNG MỚI cần thiết kế riêng (đổi
+  hẳn cách hiển thị + cần lưu trạng thái bài làm), không phải sửa lỗi — báo lại nếu đây đúng là điều
+  bạn cần, để lên kế hoạch riêng cho việc này.
+
+### Tổng kết Giai đoạn 11
+- **1 bug thật đã sửa**: `exportLessonPlanToWord()` thiếu `return blob` (không liên quan phiếu bài
+  tập, phát hiện khi rà soát tổng thể qua `npm test`).
+- **3 phản ánh về "Phiếu bài tập Toán"**: cả 3 đều XÁC NHẬN không phải lỗi trong code hiện tại của
+  riêng file/đợt tạo này — 2 việc (nền đen, lề) nhiều khả năng do môi trường/thao tác khi in-xem
+  PDF (xem hướng dẫn kiểm tra ở 11.3/11.4), 1 việc (đồng hồ không bấm được) là hành vi THIẾT KẾ
+  nhất quán của toàn bộ tính năng "Phiếu bài tập" (chỉ để in, không tương tác).
+- Test: **114/114 PASS**. Build: sạch.
+- **Việc CHƯA làm — cần bạn tự làm**: thử in/lưu PDF THẬT với Margins="None" trong hộp thoại in +
+  kiểm tra file bằng phần mềm đọc PDF khác ngoài Foxit theo đúng 3 bước ở mục 11.3, rồi báo lại kết
+  quả — nếu nền đen/lề vẫn sai SAU KHI làm đúng các bước đó thì mới cần bạn gửi lại để đào sâu thêm
+  phía code.
+
+---
+
 ## Quy trình khi mở chat mới
 1. Upload lại zip code mới nhất (sandbox reset giữa các phiên) + file `PROJECT_SUMMARY.md` này (+
    `KE_HOACH_GIAI_DOAN_10.md` nếu đang làm tiếp Giai đoạn 10).
 2. Nói rõ đang muốn tiếp tục việc gì (VD: "làm tiếp Việc 2 Giai đoạn 10 - Phong cách soạn giáo án"
-   hoặc "đã test Gemini thật, ổn rồi, làm tiếp [việc X]" hoặc "review lại lần nữa").
+   hoặc "đã test Gemini thật, ổn rồi, làm tiếp [việc X]" hoặc "review lại lần nữa", hoặc "đã thử in
+   Margins=None rồi mà vẫn nền đen/lề sai - đây là kết quả...").
 3. Sau khi hoàn thành, yêu cầu cập nhật lại chính `PROJECT_SUMMARY.md` trước khi đóng gói zip mới.
