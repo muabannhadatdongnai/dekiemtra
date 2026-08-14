@@ -69,7 +69,7 @@ export default function ExportActions({
         <button
           onClick={handleWord}
           disabled={disabled}
-          className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           <FileDown size={15} />
           {hasRubric ? "Tải Word (2 file: Học sinh + Giáo viên)" : "Tải Word (.docx)"}
@@ -77,7 +77,7 @@ export default function ExportActions({
         <button
           onClick={exportToPDF}
           disabled={disabled}
-          className="flex items-center gap-2 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
           <Printer size={15} /> In / Tải PDF
         </button>

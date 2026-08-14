@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, Zap, RefreshCw } from "lucide-react";
+import { AlertTriangle, Zap, RefreshCw, Users } from "lucide-react";
 import { fetchUsageSummaryRequest } from "@/services/apiClient";
 
 /**
@@ -86,6 +86,16 @@ export default function UsageWidget() {
         <span className="font-semibold text-slate-900">{summary.total}</span> lượt gọi ·{" "}
         {summary.configuredKeyCount} key đang cấu hình
       </p>
+
+      {/* #9 (Nhóm D): số session đăng nhập còn hiệu lực - ẩn danh, không phải thống kê Gemini
+          nên tách dòng riêng, chỉ hiện khi đọc được (đọc lỗi -> ẩn hẳn, không hiện số 0 gây hiểu
+          lầm là "không ai đang dùng"). */}
+      {!summary.activeSessionCountUnavailable && (
+        <p className="mt-1 flex items-center gap-1 text-slate-500">
+          <Users size={12} />
+          {summary.activeSessionCount} phiên đăng nhập đang hoạt động
+        </p>
+      )}
 
       {perKeyEntries.length > 1 && (
         <ul className="mt-1 space-y-0.5 text-slate-500">

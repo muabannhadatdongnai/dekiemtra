@@ -252,6 +252,14 @@ export default function ExamMatrixForm({ onGenerated }) {
     }
   }
 
+  // #6 (Nhóm D): cảnh báo (KHÔNG auto-sync) khi số đầu tiên gõ trong "Tên lớp" khác "Lớp" đang
+  // chọn ở dưới - VD gõ "Tên lớp" = "6A1" nhưng "Lớp" đang chọn là Lớp 5 -> dễ là gõ nhầm/quên đổi
+  // khi copy từ đề cũ. Dò số bất kỳ trong chuỗi (không bắt buộc phải đứng đầu tuyệt đối) để chịu
+  // được cả kiểu gõ "Lớp 6A1".
+  const classNameNumberMatch = className.match(/\d+/);
+  const classNameNumber = classNameNumberMatch ? Number(classNameNumberMatch[0]) : null;
+  const classGradeMismatch = classNameNumber !== null && classNameNumber !== grade;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* ============ THÔNG TIN CHUNG ============ */}
@@ -262,7 +270,12 @@ export default function ExamMatrixForm({ onGenerated }) {
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Tên lớp">
-            <input value={className} onChange={(e) => setClassName(e.target.value)} className={inputClass} placeholder="6A1" />
+            <input value={className} onChange={(e) => setClassName(e.target.value)} className={inputClass} placeholder="5A1" />
+            {classGradeMismatch && (
+              <p className="mt-1 text-xs text-amber-600">
+                ⚠️ Số trong "Tên lớp" ({classNameNumber}) khác "Lớp" đang chọn (Lớp {grade}) ở mục Chọn kiến thức bên dưới - kiểm tra lại nếu không cố ý.
+              </p>
+            )}
           </Field>
           <Field label="Thời gian làm bài">
             <input value={duration} onChange={(e) => setDuration(e.target.value)} className={inputClass} placeholder="45 phút" />

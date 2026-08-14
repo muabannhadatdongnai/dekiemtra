@@ -7,6 +7,7 @@ import {
   clearAttempts,
   getClientKey,
 } from "@/services/loginRateLimiter";
+import { recordActiveSession } from "@/services/activeSessionCounter";
 
 /**
  * API xác thực - kiểm tra username/password trên server, cấp session TOKEN đã ký (xem
@@ -46,6 +47,13 @@ export async function POST(request) {
 
   clearAttempts(clientKey);
   const { token, expiresAt } = createSessionToken(user);
+
+  // #9 (Nhóm D): ghi nhận session này vào bộ đếm ẨN DANH (chỉ 1 ID ngẫu nhiên + hạn dùng, không
+  // liên hệ username). PHẢI await (giống recordGeminiCall/incrementDailyCallCount ở nơi khác
+  // trong dự án) - trên Vercel serverless, code chạy SAU khi response đã trả về có thể bị đóng
+  // băng/huỷ giữa chừng, nên không thể "bắn rồi quên". Hàm này tự nuốt lỗi (không throw) nên
+  // không làm chậm/hỏng luồng đăng nhập thật nếu backend lưu trữ tạm thời lỗi.
+  await recordActiveSession(expiresAt);
 
   return NextResponse.json({ user, token, expiresAt });
 }

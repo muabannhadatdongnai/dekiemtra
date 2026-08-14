@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/services/apiAuth";
 import { getConfiguredKeyCount, getMaskedKeyList } from "@/services/geminiKeyPool";
 import { getTodayUsageSummary } from "@/services/geminiUsageTracker";
+import { getActiveSessionCount } from "@/services/activeSessionCounter";
 
 /**
  * GET /api/usage
@@ -16,9 +17,14 @@ export async function GET(request) {
 
   const maskedKeys = getMaskedKeyList();
   const summary = await getTodayUsageSummary(maskedKeys);
+  // #9 (Nhóm D): số session đăng nhập còn hiệu lực - ẩn danh, không liên quan tới thống kê
+  // Gemini ở trên, chỉ ghép chung 1 response cho gọn (UsageWidget.jsx đã gọi sẵn endpoint này).
+  const activeSessions = await getActiveSessionCount();
 
   return NextResponse.json({
     ...summary,
     configuredKeyCount: getConfiguredKeyCount(),
+    activeSessionCount: activeSessions.count,
+    activeSessionCountUnavailable: activeSessions.unavailable,
   });
 }
