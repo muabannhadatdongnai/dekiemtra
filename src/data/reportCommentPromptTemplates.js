@@ -14,6 +14,11 @@ import {
   REPORT_COMMENT_LEVELS,
   getReportCommentLevelConfig,
   getReportCommentLengthConfig,
+  getReportCommentToneConfig,
+  getDefaultStudentPronoun,
+  TEACHER_PRONOUN_CONFIG,
+  STUDENT_PRONOUN_CONFIG,
+  TEACHER_PRONOUNS,
   NANG_LUC_CHUNG_TT27,
   PHAM_CHAT_TT27,
   BANNED_NEGATIVE_WORDS,
@@ -72,6 +77,38 @@ function buildSandwichGuidance(lengthId) {
   return base;
 }
 
+/** Đại từ nhân xưng: giáo viên xưng gì (Cô/Thầy) và gọi học sinh là gì (con/em/trò) - đúng Ý
+ * tưởng "Tùy biến đại từ nhân xưng": trước đây AI mặc định cứng "Cô"/"con" nên sai với giáo viên
+ * Nam và không hợp cách gọi phổ biến ở THCS/THPT. */
+function buildPronounBlock({ xungHo, goiHocSinh }) {
+  const teacherWord = (TEACHER_PRONOUN_CONFIG[xungHo] || TEACHER_PRONOUN_CONFIG[TEACHER_PRONOUNS.CO]).word;
+  const studentWord = (STUDENT_PRONOUN_CONFIG[goiHocSinh] || STUDENT_PRONOUN_CONFIG.con).word;
+  return (
+    `BẮT BUỘC dùng ĐÚNG đại từ nhân xưng sau xuyên suốt TOÀN BỘ văn bản, không được tự đổi sang ` +
+    `cách khác: người viết (giáo viên) xưng là "${teacherWord}", gọi học sinh là "${studentWord}" ` +
+    `(ví dụ: "${teacherWord} nhận thấy ${studentWord}...", "${teacherWord} tin rằng ${studentWord}...").`
+  );
+}
+
+/** Giọng điệu (tone) - đúng Ý tưởng "Thanh điều chỉnh Âm sắc/Thái độ". */
+function buildToneBlock(toneId) {
+  const toneConfig = getReportCommentToneConfig(toneId);
+  return `Giọng điệu nhận xét: ${toneConfig.guidance}`;
+}
+
+/** Gợi ý đồng hành cùng phụ huynh - đúng Ý tưởng 3: Thông tư 27/22 đề cao phối hợp gia đình-nhà
+ * trường, lời nhận xét tốt nên chỉ ra được phụ huynh cần làm gì cụ thể. */
+function buildParentTipGuidance() {
+  return (
+    "QUAN TRỌNG - đồng hành cùng phụ huynh: ở CUỐI MỖI mục nhận xét (phẩm chất/năng lực/nhận xét " +
+    "chung/từng môn học), thêm 1 câu CHỐT ngắn gợi ý CỤ THỂ việc phụ huynh có thể làm ở nhà để " +
+    "đồng hành cùng con (VD: 'Gia đình có thể cùng con ôn lại bảng nhân vào buổi tối để con tự " +
+    "tin hơn.', 'Rất mong phụ huynh nhắc nhở con chuẩn bị đủ sách vở trước khi đến lớp.'). Câu " +
+    "chốt này PHẢI cụ thể, bám sát nội dung vừa nhận xét ở mục đó, KHÔNG chung chung, KHÔNG lặp " +
+    "lại y hệt giữa các mục."
+  );
+}
+
 function buildPreviousCommentBlock(previousComment) {
   if (!previousComment) return "";
   return `
@@ -115,6 +152,10 @@ function buildDoanVanSchemaBlock() {
  * @param monHocList - [{ten, ghiChu}] ý thô theo từng môn (dùng cho mọi cấp)
  * @param nhanXetChungTho - ý thô về ý thức học tập chung (CHỈ dùng cho THCS/THPT)
  * @param previousComment - text nhận xét kỳ trước (optional, để tham chiếu tiến bộ)
+ * @param xungHo - 1 trong TEACHER_PRONOUNS, cách giáo viên xưng hô (mặc định "Cô")
+ * @param goiHocSinh - 1 trong STUDENT_PRONOUNS, cách gọi học sinh (mặc định theo cấp học)
+ * @param tone - 1 trong REPORT_COMMENT_TONES, giọng điệu nhận xét (mặc định "khích lệ, ấm áp")
+ * @param coGoiYPhuHuynh - boolean, có thêm câu gợi ý đồng hành cùng phụ huynh ở cuối mỗi mục không
  */
 export function buildReportCommentPrompt({
   cap,
@@ -126,10 +167,15 @@ export function buildReportCommentPrompt({
   monHocList = [],
   nhanXetChungTho = "",
   previousComment = null,
+  xungHo = TEACHER_PRONOUNS.CO,
+  goiHocSinh = null,
+  tone = null,
+  coGoiYPhuHuynh = false,
 }) {
   const levelConfig = getReportCommentLevelConfig(cap) || getReportCommentLevelConfig(REPORT_COMMENT_LEVELS.TIEU_HOC);
   const lengthConfig = getReportCommentLengthConfig(doDai);
   const isTieuHoc = levelConfig.structure === "3-phan";
+  const resolvedGoiHocSinh = goiHocSinh || getDefaultStudentPronoun(levelConfig.id);
 
   const role = isTieuHoc
     ? "Bạn là một giáo viên chủ nhiệm tiểu học giàu kinh nghiệm, tận tâm, am hiểu Thông tư 27/2020/TT-BGDĐT về đánh giá học sinh tiểu học."
@@ -174,6 +220,10 @@ môn đã liệt kê ở trên, theo ĐÚNG THỨ TỰ đã cho, không tự th�
 ${task}
 ${styleByLevel} ${lengthLine}
 
+${buildPronounBlock({ xungHo, goiHocSinh: resolvedGoiHocSinh })}
+
+${buildToneBlock(tone)}
+
 ${buildBannedWordsBlock()}
 
 ${buildAntiClicheGuidance()}
@@ -181,6 +231,7 @@ ${buildAntiClicheGuidance()}
 ${buildVarietyGuidance()}
 
 ${buildSandwichGuidance(doDai)}
+${coGoiYPhuHuynh ? `\n${buildParentTipGuidance()}\n` : ""}
 ${buildPreviousCommentBlock(previousComment)}
 ${contentBlock}
 

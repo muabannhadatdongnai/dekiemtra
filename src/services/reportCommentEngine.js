@@ -34,6 +34,10 @@ export async function generateReportCommentContent({
   monHocList,
   nhanXetChungTho,
   previousComment,
+  xungHo,
+  goiHocSinh,
+  tone,
+  coGoiYPhuHuynh,
   maxRetries = 2,
 }) {
   const levelConfig = getReportCommentLevelConfig(cap);
@@ -55,6 +59,10 @@ export async function generateReportCommentContent({
       monHocList,
       nhanXetChungTho,
       previousComment,
+      xungHo,
+      goiHocSinh,
+      tone,
+      coGoiYPhuHuynh,
     });
 
     try {
@@ -110,8 +118,10 @@ export async function generateReportCommentContent({
  *      khoảng ngắn GIỮA CÁC HỌC SINH (không chỉ giữa các lần thử lại) để dàn đều tải, tránh dồn
  *      request theo cụm gây chạm giới hạn requests-per-minute của Google.
  * @param students [{ hoTen, lop, previousComment, ghiChuPhamChat, ghiChuNangLuc, monHocList, nhanXetChungTho }]
+ * @param xungHo, goiHocSinh, tone, coGoiYPhuHuynh - tùy chọn CHUNG cho cả lượt (áp dụng mọi học
+ * sinh trong danh sách, không phải theo từng em) - xem reportCommentConfig.js.
  */
-export async function generateBulkReportComments({ cap, doDai, students }) {
+export async function generateBulkReportComments({ cap, doDai, students, xungHo, goiHocSinh, tone, coGoiYPhuHuynh }) {
   const results = [];
   let consecutiveOverloaded = 0;
 
@@ -147,6 +157,10 @@ export async function generateBulkReportComments({ cap, doDai, students }) {
         monHocList: student.monHocList,
         nhanXetChungTho: student.nhanXetChungTho,
         previousComment: student.previousComment || null,
+        xungHo,
+        goiHocSinh,
+        tone,
+        coGoiYPhuHuynh,
         maxRetries: 1,
       });
 

@@ -147,6 +147,95 @@ export const BANNED_NEGATIVE_WORDS = [
   "quậy phá",
 ];
 
+// ---- 4b. Đại từ nhân xưng (giáo viên xưng / gọi học sinh) ------------------
+// Ý tưởng: AI mặc định trước đây LUÔN xưng "Cô" và gọi học sinh là "con" - sai với giáo viên Nam
+// và không hợp với cách gọi phổ biến ở THCS/THPT ("em"/"trò"). Cho giáo viên tự chọn.
+
+export const TEACHER_PRONOUNS = {
+  CO: "co",
+  THAY: "thay",
+};
+
+export const TEACHER_PRONOUN_CONFIG = {
+  [TEACHER_PRONOUNS.CO]: { id: TEACHER_PRONOUNS.CO, label: "Cô", word: "Cô" },
+  [TEACHER_PRONOUNS.THAY]: { id: TEACHER_PRONOUNS.THAY, label: "Thầy", word: "Thầy" },
+};
+
+export const TEACHER_PRONOUN_LIST = Object.values(TEACHER_PRONOUN_CONFIG);
+
+export const STUDENT_PRONOUNS = {
+  CON: "con",
+  EM: "em",
+  TRO: "tro",
+};
+
+export const STUDENT_PRONOUN_CONFIG = {
+  [STUDENT_PRONOUNS.CON]: { id: STUDENT_PRONOUNS.CON, label: "Con", word: "con" },
+  [STUDENT_PRONOUNS.EM]: { id: STUDENT_PRONOUNS.EM, label: "Em", word: "em" },
+  [STUDENT_PRONOUNS.TRO]: { id: STUDENT_PRONOUNS.TRO, label: "Trò", word: "trò" },
+};
+
+export const STUDENT_PRONOUN_LIST = Object.values(STUDENT_PRONOUN_CONFIG);
+
+export function isValidTeacherPronoun(id) {
+  return Boolean(TEACHER_PRONOUN_CONFIG[id]);
+}
+
+export function isValidStudentPronoun(id) {
+  return Boolean(STUDENT_PRONOUN_CONFIG[id]);
+}
+
+/** Cách gọi học sinh mặc định theo cấp học: Tiểu học -> "con", THCS/THPT -> "em". */
+export function getDefaultStudentPronoun(levelId) {
+  return levelId === REPORT_COMMENT_LEVELS.TIEU_HOC ? STUDENT_PRONOUNS.CON : STUDENT_PRONOUNS.EM;
+}
+
+// ---- 4c. Giọng điệu nhận xét (Tone of voice) -------------------------------
+
+export const REPORT_COMMENT_TONES = {
+  KHICH_LE: "khich_le",
+  NGHIEM_TUC: "nghiem_tuc",
+  TU_HAO: "tu_hao",
+};
+
+export const REPORT_COMMENT_TONE_CONFIG = {
+  [REPORT_COMMENT_TONES.KHICH_LE]: {
+    id: REPORT_COMMENT_TONES.KHICH_LE,
+    label: "Khích lệ, ấm áp",
+    hint: "Mặc định - dành cho học sinh đại trà",
+    guidance:
+      "Giọng điệu KHÍCH LỆ, ẤM ÁP, nhẹ nhàng động viên - phù hợp với đa số học sinh, cân bằng " +
+      "giữa ghi nhận cố gắng và góp ý nhẹ nhàng.",
+  },
+  [REPORT_COMMENT_TONES.NGHIEM_TUC]: {
+    id: REPORT_COMMENT_TONES.NGHIEM_TUC,
+    label: "Nghiêm túc, thẳng thắn",
+    hint: "Dành cho học sinh cần cải thiện mạnh",
+    guidance:
+      "Giọng điệu NGHIÊM TÚC, THẲNG THẮN hơn (nhưng vẫn LỊCH SỰ, KHÔNG xúc phạm, KHÔNG dùng từ " +
+      "ngữ tiêu cực/quy chụp) - nêu rõ, cụ thể, không né tránh mức độ nghiêm trọng của vấn đề cần " +
+      "cải thiện, để phụ huynh nhận thấy rõ tính cấp thiết cần phối hợp uốn nắn.",
+  },
+  [REPORT_COMMENT_TONES.TU_HAO]: {
+    id: REPORT_COMMENT_TONES.TU_HAO,
+    label: "Khen ngợi, tự hào",
+    hint: "Dành cho học sinh xuất sắc",
+    guidance:
+      "Giọng điệu KHEN NGỢI, TỰ HÀO, đề cao thành tích và sự tiến bộ - nhấn mạnh điểm nổi bật, " +
+      "truyền cảm hứng, dùng lời lẽ trân trọng thành quả của học sinh.",
+  },
+};
+
+export const REPORT_COMMENT_TONE_LIST = Object.values(REPORT_COMMENT_TONE_CONFIG);
+
+export function getReportCommentToneConfig(toneId) {
+  return REPORT_COMMENT_TONE_CONFIG[toneId] || REPORT_COMMENT_TONE_CONFIG[REPORT_COMMENT_TONES.KHICH_LE];
+}
+
+export function isValidToneId(toneId) {
+  return Boolean(REPORT_COMMENT_TONE_CONFIG[toneId]);
+}
+
 // ---- 5. Chế độ nhập liệu ---------------------------------------------------
 
 export const REPORT_COMMENT_INPUT_MODES = {

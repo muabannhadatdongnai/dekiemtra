@@ -181,7 +181,8 @@ export async function fetchUsageSummaryRequest() {
 
 /**
  * TÍNH NĂNG "Nhận xét học bạ" - xem reportCommentConfig.js/reportCommentEngine.js.
- * @param payload { cap, doDai, hocSinh: [{hoTen, lop, ghiChuPhamChat?, ghiChuNangLuc?, monHocList?, nhanXetChungTho?}] }
+ * @param payload { cap, doDai, hocSinh: [...], xungHo?, goiHocSinh?, tone?, coGoiYPhuHuynh? }
+ * xungHo/goiHocSinh/tone/coGoiYPhuHuynh áp dụng CHUNG cho cả lượt tạo (xem reportCommentConfig.js).
  * hocSinh có thể là mảng 1 phần tử (gõ tay) hoặc nhiều phần tử (hàng loạt) - route xử lý chung.
  */
 export async function generateReportCommentRequest(payload) {
