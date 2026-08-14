@@ -171,3 +171,87 @@ export function isValidLevelId(levelId) {
 export function isValidLengthId(lengthId) {
   return Boolean(REPORT_COMMENT_LENGTH_CONFIG[lengthId]);
 }
+
+// ---- 7. Từ khóa nhanh (Quick-tags) ----------------------------------------
+// Danh sách gợi ý để giáo viên bấm chọn thay vì tự gõ - đúng Ý tưởng 2 (Quick-tags) trong phản
+// hồi test thực tế: thao tác click nhanh hơn gõ bàn phím, đặc biệt hữu ích trên điện thoại.
+// Đây CHỈ là danh sách cụm từ THÔ (chưa qua AI "dịch") - khi bấm sẽ được nối vào ô nhập liệu,
+// AI vẫn sẽ viết lại theo đúng chuẩn mực khi tạo nhận xét như các ý thô gõ tay khác.
+
+export const QUICK_TAGS_PHAM_CHAT = [
+  "Lễ phép, ngoan ngoãn",
+  "Hay quên đồ dùng học tập",
+  "Chưa tự giác dọn dẹp",
+  "Thật thà, trung thực",
+  "Biết giúp đỡ bạn bè",
+  "Chưa giữ gìn sách vở cẩn thận",
+  "Đi học đúng giờ",
+  "Còn hay nói chuyện riêng",
+];
+
+export const QUICK_TAGS_NANG_LUC = [
+  "Tiếp thu nhanh",
+  "Hay mất tập trung",
+  "Ngại phát biểu",
+  "Làm việc nhóm còn thụ động",
+  "Tự giác hoàn thành bài tập",
+  "Trình bày chưa mạch lạc",
+  "Sáng tạo trong cách giải quyết vấn đề",
+  "Cần nhắc nhở nhiều lần",
+];
+
+export const QUICK_TAGS_NHAN_XET_CHUNG = [
+  "Có ý thức học tập tốt",
+  "Hay nói chuyện riêng trong giờ",
+  "Chưa tập trung nghe giảng",
+  "Tích cực xây dựng bài",
+  "Chưa làm đủ bài tập về nhà",
+  "Hòa đồng với bạn bè",
+  "Cần nhắc nhở về giờ giấc",
+  "Có tinh thần cầu tiến",
+];
+
+export const QUICK_TAGS_MON_HOC = [
+  "Tiếp thu nhanh",
+  "Tính toán còn sai nhiều",
+  "Chữ viết chưa đẹp",
+  "Đọc chậm",
+  "Làm bài cẩn thận",
+  "Chưa hoàn thành bài tập",
+  "Có tiến bộ rõ rệt",
+  "Cần luyện tập thêm",
+];
+
+// ---- 8. Tên môn học phổ biến ------------------------------------------------
+// Dùng để CẢNH BÁO NHẸ ở UI khi giáo viên lỡ gõ tên môn học/kết quả học tập vào ô Phẩm chất
+// hoặc Năng lực (2 ô này chỉ nên ghi biểu hiện đạo đức/kỹ năng, KHÔNG ghi kết quả học tập theo
+// môn - phần đó đã có mục "Môn học" riêng) - đúng "Hạt sạn" #2 phát hiện khi test thực tế.
+
+export const COMMON_SUBJECT_NAMES = [
+  "toán",
+  "tiếng việt",
+  "ngữ văn",
+  "tiếng anh",
+  "khoa học",
+  "lịch sử",
+  "địa lý",
+  "địa lí",
+  "vật lý",
+  "vật lí",
+  "hóa học",
+  "sinh học",
+  "gdcd",
+  "giáo dục công dân",
+  "tin học",
+  "thể dục",
+  "mỹ thuật",
+  "âm nhạc",
+  "công nghệ",
+];
+
+/** Trả về true nếu văn bản có nhắc tới tên môn học phổ biến (dùng để cảnh báo nhẹ ở UI). */
+export function containsSubjectName(text) {
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  return COMMON_SUBJECT_NAMES.some((name) => lower.includes(name));
+}

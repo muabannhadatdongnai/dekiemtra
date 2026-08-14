@@ -40,6 +40,38 @@ function buildAntiClicheGuidance() {
   );
 }
 
+function buildVarietyGuidance() {
+  return (
+    "QUAN TRỌNG - chống lặp cấu trúc câu máy móc: KHÔNG được mở đầu nhiều câu/nhiều mục bằng cùng " +
+    "một cụm rập khuôn kiểu 'Con cần...', 'Em cần...' lặp đi lặp lại (VD sai: 'Con cần học cách...', " +
+    "'Con cần rèn luyện...', 'Con cần dành thêm thời gian...' xuất hiện ở nhiều mục cùng lúc). Mỗi " +
+    "mục (phẩm chất/năng lực/nhận xét chung/từng môn học) PHẢI dùng một cách mở đầu câu KHÁC NHAU - " +
+    "có thể tham khảo và biến tấu các cách sau (không bắt buộc dùng nguyên văn): 'Trong học kỳ qua, " +
+    "...', 'Cô/thầy nhận thấy...', 'Với sự cố gắng của mình, ...', 'Có thể thấy...', '...là một điểm " +
+    "sáng của con', 'Bên cạnh đó, ...', 'Con đã thể hiện...', 'Điều đáng ghi nhận là...'. Tránh dùng " +
+    "cùng một động từ khuyên nhủ (cần/nên/hãy) ở đầu quá nhiều câu liên tiếp."
+  );
+}
+
+function buildSandwichGuidance(lengthId) {
+  const base =
+    "CẤU TRÚC 'BÁNH KẸP' (sandwich feedback) - áp dụng cho từng mục nhận xét (phẩm chất/năng lực/" +
+    "nhận xét chung/từng môn học) khi có đủ dữ kiện và độ dài cho phép, theo thứ tự: (1) KHEN NGỢI " +
+    "một điểm tích cực cụ thể trước, (2) sau đó mới nêu ĐIỀU CẦN CẢI THIỆN dựa trên ý thô của giáo " +
+    "viên, (3) kết lại bằng một câu KỲ VỌNG/ĐỘNG VIÊN hướng tới tương lai. Nếu ý thô giáo viên chỉ " +
+    "toàn điểm cần cải thiện (không có điểm tích cực rõ ràng), được phép khen một nét chung chung " +
+    "hợp lý (thái độ, tinh thần) trước khi góp ý, miễn là không bịa đặt thành tích cụ thể không có " +
+    "thật.";
+  if (lengthId === "ngan") {
+    return (
+      base +
+      " Với độ dài NGẮN GỌN, có thể rút gọn còn 2 phần (khen ngắn + góp ý/kỳ vọng gộp lại) thay vì " +
+      "đủ cả 3 phần, miễn giữ đúng tinh thần bắt đầu bằng điều tích cực."
+    );
+  }
+  return base;
+}
+
 function buildPreviousCommentBlock(previousComment) {
   if (!previousComment) return "";
   return `
@@ -145,6 +177,10 @@ ${styleByLevel} ${lengthLine}
 ${buildBannedWordsBlock()}
 
 ${buildAntiClicheGuidance()}
+
+${buildVarietyGuidance()}
+
+${buildSandwichGuidance(doDai)}
 ${buildPreviousCommentBlock(previousComment)}
 ${contentBlock}
 
