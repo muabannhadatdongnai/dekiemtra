@@ -7,7 +7,13 @@ import {
   REPORT_COMMENT_LENGTH_LIST,
   REPORT_COMMENT_LENGTHS,
   REPORT_COMMENT_INPUT_MODES,
+  TEACHER_PRONOUN_LIST,
+  TEACHER_PRONOUNS,
+  STUDENT_PRONOUN_LIST,
+  REPORT_COMMENT_TONE_LIST,
+  REPORT_COMMENT_TONES,
   getReportCommentLevelConfig,
+  getDefaultStudentPronoun,
   QUICK_TAGS_PHAM_CHAT,
   QUICK_TAGS_NANG_LUC,
   QUICK_TAGS_NHAN_XET_CHUNG,
@@ -23,15 +29,20 @@ import {
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
 const textareaClass = `${inputClass} min-h-[70px] resize-y`;
 
+// Nhãn + chú thích: cỡ chữ to hơn, đậm/màu rõ ràng hơn text-xs/slate-500 mặc định trước đây - phản
+// hồi thực tế là giáo viên lớn tuổi khó đọc chữ nhỏ, nhạt màu (đặc biệt phần "hint" giải thích).
+const fieldLabelClass = "mb-1 block text-sm font-bold tracking-wide text-slate-800";
+const fieldHintClass = "mt-1 text-sm font-medium leading-snug text-slate-600";
+
 function Field({ label, hint, warning, children }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</label>
+      <label className={fieldLabelClass}>{label}</label>
       {children}
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className={fieldHintClass}>{hint}</p>}
       {warning && (
-        <p className="mt-1 flex items-start gap-1 text-xs font-medium text-amber-600">
-          <AlertTriangle size={13} className="mt-0.5 shrink-0" /> {warning}
+        <p className="mt-1 flex items-start gap-1 text-sm font-semibold text-amber-700">
+          <AlertTriangle size={14} className="mt-0.5 shrink-0" /> {warning}
         </p>
       )}
     </div>
@@ -83,6 +94,11 @@ export default function ReportCommentForm({ onGenerated }) {
   const [cap, setCap] = useState(REPORT_COMMENT_LEVEL_LIST[0].id);
   const [doDai, setDoDai] = useState(REPORT_COMMENT_LENGTHS.VUA);
   const [inputMode, setInputMode] = useState(REPORT_COMMENT_INPUT_MODES.SINGLE);
+
+  const [xungHo, setXungHo] = useState(TEACHER_PRONOUNS.CO);
+  const [goiHocSinh, setGoiHocSinh] = useState(null); // null = tự suy theo cấp học (Tiểu học -> con, còn lại -> em)
+  const [tone, setTone] = useState(REPORT_COMMENT_TONES.KHICH_LE);
+  const [coGoiYPhuHuynh, setCoGoiYPhuHuynh] = useState(false);
 
   const [student, setStudent] = useState(emptySingleStudent());
   const [activeSubjectIdx, setActiveSubjectIdx] = useState(0);
@@ -178,7 +194,7 @@ export default function ReportCommentForm({ onGenerated }) {
 
     setLoading(true);
     try {
-      const data = await generateReportCommentRequest({ cap, doDai, hocSinh });
+      const data = await generateReportCommentRequest({ cap, doDai, hocSinh, xungHo, goiHocSinh, tone, coGoiYPhuHuynh });
       onGenerated?.({ cap, doDai, results: data.results });
     } catch (err) {
       setError(err.message);
@@ -208,6 +224,72 @@ export default function ReportCommentForm({ onGenerated }) {
         </div>
         <p className="mt-1 text-xs text-slate-400">{levelConfig?.circularLabel}</p>
       </Field>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Giáo viên xưng">
+          <select
+            className={inputClass}
+            value={xungHo}
+            onChange={(e) => setXungHo(e.target.value)}
+          >
+            {TEACHER_PRONOUN_LIST.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Gọi học sinh là">
+          <select
+            className={inputClass}
+            value={goiHocSinh || getDefaultStudentPronoun(cap)}
+            onChange={(e) => setGoiHocSinh(e.target.value)}
+          >
+            {STUDENT_PRONOUN_LIST.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+
+      <Field label="Giọng điệu nhận xét">
+        <div className="grid grid-cols-3 gap-2">
+          {REPORT_COMMENT_TONE_LIST.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTone(t.id)}
+              title={t.hint}
+              className={`rounded-md border px-2 py-2 text-sm font-medium transition ${
+                tone === t.id
+                  ? "border-brand-600 bg-brand-50 text-brand-700"
+                  : "border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <p className={fieldHintClass}>{REPORT_COMMENT_TONE_LIST.find((t) => t.id === tone)?.hint}</p>
+      </Field>
+
+      <label className="flex cursor-pointer items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+        <input
+          type="checkbox"
+          className="mt-0.5 h-4 w-4"
+          checked={coGoiYPhuHuynh}
+          onChange={(e) => setCoGoiYPhuHuynh(e.target.checked)}
+        />
+        <span>
+          <span className="block text-sm font-bold text-slate-800">Thêm gợi ý đồng hành cho phụ huynh</span>
+          <span className="block text-sm text-slate-600">
+            Ở cuối mỗi mục nhận xét, AI sẽ thêm 1 câu gợi ý cụ thể phụ huynh nên làm gì ở nhà để
+            đồng hành cùng con.
+          </span>
+        </span>
+      </label>
 
       <Field label="Độ dài nhận xét">
         <div className="grid grid-cols-3 gap-2">
@@ -336,13 +418,13 @@ export default function ReportCommentForm({ onGenerated }) {
 
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Môn học (ý thô)</label>
+              <label className={fieldLabelClass}>Môn học (ý thô)</label>
               <button
                 type="button"
                 onClick={addSubject}
-                className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700"
+                className="flex items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700"
               >
-                <Plus size={13} /> Thêm môn
+                <Plus size={14} /> Thêm môn
               </button>
             </div>
             <div className="space-y-2">
@@ -373,9 +455,9 @@ export default function ReportCommentForm({ onGenerated }) {
                 </div>
               ))}
             </div>
-            <p className="mt-1.5 text-xs text-slate-500">
+            <p className="mt-1.5 text-sm font-medium text-slate-600">
               Từ khóa nhanh cho môn{" "}
-              <span className="font-semibold text-slate-600">
+              <span className="font-bold text-slate-800">
                 {student.monHocList[activeSubjectIdx]?.ten || `#${activeSubjectIdx + 1}`}
               </span>{" "}
               (bấm vào ô ghi chú của môn muốn thêm rồi chọn):

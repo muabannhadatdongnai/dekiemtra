@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { requireAuth, requireWithinTeacherGenerateLimit } from "@/services/apiAuth";
-import { isValidLevelId, isValidLengthId, REPORT_COMMENT_LENGTHS } from "@/data/reportCommentConfig";
+import {
+  isValidLevelId,
+  isValidLengthId,
+  REPORT_COMMENT_LENGTHS,
+  isValidTeacherPronoun,
+  isValidStudentPronoun,
+  isValidToneId,
+  TEACHER_PRONOUNS,
+} from "@/data/reportCommentConfig";
 import { generateReportCommentContent, generateBulkReportComments } from "@/services/reportCommentEngine";
 import { getPreviousComment, saveReportCommentHistory } from "@/services/reportCommentHistoryStore";
 
@@ -52,6 +60,13 @@ export async function POST(request) {
     const body = await request.json();
     const cap = body.cap;
     const doDai = isValidLengthId(body.doDai) ? body.doDai : REPORT_COMMENT_LENGTHS.VUA;
+    // Tùy chọn CHUNG cho cả lượt tạo (xem tom-tat-tinh-nang-nhan-xet-hoc-ba.md, mục "Ý tưởng"):
+    // đại từ nhân xưng, giọng điệu, có gợi ý cho phụ huynh hay không. Validate lỏng - sai/thiếu
+    // thì rơi về giá trị mặc định ở prompt template, KHÔNG chặn cả request.
+    const xungHo = isValidTeacherPronoun(body.xungHo) ? body.xungHo : TEACHER_PRONOUNS.CO;
+    const goiHocSinh = isValidStudentPronoun(body.goiHocSinh) ? body.goiHocSinh : null; // null = tự suy theo cấp học
+    const tone = isValidToneId(body.tone) ? body.tone : undefined;
+    const coGoiYPhuHuynh = body.coGoiYPhuHuynh === true;
 
     if (!isValidLevelId(cap)) {
       return NextResponse.json({ error: "Cấp học không hợp lệ." }, { status: 400 });
@@ -91,6 +106,10 @@ export async function POST(request) {
         monHocList: s.monHocList,
         nhanXetChungTho: s.nhanXetChungTho,
         previousComment: s.previousComment,
+        xungHo,
+        goiHocSinh,
+        tone,
+        coGoiYPhuHuynh,
       });
 
       if (quotaExhausted) {
@@ -114,7 +133,15 @@ export async function POST(request) {
       });
     }
 
-    const results = await generateBulkReportComments({ cap, doDai, students: withHistory });
+    const results = await generateBulkReportComments({
+      cap,
+      doDai,
+      students: withHistory,
+      xungHo,
+      goiHocSinh,
+      tone,
+      coGoiYPhuHuynh,
+    });
 
     // Lưu lịch sử cho những học sinh tạo THÀNH CÔNG (không lưu học sinh bị lỗi).
     await Promise.all(
