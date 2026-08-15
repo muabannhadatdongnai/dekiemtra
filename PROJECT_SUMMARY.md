@@ -1579,6 +1579,75 @@ trong "Phiếu bài tập" (không phải lỗi riêng của mục này)
 
 ---
 
+## BƯỚC 1 (Nhóm D), VIỆC #7 + #8 — Rà soát tiêu đề in đậm + PDF thân thiện phụ huynh — ĐÃ XONG
+(phiên 6, kèm chốt quyết định "lịch sử nhận xét học bạ" đang treo từ NEXT_STEPS.md)
+
+### Quyết định đã chốt: lịch sử nhận xét học bạ ưu tiên XOÁ SỚM (không giữ so sánh kỳ trước)
+- Chọn hướng (b) thay vì (a): `reportCommentHistoryStore.js` viết lại để dữ liệu mỗi học sinh tự
+  xoá trong vòng TỐI ĐA 1 GIỜ kể từ lần lưu đầu tiên (2 lớp bảo vệ: Upstash `EXPIRE 3600` đặt 1
+  LẦN DUY NHẤT khi TTL chưa có + lọc `savedAt` phòng hờ ở cả 2 backend khi đọc/ghi).
+- Hệ quả: KHÔNG còn tính năng "so sánh với kỳ trước" (các kỳ cách nhau hàng tháng, xa hơn 1 giờ
+  rất nhiều) — vì vậy KHÔNG cần làm việc chuẩn hoá giá trị "Lớp" (VD "1A" vs "Lớp 1A") như hướng
+  (a) từng yêu cầu. AI chỉ còn "nhớ" nhận xét cùng học sinh TRONG CÙNG 1 đợt chấm bài liên tục.
+- File sửa: `src/services/reportCommentHistoryStore.js` (viết lại toàn bộ, giữ nguyên chữ ký hàm
+  export `getPreviousComment`/`getFullCommentHistory`/`saveReportCommentHistory` nên KHÔNG cần
+  sửa 2 nơi gọi ở `src/app/api/generate-report-comment/route.js` và
+  `src/app/api/report-comment-history/route.js`).
+
+### Việc #7 — Rà soát tiêu đề in đậm nhất quán (Word + A4 preview, cả 4-5 tab) — KHÔNG TÌM THẤY LỖI
+- Đã rà từng tab: `exportService.js`/`A4LivePreview.jsx` (Đề kiểm tra — `.gdt-exam-title` bold
+  700), `worksheetExportService.js`/`WorksheetPreview.jsx` (Phiếu bài tập — `.worksheet-title-badge`
+  font-weight 800), `lessonPlanExportService.js`/`LessonPlanPreview.jsx` (Giáo án — bold true size
+  30 khớp `<h1 style={{fontWeight:700}}>`), `vietnameseExamExportService.js`/`VietnameseExamPreview.jsx`
+  (Đề Tiếng Việt — tiêu đề cố định, bold cả 2 nơi), `reportCommentExportService.js`/`ReportCommentPreview.jsx`
+  (tên học sinh — bold true size 28 khớp `font-bold` trên StudentCard).
+- Cũng kiểm tra `exportBothVersions()`/`generateFourExamVariants()` (4 Mã Đề) — đều tái dùng
+  `buildExamDocxBlob()` nên thừa hưởng đúng style bold, không có nhánh riêng lệch chuẩn.
+- Kết luận: tiêu đề chính đã in đậm nhất quán ở CẢ Word lẫn A4 preview từ trước — không có thay
+  đổi code nào cho việc này, chỉ xác nhận qua rà soát.
+
+### Việc #8 — PDF "thân thiện phụ huynh" cho Nhận xét học bạ — ĐÃ LÀM (phần Nhận xét học bạ; phần
+`outlineExportService.js` của Đề cương Ôn tập để dành cho Bước 2/Nhóm B vì tab đó CHƯA tồn tại)
+- Trước đây "reportComment" KHÔNG có in/PDF (chỉ Word/Excel/Sao chép) — theo đúng ghi chú cũ trong
+  `page.js`. Giờ thêm 1 luồng PDF riêng, văn phong THƯ NGỎ gửi phụ huynh (khác hẳn khung "chuẩn Bộ
+  GD&ĐT" `.a4-page`/`.gdt-*` dùng cho Đề kiểm tra), dùng lại ĐÚNG kỹ thuật `window.print()` +
+  `id="print-area"` đã có sẵn (0 thư viện PDF mới, giữ tinh thần "$0 chi phí, ít phụ thuộc").
+- File mới: `src/components/ReportCommentPdfView.jsx` (khung in, ẩn màn hình bằng CSS
+  `.report-pdf-only { display:none }` + `@media print { display:block }`, chỉ hiện khi in).
+- Hàm mới TÁCH RIÊNG (không gộp outline): `buildParentFriendlyReportSections()` trong
+  `reportCommentExportService.js` — hàm THUẦN (không JSX/CSS), test được bằng Node thuần, chỉ
+  chuẩn bị dữ liệu cho `ReportCommentPdfView.jsx` map ra JSX.
+- CSS mới: nhóm `.report-pdf-*` trong `globals.css` (không dùng lại `.a4-page`/`.gdt-*`) — kế thừa
+  MIỄN PHÍ 2 rule chung sẵn có qua cùng `id="print-area"` (ẩn phần tử khác khi in, ép in màu nền).
+- Nút mới: "Tải PDF (bản phụ huynh)" trong `ReportCommentExportActions.jsx`, gọi `window.print()`.
+- ⚠️ LƯU Ý QUAN TRỌNG cho ai đọc lại sau: `Tailwind content` trong `tailwind.config.js` CHỈ scan
+  `src/app/**` và `src/components/**` — KHÔNG scan `src/services/**`. Vì vậy hàm
+  `buildParentFriendlyReportSections()` (nằm trong services/) KHÔNG được phép trả về/định nghĩa
+  class Tailwind (sẽ bị purge mất khi build production) — mọi style của PDF thân thiện phụ huynh
+  phải nằm ở CSS thuần (`globals.css`) hoặc trong `.jsx` (được Tailwind scan), không được đặt ở
+  `.js` service. Nếu sau này viết `outlineExportService.js` (Bước 2/Nhóm B) cũng phải nhớ đúng
+  ràng buộc này.
+- Cập nhật lại chú thích cũ trong `page.js` (dòng giải thích `MODES`) — trước ghi "reportComment
+  không dùng in ấn A4", giờ không còn đúng nữa.
+
+### Đã tự verify thật (không chỉ đọc code) — sandbox phiên này CÓ MẠNG
+- `npm install` thật (221 packages) + `npm test`: **114/114 PASS** (không có test nào riêng cho
+  `reportCommentHistoryStore.js`/PDF thân thiện phụ huynh — CHƯA VIẾT test mới, xem "Chưa làm" bên
+  dưới) + `npm run build`: **sạch, exit code 0**, `✓ Compiled successfully`, 20/20 static page.
+- 2 dòng "Dynamic server usage" cho `/api/report-comment-history` và `/api/report-comment-template`
+  trong log build là HÀNH VI CÓ SẴN TỪ TRƯỚC (route dùng `request.headers`, Next.js coi là route
+  động — đúng bản chất, KHÔNG PHẢI lỗi mới phát sinh từ việc sửa lần này).
+
+### Việc CHƯA làm — để bạn tự quyết định thời điểm quay lại
+- CHƯA viết test tự động cho `reportCommentHistoryStore.js` (TTL 1 giờ) và
+  `buildParentFriendlyReportSections()` — cả 2 đều là hàm thuần, có thể test bằng `node --test`
+  không cần mạng, nên làm được bất kỳ lúc nào rảnh (không cấp bách, không phải blocker).
+- CHƯA tự bấm nút "Tải PDF (bản phụ huynh)" trên trình duyệt thật để xem bằng mắt (sandbox không
+  có UI trình duyệt) — nên tự thử 1 lần trước khi coi là ổn định, đặc biệt kiểm tra ngắt trang
+  giữa các học sinh (`.report-pdf-page-break`) có đúng khi có từ 2 học sinh trở lên hay không.
+
+---
+
 ## Quy trình khi mở chat mới
 1. Upload lại zip code mới nhất (sandbox reset giữa các phiên) + file `PROJECT_SUMMARY.md` này (+
    `KE_HOACH_GIAI_DOAN_10.md` nếu đang làm tiếp Giai đoạn 10).
