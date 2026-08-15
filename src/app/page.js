@@ -67,7 +67,9 @@ export default function HomePage() {
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
 
   // A2/A3: chế độ đang chọn + dữ liệu Phiếu bài tập/Giáo án (độc lập với examResult, giữ 3 luồng tách biệt)
-  const [mode, setMode] = useState(MODES.EXAM);
+  // Mặc định khi vào web là "Soạn giáo án" (MODES.LESSON_PLAN) - đây là tab vị trí 1, theo yêu cầu
+  // người dùng (trước đó lỡ để mặc định là MODES.EXAM dù tab EXAM không còn ở vị trí đầu).
+  const [mode, setMode] = useState(MODES.LESSON_PLAN);
   const [worksheetResult, setWorksheetResult] = useState(null); // { worksheet, meta } | null
   const [lessonPlanResult, setLessonPlanResult] = useState(EMPTY_LESSON_PLAN_RESULT);
   const [vietnameseExamResult, setVietnameseExamResult] = useState(EMPTY_VIETNAMESE_EXAM_RESULT);
@@ -91,7 +93,7 @@ export default function HomePage() {
     setVietnameseExamResult(EMPTY_VIETNAMESE_EXAM_RESULT);
     setReportCommentResult(EMPTY_REPORT_COMMENT_RESULT);
     setOutlineResult(EMPTY_OUTLINE_RESULT);
-    setMode(MODES.EXAM);
+    setMode(MODES.LESSON_PLAN);
   }
 
   function handleGenerated(result) {
