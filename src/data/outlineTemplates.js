@@ -40,6 +40,14 @@ export const DEFAULT_OUTLINE_EXERCISE_COUNTS = {
 };
 
 /**
+ * "Lộ trình Ôn tập" (Bước 3/Nhóm E, phản hồi thực tế sau khi test) - giáo viên tự nhập số ngày
+ * muốn ôn (ĐÃ CHỐT: không để AI tự ước lượng), AI chia khối lượng ôn tập thành nhiệm vụ nhỏ theo
+ * đúng số ngày này. Mặc định 7 ngày (1 tuần) khi mở form lần đầu - xem trần tối đa ở
+ * contentGenerationLimits.js -> getOutlineMaxStudyDays().
+ */
+export const DEFAULT_OUTLINE_STUDY_DAYS = 7;
+
+/**
  * "Phạm vi" theo Học kỳ - giáo viên bấm 1 nút để tự động chọn NHÓM chương tương ứng, thay vì
  * phải tự tick từng chương một (đặc biệt hữu ích khi ôn tập giữa/cuối kỳ, cần gộp NHIỀU chương).
  * Quy ước ĐƠN GIẢN (không có nguồn phân phối chương trình chính thức theo kỳ trong repo kiến

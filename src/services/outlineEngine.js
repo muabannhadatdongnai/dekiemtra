@@ -21,6 +21,7 @@ export async function generateOutlineContent({
   sourceMarkdown,
   exerciseCounts,
   yeuCauDacBiet,
+  soNgayOnTap,
   maxRetries = 2,
 }) {
   let attempt = 0;
@@ -35,6 +36,7 @@ export async function generateOutlineContent({
       sourceMarkdown,
       exerciseCounts,
       yeuCauDacBiet,
+      soNgayOnTap,
     });
 
     try {
@@ -51,9 +53,14 @@ export async function generateOutlineContent({
         !Array.isArray(parsed.dangBai) ||
         parsed.dangBai.length === 0 ||
         !parsed.nganHangBaiTap ||
-        typeof parsed.nganHangBaiTap !== "object"
+        typeof parsed.nganHangBaiTap !== "object" ||
+        !Array.isArray(parsed.loTrinhOnTap) ||
+        parsed.loTrinhOnTap.length === 0
       ) {
-        throw new Error("Thiếu 1 trong 3 phần bắt buộc (Kiến thức cốt lõi/Dạng bài/Ngân hàng bài tập) trong JSON trả về.");
+        throw new Error(
+          "Thiếu 1 trong các phần bắt buộc (Kiến thức cốt lõi/Dạng bài/Ngân hàng bài tập/Lộ trình " +
+            "Ôn tập) trong JSON trả về."
+        );
       }
       return { outline: parsed, quotaExhausted: false };
     } catch (err) {

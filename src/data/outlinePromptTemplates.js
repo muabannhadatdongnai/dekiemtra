@@ -11,6 +11,12 @@
  * Đầu ra KHÔNG dùng LaTeX (giống Giáo án, khác Đề kiểm tra): outlineExportService.js xuất Word
  * bằng Paragraph/TextRun thuần, KHÔNG có pipeline LaTeX -> MathML -> OMML như exportService.js,
  * nên mọi công thức/số liệu phải viết bằng ký hiệu toán học thông thường.
+ *
+ * Bước 3/Nhóm E (phản hồi thực tế sau khi test, đã sửa): schema thêm "canhBaoBayLoi" (mỗi dạng
+ * bài, Trụ cột 2) và "loTrinhOnTap" (checklist theo NGÀY, số ngày do giáo viên tự nhập qua
+ * "soNgayOnTap" - KHÔNG để AI tự ước lượng, đã chốt với người dùng). "baiMauLoiGiai" (lời giải
+ * bài mẫu) giờ LUÔN hiển thị ở CẢ 2 phiên bản xuất file (xem outlineExportService.js) - trước đây
+ * bị ẩn nhầm ở bản Học sinh, đây là lỗi nghiêm trọng nhất trong phản hồi Bước 3.
  */
 
 import { getSubjectProfile } from "./subjectProfiles";
@@ -39,6 +45,7 @@ export function buildOutlinePrompt({
   sourceMarkdown = "",
   exerciseCounts,
   yeuCauDacBiet = "",
+  soNgayOnTap,
 }) {
   const subjectProfile = getSubjectProfile(subject);
   const gradeLabel = `Lớp ${grade}`;
@@ -59,11 +66,14 @@ ${chapterLabel || "(không rõ, tự xác định theo chương trình)"}.`;
     { "tieuMuc": "...", "noiDung": "..." }
   ],
   "dangBai": [
-    { "tenDang": "...", "luuY": "...", "baiMauDe": "...", "baiMauLoiGiai": "..." }
+    { "tenDang": "...", "luuY": "...", "baiMauDe": "...", "baiMauLoiGiai": "...", "canhBaoBayLoi": "..." }
   ],
   "nganHangBaiTap": {
 ${buildExerciseBankSchemaBlock(exerciseCounts)}
   },
+  "loTrinhOnTap": [
+    { "ngay": "Ngày 1", "nhiemVu": "..." }
+  ],
   "thuNgoPhuHuynh": "..."
 }`;
 
@@ -75,8 +85,9 @@ THÔNG TIN ĐỀ CƯƠNG:
 - Môn: ${subjectProfile.label}
 - Cấp/Lớp: ${gradeLabel}
 - Phạm vi ôn tập: ${chapterLabel || "(theo tài liệu cung cấp bên dưới)"}
+- Số ngày ôn tập giáo viên yêu cầu: ${soNgayOnTap} ngày
 
-QUY TẮC BẮT BUỘC - CẤU TRÚC "3 TRỤ CỘT":
+QUY TẮC BẮT BUỘC - CẤU TRÚC "3 TRỤ CỘT" + LỘ TRÌNH ÔN TẬP:
 
 1. "kienThucCotLoi" (Trụ cột 1 - Kiến thức cốt lõi): liệt kê CÁC TIỂU MỤC lý thuyết/công thức/quy
    tắc TRỌNG TÂM nhất trong phạm vi đã nêu, viết NGẮN GỌN, DỄ NHỚ (như "sổ tay ôn thi"), không lan
@@ -88,7 +99,13 @@ QUY TẮC BẮT BUỘC - CẤU TRÚC "3 TRỤ CỘT":
    - "luuY": 1-2 câu mẹo/lưu ý khi làm dạng này (lỗi hay gặp, cách nhận diện dạng bài).
    - "baiMauDe" + "baiMauLoiGiai": 1 BÀI MẪU CỤ THỂ cho dạng này, "baiMauLoiGiai" PHẢI trình bày
      ĐẦY ĐỦ CÁC BƯỚC giải (không chỉ đáp số) để học sinh học được CÁCH LÀM, không chỉ học thuộc
-     đáp án.
+     đáp án. ⚠️ "baiMauLoiGiai" LUÔN được hiển thị cho học sinh (không bị ẩn ở bất kỳ phiên bản
+     nào) - vì vậy PHẢI viết đủ chi tiết, tự thân đọc hiểu được mà không cần thêm giải thích khác.
+   - "canhBaoBayLoi": 1 câu CẢNH BÁO LỖI SAI HỌC SINH HAY MẮC PHẢI khi làm dạng bài này (VD: sai
+     dấu, nhầm đơn vị, đặt tính lệch cột, quên đổi đơn vị...) - viết giọng gần gũi, nhắc nhở nhẹ
+     nhàng như lời cô giáo dặn dò (VD: "Khi cộng số thập phân, nhiều bạn hay đặt các chữ số cuối
+     cùng thẳng cột thay vì đặt dấu phẩy thẳng cột. Các con nhớ cẩn thận nhé!"). BẮT BUỘC có cho
+     MỌI dạng bài, không được để trống.
 
 3. "nganHangBaiTap" (Trụ cột 3 - Ngân hàng bài tập 3 mức): bài tập để học sinh TỰ LUYỆN, chia
    đúng 3 mức độ tăng dần độ khó, đúng SỐ LƯỢNG giáo viên yêu cầu cho từng mức:
@@ -104,7 +121,18 @@ ${buildExerciseCountsBlock(exerciseCounts)}
    Nếu 1 mức được yêu cầu 0 bài, trả về mảng RỖNG "[]" cho đúng mức đó (không tự thêm bài ngoài
    yêu cầu).
 
-4. "thuNgoPhuHuynh": viết 1 ĐOẠN THƯ NGỎ NGẮN (4-6 câu) gửi PHỤ HUYNH, giọng văn ẤM ÁP, GẦN GŨI
+4. "loTrinhOnTap" (Lộ trình Ôn tập - checklist theo ngày): chia TOÀN BỘ khối lượng ôn tập (Kiến
+   thức cốt lõi + Dạng bài + Ngân hàng bài tập ở trên) thành ĐÚNG ${soNgayOnTap} NHIỆM VỤ theo
+   ngày (mảng "loTrinhOnTap" PHẢI có ĐÚNG ${soNgayOnTap} phần tử, mỗi phần tử 1 ngày, KHÔNG được
+   nhiều hơn hoặc ít hơn). Mỗi phần tử { "ngay": "Ngày N", "nhiemVu": "..." }:
+   - "ngay": ghi đúng "Ngày 1", "Ngày 2", ... "Ngày ${soNgayOnTap}" theo thứ tự.
+   - "nhiemVu": 1 CÂU nhiệm vụ CỤ THỂ, VỪA SỨC cho ngày đó (VD: "Đọc hiểu Lý thuyết Chương 1 + Làm
+     3 bài Mức Cơ bản Dạng 1"), phân bổ HỢP LÝ và TĂNG DẦN độ khó qua các ngày (những ngày đầu ưu
+     tiên Kiến thức cốt lõi + bài mẫu, những ngày giữa/cuối ưu tiên luyện Ngân hàng bài tập, ngày
+     cuối cùng nên là ôn tập tổng hợp/luyện đề). KHÔNG lặp lại nguyên văn nội dung đã liệt kê ở
+     Trụ cột 1-3, chỉ NHẮC TÊN việc cần làm.
+
+5. "thuNgoPhuHuynh": viết 1 ĐOẠN THƯ NGỎ NGẮN (4-6 câu) gửi PHỤ HUYNH, giọng văn ẤM ÁP, GẦN GŨI
    (không phải văn phong hành chính) - giải thích ngắn gọn phạm vi con đang ôn tập, gợi ý CỤ THỂ
    cách phụ huynh có thể đồng hành tại nhà (VD: mỗi ngày cùng con làm 1-2 bài mức Cơ bản trước,
    kiểm tra qua đáp án, khuyến khích con thử sức mức Nâng cao/Vận dụng cao khi đã vững). KHÔNG

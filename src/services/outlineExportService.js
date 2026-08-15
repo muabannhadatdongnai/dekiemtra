@@ -6,6 +6,10 @@ import {
   AlignmentType,
   BorderStyle,
   ShadingType,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
   convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
@@ -20,13 +24,33 @@ import { getSubjectLabel } from "@/data/config";
  * "3 Trụ cột" của đề cương khác hẳn khung mục I-IV của giáo án hay các "khối màu theo dạng bài"
  * của phiếu bài tập.
  *
- * 2 LUỒNG TẢI (đúng yêu cầu NEXT_STEPS.md Bước 2):
- *  - Bản "Học sinh" (showAnswers=false): CÓ đề bài Trụ cột 2/3, KHÔNG có lời giải/đáp án (chừa
- *    dòng trống để tự làm) - vẫn giữ nguyên "Kiến thức cốt lõi" (Trụ cột 1) vì đó là lý thuyết
- *    tham khảo, không phải "đáp án" cần giấu.
- *  - Bản "GV-PH" (showAnswers=true): ĐẦY ĐỦ lời giải/đáp án + PHỤ LỤC "Thư ngỏ gửi Phụ huynh" ở
- *    ĐẦU file (Giáo viên in kèm bản này để gửi kèm cho phụ huynh, hoặc dùng làm bản chấm/đối
- *    chiếu) - bản Học sinh KHÔNG có phụ lục này (tránh lộ đáp án kèm thư ngỏ khi đưa cho học sinh).
+ * 2 LUỒNG TẢI (đã cập nhật ở Bước 3/Nhóm E theo phản hồi thực tế sau khi test - xem NEXT_STEPS.md):
+ *  - Bản "Học sinh" (showAnswers=false):
+ *      + CÓ đề bài + LỜI GIẢI ĐẦY ĐỦ của Bài mẫu (Trụ cột 2) - ⚠️ SỬA LỖI NGHIÊM TRỌNG (Bước 3
+ *        Việc E1): TRƯỚC ĐÂY lời giải Bài mẫu bị ẩn nhầm ở bản này, khiến học sinh đọc đề mẫu mà
+ *        không có gì tham chiếu để tự làm Ngân hàng bài tập. Lời giải Bài mẫu KHÔNG PHẢI "đáp án"
+ *        cần giấu - đây là nội dung DẠY CÁCH LÀM, phải hiển thị ở CẢ 2 bản.
+ *      + KHÔNG có đáp án Ngân hàng bài tập (Trụ cột 3) - chừa dòng trống "Bài làm: ..." để tự làm.
+ *      + Vẫn giữ nguyên "Kiến thức cốt lõi" (Trụ cột 1) - lý thuyết tham khảo, không phải đáp án.
+ *      + CÓ "⚠️ Lỗi sai thường gặp" dưới mỗi Bài mẫu (Việc E3a) - nội dung dạy/nhắc nhở, không
+ *        phải đáp án, nên hiển thị ở CẢ 2 bản giống Bài mẫu/Lời giải.
+ *      + CÓ "Lộ trình Ôn tập" checklist theo ngày (Việc E3b) - đặt gần đầu file (không có Thư ngỏ
+ *        ở bản này nên đặt ngay sau tiêu đề).
+ *      + CÓ bảng "Tự đánh giá" (Việc E3c) ở CUỐI file - CHỈ bản Học sinh (công cụ tự nhận thức của
+ *        học sinh, không cần thiết ở bản Giáo viên/Phụ huynh).
+ *      + KHÔNG có phụ lục đáp án (đáp án hoàn toàn vắng mặt ở bản này).
+ *  - Bản "GV-PH" (showAnswers=true):
+ *      + PHỤ LỤC "Thư ngỏ gửi Phụ huynh" ở ĐẦU file (giữ nguyên từ Bước 2).
+ *      + "Lộ trình Ôn tập" ngay SAU Thư ngỏ (Việc E3b - đúng yêu cầu gốc "đặt ngay sau Thư ngỏ").
+ *      + Bài mẫu + Lời giải + "⚠️ Lỗi sai thường gặp" - GIỐNG HỆT bản Học sinh (nội dung dạy học,
+ *        không phải đáp án cần giấu - xem giải thích ở trên).
+ *      + Ngân hàng bài tập (Trụ cột 3): CHỈ đề bài + dòng trống "Bài làm: ..." - GIỐNG bản Học
+ *        sinh, KHÔNG in đáp án ngay dưới câu hỏi nữa - ⚠️ THAY ĐỔI so với Bước 2 (Việc E2, "chống
+ *        xem trộm": trước đây đáp án nằm ngay dưới câu hỏi, phụ huynh đưa file này cho con làm bài
+ *        thì con dễ nhìn thấy đáp án câu kế tiếp).
+ *      + "PHỤ LỤC: ĐÁP ÁN NGÂN HÀNG BÀI TẬP" ở TRANG CUỐI - TÁCH RIÊNG THEO TỪNG MỨC (Cơ bản/Nâng
+ *        cao/Vận dụng cao, ĐÃ CHỐT với người dùng ở Bước 3), đánh số lại khớp với thứ tự bài ở
+ *        mục III để giáo viên/phụ huynh dễ tra cứu - CHỈ bản này mới có phụ lục đáp án.
  *
  * ⚠️ buildParentFriendlyOutlineParagraphs() bên dưới CỐ Ý tách ĐỘC LẬP khỏi
  * buildParentFriendlyReportSections() (reportCommentExportService.js, Bước 1 Việc #8) - 2 tính
@@ -109,8 +133,12 @@ function buildKienThucCotLoiParagraphs(items) {
   return paragraphs;
 }
 
-/** Trụ cột 2 - Dạng bài + bài mẫu: "baiMauLoiGiai" CHỈ hiện khi showAnswers=true. */
-function buildDangBaiParagraphs(items, showAnswers) {
+/**
+ * Trụ cột 2 - Dạng bài + bài mẫu: "baiMauLoiGiai" (Việc E1 - đã sửa) và "canhBaoBayLoi" (Việc
+ * E3a) LUÔN hiển thị, KHÔNG phụ thuộc showAnswers - đây là nội dung DẠY CÁCH LÀM, không phải đáp
+ * án cần giấu (khác hẳn "dapAn" ở Trụ cột 3 - xem buildNganHangBaiTapParagraphs()).
+ */
+function buildDangBaiParagraphs(items) {
   if (!items?.length) return [];
   const paragraphs = [sectionHeading("II. DẠNG BÀI + BÀI MẪU")];
   const border = { style: BorderStyle.SINGLE, size: 4, color: "A5B4FC", space: 6 };
@@ -136,23 +164,34 @@ function buildDangBaiParagraphs(items, showAnswers) {
     }
     paragraphs.push(
       new Paragraph({
-        border: { left: border, right: border, bottom: showAnswers ? undefined : border },
+        border: { left: border, right: border },
         shading: { type: ShadingType.CLEAR, fill: "EEF2FF" },
         children: [
           new TextRun({ text: "Bài mẫu: ", bold: true, size: 22, font: FONT }),
           new TextRun({ text: it.baiMauDe || "", size: 22, font: FONT }),
         ],
-        spacing: { after: showAnswers ? 20 : 120 },
+        spacing: { after: 20 },
       })
     );
-    if (showAnswers) {
+    paragraphs.push(
+      new Paragraph({
+        border: { left: border, right: border, bottom: it.canhBaoBayLoi ? undefined : border },
+        shading: { type: ShadingType.CLEAR, fill: "EEF2FF" },
+        children: [
+          new TextRun({ text: "Lời giải: ", bold: true, size: 22, font: FONT }),
+          new TextRun({ text: it.baiMauLoiGiai || "", size: 22, font: FONT }),
+        ],
+        spacing: { after: it.canhBaoBayLoi ? 20 : 120 },
+      })
+    );
+    if (it.canhBaoBayLoi) {
       paragraphs.push(
         new Paragraph({
           border: { left: border, right: border, bottom: border },
-          shading: { type: ShadingType.CLEAR, fill: "EEF2FF" },
+          shading: { type: ShadingType.CLEAR, fill: "FEF3C7" },
           children: [
-            new TextRun({ text: "Lời giải: ", bold: true, size: 22, font: FONT }),
-            new TextRun({ text: it.baiMauLoiGiai || "", size: 22, font: FONT }),
+            new TextRun({ text: "⚠️ Lỗi sai thường gặp: ", bold: true, size: 21, font: FONT, color: "92400E" }),
+            new TextRun({ text: it.canhBaoBayLoi, size: 21, font: FONT, color: "92400E" }),
           ],
           spacing: { after: 120 },
         })
@@ -163,10 +202,13 @@ function buildDangBaiParagraphs(items, showAnswers) {
 }
 
 /**
- * Trụ cột 3 - Ngân hàng bài tập 3 mức: mỗi bài đánh số trong đúng mức của nó. "dapAn" CHỈ hiện
- * khi showAnswers=true (bản Học sinh chừa dòng trống để tự làm bài, giống mạch WorksheetExportService).
+ * Trụ cột 3 - Ngân hàng bài tập 3 mức: mỗi bài đánh số trong đúng mức của nó. Việc E2 (Bước 3) -
+ * ĐÃ SỬA: "dapAn" KHÔNG còn in ngay dưới câu hỏi ở BẤT KỲ bản nào nữa (kể cả bản GV-PH) - luôn
+ * chừa dòng trống "Bài làm: ..." ở đây, đáp án chuyển hẳn sang phụ lục riêng cuối tài liệu (xem
+ * buildAnswerKeyAppendixParagraphs()) chỉ có ở bản GV-PH - lý do "chống xem trộm" (phụ huynh dùng
+ * bản GV-PH cho con làm bài thì con không còn nhìn thấy đáp án câu kế tiếp ngay dưới câu hỏi).
  */
-function buildNganHangBaiTapParagraphs(nganHangBaiTap, showAnswers) {
+function buildNganHangBaiTapParagraphs(nganHangBaiTap) {
   if (!nganHangBaiTap) return [];
   const paragraphs = [sectionHeading("III. NGÂN HÀNG BÀI TẬP (3 MỨC ĐỘ)")];
 
@@ -191,10 +233,67 @@ function buildNganHangBaiTapParagraphs(nganHangBaiTap, showAnswers) {
       );
       paragraphs.push(
         new Paragraph({
-          children: showAnswers
-            ? [new TextRun({ text: `   Đáp án: ${ex.dapAn || ""}`, size: 20, font: FONT, color: "166534" })]
-            : [new TextRun({ text: "   Bài làm: .......................................................................", size: 20, font: FONT, color: "94A3B8" })],
+          children: [new TextRun({ text: "   Bài làm: .......................................................................", size: 20, font: FONT, color: "94A3B8" })],
           spacing: { after: 100 },
+        })
+      );
+    });
+  });
+
+  return paragraphs;
+}
+
+/**
+ * "PHỤ LỤC: ĐÁP ÁN NGÂN HÀNG BÀI TẬP" (Việc E2, Bước 3) - CHỈ chèn ở bản GV-PH, đặt ở TRANG CUỐI
+ * tài liệu (dùng pageBreakBefore để luôn bắt đầu 1 trang mới, tách biệt hẳn với nội dung câu hỏi
+ * phía trên). ĐÃ CHỐT với người dùng: tách riêng theo TỪNG MỨC (Cơ bản/Nâng cao/Vận dụng cao),
+ * đánh số lại trong từng mức khớp đúng thứ tự bài ở mục III (không đánh số liên tục xuyên suốt).
+ */
+function buildAnswerKeyAppendixParagraphs(nganHangBaiTap) {
+  if (!nganHangBaiTap) return [];
+  const hasAnyItem = OUTLINE_LEVEL_ORDER.some((level) => (nganHangBaiTap[level] || []).length > 0);
+  if (!hasAnyItem) return [];
+
+  const paragraphs = [
+    new Paragraph({
+      pageBreakBefore: true,
+      children: [new TextRun({ text: "PHỤ LỤC: ĐÁP ÁN NGÂN HÀNG BÀI TẬP", bold: true, size: 26, font: FONT })],
+      spacing: { before: 100, after: 100 },
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: "(Đáp án được tách riêng ở đây để tránh lộ ra ngay dưới câu hỏi khi dùng bản này cho con tự làm bài)",
+          italics: true,
+          size: 20,
+          font: FONT,
+          color: "64748B",
+        }),
+      ],
+      spacing: { after: 160 },
+    }),
+  ];
+
+  OUTLINE_LEVEL_ORDER.forEach((level) => {
+    const items = nganHangBaiTap[level] || [];
+    if (items.length === 0) return;
+
+    paragraphs.push(
+      new Paragraph({
+        shading: { type: ShadingType.CLEAR, fill: LEVEL_SHADING[level] },
+        children: [new TextRun({ text: OUTLINE_LEVEL_LABELS[level], bold: true, size: 22, font: FONT })],
+        spacing: { before: 140, after: 60 },
+      })
+    );
+
+    items.forEach((ex, i) => {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${i + 1}. `, bold: true, size: 21, font: FONT }),
+            new TextRun({ text: ex.dapAn || "", size: 21, font: FONT, color: "166534" }),
+          ],
+          spacing: { after: 40 },
         })
       );
     });
@@ -241,6 +340,125 @@ export function buildParentFriendlyOutlineParagraphs(thuNgoPhuHuynh, meta) {
   ];
 }
 
+/**
+ * "Lộ trình Ôn tập" (Việc E3b, Bước 3) - checklist theo NGÀY (số ngày do giáo viên tự nhập qua
+ * "soNgayOnTap", xem outlinePromptTemplates.js) - CÓ Ở CẢ 2 BẢN (nội dung dạy/hướng dẫn tự học,
+ * không phải đáp án cần giấu). Đặt gần đầu file (ngay sau Thư ngỏ ở bản GV-PH đúng yêu cầu gốc;
+ * bản Học sinh không có Thư ngỏ nên đặt ngay sau tiêu đề).
+ */
+function buildStudyPlanParagraphs(loTrinhOnTap) {
+  if (!loTrinhOnTap?.length) return [];
+  const border = { style: BorderStyle.SINGLE, size: 4, color: "93C5FD", space: 6 };
+
+  const paragraphs = [
+    new Paragraph({
+      border: { top: border, left: border, right: border },
+      shading: { type: ShadingType.CLEAR, fill: "EFF6FF" },
+      children: [new TextRun({ text: "🗓️ LỘ TRÌNH ÔN TẬP", bold: true, size: 24, font: FONT, color: "1D4ED8" })],
+      spacing: { before: 100, after: 60 },
+    }),
+  ];
+
+  loTrinhOnTap.forEach((item, i) => {
+    const isLast = i === loTrinhOnTap.length - 1;
+    paragraphs.push(
+      new Paragraph({
+        border: { left: border, right: border, bottom: isLast ? border : undefined },
+        shading: { type: ShadingType.CLEAR, fill: "EFF6FF" },
+        children: [
+          new TextRun({ text: "☐ ", bold: true, size: 22, font: FONT }),
+          new TextRun({ text: `${item.ngay || `Ngày ${i + 1}`}: `, bold: true, size: 22, font: FONT, color: "1D4ED8" }),
+          new TextRun({ text: item.nhiemVu || "", size: 22, font: FONT }),
+        ],
+        spacing: { after: isLast ? 200 : 40 },
+      })
+    );
+  });
+
+  return paragraphs;
+}
+
+/**
+ * Bảng "Tự đánh giá" (Việc E3c, Bước 3) - CHỈ ở bản Học sinh (công cụ tự nhận thức của học sinh),
+ * đặt ở TRANG CUỐI. KHÔNG cần AI sinh thêm dữ liệu mới - tự động lấy danh sách "tenDang" đã có sẵn
+ * từ Trụ cột 2 (mỗi Dạng bài đã soạn tương ứng 1 dòng để học sinh tự chấm mức độ hiểu bài).
+ */
+function buildSelfReflectionParagraphs(dangBai) {
+  if (!dangBai?.length) return [];
+
+  const paragraphs = [
+    new Paragraph({
+      pageBreakBefore: true,
+      children: [new TextRun({ text: "📊 TỰ ĐÁNH GIÁ MỨC ĐỘ HIỂU BÀI", bold: true, size: 26, font: FONT })],
+      spacing: { before: 100, after: 60 },
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: "Sau khi ôn xong mỗi dạng bài, con hãy khoanh tròn mức độ hiểu bài của mình nhé:",
+          italics: true,
+          size: 21,
+          font: FONT,
+          color: "475569",
+        }),
+      ],
+      spacing: { after: 140 },
+    }),
+  ];
+
+  const rows = [
+    new TableRow({
+      tableHeader: true,
+      children: [
+        new TableCell({
+          shading: { type: ShadingType.CLEAR, fill: "E2E8F0" },
+          children: [new Paragraph({ children: [new TextRun({ text: "Dạng bài", bold: true, size: 21, font: FONT })] })],
+        }),
+        new TableCell({
+          shading: { type: ShadingType.CLEAR, fill: "E2E8F0" },
+          children: [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: "Mức độ tự đánh giá", bold: true, size: 21, font: FONT })],
+            }),
+          ],
+        }),
+      ],
+    }),
+  ];
+
+  dangBai.forEach((it) => {
+    rows.push(
+      new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph({ children: [new TextRun({ text: it.tenDang || "", size: 21, font: FONT })] })],
+          }),
+          new TableCell({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                  new TextRun({ text: "😃 Rất hiểu     -     😐 Hơi băn khoăn     -     😥 Cần cô giảng lại", size: 20, font: FONT }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+  });
+
+  paragraphs.push(
+    new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows,
+    })
+  );
+
+  return paragraphs;
+}
+
 /** Dựng Blob .docx - hàm lõi dùng chung, KHÔNG tự tải file, cùng quy ước
  * buildWorksheetDocxBlob()/buildLessonPlanDocxSections(). */
 export async function buildOutlineDocxBlob({ outline, meta = {}, showAnswers = false }) {
@@ -248,9 +466,12 @@ export async function buildOutlineDocxBlob({ outline, meta = {}, showAnswers = f
   const parentLetterParagraphs = showAnswers
     ? buildParentFriendlyOutlineParagraphs(outline?.thuNgoPhuHuynh, meta)
     : [];
+  const studyPlanParagraphs = buildStudyPlanParagraphs(outline?.loTrinhOnTap);
   const kienThucParagraphs = buildKienThucCotLoiParagraphs(outline?.kienThucCotLoi);
-  const dangBaiParagraphs = buildDangBaiParagraphs(outline?.dangBai, showAnswers);
-  const nganHangParagraphs = buildNganHangBaiTapParagraphs(outline?.nganHangBaiTap, showAnswers);
+  const dangBaiParagraphs = buildDangBaiParagraphs(outline?.dangBai);
+  const nganHangParagraphs = buildNganHangBaiTapParagraphs(outline?.nganHangBaiTap);
+  const answerKeyParagraphs = showAnswers ? buildAnswerKeyAppendixParagraphs(outline?.nganHangBaiTap) : [];
+  const selfReflectionParagraphs = showAnswers ? [] : buildSelfReflectionParagraphs(outline?.dangBai);
 
   const doc = new Document({
     sections: [
@@ -259,9 +480,12 @@ export async function buildOutlineDocxBlob({ outline, meta = {}, showAnswers = f
         children: [
           ...headerParagraphs,
           ...parentLetterParagraphs,
+          ...studyPlanParagraphs,
           ...kienThucParagraphs,
           ...dangBaiParagraphs,
           ...nganHangParagraphs,
+          ...answerKeyParagraphs,
+          ...selfReflectionParagraphs,
         ],
       },
     ],
@@ -284,9 +508,10 @@ export async function exportOutlineToWord({ outline, meta }) {
 
 /**
  * Xuất ĐỒNG THỜI 2 file từ CÙNG 1 dữ liệu đã tạo (không sinh lại), đúng khuôn
- * exportWorksheetBothVersions()/exportBothVersions():
- *   - Bản Học sinh: không lời giải/đáp án, chừa dòng trống để tự làm.
- *   - Bản GV-PH: đầy đủ lời giải/đáp án + phụ lục Thư ngỏ Phụ huynh ở đầu file.
+ * exportWorksheetBothVersions()/exportBothVersions() - xem chi tiết đầy đủ 2 bản ở comment đầu
+ * file (Bước 3/Nhóm E): Bản Học sinh có lời giải Bài mẫu nhưng KHÔNG có đáp án Ngân hàng bài tập
+ * (chừa dòng trống + có bảng Tự đánh giá cuối file); Bản GV-PH có phụ lục Thư ngỏ + phụ lục đáp
+ * án riêng cuối file (KHÔNG còn in đáp án ngay dưới câu hỏi).
  */
 export async function exportOutlineBothVersions({ outline, meta }) {
   const fileBase = slugifyTitle(outline?.tenDeCuong);

@@ -12,6 +12,8 @@
  * @property {{coBan:number, nangCao:number, vanDungCao:number}} exerciseCounts - số bài/mức,
  *   xem OUTLINE_LEVELS trong outlineTemplates.js
  * @property {string} [yeuCauDacBiet] - giáo viên tự gõ yêu cầu riêng cho lượt soạn này
+ * @property {number} [soNgayOnTap] - số ngày ôn tập giáo viên tự nhập (Bước 3/Nhóm E) - AI chia
+ *   Lộ trình Ôn tập thành đúng số ngày này, xem DEFAULT_OUTLINE_STUDY_DAYS trong outlineTemplates.js
  */
 
 export function buildOutlineBlueprint({
@@ -21,6 +23,7 @@ export function buildOutlineBlueprint({
   chapterIds = [],
   exerciseCounts,
   yeuCauDacBiet = "",
+  soNgayOnTap,
 }) {
   return {
     subject,
@@ -29,5 +32,6 @@ export function buildOutlineBlueprint({
     chapterIds,
     exerciseCounts,
     yeuCauDacBiet,
+    soNgayOnTap,
   };
 }

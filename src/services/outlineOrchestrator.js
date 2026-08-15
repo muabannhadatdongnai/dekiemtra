@@ -19,6 +19,7 @@ export async function orchestrateOutlineGeneration({
   chapterIds = [],
   exerciseCounts,
   yeuCauDacBiet = "",
+  soNgayOnTap,
 }) {
   const warnings = [];
   let sourceMarkdown = "";
@@ -57,6 +58,7 @@ export async function orchestrateOutlineGeneration({
       sourceMarkdown,
       exerciseCounts,
       yeuCauDacBiet,
+      soNgayOnTap,
     }));
   } catch (err) {
     warnings.push(

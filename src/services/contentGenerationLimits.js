@@ -186,3 +186,18 @@ export function clampOutlineExerciseCounts(exerciseCounts) {
 
   return { counts, wasClamped };
 }
+
+// ============== Lộ trình Ôn tập - số ngày (Bước 3/Nhóm E, /api/generate-outline) ==============
+// Giáo viên tự nhập số ngày muốn ôn (ĐÃ CHỐT, không để AI tự ước lượng) - vẫn cần trần tối đa
+// cùng lý do các trần khác trong file này (client gửi thẳng API có thể nhập số ngày phi thực tế
+// như 9999, khiến AI phải sinh 1 mảng "loTrinhOnTap" khổng lồ trong 1 lượt gọi duy nhất).
+export function getOutlineMaxStudyDays() {
+  return envInt("OUTLINE_MAX_STUDY_DAYS", 30);
+}
+
+/** Cắt (clamp) số ngày về [1, trần tối đa] - cùng khuôn clampSoTiet() (1 giá trị đơn, không phải object). */
+export function clampOutlineStudyDays(soNgayOnTap) {
+  const max = getOutlineMaxStudyDays();
+  const value = Math.max(1, Number(soNgayOnTap) || 1);
+  return Math.min(value, max);
+}
