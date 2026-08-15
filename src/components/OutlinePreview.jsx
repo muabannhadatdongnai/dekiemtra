@@ -3,6 +3,16 @@
 import { getSubjectLabel } from "@/data/config";
 import { OUTLINE_LEVEL_ORDER, OUTLINE_LEVEL_LABELS } from "@/data/outlineTemplates";
 
+/**
+ * Bước 3/Nhóm E (phản hồi thực tế): thêm "⚠️ Lỗi sai thường gặp" dưới mỗi Bài mẫu (E3a),
+ * "🗓️ Lộ trình Ôn tập" checklist theo ngày (E3b) và bảng "📊 Tự đánh giá" (E3c). Đây là bản xem
+ * TRƯỚC KHI xuất file - LUÔN hiển thị ĐẦY ĐỦ (lời giải + đáp án inline ở mục III + Thư ngỏ) như 1
+ * bản tham chiếu tổng hợp cho giáo viên tự xem/in, KHÔNG cố tình mô phỏng lại đúng bố cục 2 file
+ * Word xuất ra (Học sinh/GV-PH tách biệt đáp án khỏi câu hỏi - xem outlineExportService.js) vì
+ * đây không phải bản dùng để đưa trực tiếp cho học sinh làm bài chống xem trộm. Vị trí Lộ trình
+ * Ôn tập đặt SAU khối Thư ngỏ (nếu có) để giữ đúng tinh thần "ngay sau Thư ngỏ" theo yêu cầu gốc.
+ */
+
 const LEVEL_COLORS = {
   coBan: { border: "#86EFAC", bg: "#F0FDF4", text: "#166534" },
   nangCao: { border: "#FDE68A", bg: "#FFFBEB", text: "#92400E" },
@@ -57,8 +67,23 @@ function DangBaiBlock({ items }) {
             </p>
           )}
           {it.baiMauLoiGiai && (
-            <p style={{ fontSize: 13, margin: 0, whiteSpace: "pre-line" }}>
+            <p style={{ fontSize: 13, margin: "0 0 6px", whiteSpace: "pre-line" }}>
               <b>Lời giải:</b> {it.baiMauLoiGiai}
+            </p>
+          )}
+          {it.canhBaoBayLoi && (
+            <p
+              style={{
+                fontSize: 12.5,
+                margin: 0,
+                padding: "5px 8px",
+                background: "#FEF3C7",
+                borderRadius: 6,
+                color: "#92400E",
+                whiteSpace: "pre-line",
+              }}
+            >
+              <b>⚠️ Lỗi sai thường gặp:</b> {it.canhBaoBayLoi}
             </p>
           )}
         </div>
@@ -113,6 +138,64 @@ function NganHangBaiTapBlock({ nganHangBaiTap }) {
   );
 }
 
+function LoTrinhOnTapBlock({ loTrinhOnTap }) {
+  if (!loTrinhOnTap?.length) return null;
+  return (
+    <div
+      style={{
+        marginBottom: 14,
+        padding: "8px 10px",
+        border: "1px solid #93C5FD",
+        borderRadius: 8,
+        background: "#EFF6FF",
+        breakInside: "avoid",
+      }}
+    >
+      <p style={{ fontWeight: 700, fontSize: 14, margin: "0 0 6px", color: "#1D4ED8" }}>
+        🗓️ Lộ trình Ôn tập
+      </p>
+      {loTrinhOnTap.map((item, i) => (
+        <p key={i} style={{ fontSize: 13, margin: "0 0 4px" }}>
+          <b>☐ {item.ngay || `Ngày ${i + 1}`}:</b> {item.nhiemVu}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function TuDanhGiaBlock({ dangBai }) {
+  if (!dangBai?.length) return null;
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, fontSize: 15, margin: "10px 0 6px" }}>
+        📊 Tự đánh giá mức độ hiểu bài (dành cho học sinh)
+      </p>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+        <thead>
+          <tr>
+            <th style={{ border: "1px solid #cbd5e1", padding: "4px 6px", background: "#f1f5f9", textAlign: "left" }}>
+              Dạng bài
+            </th>
+            <th style={{ border: "1px solid #cbd5e1", padding: "4px 6px", background: "#f1f5f9" }}>
+              Mức độ tự đánh giá
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {dangBai.map((it, i) => (
+            <tr key={i}>
+              <td style={{ border: "1px solid #cbd5e1", padding: "4px 6px" }}>{it.tenDang}</td>
+              <td style={{ border: "1px solid #cbd5e1", padding: "4px 6px", textAlign: "center" }}>
+                😃 Rất hiểu &nbsp;-&nbsp; 😐 Hơi băn khoăn &nbsp;-&nbsp; 😥 Cần cô giảng lại
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function OutlinePreview({ outline, meta }) {
   if (!outline) {
     return (
@@ -155,6 +238,9 @@ export default function OutlinePreview({ outline, meta }) {
             <p style={{ fontSize: 13, margin: 0, whiteSpace: "pre-line" }}>{outline.thuNgoPhuHuynh}</p>
           </div>
         )}
+
+        <LoTrinhOnTapBlock loTrinhOnTap={outline.loTrinhOnTap} />
+        <TuDanhGiaBlock dangBai={outline.dangBai} />
       </div>
     </div>
   );

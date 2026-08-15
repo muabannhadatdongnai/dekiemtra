@@ -7,6 +7,7 @@ import {
   OUTLINE_LEVEL_ORDER,
   OUTLINE_LEVEL_LABELS,
   DEFAULT_OUTLINE_EXERCISE_COUNTS,
+  DEFAULT_OUTLINE_STUDY_DAYS,
   OUTLINE_SEMESTER_SHORTCUTS,
   splitChaptersBySemester,
 } from "@/data/outlineTemplates";
@@ -41,6 +42,7 @@ export default function OutlineForm({ onGenerated }) {
 
   const [exerciseCounts, setExerciseCounts] = useState(DEFAULT_OUTLINE_EXERCISE_COUNTS);
   const [yeuCauDacBiet, setYeuCauDacBiet] = useState("");
+  const [soNgayOnTap, setSoNgayOnTap] = useState(DEFAULT_OUTLINE_STUDY_DAYS);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -119,6 +121,7 @@ export default function OutlineForm({ onGenerated }) {
         chapterIds: selectedChapterIds,
         exerciseCounts,
         yeuCauDacBiet,
+        soNgayOnTap,
       });
       const data = await generateOutlineRequest(blueprint);
 
@@ -238,6 +241,21 @@ export default function OutlineForm({ onGenerated }) {
             </Field>
           ))}
         </div>
+      </div>
+
+      <div className="space-y-3 border-b border-slate-100 pb-5">
+        <Field
+          label="Lộ trình Ôn tập — số ngày muốn ôn"
+          hint='AI sẽ chia toàn bộ nội dung đề cương thành checklist nhiệm vụ theo từng ngày (VD: "Ngày 1: Đọc lý thuyết + làm 3 bài Mức Cơ bản"), tăng dần độ khó qua các ngày.'
+        >
+          <input
+            type="number"
+            min={1}
+            value={soNgayOnTap}
+            onChange={(e) => setSoNgayOnTap(Math.max(1, Number(e.target.value) || 1))}
+            className={`${inputClass} max-w-[140px]`}
+          />
+        </Field>
       </div>
 
       <div className="space-y-3">

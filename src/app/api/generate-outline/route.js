@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { orchestrateOutlineGeneration } from "@/services/outlineOrchestrator";
 import { requireAuth, requireWithinTeacherGenerateLimit } from "@/services/apiAuth";
-import { clampOutlineExerciseCounts } from "@/services/contentGenerationLimits";
-import { DEFAULT_OUTLINE_EXERCISE_COUNTS } from "@/data/outlineTemplates";
+import { clampOutlineExerciseCounts, clampOutlineStudyDays } from "@/services/contentGenerationLimits";
+import { DEFAULT_OUTLINE_EXERCISE_COUNTS, DEFAULT_OUTLINE_STUDY_DAYS } from "@/data/outlineTemplates";
 
 export async function POST(request) {
   try {
@@ -20,6 +20,7 @@ export async function POST(request) {
       chapterIds = [],
       exerciseCounts = DEFAULT_OUTLINE_EXERCISE_COUNTS,
       yeuCauDacBiet = "",
+      soNgayOnTap = DEFAULT_OUTLINE_STUDY_DAYS,
     } = body;
 
     if (!grade) {
@@ -27,11 +28,17 @@ export async function POST(request) {
     }
 
     // ⚠️ Trần tối đa số bài/mỗi mức + tổng số bài (xem contentGenerationLimits.js) - cùng nguyên
-    // tắc "không tin dữ liệu client" đã áp dụng cho chapterMatrix/exerciseCounts/soTiet.
+    // tắc "không tin dữ liệu client" đã áp dụng cho chapterMatrix/exerciseCounts/soTiet. Số ngày
+    // ôn tập (Bước 3/Nhóm E, giáo viên tự nhập) cũng cần clamp cùng lý do.
     const { counts: clampedExerciseCounts, wasClamped } = clampOutlineExerciseCounts(exerciseCounts);
-    const limitWarnings = wasClamped
-      ? [`Số bài/mức đã nhập vượt trần cho phép, hệ thống đã tự động điều chỉnh về mức tối đa.`]
-      : [];
+    const clampedSoNgayOnTap = clampOutlineStudyDays(soNgayOnTap);
+    const limitWarnings = [];
+    if (wasClamped) {
+      limitWarnings.push(`Số bài/mức đã nhập vượt trần cho phép, hệ thống đã tự động điều chỉnh về mức tối đa.`);
+    }
+    if (clampedSoNgayOnTap !== Math.max(1, Number(soNgayOnTap) || 1)) {
+      limitWarnings.push(`Số ngày ôn tập đã nhập vượt trần cho phép, hệ thống đã tự động điều chỉnh về mức tối đa.`);
+    }
 
     const { outline, warnings, chapterLabel } = await orchestrateOutlineGeneration({
       subject,
@@ -40,6 +47,7 @@ export async function POST(request) {
       chapterIds: Array.isArray(chapterIds) ? chapterIds : [],
       exerciseCounts: clampedExerciseCounts,
       yeuCauDacBiet,
+      soNgayOnTap: clampedSoNgayOnTap,
     });
 
     if (!outline) {
