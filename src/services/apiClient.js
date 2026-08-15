@@ -173,6 +173,18 @@ export async function generateVietnameseExamRequest(blueprint) {
   return handleResponse(res);
 }
 
+/**
+ * @param blueprint - xem cấu trúc "OutlineBlueprint" trong src/data/outlineBlueprint.js
+ */
+export async function generateOutlineRequest(blueprint) {
+  const res = await fetch("/api/generate-outline", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(blueprint),
+  });
+  return handleResponse(res);
+}
+
 /** Thống kê mức dùng Gemini API hôm nay - xem UsageWidget.jsx */
 export async function fetchUsageSummaryRequest() {
   const res = await fetch("/api/usage", { headers: authHeaders() });

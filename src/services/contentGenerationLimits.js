@@ -141,3 +141,48 @@ export function clampSoTiet(soTiet) {
   const value = Math.max(1, Number(soTiet) || 1);
   return Math.min(value, max);
 }
+
+// ================== Đề cương Ôn tập (/api/generate-outline, Bước 2/Nhóm B) ==================
+// Cùng bản chất "Ngân hàng bài tập 3 mức" như exerciseCounts của Phiếu bài tập (3 key thay vì
+// nhiều key tự do) - TÁI DÙNG ĐÚNG chiến lược clamp của clampExerciseCounts() ở trên (clamp từng
+// mức trước, cắt bớt mức CUỐI CÙNG nếu tổng vẫn vượt trần) thay vì viết lại thuật toán.
+export function getOutlineMaxPerLevel() {
+  return envInt("OUTLINE_MAX_PER_LEVEL", 15);
+}
+export function getOutlineMaxTotalExercises() {
+  return envInt("OUTLINE_MAX_TOTAL_EXERCISES", 30);
+}
+
+/**
+ * Cắt (clamp) exerciseCounts của Đề cương Ôn tập (3 key: coBan/nangCao/vanDungCao - xem
+ * OUTLINE_LEVELS trong outlineTemplates.js) về đúng trần.
+ * @returns {{ counts: object, wasClamped: boolean }}
+ */
+export function clampOutlineExerciseCounts(exerciseCounts) {
+  const maxPerLevel = getOutlineMaxPerLevel();
+  const maxTotal = getOutlineMaxTotalExercises();
+  let wasClamped = false;
+
+  const counts = {};
+  for (const [key, rawValue] of Object.entries(exerciseCounts || {})) {
+    const value = Math.max(0, Number(rawValue) || 0);
+    const clamped = Math.min(value, maxPerLevel);
+    if (clamped !== value) wasClamped = true;
+    counts[key] = clamped;
+  }
+
+  let total = Object.values(counts).reduce((sum, v) => sum + v, 0);
+  if (total > maxTotal) {
+    wasClamped = true;
+    let excess = total - maxTotal;
+    const keys = Object.keys(counts).reverse();
+    for (const key of keys) {
+      if (excess <= 0) break;
+      const cut = Math.min(counts[key], excess);
+      counts[key] -= cut;
+      excess -= cut;
+    }
+  }
+
+  return { counts, wasClamped };
+}
