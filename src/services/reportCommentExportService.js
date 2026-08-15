@@ -98,6 +98,56 @@ export async function exportReportCommentsToExcel({ results, cap }) {
   saveAs(blob, `nhan-xet-hoc-ba-${cap}.xlsx`);
 }
 
+// Nhãn "thân thiện" cho PDF gửi phụ huynh - KHÁC nhãn kỹ thuật dùng trong Word/Excel ở trên
+// (VD "Nhận xét chung" thay vì tách phần "cấu trúc" giáo viên quen dùng), vì người đọc PDF này
+// là PHỤ HUYNH, không phải giáo viên lưu hồ sơ.
+const PARENT_FRIENDLY_FIELD_LABELS = {
+  phamChat: "Về phẩm chất",
+  nangLuc: "Về năng lực",
+  nhanXetChung: "Nhận xét chung",
+};
+
+/**
+ * buildParentFriendlyReportSections
+ * Dựng dữ liệu ĐÃ CHUẨN HOÁ (không phải Paragraph của "docx") cho bản PDF "thân thiện phụ
+ * huynh" (Bước 1, Việc #8) - văn phong THƯ NGỎ gửi thẳng phụ huynh, khác hẳn Word/Excel ở trên
+ * (những bản đó dành cho GIÁO VIÊN lưu hồ sơ/nộp trường). Component ReportCommentPdfView.jsx chỉ
+ * việc map mảng trả về ra JSX + CSS in ấn riêng (xem globals.css, nhóm ".report-pdf-*") - hàm
+ * này KHÔNG biết gì về React/CSS, chỉ chuẩn bị dữ liệu, nên test được bằng Node thuần.
+ *
+ * ⚠️ CÓ CHỦ ĐÍCH tách ĐỘC LẬP khỏi outlineExportService.js (Nhóm B, "Đề cương Ôn tập" - cũng có
+ * 1 hàm style PDF thân thiện phụ huynh riêng theo NEXT_STEPS.md) dù cùng chung mục tiêu "PDF thân
+ * thiện phụ huynh": 2 tính năng có đối tượng nội dung và bố cục khác hẳn nhau (nhận xét học bạ
+ * theo từng học sinh, ngắn gọn >< đề cương ôn tập theo môn/lớp, dài, nhiều mục) - gộp chung sẽ
+ * phải rẽ nhánh if/else liên tục, dễ sửa nhầm bên này ảnh hưởng bên kia.
+ *
+ * @returns [{ hoTen, lop, circularLabel, items: [{ label, text }] }] - CHỈ gồm học sinh đã có
+ * comment hợp lệ (bỏ qua phần tử lỗi/`error`, giống buildAllCommentsPlainText).
+ */
+export function buildParentFriendlyReportSections({ results, cap }) {
+  const levelConfig = getReportCommentLevelConfig(cap);
+  const valid = (results || []).filter((r) => r.comment);
+
+  return valid.map((r) => {
+    const c = r.comment;
+    const items = [];
+    if (c.phamChat) items.push({ label: PARENT_FRIENDLY_FIELD_LABELS.phamChat, text: c.phamChat });
+    if (c.nangLuc) items.push({ label: PARENT_FRIENDLY_FIELD_LABELS.nangLuc, text: c.nangLuc });
+    if (c.nhanXetChung) items.push({ label: PARENT_FRIENDLY_FIELD_LABELS.nhanXetChung, text: c.nhanXetChung });
+    if (Array.isArray(c.monHoc)) {
+      for (const m of c.monHoc) {
+        if (m?.ten && m?.noiDung) items.push({ label: `Môn ${m.ten}`, text: m.noiDung });
+      }
+    }
+    return {
+      hoTen: r.hoTen,
+      lop: r.lop || "",
+      circularLabel: levelConfig?.circularLabel || "",
+      items,
+    };
+  });
+}
+
 /** Gộp toàn bộ nhận xét thành 1 chuỗi text để "Sao chép tất cả" (dùng navigator.clipboard). */
 export function buildAllCommentsPlainText({ results }) {
   const valid = (results || []).filter((r) => r.comment);
