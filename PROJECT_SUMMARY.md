@@ -1730,3 +1730,112 @@ chưa tự bấm nút trên trình duyệt thật với API key thật để xem
 chọn đúng nhóm chương hợp lý cho MÔN/LỚP thật của bạn không, (b) văn phong "Thư ngỏ Phụ huynh" AI
 sinh ra, (c) vị trí phụ lục Thư ngỏ trong file Word GV-PH, (d) đề cương gộp nhiều chương có phân
 bổ đều nội dung cho tất cả chương hay chỉ tập trung 1-2 chương đầu.
+
+## PHIÊN 8 — Fix tab mặc định + tiếp nhận phản hồi thực tế sau khi test "Đề cương Ôn tập"
+
+### Đã làm: Fix tab mặc định khi mới vào web
+Trước đó lỡ để `mode` khởi tạo mặc định là `MODES.EXAM` ("Đề kiểm tra") dù tab "📘 Soạn giáo án"
+đã ở vị trí nút bấm đầu tiên (từ Bước 2/phiên 7) — 2 chỗ không khớp nhau. Đã sửa `src/app/page.js`:
+- Khởi tạo `useState(MODES.LESSON_PLAN)` thay vì `useState(MODES.EXAM)`.
+- `handleLogout()` cũng trả về `MODES.LESSON_PLAN` (trước đó trả về `MODES.EXAM`), để tránh sau khi
+  đăng xuất/đăng nhập lại bị lệch pha với lần đầu vào web.
+- Đã tự verify: `npm test` 123/123 PASS, `npm run build` sạch (sandbox có mạng, phiên này).
+
+### Phản hồi thực tế sau khi bấm thử "Đề cương Ôn tập" trên trình duyệt thật — CHƯA SỬA, đã ghi
+### nhận đầy đủ vào `NEXT_STEPS.md` mục "BƯỚC 3 (NHÓM E)" để làm ở phiên sau
+Người dùng đã hoàn thành đúng mục còn treo ở Nhóm A phiên 7 (tự bấm thử Đề cương Ôn tập với API
+key thật) và gửi phản hồi chi tiết. Tóm tắt các điểm chính (đầy đủ xem `NEXT_STEPS.md`):
+
+1. **Bug nghiêm trọng nhất (E1)**: bản Học sinh đang bị xoá mất toàn bộ "Lời giải" của các "Bài
+   mẫu" (mục II) — chỉ còn đề bài, học sinh không có gì tham chiếu để làm mục III. Đúng ra bản Học
+   sinh phải giữ NGUYÊN lời giải Bài mẫu, chỉ xoá đáp án + chừa dòng trống "Bài làm: ..." ở mục III
+   (Ngân hàng bài tập). Nghi ngờ nguyên nhân: đang dùng chung 1 cờ ẩn/hiện đáp án cho cả Bài mẫu
+   lẫn Ngân hàng bài tập, cần tách 2 luồng riêng (cả ở prompt AI lẫn ở `outlineExportService.js`).
+2. **Bố cục đáp án bản GV-Phụ huynh (E2)**: đáp án mục III đang in ngay dưới từng câu → cần gom
+   thành 1 "PHỤ LỤC ĐÁP ÁN" tách riêng ở trang cuối tài liệu (lý do sư phạm: "chống xem trộm" - nếu
+   phụ huynh dùng bản này cho con làm bài, con dễ nhìn thấy đáp án câu kế tiếp khi đáp án nằm ngay
+   dưới câu hỏi).
+3. **3 mục nội dung mới muốn thêm (E3)**:
+   - Góc "⚠️ Lỗi sai thường gặp" (Common Pitfalls) ngay dưới mỗi Bài mẫu.
+   - "Lộ trình Ôn tập" dạng checklist theo ngày (Micro-learning), đặt ngay sau Thư ngỏ Phụ huynh.
+   - Bảng "Tự đánh giá" (Self-Reflection Rubric, 😃/😐/😥) ở trang cuối bản Học sinh.
+4. **Ghi nhận, KHÔNG sửa ngay**: định dạng phân số dạng gạch chéo "a/b" — người dùng tự xác nhận
+   khó tránh ở tầng văn bản thuần, để dành cho nâng cấp pipeline export sau nếu cần.
+
+Toàn bộ phạm vi ảnh hưởng: CHỈ tính năng "Đề cương Ôn tập" (`outlinePromptTemplates.js`,
+`outlineExportService.js`, `OutlinePreview.jsx`) — không đụng tới Giáo án/Đề kiểm tra/Phiếu bài
+tập/Đề Tiếng Việt/Nhận xét học bạ.
+
+## PHIÊN 9 — BƯỚC 3 (NHÓM E): sửa lỗi + nâng cấp "Đề cương Ôn tập" theo phản hồi thực tế
+
+Đã làm ĐỦ 5 việc theo đúng thứ tự ưu tiên đã chốt ở NEXT_STEPS.md phiên 8 (E1 → E2 → E3a → E3b →
+E3c), phạm vi ảnh hưởng CHỈ tính năng "Đề cương Ôn tập" - không đụng các tab khác.
+
+### E1 (nghiêm trọng nhất) — Bản Học sinh mất lời giải Bài mẫu
+Nguyên nhân: `buildDangBaiParagraphs()` (outlineExportService.js) trước đây nhận tham số
+`showAnswers` và CHỈ in đoạn "Lời giải" khi `showAnswers=true` - dùng NHẦM chung 1 cờ với mục III
+(Ngân hàng bài tập, nơi `showAnswers` đúng ra chỉ nên ẩn/hiện "dapAn" tự luyện). Đã sửa: bỏ tham số
+`showAnswers` khỏi hàm này hoàn toàn - "Bài mẫu" + "Lời giải" giờ LUÔN in ở CẢ 2 bản (đây là nội
+dung DẠY CÁCH LÀM, không phải "đáp án" cần giấu, đúng góp ý của người dùng).
+
+### E2 — Đáp án Ngân hàng bài tập chuyển thành phụ lục riêng (tách theo 3 mức, ĐÃ CHỐT)
+- `buildNganHangBaiTapParagraphs()`: bỏ hẳn nhánh in "Đáp án: ..." ngay dưới câu hỏi - giờ CẢ 2 bản
+  đều chỉ in đề bài + dòng trống "Bài làm: ...." (giống hệt nhau ở mục III).
+- Hàm MỚI `buildAnswerKeyAppendixParagraphs()`: in "PHỤ LỤC: ĐÁP ÁN NGÂN HÀNG BÀI TẬP" ở TRANG CUỐI
+  (dùng `pageBreakBefore: true`), tách riêng 3 khối theo mức Cơ bản/Nâng cao/Vận dụng cao, đánh số
+  lại khớp đúng thứ tự bài ở mục III. CHỈ chèn khi `showAnswers=true` (bản GV-PH).
+
+### E3a — Góc "⚠️ Lỗi sai thường gặp"
+- Thêm trường mới `canhBaoBayLoi` vào schema AI (mỗi phần tử `dangBai`, Trụ cột 2) trong
+  `outlinePromptTemplates.js` - BẮT BUỘC AI phải điền cho MỌI dạng bài, giọng văn gần gũi như lời
+  cô giáo dặn dò.
+- `buildDangBaiParagraphs()`: in ngay dưới "Lời giải", nền vàng nhạt (FEF3C7), LUÔN hiện ở CẢ 2 bản
+  (cùng lý do với Lời giải - nội dung dạy, không phải đáp án).
+- `OutlinePreview.jsx` (`DangBaiBlock`): thêm khối hiển thị tương ứng trên màn hình xem trước.
+
+### E3b — "Lộ trình Ôn tập" checklist theo ngày (ĐÃ CHỐT: giáo viên tự nhập số ngày)
+- Luồng dữ liệu MỚI xuyên suốt: `OutlineForm.jsx` (ô nhập "Số ngày ôn tập", mặc định 7 -
+  `DEFAULT_OUTLINE_STUDY_DAYS` trong `outlineTemplates.js`) → `outlineBlueprint.js` (`soNgayOnTap`)
+  → `route.js` (`/api/generate-outline`, clamp qua `clampOutlineStudyDays()` MỚI trong
+  `contentGenerationLimits.js`, trần mặc định 30 ngày qua biến môi trường `OUTLINE_MAX_STUDY_DAYS`)
+  → `outlineOrchestrator.js` → `outlineEngine.js` → `outlinePromptTemplates.js` (`buildOutlinePrompt`
+  nhận `soNgayOnTap`, yêu cầu AI trả về ĐÚNG số phần tử trong "loTrinhOnTap").
+- Schema AI thêm trường mới `loTrinhOnTap`: mảng `{ ngay, nhiemVu }`, AI phải phân bổ TĂNG DẦN độ
+  khó qua các ngày (đầu ưu tiên lý thuyết/bài mẫu, giữa/cuối ưu tiên luyện tập, ngày cuối ôn tổng
+  hợp). `outlineEngine.js` đã thêm validate bắt buộc (giống 3 Trụ cột cũ): thiếu `loTrinhOnTap` hợp
+  lệ (mảng rỗng/không phải mảng) sẽ khiến AI thử lại.
+- `outlineExportService.js`: hàm MỚI `buildStudyPlanParagraphs()` - checklist có ô vuông "☐", LUÔN
+  hiện ở CẢ 2 bản (nội dung hướng dẫn tự học, không phải đáp án). Vị trí: NGAY SAU Thư ngỏ Phụ
+  huynh ở bản GV-PH (đúng yêu cầu gốc "ngay sau Thư ngỏ"); bản Học sinh không có Thư ngỏ nên đặt
+  ngay sau tiêu đề.
+- `OutlinePreview.jsx`: thêm `LoTrinhOnTapBlock`, hiển thị SAU khối Thư ngỏ trên màn hình xem trước.
+
+### E3c — Bảng "Tự đánh giá" (Self-Reflection Rubric)
+- KHÔNG cần AI sinh thêm dữ liệu mới - tự động lấy danh sách `tenDang` có sẵn từ Trụ cột 2 (mỗi
+  Dạng bài đã soạn → 1 dòng trong bảng, 3 mức tự chấm 😃/😐/😥) - quyết định kỹ thuật này giúp giảm
+  rủi ro schema AI, không cần validate thêm.
+- `outlineExportService.js`: hàm MỚI `buildSelfReflectionParagraphs()` dùng `Table/TableRow/
+  TableCell` của thư viện "docx" (đã thêm import), đặt ở TRANG CUỐI (`pageBreakBefore: true`), CHỈ
+  chèn khi `showAnswers=false` (bản Học sinh - công cụ tự nhận thức, không cần ở bản GV-PH).
+- `OutlinePreview.jsx`: thêm `TuDanhGiaBlock` (bảng HTML thường), hiển thị cuối cùng.
+
+### Quyết định thiết kế đã tự đưa ra khi triển khai (không hỏi lại vì không ảnh hưởng lớn)
+- Vị trí "Lộ trình Ôn tập" trên `OutlinePreview.jsx` (bản xem trước MÀN HÌNH, dùng chung cho nút
+  "In/Tải PDF") CỐ Ý đặt SAU khối Thư ngỏ (cuối trang) thay vì đầu trang như file .docx xuất ra -
+  vì bản xem trước này LUÔN hiển thị ĐẦY ĐỦ (kể cả đáp án inline ở mục III) như 1 bản tham chiếu
+  tổng hợp cho giáo viên tự xem/in, KHÔNG phải bản đưa trực tiếp cho học sinh nên không cần đổi bố
+  cục để né "chống xem trộm" - đã ghi rõ trong comment đầu `OutlinePreview.jsx`.
+- Bảng "Tự đánh giá" và "Lỗi sai thường gặp" cũng được thêm vào `OutlinePreview.jsx` dù bản xem
+  trước không tách biệt Học sinh/GV-PH, để giáo viên xem trước được TOÀN BỘ nội dung sẽ có trong 2
+  file .docx trước khi tải về.
+
+### Đã tự verify
+`npm test`: 130/130 PASS (123 cũ + 7 mới: 5 test outline export mới thay thế 5 test cũ, đã sửa để
+đúng hành vi mới + 3 test `clampOutlineStudyDays`). `npm run build`: sạch, không lỗi.
+
+### CHƯA làm (đúng như đã ghi nhận, không cấp bách)
+Định dạng phân số "a/b" gạch chéo - người dùng tự xác nhận không sửa, để dành nâng cấp export sau.
+
+### Việc còn lại (Nhóm A, người dùng tự làm)
+CHƯA tự bấm thử Bước 3 trên trình duyệt thật với API key thật - xem chi tiết 6 điểm cần kiểm tra
+bằng mắt (a-f) trong `NEXT_STEPS.md` mục "Nhóm A".

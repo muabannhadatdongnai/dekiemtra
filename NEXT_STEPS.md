@@ -1,4 +1,4 @@
-# NEXT STEPS — AI Exam Generator (cập nhật phiên 7, thay thế mọi bản trước)
+# NEXT STEPS — AI Exam Generator (cập nhật phiên 9, thay thế mọi bản trước)
 
 > File này CHỈ chứa việc cần làm HIỆN TẠI, không phải nhật ký lịch sử. Nhật ký đầy đủ nằm ở
 > `PROJECT_SUMMARY.md` (không cần dán file đó vào chat trừ khi cần tra lại quyết định cũ chi
@@ -27,8 +27,19 @@ mục "BƯỚC 1 (Nhóm D), VIỆC #7 + #8".
 
 ## Bước 2 — Nhóm B: tính năng "Đề cương Ôn tập" — ĐÃ XONG (phiên 7)
 Đã hoàn thành đúng thiết kế đã chốt. Xem chi tiết đầy đủ trong `PROJECT_SUMMARY.md` mục
-"BƯỚC 2 (NHÓM B) — TÍNH NĂNG ĐỀ CƯƠNG ÔN TẬP". Việc còn lại (không cấp bách, để bạn tự làm khi
-rảnh) đã liệt kê trong Nhóm A bên dưới.
+"BƯỚC 2 (NHÓM B) — TÍNH NĂNG ĐỀ CƯƠNG ÔN TẬP". Người dùng đã tự bấm thử trên trình duyệt thật với
+API key thật (đúng mục Nhóm A còn treo ở phiên 7) và gửi phản hồi chi tiết → xem Bước 3 ngay dưới.
+
+## Bước 2.5 — Fix nhanh: tab mặc định khi vào web — ĐÃ XONG (phiên 8)
+Mặc định `mode` bị lệch (đang là `MODES.EXAM` dù nút "Soạn giáo án" đã ở vị trí đầu) → đã sửa
+`src/app/page.js` (`useState` khởi tạo + `handleLogout()`) về `MODES.LESSON_PLAN`. Đã tự verify
+`npm test` 123/123 PASS + `npm run build` sạch. Chi tiết xem `PROJECT_SUMMARY.md` mục "PHIÊN 8".
+
+## Bước 3 — Nhóm E: sửa lỗi + nâng cấp "Đề cương Ôn tập" theo phản hồi thực tế — ĐÃ XONG (phiên 9)
+Đã làm ĐỦ CẢ 6 việc (E1, E2, E3a, E3b, E3c + ghi nhận không sửa vụ phân số). Chi tiết đầy đủ trong
+`PROJECT_SUMMARY.md` mục "BƯỚC 3 (NHÓM E)". Đã tự verify: `npm test` 130/130 PASS (thêm 7 test mới:
+5 test outline export + 3 test clampOutlineStudyDays - đúng 7 test được kỳ vọng), `npm run build`
+sạch. Việc còn lại (không cấp bách, để bạn tự làm khi rảnh) đã liệt kê trong Nhóm A bên dưới.
 
 ## Đã tạm gác lại (KHÔNG còn trong backlog chủ động — người dùng xác nhận chưa cần)
 Phản hồi 👍/👎 chất lượng AI; tự phục vụ đăng ký tài khoản giáo viên; phân tích kết quả lớp sau
@@ -44,13 +55,16 @@ khi chấm bài. Nếu sau này muốn làm lại, xem chi tiết gợi ý trong
 - Cấu hình Upstash trên Vercel theo hướng dẫn phiên 5 ở trên.
 - Tự bấm thử nút "Tải PDF (bản phụ huynh)" (Nhận xét học bạ) trên trình duyệt thật — xem mục
   "Việc còn lại từ #8" ở Bước 1 phía trên.
-- **Bước 2 (Đề cương Ôn tập, phiên 7)**: chưa tự bấm thử trên trình duyệt thật với API key thật -
-  cần xem bằng mắt: (a) 4 nút "📌 Học kỳ I/II/Cả năm" có tự chọn đúng nhóm chương hợp lý không (quy
-  ước chia đôi TẠM THỜI, xem ghi chú trong `outlineTemplates.js`), (b) đọc kỹ văn phong "Thư ngỏ
-  Phụ huynh" AI sinh ra có đủ ấm áp/tự nhiên không, (c) mở thử file Word "GV-Phụ huynh" xem phụ lục
-  Thư ngỏ có nằm đúng vị trí đầu file, không đè lên phần khác không, (d) thử với đề cương gộp NHIỀU
-  chương cùng lúc xem AI có thực sự phân bổ đều nội dung 3 Trụ cột cho tất cả chương đã chọn hay
-  chỉ tập trung vào 1-2 chương đầu.
+- **Bước 3 (Đề cương Ôn tập, phiên 9)**: CHƯA tự bấm thử trên trình duyệt thật với API key thật —
+  cần xem bằng mắt SAU KHI làm xong Bước 3: (a) bản Học sinh (.docx) có đủ lời giải Bài mẫu +
+  KHÔNG có đáp án Ngân hàng bài tập ở bất kỳ đâu; (b) bản GV-Phụ huynh (.docx) đáp án đã chuyển hẳn
+  vào "PHỤ LỤC: ĐÁP ÁN NGÂN HÀNG BÀI TẬP" ở trang cuối, tách đúng 3 khối theo mức, không còn nằm
+  dưới câu hỏi; (c) văn phong "⚠️ Lỗi sai thường gặp" và "Lộ trình Ôn tập" AI sinh ra có tự nhiên,
+  vừa sức lứa tuổi không; (d) ô nhập "Số ngày ôn tập" trên form hoạt động đúng, AI có chia đúng số
+  ngày đã nhập không (thử với vài giá trị khác nhau, VD 3 ngày và 14 ngày); (e) bảng "Tự đánh giá"
+  cuối bản Học sinh hiển thị đúng danh sách Dạng bài, không bị lỗi bố cục khi in; (f) 4 nút "📌 Học
+  kỳ I/II/Cả năm" chọn đúng nhóm chương hợp lý (quy ước chia đôi TẠM THỜI, xem ghi chú trong
+  `outlineTemplates.js`) — mục này vẫn chưa xem lại từ phiên 7.
 
 ## Chưa quyết (không gấp, để riêng)
 CSP (Content-Security-Policy); rate-limit cho 3 route `/api/analyze-*`; Giai đoạn 9 (Phiếu bài

@@ -5,6 +5,7 @@ import {
   clampExerciseCounts,
   clampSoTiet,
   clampOutlineExerciseCounts,
+  clampOutlineStudyDays,
   getExamMaxPerCell,
   getExamMaxTotalQuestions,
   getWorksheetMaxPerExercise,
@@ -12,6 +13,7 @@ import {
   getLessonPlanMaxSoTiet,
   getOutlineMaxPerLevel,
   getOutlineMaxTotalExercises,
+  getOutlineMaxStudyDays,
 } from "../src/services/contentGenerationLimits.js";
 
 // ================== clampChapterMatrix (/api/generate) ==================
@@ -153,4 +155,23 @@ test("mỗi mức hợp lệ riêng lẻ nhưng TỔNG vượt trần -> bị c�
 test("clampOutlineExerciseCounts không âm dù input âm", () => {
   const { counts } = clampOutlineExerciseCounts({ coBan: -10 });
   assert.equal(counts.coBan, 0);
+});
+
+// ============== clampOutlineStudyDays (/api/generate-outline, Bước 3/Nhóm E) ==============
+
+test("clampOutlineStudyDays trong hạn mức -> giữ nguyên", () => {
+  assert.equal(clampOutlineStudyDays(7), 7);
+  assert.equal(clampOutlineStudyDays(1), 1);
+});
+
+test("clampOutlineStudyDays vượt trần -> bị cắt về đúng trần tối đa", () => {
+  const max = getOutlineMaxStudyDays();
+  assert.equal(clampOutlineStudyDays(max + 1000), max);
+});
+
+test("clampOutlineStudyDays với input <= 0 hoặc không hợp lệ -> về 1 (tối thiểu)", () => {
+  assert.equal(clampOutlineStudyDays(0), 1);
+  assert.equal(clampOutlineStudyDays(-5), 1);
+  assert.equal(clampOutlineStudyDays("khong_phai_so"), 1);
+  assert.equal(clampOutlineStudyDays(undefined), 1);
 });
