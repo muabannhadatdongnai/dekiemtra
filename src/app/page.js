@@ -18,26 +18,32 @@ import VietnameseExamExportActions from "@/components/VietnameseExamExportAction
 import ReportCommentForm from "@/components/ReportCommentForm";
 import ReportCommentPreview from "@/components/ReportCommentPreview";
 import ReportCommentExportActions from "@/components/ReportCommentExportActions";
+import OutlineForm from "@/components/OutlineForm";
+import OutlinePreview from "@/components/OutlinePreview";
+import OutlineExportActions from "@/components/OutlineExportActions";
 import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
 import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
+import { EMPTY_OUTLINE_RESULT } from "@/data/outlineResult";
 
-// A2/A3/Giai đoạn 2: 5 chế độ làm việc - "exam" (Đề kiểm tra, Lớp 1-12), "worksheet" (Phiếu bài
-// tập, Mầm non - Lớp 2), "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5), "vietnameseExam" (Đề
-// Tiếng Việt Tiểu học, Lớp 1-5 - xem PROJECT_SUMMARY.md Phần B) và "reportComment" (Nhận xét học
-// bạ, Lớp 1-12 - xem tom-tat-tinh-nang-nhan-xet-hoc-ba.md). Chỉ 1 trong 5 được mount tại 1 thời
-// điểm vì CẢ 5 chế độ đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount
-// nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung. "reportComment" xuất
-// Word/Excel là chính (danh sách nhiều học sinh dạng thẻ, sửa trực tiếp trên màn hình), NHƯNG từ
-// Bước 1 Việc #8 cũng có thêm "Tải PDF (bản phụ huynh)" - xem ReportCommentPdfView.jsx (khung in
-// riêng, ẩn màn hình, chỉ hiện khi in) - vẫn theo đúng khuôn 1-mode-tại-1-thời-điểm ở trên.
+// A2/A3/Giai đoạn 2/Bước 2 (Nhóm B): 6 chế độ làm việc - "lessonPlan" (Soạn giáo án, Mầm non -
+// Lớp 5), "worksheet" (Phiếu bài tập, Mầm non - Lớp 2), "vietnameseExam" (Đề Tiếng Việt Tiểu học,
+// Lớp 1-5), "outline" (Đề cương Ôn tập, MỚI - xem NEXT_STEPS.md Bước 2/Nhóm B), "exam" (Đề kiểm
+// tra, Lớp 1-12), và "reportComment" (Nhận xét học bạ, Lớp 1-12). Thứ tự 6 tab (nút bấm bên dưới)
+// đã chốt đúng thứ tự khai báo ở đây. Chỉ 1 trong 6 được mount tại 1 thời điểm vì CẢ 6 chế độ đều
+// dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount nhiều hơn 1 cùng lúc sẽ
+// vi phạm id trùng lặp và có thể in nhầm nội dung. "reportComment" xuất Word/Excel là chính (danh
+// sách nhiều học sinh dạng thẻ, sửa trực tiếp trên màn hình), NHƯNG từ Bước 1 Việc #8 cũng có thêm
+// "Tải PDF (bản phụ huynh)" - xem ReportCommentPdfView.jsx (khung in riêng, ẩn màn hình, chỉ hiện
+// khi in) - vẫn theo đúng khuôn 1-mode-tại-1-thời-điểm ở trên.
 const MODES = {
-  EXAM: "exam",
-  WORKSHEET: "worksheet",
   LESSON_PLAN: "lessonPlan",
+  WORKSHEET: "worksheet",
   VIETNAMESE_EXAM: "vietnameseExam",
+  OUTLINE: "outline",
+  EXAM: "exam",
   REPORT_COMMENT: "reportComment",
 };
 
@@ -66,6 +72,7 @@ export default function HomePage() {
   const [lessonPlanResult, setLessonPlanResult] = useState(EMPTY_LESSON_PLAN_RESULT);
   const [vietnameseExamResult, setVietnameseExamResult] = useState(EMPTY_VIETNAMESE_EXAM_RESULT);
   const [reportCommentResult, setReportCommentResult] = useState(EMPTY_REPORT_COMMENT_RESULT);
+  const [outlineResult, setOutlineResult] = useState(EMPTY_OUTLINE_RESULT);
 
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
@@ -83,6 +90,7 @@ export default function HomePage() {
     setLessonPlanResult(EMPTY_LESSON_PLAN_RESULT);
     setVietnameseExamResult(EMPTY_VIETNAMESE_EXAM_RESULT);
     setReportCommentResult(EMPTY_REPORT_COMMENT_RESULT);
+    setOutlineResult(EMPTY_OUTLINE_RESULT);
     setMode(MODES.EXAM);
   }
 
@@ -113,6 +121,10 @@ export default function HomePage() {
     setReportCommentResult(result);
   }
 
+  function handleOutlineGenerated(result) {
+    setOutlineResult(result);
+  }
+
   const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
 
   // Câu hỏi đang hiển thị trong khung xem trước: mã đề đang chọn (nếu đã tạo 4 mã) hoặc đề gốc
@@ -132,17 +144,17 @@ export default function HomePage() {
       <main className="mx-auto max-w-7xl px-4 py-6">
         {/* A2: Tab chuyển đổi "Đề kiểm tra" <-> "Phiếu bài tập". no-print vì chỉ là điều khiển,
             không liên quan nội dung in ra. */}
-        <div className="no-print mb-4 flex gap-2">
+        <div className="no-print mb-4 flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => setMode(MODES.EXAM)}
+            onClick={() => setMode(MODES.LESSON_PLAN)}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
-              mode === MODES.EXAM
+              mode === MODES.LESSON_PLAN
                 ? "bg-brand-600 text-white"
                 : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
             }`}
           >
-            📝 Đề kiểm tra
+            📘 Soạn giáo án
           </button>
           <button
             type="button"
@@ -157,17 +169,6 @@ export default function HomePage() {
           </button>
           <button
             type="button"
-            onClick={() => setMode(MODES.LESSON_PLAN)}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
-              mode === MODES.LESSON_PLAN
-                ? "bg-brand-600 text-white"
-                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            📘 Soạn giáo án
-          </button>
-          <button
-            type="button"
             onClick={() => setMode(MODES.VIETNAMESE_EXAM)}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
               mode === MODES.VIETNAMESE_EXAM
@@ -176,6 +177,28 @@ export default function HomePage() {
             }`}
           >
             📖 Đề Tiếng Việt Tiểu học
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.OUTLINE)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.OUTLINE
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            🧭 Đề cương Ôn tập
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.EXAM)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.EXAM
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            📝 Đề kiểm tra
           </button>
           <button
             type="button"
@@ -197,6 +220,7 @@ export default function HomePage() {
             {mode === MODES.WORKSHEET && <WorksheetForm onGenerated={handleWorksheetGenerated} />}
             {mode === MODES.LESSON_PLAN && <LessonPlanForm onGenerated={handleLessonPlanGenerated} />}
             {mode === MODES.VIETNAMESE_EXAM && <VietnameseExamForm onGenerated={handleVietnameseExamGenerated} />}
+            {mode === MODES.OUTLINE && <OutlineForm onGenerated={handleOutlineGenerated} />}
             {mode === MODES.REPORT_COMMENT && <ReportCommentForm onGenerated={handleReportCommentGenerated} />}
             <div className="mt-4">
               <UsageWidget />
@@ -283,6 +307,23 @@ export default function HomePage() {
               <VietnameseExamExportActions results={vietnameseExamResult.results} meta={vietnameseExamResult.meta} />
               <div className="overflow-auto rounded-xl bg-slate-100 p-4">
                 <VietnameseExamPreview results={vietnameseExamResult.results} meta={vietnameseExamResult.meta} />
+              </div>
+            </section>
+          ) : mode === MODES.OUTLINE ? (
+            <section className="space-y-4">
+              {outlineResult.warnings.length > 0 && (
+                <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <p className="mb-1 font-semibold">⚠️ Lưu ý:</p>
+                  <ul className="list-disc space-y-0.5 pl-5">
+                    {outlineResult.warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <OutlineExportActions outline={outlineResult.outline} meta={outlineResult.meta} />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <OutlinePreview outline={outlineResult.outline} meta={outlineResult.meta} />
               </div>
             </section>
           ) : (
