@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Copy, Check, AlertTriangle, BadgeCheck } from "lucide-react";
 import { getReportCommentLevelConfig } from "@/data/reportCommentConfig";
+import ReportCommentPdfView from "./ReportCommentPdfView";
 
 const textareaClass =
   "w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed focus:border-brand-400 focus:outline-none";
@@ -148,6 +149,10 @@ export default function ReportCommentPreview({ cap, results, onResultsChange }) 
           <StudentCard key={`${r.hoTen}-${idx}`} result={r} onEdit={(c) => handleEdit(idx, c)} />
         ))}
       </div>
+
+      {/* Ẩn trên màn hình, CHỈ hiện khi in/"Tải PDF" (bản thân thiện phụ huynh) - xem
+          ReportCommentPdfView.jsx + nhóm CSS ".report-pdf-*" trong globals.css. */}
+      <ReportCommentPdfView results={results} cap={cap} />
     </div>
   );
 }

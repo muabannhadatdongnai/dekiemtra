@@ -28,10 +28,11 @@ import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
 // tập, Mầm non - Lớp 2), "lessonPlan" (Soạn giáo án, Mầm non - Lớp 5), "vietnameseExam" (Đề
 // Tiếng Việt Tiểu học, Lớp 1-5 - xem PROJECT_SUMMARY.md Phần B) và "reportComment" (Nhận xét học
 // bạ, Lớp 1-12 - xem tom-tat-tinh-nang-nhan-xet-hoc-ba.md). Chỉ 1 trong 5 được mount tại 1 thời
-// điểm vì các chế độ có nội dung in (exam/worksheet/lessonPlan/vietnameseExam) dùng chung
-// id="print-area" (CSS in ấn @media print chọn theo id) - mount nhiều hơn 1 cùng lúc sẽ vi phạm
-// id trùng lặp và có thể in nhầm nội dung. "reportComment" không dùng in ấn A4 (danh sách nhiều
-// học sinh dạng thẻ, xuất trực tiếp ra Word/Excel thay vì in) nhưng vẫn theo cùng khuôn 1-mode-tại-1-thời-điểm.
+// điểm vì CẢ 5 chế độ đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount
+// nhiều hơn 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung. "reportComment" xuất
+// Word/Excel là chính (danh sách nhiều học sinh dạng thẻ, sửa trực tiếp trên màn hình), NHƯNG từ
+// Bước 1 Việc #8 cũng có thêm "Tải PDF (bản phụ huynh)" - xem ReportCommentPdfView.jsx (khung in
+// riêng, ẩn màn hình, chỉ hiện khi in) - vẫn theo đúng khuôn 1-mode-tại-1-thời-điểm ở trên.
 const MODES = {
   EXAM: "exam",
   WORKSHEET: "worksheet",

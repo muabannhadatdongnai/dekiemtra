@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileDown, FileSpreadsheet, Copy, Check } from "lucide-react";
+import { FileDown, FileSpreadsheet, Printer, Copy, Check } from "lucide-react";
 import {
   exportReportCommentsToWord,
   exportReportCommentsToExcel,
@@ -20,6 +20,13 @@ export default function ReportCommentExportActions({ cap, results }) {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  // "Tải PDF" ở đây = window.print() trên khung riêng ReportCommentPdfView.jsx (id="print-area",
+  // luôn được mount kèm ReportCommentPreview.jsx nhưng ẩn màn hình) - đúng khuôn exportToPDF()
+  // trong exportService.js (Đề kiểm tra), KHÔNG cần thêm thư viện tạo PDF nào (Bước 1, Việc #8).
+  function handleDownloadPdf() {
+    window.print();
+  }
+
   return (
     <div className="no-print flex flex-wrap gap-2">
       <button
@@ -35,6 +42,13 @@ export default function ReportCommentExportActions({ cap, results }) {
         className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
       >
         <FileSpreadsheet size={15} /> Tải Excel
+      </button>
+      <button
+        onClick={handleDownloadPdf}
+        disabled={disabled}
+        className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+      >
+        <Printer size={15} /> Tải PDF (bản phụ huynh)
       </button>
       <button
         onClick={handleCopyAll}
