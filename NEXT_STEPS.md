@@ -1,4 +1,4 @@
-# NEXT STEPS — AI Exam Generator (cập nhật phiên 6, thay thế mọi bản trước)
+# NEXT STEPS — AI Exam Generator (cập nhật phiên 7, thay thế mọi bản trước)
 
 > File này CHỈ chứa việc cần làm HIỆN TẠI, không phải nhật ký lịch sử. Nhật ký đầy đủ nằm ở
 > `PROJECT_SUMMARY.md` (không cần dán file đó vào chat trừ khi cần tra lại quyết định cũ chi
@@ -25,19 +25,10 @@ mục "BƯỚC 1 (Nhóm D), VIỆC #7 + #8".
       huynh)" trên trình duyệt thật (đặc biệt kiểm tra ngắt trang giữa các học sinh khi có từ 2
       học sinh trở lên) — không cấp bách, làm khi rảnh trước khi coi Bước 1 là ổn định hoàn toàn.
 
-## Bước 2 — Nhóm B: tính năng "Đề cương Ôn tập" (thiết kế đã chốt, làm sau khi xong việc còn lại ở Bước 1)
-- [ ] Thêm tab mới, sắp xếp lại thứ tự 6 tab: Soạn Giáo án → Phiếu Bài Tập → Đề Tiếng Việt Tiểu
-      học → **Đề Cương Ôn Tập (mới)** → Tạo Đề Kiểm Tra → Nhận Xét Học Bạ.
-- [ ] Cấu trúc "3 Trụ cột" (Kiến thức cốt lõi / Dạng bài + bài mẫu / Ngân hàng bài tập 3 mức).
-- [ ] Input: Môn/Lớp/Phạm vi (map kỳ → khoảng chương, dùng kho GitHub RAG hiện có)/Yêu cầu đặc biệt.
-- [ ] Trần tối đa mỗi lượt gọi, cùng kiến trúc `contentGenerationLimits.js`.
-- [ ] Component xuất file MỚI HOÀN TOÀN: `OutlineExportActions.jsx` + `outlineExportService.js`,
-      2 luồng tải (học sinh không đáp án / GV-PH có đáp án đầy đủ) + Thư ngỏ Phụ huynh tự động +
-      hàm style "thân thiện phụ huynh" riêng — ĐỘC LẬP với `buildParentFriendlyReportSections()`
-      của Nhận xét học bạ (2 tính năng bố cục khác nhau, không gộp chung). ⚠️ Nhớ: hàm này KHÔNG
-      được dùng class Tailwind (file trong `src/services/` không nằm trong danh sách Tailwind
-      `content` scan ở `tailwind.config.js` → class sẽ bị purge mất khi build) — style phải nằm ở
-      CSS thuần (`globals.css`) hoặc trong file `.jsx`.
+## Bước 2 — Nhóm B: tính năng "Đề cương Ôn tập" — ĐÃ XONG (phiên 7)
+Đã hoàn thành đúng thiết kế đã chốt. Xem chi tiết đầy đủ trong `PROJECT_SUMMARY.md` mục
+"BƯỚC 2 (NHÓM B) — TÍNH NĂNG ĐỀ CƯƠNG ÔN TẬP". Việc còn lại (không cấp bách, để bạn tự làm khi
+rảnh) đã liệt kê trong Nhóm A bên dưới.
 
 ## Đã tạm gác lại (KHÔNG còn trong backlog chủ động — người dùng xác nhận chưa cần)
 Phản hồi 👍/👎 chất lượng AI; tự phục vụ đăng ký tài khoản giáo viên; phân tích kết quả lớp sau
@@ -46,13 +37,20 @@ khi chấm bài. Nếu sau này muốn làm lại, xem chi tiết gợi ý trong
 
 ## Nhóm A — Việc CẦN BẠN TỰ LÀM (ngoài phạm vi Claude tự động hoá được)
 - `npm install && npm test && npm run build` thật trên máy có mạng, xác nhận sạch trước khi coi
-  các thay đổi gần nhất là ổn định (phiên 6: đã tự chạy trong sandbox có mạng, 114/114 PASS +
+  các thay đổi gần nhất là ổn định (phiên 7: đã tự chạy trong sandbox có mạng, 123/123 PASS +
   build sạch — nhưng bạn nên tự chạy lại 1 lần trên máy/CI thật của bạn cho chắc).
 - Tự kiểm tra lịch sử commit GitHub thật xem `.env.local`/`.data/` có từng lọt vào không.
 - Xem bằng mắt + gọi Gemini thật để duyệt văn phong Lời dẫn/Slide Outline (Giai đoạn 10).
 - Cấu hình Upstash trên Vercel theo hướng dẫn phiên 5 ở trên.
 - Tự bấm thử nút "Tải PDF (bản phụ huynh)" (Nhận xét học bạ) trên trình duyệt thật — xem mục
   "Việc còn lại từ #8" ở Bước 1 phía trên.
+- **Bước 2 (Đề cương Ôn tập, phiên 7)**: chưa tự bấm thử trên trình duyệt thật với API key thật -
+  cần xem bằng mắt: (a) 4 nút "📌 Học kỳ I/II/Cả năm" có tự chọn đúng nhóm chương hợp lý không (quy
+  ước chia đôi TẠM THỜI, xem ghi chú trong `outlineTemplates.js`), (b) đọc kỹ văn phong "Thư ngỏ
+  Phụ huynh" AI sinh ra có đủ ấm áp/tự nhiên không, (c) mở thử file Word "GV-Phụ huynh" xem phụ lục
+  Thư ngỏ có nằm đúng vị trí đầu file, không đè lên phần khác không, (d) thử với đề cương gộp NHIỀU
+  chương cùng lúc xem AI có thực sự phân bổ đều nội dung 3 Trụ cột cho tất cả chương đã chọn hay
+  chỉ tập trung vào 1-2 chương đầu.
 
 ## Chưa quyết (không gấp, để riêng)
 CSP (Content-Security-Policy); rate-limit cho 3 route `/api/analyze-*`; Giai đoạn 9 (Phiếu bài

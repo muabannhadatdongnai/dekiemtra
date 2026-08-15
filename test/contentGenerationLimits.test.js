@@ -4,11 +4,14 @@ import {
   clampChapterMatrix,
   clampExerciseCounts,
   clampSoTiet,
+  clampOutlineExerciseCounts,
   getExamMaxPerCell,
   getExamMaxTotalQuestions,
   getWorksheetMaxPerExercise,
   getWorksheetMaxTotalExercises,
   getLessonPlanMaxSoTiet,
+  getOutlineMaxPerLevel,
+  getOutlineMaxTotalExercises,
 } from "../src/services/contentGenerationLimits.js";
 
 // ================== clampChapterMatrix (/api/generate) ==================
@@ -115,4 +118,39 @@ test("soTiet <= 0 hoặc không hợp lệ -> tối thiểu 1", () => {
   assert.equal(clampSoTiet(-5), 1);
   assert.equal(clampSoTiet("khong_phai_so"), 1);
   assert.equal(clampSoTiet(undefined), 1);
+});
+
+// ================== clampOutlineExerciseCounts (/api/generate-outline, Bước 2/Nhóm B) ==================
+
+test("outline exerciseCounts trong hạn mức -> giữ nguyên, wasClamped=false", () => {
+  const input = { coBan: 5, nangCao: 3, vanDungCao: 1 };
+  const { counts, wasClamped } = clampOutlineExerciseCounts(input);
+  assert.deepEqual(counts, input);
+  assert.equal(wasClamped, false);
+});
+
+test("1 mức vượt trần per-level -> bị cắt về đúng trần, các mức khác giữ nguyên", () => {
+  const maxPerLevel = getOutlineMaxPerLevel();
+  const input = { coBan: maxPerLevel + 50, nangCao: 2 };
+  const { counts, wasClamped } = clampOutlineExerciseCounts(input);
+  assert.equal(counts.coBan, maxPerLevel);
+  assert.equal(counts.nangCao, 2);
+  assert.equal(wasClamped, true);
+});
+
+test("mỗi mức hợp lệ riêng lẻ nhưng TỔNG vượt trần -> bị cắt bớt để tổng <= trần", () => {
+  const maxPerLevel = getOutlineMaxPerLevel();
+  const maxTotal = getOutlineMaxTotalExercises();
+  const perLevel = Math.min(maxPerLevel, Math.ceil(maxTotal / 2));
+  const input = { coBan: perLevel, nangCao: perLevel, vanDungCao: perLevel };
+
+  const { counts, wasClamped } = clampOutlineExerciseCounts(input);
+  const total = Object.values(counts).reduce((s, v) => s + v, 0);
+  assert.ok(total <= maxTotal, `tổng sau clamp (${total}) phải <= trần (${maxTotal})`);
+  assert.equal(wasClamped, true);
+});
+
+test("clampOutlineExerciseCounts không âm dù input âm", () => {
+  const { counts } = clampOutlineExerciseCounts({ coBan: -10 });
+  assert.equal(counts.coBan, 0);
 });

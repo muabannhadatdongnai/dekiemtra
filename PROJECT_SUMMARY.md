@@ -1655,3 +1655,78 @@ trong "Phiếu bài tập" (không phải lỗi riêng của mục này)
    hoặc "đã test Gemini thật, ổn rồi, làm tiếp [việc X]" hoặc "review lại lần nữa", hoặc "đã thử in
    Margins=None rồi mà vẫn nền đen/lề sai - đây là kết quả...").
 3. Sau khi hoàn thành, yêu cầu cập nhật lại chính `PROJECT_SUMMARY.md` trước khi đóng gói zip mới.
+
+---
+
+## BƯỚC 2 (NHÓM B) — TÍNH NĂNG "ĐỀ CƯƠNG ÔN TẬP" — ĐÃ XONG (phiên 7)
+
+Tab MỚI thứ 6, đặt đúng thứ tự đã chốt trong NEXT_STEPS.md: Soạn Giáo án → Phiếu Bài Tập → Đề
+Tiếng Việt Tiểu học → **Đề Cương Ôn Tập** → Tạo Đề Kiểm Tra → Nhận Xét Học Bạ (`page.js`, hằng số
+`MODES` đã sắp lại đúng thứ tự này, nút bấm + nhánh nội dung ternary cũng theo đúng thứ tự).
+
+### Kiến trúc (đúng khuôn "form → blueprint → API route → orchestrator → engine → prompt → AI"
+đã dùng cho Giáo án/Đề kiểm tra, KHÔNG tái dùng code của 2 tính năng đó - chỉ tái dùng
+`githubService.js` làm nguồn kiến thức SGK chung)
+- `src/data/outlineTemplates.js`: 3 mức `OUTLINE_LEVELS` (`coBan`/`nangCao`/`vanDungCao`),
+  `splitChaptersBySemester()` - quy ước chia đôi TẠM THỜI danh sách chương cho 2 nút bấm nhanh
+  "Học kỳ I/II" (KHÔNG PHẢI phân phối chương trình chính thức - kho kiến thức hiện tại không có
+  nguồn nào khác để tham chiếu, giáo viên vẫn tự chỉnh tay được sau khi bấm).
+- `src/data/outlinePromptTemplates.js`: dựng prompt AI cho cấu trúc "3 Trụ cột" (Kiến thức cốt
+  lõi / Dạng bài + bài mẫu / Ngân hàng bài tập 3 mức) + trường `thuNgoPhuHuynh` (thư ngỏ tự động
+  gửi phụ huynh). KHÔNG dùng LaTeX (giống Giáo án, khác Đề kiểm tra) vì `outlineExportService.js`
+  KHÔNG có pipeline LaTeX → MathML → OMML.
+- `src/services/outlineEngine.js`/`outlineOrchestrator.js`: đúng khuôn `lessonPlanEngine.js`/
+  `lessonPlanOrchestrator.js` (retry + backoff khi quá tải, KHÔNG chặn cả lượt soạn nếu 1/nhiều
+  chương SGK tải lỗi - dùng `Promise.allSettled()` trên `fetchChaptersSeparately()` sẵn có trong
+  `githubService.js`, gộp nội dung nhiều chương thành 1 khối).
+- `src/app/api/generate-outline/route.js`: `requireAuth` + `requireWithinTeacherGenerateLimit` +
+  clamp `exerciseCounts` (xem bên dưới) đúng khuôn `/api/generate-lesson-plan`.
+- `src/data/outlineBlueprint.js`/`outlineResult.js`: contract client↔server, đúng khuôn
+  `lessonPlanBlueprint.js`/`lessonPlanResult.js`.
+- `src/services/contentGenerationLimits.js`: thêm `getOutlineMaxPerLevel()` (mặc định 15),
+  `getOutlineMaxTotalExercises()` (mặc định 30), `clampOutlineExerciseCounts()` - TÁI DÙNG đúng
+  thuật toán `clampExerciseCounts()` (clamp từng mức trước, cắt bớt mức CUỐI CÙNG nếu tổng vẫn
+  vượt trần), áp dụng cho 3 key cố định thay vì nhiều key tự do.
+- `src/components/OutlineForm.jsx`: Môn/Lớp/Tập + chọn NHIỀU chương (khác Giáo án - luôn 1
+  chương) + 3 nút bấm nhanh "Học kỳ I/II/Cả năm" + 3 ô nhập số bài/mức + "Yêu cầu đặc biệt".
+- `src/components/OutlinePreview.jsx`: khung `.a4-page` hiển thị đủ 3 Trụ cột + khối "Thư ngỏ gửi
+  Phụ huynh" màu vàng nhạt ở cuối trang.
+
+### Xuất file - `OutlineExportActions.jsx` + `outlineExportService.js` (MỚI HOÀN TOÀN, ĐỘC LẬP)
+- 2 luồng tải ĐỒNG THỜI (đúng khuôn `exportWorksheetBothVersions()`, không có checkbox vì luôn có
+  đủ đáp án tin cậy, khác Giáo án/Nhận xét học bạ):
+  - **Bản Học sinh** (`showAnswers=false`): có Kiến thức cốt lõi + đề bài mẫu/đề ngân hàng bài
+    tập, KHÔNG có lời giải bài mẫu/đáp án ngân hàng bài tập (bản Học sinh vẫn giữ NGUYÊN Kiến thức
+    cốt lõi vì đó là lý thuyết tham khảo, không phải "đáp án" cần giấu) - KHÔNG có phụ lục Thư ngỏ.
+  - **Bản GV-Phụ huynh** (`showAnswers=true`): đầy đủ lời giải/đáp án + phụ lục "THƯ NGỎ GỬI PHỤ
+    HUYNH" chèn Ở ĐẦU file (trước cả 3 Trụ cột) - giáo viên đọc/gửi ngay không cần lật tới cuối.
+- `buildParentFriendlyOutlineParagraphs(thuNgoPhuHuynh, meta)`: hàm "style thân thiện phụ huynh"
+  riêng theo đúng yêu cầu NEXT_STEPS.md, ĐỘC LẬP với `buildParentFriendlyReportSections()` (Nhận
+  xét học bạ) - 2 tính năng bố cục khác hẳn (thư ngỏ theo ĐỀ CƯƠNG >< theo TỪNG HỌC SINH). Hàm
+  này trả về mảng `Paragraph` của thư viện "docx" (KHÔNG PHẢI JSX/class Tailwind) nên không bị
+  ảnh hưởng bởi giới hạn Tailwind `content` scan đã ghi chú ở Bước 1 Việc #8 - giới hạn đó chỉ áp
+  dụng cho hàm trả JSX/CSS class; vẫn giữ nguyên tắc "hàm thuần, test được bằng Node" để nhất quán.
+- ⚠️ Quyết định phạm vi: KHÔNG làm thêm 1 pipeline PDF-in-riêng kiểu `ReportCommentPdfView.jsx`
+  (khung `.report-pdf-only` ẩn/hiện khi in) cho tính năng này - vì Đề cương Ôn tập ĐÃ CÓ sẵn bản
+  xem A4 chuẩn (`OutlinePreview.jsx`, `id="print-area"`) nên nút "In / Tải PDF" hoạt động trực
+  tiếp qua `exportToPDF()` (dùng lại nguyên hàm `window.print()` có sẵn trong `exportService.js`),
+  khác Nhận xét học bạ (vốn KHÔNG có bản A4 preview, phải dựng thêm khung in riêng). "Thư ngỏ Phụ
+  huynh" hiển thị ngay trong `OutlinePreview.jsx` (khối màu vàng cuối trang) - in trực tiếp cùng
+  cả trang, không cần tách trang riêng.
+
+### Đã tự verify thật (không chỉ đọc code) — sandbox phiên này CÓ MẠNG
+- `npm install` thật (221 packages, không đổi so với phiên 6 - không thêm dependency mới).
+- `npm test` chạy THẬT bằng đúng lệnh chính thức: **123/123 PASS** (114 test cũ không hỏng + 9
+  test mới: 5 test `outlineExportService.test.js` giải nén `.docx` THẬT bằng `jszip` thật xác
+  nhận đúng bản Học sinh/GV-PH tách bạch đáp án + phụ lục Thư ngỏ, 4 test `clampOutlineExerciseCounts`
+  bổ sung vào `contentGenerationLimits.test.js`).
+- `npm run build` (Next.js 14.2.35): **build sạch, không lỗi type/lint**, route
+  `/api/generate-outline` xuất hiện đúng trong danh sách route đã build (kiểu `ƒ` - dynamic, đúng
+  bản chất route cần `requireAuth`). Dòng "Dynamic server usage" cho 2 route report-comment-* là
+  hành vi CÓ SẴN TỪ TRƯỚC (Giai đoạn 11), KHÔNG PHẢI lỗi mới phát sinh từ Bước 2.
+
+**Việc CHƯA làm được (cần bạn tự làm)** - xem chi tiết đầy đủ trong `NEXT_STEPS.md` mục "Nhóm A":
+chưa tự bấm nút trên trình duyệt thật với API key thật để xem bằng mắt (a) 2 nút Học kỳ I/II có
+chọn đúng nhóm chương hợp lý cho MÔN/LỚP thật của bạn không, (b) văn phong "Thư ngỏ Phụ huynh" AI
+sinh ra, (c) vị trí phụ lục Thư ngỏ trong file Word GV-PH, (d) đề cương gộp nhiều chương có phân
+bổ đều nội dung cho tất cả chương hay chỉ tập trung 1-2 chương đầu.
