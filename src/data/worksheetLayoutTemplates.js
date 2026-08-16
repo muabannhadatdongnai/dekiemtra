@@ -15,7 +15,10 @@
  *
  * Mỗi layout gồm:
  *  - id, name: định danh + tên hiển thị (cho giáo viên chọn thủ công nếu muốn, thay vì để AI tự chọn)
- *  - columns: số cột chia bài tập trong trang (1 hoặc 2) - ảnh hưởng cách sections được xếp
+ *  - columns: LUÔN LÀ 1 (xem GIAI ĐOẠN F3) - giữ lại field này chỉ để tương thích với
+ *    `suggestedColumns` do worksheetSampleAnalyzer.js gợi ý khi phân tích ảnh mẫu, KHÔNG còn
+ *    ảnh hưởng cách xếp sections nữa (WorksheetPreview.jsx đã bỏ hẳn nhánh 2 cột do lỗi tiêu đề
+ *    tràn/bị cắt ở khung 47% bề rộng trang - xem comment trong WorksheetPreview.jsx)
  *  - frameStyle: kiểu khung trang trí (khác nhau về viền, góc trang trí, độ "rộn ràng")
  *  - headerStyle: kiểu khối tiêu đề (banner cong, badge nổi khối, ruy-băng chéo góc...)
  *  - cornerDecorSets: NHIỀU bộ icon góc trang trí để chọn xoay vòng (không chỉ ☀️🌈✏️⭐ cố định)
@@ -49,9 +52,9 @@ export const CORNER_DECOR_SETS = [
 export const WORKSHEET_LAYOUT_TEMPLATES = [
   {
     id: "classic_2col_dotted",
-    name: "Cổ điển 2 cột - viền chấm bo tròn",
-    description: "Bố cục hiện có: khung thẻ trắng dày, viền chấm bo tròn, 2 cột song song.",
-    columns: 2,
+    name: "Cổ điển - viền chấm bo tròn",
+    description: "Bố cục hiện có: khung thẻ trắng dày, viền chấm bo tròn, 1 cột dọc.",
+    columns: 1,
     frameStyle: "dotted_border_thick_card",
     headerStyle: "badge_banner",
     sectionCardStyle: "rounded_dotted",
@@ -70,10 +73,10 @@ export const WORKSHEET_LAYOUT_TEMPLATES = [
   },
   {
     id: "learning_stations",
-    name: "2 cột - trạm học tập (game hoá)",
+    name: "Trạm học tập (game hoá)",
     description:
       "Mỗi khối bài tập là 1 \"trạm\" có huy hiệu số thứ tự nổi bật kiểu trò chơi, khuyến khích học sinh \"vượt trạm\" - phù hợp Lớp 2 nhiều dạng bài.",
-    columns: 2,
+    columns: 1,
     frameStyle: "dotted_border_thick_card",
     headerStyle: "badge_banner",
     sectionCardStyle: "game_station",
@@ -92,10 +95,10 @@ export const WORKSHEET_LAYOUT_TEMPLATES = [
   },
   {
     id: "adventure_map",
-    name: "2 cột - bản đồ phiêu lưu",
+    name: "Bản đồ phiêu lưu",
     description:
       "Nền trang trí dạng bản đồ/đảo phiêu lưu, mascot chính dẫn dắt xuyên suốt phiếu (không đổi mascot giữa chừng) - tạo cảm giác 1 câu chuyện liền mạch thay vì các khối rời rạc.",
-    columns: 2,
+    columns: 1,
     frameStyle: "adventure_border",
     headerStyle: "badge_banner",
     sectionCardStyle: "rounded_dotted",

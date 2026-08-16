@@ -256,10 +256,7 @@ const SHAPE_GLYPHS = {
   "Hình ê-líp": "⬭",
   "Hình ngũ giác": "⬠",
   "Hình lục giác": "⬡",
-  "Hình bán nguyệt": "◠",
   "Hình thang": "⏢",
-  "Hình mũi tên": "➤",
-  "Hình đám mây": "☁",
 };
 
 function buildNhanDienHinhParagraphs(shapes) {
@@ -306,17 +303,24 @@ function buildDemHinhUngDungParagraphs(data, showAnswers) {
   return [trayLine, ...questionLines];
 }
 
+// GIAI ĐOẠN F2 (ý b) - đồng bộ với GIAI_TOAN_LINE_COUNT bên WorksheetPreview.jsx: trước đây chỉ
+// in 1 dòng chấm chấm cho mỗi bài "Giải toán có lời văn", không đủ chỗ viết lời giải + phép tính
+// + đáp số. Giờ in nhiều dòng chấm chấm liên tiếp (mặc định 4 dòng) để khớp khung nhiều dòng bên
+// bản xem trước web.
+const GIAI_TOAN_LINE_COUNT = 4;
+
 function buildGiaiToanParagraphs(items, showAnswers) {
   return items.flatMap((it) => {
+    const writingLines = Array.from({ length: GIAI_TOAN_LINE_COUNT }, (_, i) => ({
+      children: [new TextRun({ text: WRITING_LINE, font: FONT, size: 24 })],
+      spacing: { after: i === GIAI_TOAN_LINE_COUNT - 1 ? (showAnswers && it.answer ? 60 : 120) : 100 },
+    }));
     const paras = [
       {
         children: [new TextRun({ text: it.content, font: FONT, size: 24 })],
         spacing: { after: 60 },
       },
-      {
-        children: [new TextRun({ text: WRITING_LINE, font: FONT, size: 24 })],
-        spacing: { after: showAnswers && it.answer ? 60 : 120 },
-      },
+      ...writingLines,
     ];
     if (showAnswers && it.answer) {
       paras.push({

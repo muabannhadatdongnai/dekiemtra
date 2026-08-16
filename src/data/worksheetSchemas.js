@@ -36,6 +36,9 @@ const ICONS = [
 // lấy hết cả mảng, random chỉ đảo thứ tự chứ không đổi nội dung. Mở rộng lên 14 hình + đổi
 // defaultCount xuống 5 (xem worksheetExerciseCatalog.js) để LUÔN có phần hình "vắng mặt", tạo
 // khác biệt thật giữa các lần tạo phiếu.
+// GIAI ĐOẠN F2: bỏ "Hình bán nguyệt"/"Hình mũi tên"/"Hình đám mây" khỏi kho - giáo viên phản ánh
+// đây là những hình "ngớ ngẩn", không phù hợp với bối cảnh nhận diện hình học cơ bản (mũi tên
+// không phải hình học, bán nguyệt/đám mây dễ gây nhầm lẫn cho học sinh nhỏ tuổi). Còn lại 11 hình.
 const SHAPES = [
   "Hình tròn",
   "Hình vuông",
@@ -47,10 +50,7 @@ const SHAPES = [
   "Hình ê-líp",
   "Hình ngũ giác",
   "Hình lục giác",
-  "Hình bán nguyệt",
   "Hình thang",
-  "Hình mũi tên",
-  "Hình đám mây",
 ];
 
 function randInt(min, max) {
