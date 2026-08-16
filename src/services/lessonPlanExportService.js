@@ -14,7 +14,12 @@ import {
   convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
-import { LESSON_PLAN_COLUMN_MODES, computeMultiPeriodTimeline } from "@/data/lessonPlanTemplates";
+import {
+  LESSON_PLAN_COLUMN_MODES,
+  computeMultiPeriodTimeline,
+  normalizeActivitiesTiet,
+  computeActivityStartTiets,
+} from "@/data/lessonPlanTemplates";
 import { getSubjectLabel } from "@/data/config";
 import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 
@@ -131,14 +136,18 @@ function periodBoundaryTableRow(tiet) {
 // Đồng thời chèn "ranh giới tiết" (periodBoundary*) THUẦN CODE ngay trước bước đầu tiên có "tiet"
 // lớn hơn bước liền trước - xem giải thích đầy đủ trong buildMultiPeriodGuidance() (data/
 // lessonPlanPromptTemplates.js) và PeriodBoundary trong LessonPlanPreview.jsx (bản xem trước web).
-function buildTwoColumnActivityTable(steps) {
+function buildTwoColumnActivityTable(steps, startTiet) {
   const headerRow = new TableRow({
     children: [
       cell("Hoạt động của giáo viên và học sinh", 60, { bold: true }),
       cell("Sản phẩm dự kiến", 40, { bold: true }),
     ],
   });
-  let lastTiet = null;
+  // startTiet: mốc "tiết đang diễn ra" ngay trước khi hoạt động này bắt đầu - xem
+  // computeActivityStartTiets() (lessonPlanTemplates.js) + giải thích lỗi "rối loạn dòng thời
+  // gian" tại normalizeActivitiesTiet() cùng file. KHÔNG dùng null như trước (bỏ sót ranh giới
+  // tiết xảy ra ngay ở bước đầu tiên của hoạt động).
+  let lastTiet = startTiet || null;
   const bodyRows = (steps || []).flatMap((s, i) => {
     const showBoundary = s.tiet && lastTiet && s.tiet > lastTiet;
     lastTiet = s.tiet || lastTiet;
@@ -155,8 +164,8 @@ function buildTwoColumnActivityTable(steps) {
   return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...bodyRows] });
 }
 
-function buildOneColumnActivityParagraphs(steps) {
-  let lastTiet = null;
+function buildOneColumnActivityParagraphs(steps, startTiet) {
+  let lastTiet = startTiet || null;
   return (steps || []).flatMap((s, i) => {
     const showBoundary = s.tiet && lastTiet && s.tiet > lastTiet;
     lastTiet = s.tiet || lastTiet;
@@ -303,7 +312,7 @@ function buildSlideOutlineParagraphs(slides) {
   return children;
 }
 
-function buildActivitySection(activity, columnMode, minutes) {
+function buildActivitySection(activity, columnMode, minutes, startTiet) {
   const titleSuffix = minutes ? ` (~${minutes} phút)` : "";
   const children = [
     new Paragraph({
@@ -317,10 +326,10 @@ function buildActivitySection(activity, columnMode, minutes) {
     );
   }
   if (columnMode === LESSON_PLAN_COLUMN_MODES.TWO_COLUMN) {
-    children.push(buildTwoColumnActivityTable(activity.tienTrinh));
+    children.push(buildTwoColumnActivityTable(activity.tienTrinh, startTiet));
     children.push(new Paragraph({ text: "" }));
   } else {
-    children.push(...buildOneColumnActivityParagraphs(activity.tienTrinh));
+    children.push(...buildOneColumnActivityParagraphs(activity.tienTrinh, startTiet));
   }
   return children;
 }
@@ -329,6 +338,11 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includ
   const columnMode = meta?.columnMode || LESSON_PLAN_COLUMN_MODES.ONE_COLUMN;
   const minutesByKey = Object.fromEntries((timeline || []).map((t) => [t.key, t.minutes]));
   const activityKeyByIndex = ["khoi_dong", "kham_pha", "luyen_tap", "van_dung"];
+  // Sửa lỗi "rối loạn dòng thời gian" (ranh giới "Hết Tiết..." bị chèn sai chỗ/chèn lặp khi xuất
+  // Word) - PHẢI dùng chung logic chuẩn hoá với bản xem trước web (LessonPlanPreview.jsx), xem
+  // giải thích đầy đủ tại normalizeActivitiesTiet()/computeActivityStartTiets() (lessonPlanTemplates.js).
+  const normalizedHoatDong = normalizeActivitiesTiet(lessonPlan.hoatDong);
+  const activityStartTiets = computeActivityStartTiets(normalizedHoatDong);
 
   const children = [
     new Paragraph({
@@ -374,8 +388,8 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includ
           }),
         ]
       : []),
-    ...(lessonPlan.hoatDong || []).flatMap((a, i) =>
-      buildActivitySection(a, columnMode, minutesByKey[activityKeyByIndex[i]])
+    ...normalizedHoatDong.flatMap((a, i) =>
+      buildActivitySection(a, columnMode, minutesByKey[activityKeyByIndex[i]], activityStartTiets[i])
     ),
   ];
 

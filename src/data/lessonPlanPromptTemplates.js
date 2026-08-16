@@ -110,6 +110,7 @@ ${priorityNote}${referenceBlock}
 function buildMultiPeriodGuidance(soTiet, grade, lessonType) {
   const periods = computeMultiPeriodTimeline(soTiet, grade, lessonType);
   const multiPeriod = periods.length > 1;
+  const secondActivityLabel = getActivityLabels(lessonType).find((a) => a.key === "kham_pha")?.label || "Khám phá";
   const lines = periods.map(
     (p) =>
       `  Tiết ${p.period} (${p.totalMinutes} phút): ` +
@@ -141,7 +142,16 @@ ${lines.join("\n")}
   SAU đó (nếu "tienTrinh" của hoạt động "Khởi động" có bước với "tiet" > 1) PHẢI là "khởi động lại"
   RẤT NGẮN GỌN (trò chơi nhỏ/câu hỏi nhanh nhắc lại tiết trước), TUYỆT ĐỐI KHÔNG lặp lại y hệt nội
   dung khởi động của Tiết 1.
-- Hoạt động "Vận dụng" CHỈ đặt ở tiết cuối cùng (tienTrinh chỉ có "tiet": ${periods.length}).`,
+- Hoạt động "Vận dụng" CHỈ đặt ở tiết cuối cùng (tienTrinh chỉ có "tiet": ${periods.length}).
+- ⚠️ QUAN TRỌNG NHẤT - "tiet" PHẢI TĂNG DẦN (KHÔNG BAO GIỜ GIẢM) khi đọc TUẦN TỰ từ bước đầu tiên
+  của hoạt động "Khởi động" tới bước cuối cùng của hoạt động "Vận dụng" (đúng thứ tự 4 khối hoạt
+  động sẽ hiển thị trong văn bản: Khởi động → ${secondActivityLabel} → Luyện tập → Vận dụng). Hãy
+  hình dung TOÀN BỘ ${periods.length} tiết như 1 DÒNG THỜI GIAN DUY NHẤT chảy xuyên suốt cả 4 hoạt
+  động, KHÔNG PHẢI 4 dòng thời gian riêng của từng hoạt động: nếu hoạt động đứng TRƯỚC (vd
+  ${secondActivityLabel}) đã có bước với "tiet": 2, thì MỌI bước của hoạt động đứng NGAY SAU nó
+  (vd Luyện tập) PHẢI có "tiet" ≥ 2, TUYỆT ĐỐI KHÔNG được quay lại "tiet": 1 (lỗi này khiến văn
+  bản xuất ra bị chèn lặp dòng "Hết Tiết 1" nhiều lần dù Tiết 1 chỉ kết thúc 1 lần duy nhất, làm
+  giáo viên đọc không hiểu mạch bài dạy).`,
   };
 }
 

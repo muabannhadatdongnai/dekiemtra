@@ -145,6 +145,17 @@ QUY TẮC CHUNG:
   để ngăn cách chữ số) ở BẤT KỲ đâu, kể cả với môn Toán. Đây là tài liệu in trực tiếp (không qua
   công cụ hiển thị công thức), MỌI số liệu/công thức phải viết bằng CHỮ SỐ VÀ KÝ HIỆU TOÁN HỌC
   THÔNG THƯỜNG (VD: viết "3 + 4 = 7", KHÔNG viết "$3 + 4 = 7$").
+- ⚠️ SỐ THẬP PHÂN BẮT BUỘC dùng DẤU PHẨY (,) để ngăn cách phần nguyên và phần thập phân, đúng
+  chuẩn trình bày Toán học Việt Nam (VD: viết "15,6" và "12,34", TUYỆT ĐỐI KHÔNG viết "15.6" hay
+  "12.34" kiểu dấu chấm quốc tế) - áp dụng cho MỌI số thập phân xuất hiện ở bất kỳ đâu trong đề
+  cương (kiến thức cốt lõi, bài mẫu, lời giải, ngân hàng bài tập, đáp án...). Dấu chấm (.) CHỈ
+  được dùng để phân tách nhóm ba chữ số ở SỐ NGUYÊN lớn nếu cần (VD: "1.000.000"), KHÔNG dùng cho
+  số thập phân.
+- Đơn vị đo có số mũ (diện tích, thể tích...) PHẢI viết bằng ký hiệu số mũ trên thật (Unicode
+  superscript, VD: "km²", "m²", "cm³"), KHÔNG viết số thường ngay sau chữ cái (KHÔNG viết "km2",
+  "m2", "cm3").
+- Phân số viết theo dạng "tử số/mẫu số" (VD: "3/4", "1 và 1/4" cho hỗn số) - đây là cách trình bày
+  AN TOÀN nhất khi không có công cụ hiển thị công thức, KHÔNG cần viết dạng phân số nằm dọc.
 ${subject === "Toan" ? `\nQUY TẮC RIÊNG MÔN TOÁN (LƯU Ý: phần dưới đây có thể nhắc tới LaTeX vì vốn viết cho phần ra ĐỀ\nKIỂM TRA - khi soạn ĐỀ CƯƠNG vẫn áp dụng quy tắc nội dung/số liệu nhưng BỎ QUA hoàn toàn yêu cầu\ndùng LaTeX, luôn viết bằng ký hiệu thông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
 
 ${sourceBlock}

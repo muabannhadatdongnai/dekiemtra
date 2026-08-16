@@ -235,3 +235,63 @@ export function computeActivityTimeline(soTiet = 1, grade, lessonType = "bai_moi
   const activities = getActivityLabels(lessonType);
   return activities.filter((a) => a.key in totals).map((a) => ({ key: a.key, label: a.label, minutes: totals[a.key] }));
 }
+
+/**
+ * normalizeActivitiesTiet(hoatDong)
+ * KHẮC PHỤC lỗi "rối loạn dòng thời gian" (giáo viên phản ánh: bản Word/preview hiển thị "Hết
+ * Tiết 1" tới HAI LẦN, mạch kịch bản bị đứt gãy). Nguyên nhân gốc: Mục III LUÔN trình bày theo
+ * 4 khối HOẠT ĐỘNG cố định (Khởi động -> Hệ thống hoá -> Luyện tập -> Vận dụng - đúng khung
+ * CV2345), KHÔNG trình bày theo tiết; ranh giới tiết được đánh dấu NGAY BÊN TRONG từng hoạt động
+ * qua trường "tiet" ở mỗi bước. Nhưng AI soạn "tienTrinh" của từng hoạt động có phần ĐỘC LẬP với
+ * nhau, nên có thể gán "tiet" một hoạt động đứng SAU (vd Luyện tập) nhỏ hơn hoạt động đứng NGAY
+ * TRƯỚC nó (vd Hệ thống hoá đã sang Tiết 2, nhưng Luyện tập lại bắt đầu lại từ Tiết 1) -> khi
+ * trình bày tuyến tính, ranh giới "Hết Tiết..." bị chèn sai chỗ hoặc chèn lặp.
+ *
+ * Hàm này duyệt TOÀN BỘ các bước theo ĐÚNG thứ tự sẽ hiển thị (đúng thứ tự "hoatDong" -> đúng thứ
+ * tự "tienTrinh" trong từng hoạt động) và ép "tiet" của bước sau KHÔNG BAO GIỜ nhỏ hơn bước ngay
+ * trước đó trong cùng dòng thời gian (chỉ sửa khi AI bị "lùi thời gian", giữ nguyên nếu AI đã gán
+ * đúng thứ tự không giảm). Đây là lớp bảo vệ THUẦN CODE, không phụ thuộc AI có tuân thủ đúng
+ * hướng dẫn hay không (xem thêm buildMultiPeriodGuidance() bên lessonPlanPromptTemplates.js -
+ * phần hướng dẫn AI vẫn giữ để giảm khả năng phải "vá" bằng hàm này).
+ *
+ * Trả về BẢN SAO của mảng "hoatDong" (không sửa trực tiếp dữ liệu gốc) để LessonPlanPreview.jsx
+ * (bản xem trước web) và lessonPlanExportService.js (bản xuất Word) DÙNG CHUNG 1 nguồn chân lý
+ * duy nhất, tránh 2 nơi hiển thị lệch nhau.
+ */
+export function normalizeActivitiesTiet(hoatDong) {
+  let lastTiet = 1;
+  return (hoatDong || []).map((activity) => {
+    const steps = (activity.tienTrinh || []).map((step) => {
+      if (step == null || typeof step.tiet !== "number" || step.tiet <= 0) return step; // giáo án 1 tiết: không có trường "tiet", giữ nguyên
+      const fixedTiet = Math.max(step.tiet, lastTiet);
+      lastTiet = fixedTiet;
+      return fixedTiet === step.tiet ? step : { ...step, tiet: fixedTiet };
+    });
+    return { ...activity, tienTrinh: steps };
+  });
+}
+
+/**
+ * computeActivityStartTiets(normalizedHoatDong)
+ * Tính "tiết đang diễn ra" NGAY TRƯỚC KHI hoạt động thứ i bắt đầu (dùng làm mốc lastTiet ban đầu
+ * khi trình bày hoạt động đó), thay vì mỗi hoạt động luôn bắt đầu đếm lại từ null/1 một cách độc
+ * lập (cách cũ khiến ranh giới tiết xảy ra ĐÚNG vào bước đầu tiên của 1 hoạt động - ví dụ Hệ
+ * thống hoá cả khối đã ở Tiết 2 nhưng Khởi động ngay trước nó kết thúc ở Tiết 1 - bị BỎ SÓT,
+ * không có dòng "Hết Tiết..." nào được chèn). PHẢI dùng cùng 1 mảng đã qua normalizeActivitiesTiet()
+ * ở trên để nhất quán.
+ * @returns {number[]} startTiet cho từng hoạt động, cùng độ dài với normalizedHoatDong.
+ */
+export function computeActivityStartTiets(normalizedHoatDong) {
+  let runningTiet = 1;
+  return (normalizedHoatDong || []).map((activity) => {
+    const startTiet = runningTiet;
+    const steps = activity.tienTrinh || [];
+    for (let i = steps.length - 1; i >= 0; i--) {
+      if (typeof steps[i]?.tiet === "number") {
+        runningTiet = steps[i].tiet;
+        break;
+      }
+    }
+    return startTiet;
+  });
+}
