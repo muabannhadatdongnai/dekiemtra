@@ -112,66 +112,84 @@ function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, tit
   return (
     <div
       style={{
-        position: "relative",
         border: `3px solid ${accent}`,
         background: bg,
         borderRadius: 18,
-        padding: "20px 16px 14px",
+        padding: "0 16px 14px",
         margin: "24px 0 14px",
         boxShadow: `0 3px 0 ${accent}66`,
         breakInside: "avoid",
       }}
     >
+      {/*
+       * ================== GIAI ĐOẠN F3 (sửa lỗi nhãn tiêu đề đè lên ô) ==================
+       * TRƯỚC ĐÂY nhãn dùng `position: absolute` + `whiteSpace: "nowrap"`: tiêu đề dài không
+       * bao giờ xuống dòng (tràn tự do ra ngoài khung, đặc biệt nặng ở bố cục 2 cột cũ - nay đã
+       * bỏ hẳn, xem GIAI ĐOẠN F3 phía trên) - VÀ vì absolute nên kể cả sau khi cho phép wrap,
+       * nhãn cao lên vẫn có thể đè lên nội dung bên dưới (vốn nằm ở vị trí cố định `marginTop`).
+       *
+       * Giờ đổi sang flow bình thường (bỏ absolute) + margin-top ÂM để kéo nhãn nổi lên đè viền
+       * trên (giữ đúng hiệu ứng thị giác "nhãn dán nổi khối" ban đầu), nhưng vì nằm trong flow
+       * nên nội dung `children` phía dưới LUÔN được đẩy xuống đúng bằng chiều cao thật của nhãn -
+       * nhãn dài 1 dòng hay 2 dòng đều không thể đè lên ô làm bài nữa.
+       */}
       <div
         style={{
-          position: "absolute",
-          top: -18,
-          left: 16,
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           gap: 6,
+          marginTop: -18,
+          marginBottom: 10,
           background: badge,
           color: "#fff",
           padding: "6px 16px 6px 10px",
-          borderRadius: 999,
+          borderRadius: 18,
           border: "2.5px solid #ffffff",
           boxShadow: `0 3px 0 ${badgeDark}, 0 4px 8px rgba(0,0,0,.18)`,
           fontFamily: "'Baloo 2', 'Segoe UI', sans-serif",
           fontWeight: 700,
-          fontSize: 14,
-          whiteSpace: "nowrap",
+          fontSize: 16,
+          whiteSpace: "normal",
+          wordBreak: "break-word",
+          width: "fit-content",
+          maxWidth: "100%",
         }}
       >
         <span
           style={{
             display: "inline-flex",
+            flexShrink: 0,
             alignItems: "center",
             justifyContent: "center",
-            width: 22,
-            height: 22,
+            width: 24,
+            height: 24,
             borderRadius: "50%",
             background: "rgba(255,255,255,.9)",
-            fontSize: 13,
+            fontSize: 14,
             color: titleColor,
             fontWeight: 800,
+            marginTop: 1,
           }}
         >
           {index + 1}
         </span>
-        <span style={{ fontSize: 16 }}>{mascot}</span>
+        <span style={{ fontSize: 20, flexShrink: 0 }}>{mascot}</span>
         <span>{title}</span>
       </div>
-      <div style={{ marginTop: 8, color: titleColor }}>{children}</div>
+      <div style={{ color: titleColor }}>{children}</div>
     </div>
   );
 }
 
+// GIAI ĐOẠN F3 (tăng cỡ ô làm bài): 34x26 quá nhỏ so với khổ A4 thật khi in - học sinh khó viết
+// số vào trong. Bỏ 2 cột giải phóng bề rộng trang (trước đây mỗi cột chỉ 47%) nên có đủ chỗ tăng
+// kích thước ô mà không lo tràn dòng.
 const blankBox = (accent = "#94A3B8") => (
   <span
     style={{
       display: "inline-block",
-      width: 34,
-      height: 26,
+      width: 42,
+      height: 32,
       border: `1.5px solid ${accent}`,
       borderRadius: 6,
       background: "#fff",
@@ -182,7 +200,7 @@ const blankBox = (accent = "#94A3B8") => (
 
 function TinhNhamSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px 16px", fontSize: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px 16px", fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
           {it.operandA} {it.operator} {it.operandB} = {blankBox(accent)}
@@ -216,7 +234,7 @@ function DemVaVietSoSection({ items, accent }) {
 
 function SoSanhSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px 16px", fontSize: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px 16px", fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
           {it.left}
@@ -241,7 +259,7 @@ function DaySoSection({ items, accent }) {
   return (
     <div>
       {items.map((it, i) => (
-        <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, fontSize: 14, alignItems: "center" }}>
+        <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, fontSize: 15, alignItems: "center" }}>
           {it.sequence.map((n, idx) => (
             <span key={idx}>{n === null ? blankBox(accent) : n}</span>
           ))}
@@ -268,7 +286,7 @@ function SapXepThuTuSection({ items, accent }) {
       {items.map((it, i) => {
         const unitSuffix = it.unit ? ` ${it.unit}` : "";
         return (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 14 }}>
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 15 }}>
             <span style={{ marginRight: 10 }}>{it.numbers.map((n) => `${n}${unitSuffix}`).join(" ;  ")}</span>
             <span style={{ color: accent, fontWeight: 700 }}>➜</span>
             {it.sortedAnswer.map((_, idx) => (
@@ -286,7 +304,7 @@ function SapXepThuTuSection({ items, accent }) {
 
 function NoiPhepTinhSection({ data, accent }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15 }}>
       <div>
         {data.pairs.map((p, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
@@ -491,22 +509,8 @@ function ShapeIcon({ name, accent }) {
     case "Hình lục giác":
       shape = <polygon points="52,28 40,48.8 16,48.8 4,28 16,7.2 40,7.2" {...common} />;
       break;
-    case "Hình bán nguyệt":
-      shape = <path d="M4,32 A24,24 0 0 1 52,32 Z" {...common} />;
-      break;
     case "Hình thang":
       shape = <polygon points="18,10 38,10 50,46 6,46" {...common} />;
-      break;
-    case "Hình mũi tên":
-      shape = <polygon points="4,22 30,22 30,10 52,28 30,46 30,34 4,34" {...common} />;
-      break;
-    case "Hình đám mây":
-      shape = (
-        <path
-          d="M15,40 C8,40 4,35 6,29 C3,23 8,17 15,18 C16,11 24,7 31,10 C36,6 45,8 46,15 C52,15 55,21 51,26 C55,30 53,38 46,40 Z"
-          {...common}
-        />
-      );
       break;
     case "Hình tròn":
     default:
@@ -573,7 +577,7 @@ function DemHinhUngDungSection({ data, accent }) {
           </span>
         ))}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 15 }}>
         {data.questions.map((q, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span>❓ Có bao nhiêu <strong>{q.shape}</strong>?</span>
@@ -664,13 +668,33 @@ function WorksheetFooter({ palette }) {
   );
 }
 
+// GIAI ĐOẠN F2 (ý b): trước đây chỉ có 1 ô trống cao 42px cho "Giải toán có lời văn" - không đủ
+// chỗ viết lời giải + phép tính + đáp số (thường cần 3-4 dòng). Đổi sang khung "ô ly" nhiều dòng
+// kẻ ngang (giống vở kẻ ngang học sinh tiểu học hay dùng) thay vì 1 khối trống trơn, để học sinh
+// biết rõ viết được mấy dòng và giữ chữ thẳng hàng. LINE_HEIGHT/LINE_COUNT tính theo px cố định
+// (không phụ thuộc khổ giấy) vì đây chỉ là các dòng kẻ ngang đơn giản, khác bài toán "vừa khổ A4"
+// của blankBox ở F3.
+const GIAI_TOAN_LINE_HEIGHT = 26;
+const GIAI_TOAN_LINE_COUNT = 4;
+
 function GiaiToanSection({ items, accent }) {
+  const boxHeight = GIAI_TOAN_LINE_HEIGHT * GIAI_TOAN_LINE_COUNT;
   return (
     <div>
       {items.map((it, i) => (
-        <div key={i} style={{ marginBottom: 12, fontSize: 14 }}>
+        <div key={i} style={{ marginBottom: 14, fontSize: 15 }}>
           <p style={{ marginBottom: 6 }}>{it.content}</p>
-          <div style={{ border: `1.5px dashed ${accent}`, borderRadius: 6, height: 42, background: "#fff" }} />
+          <div
+            style={{
+              border: `1.5px dashed ${accent}`,
+              borderRadius: 6,
+              height: boxHeight,
+              background: `repeating-linear-gradient(to bottom, transparent 0, transparent ${
+                GIAI_TOAN_LINE_HEIGHT - 1
+              }px, #d9dde3 ${GIAI_TOAN_LINE_HEIGHT - 1}px, #d9dde3 ${GIAI_TOAN_LINE_HEIGHT}px)`,
+              backgroundColor: "#fff",
+            }}
+          />
         </div>
       ))}
     </div>
@@ -685,7 +709,7 @@ function GiaiToanSection({ items, accent }) {
  */
 function KhoanhTuLoaiSection({ items, accent }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 14 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", gap: 8 }}>
           <span style={{ color: accent, fontWeight: 700 }}>{i + 1}.</span>
@@ -700,7 +724,7 @@ function KhoanhTuLoaiSection({ items, accent }) {
  * học sinh), chỉ khác nội dung là CHỮ thay vì SỐ. */
 function NoiTuNhomSection({ data, accent }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15 }}>
       <div>
         {data.pairs.map((p, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
@@ -744,7 +768,7 @@ function DienTuChoSanSection({ data, accent }) {
           </span>
         ))}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 14 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 15 }}>
         {data.sentences.map((s, i) => {
           const parts = s.template.split("___");
           return (
@@ -766,7 +790,7 @@ function DienTuChoSanSection({ data, accent }) {
  * answerKeyParts). */
 function DatCauTheoMauSection({ items, accent }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 14 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i}>
           <p style={{ marginBottom: 2 }}>
@@ -779,15 +803,6 @@ function DatCauTheoMauSection({ items, accent }) {
       ))}
     </div>
   );
-}
-
-/** Chia mảng sections thành 2 cột theo kiểu "đọc hết cột trái rồi mới sang cột phải" (giống báo
- * in truyền thống) - nửa đầu vào cột trái, nửa sau vào cột phải. Giữ nguyên index gốc (i) để
- * key/props render (VD accent/mascot theo index) không đổi so với trước khi chia cột. */
-function splitIntoTwoColumns(sections) {
-  const withIndex = sections.map((section, i) => ({ section, i }));
-  const mid = Math.ceil(withIndex.length / 2);
-  return { left: withIndex.slice(0, mid), right: withIndex.slice(mid) };
 }
 
 /** Render 1 ExerciseBox hoàn chỉnh theo section.type - tách riêng thành component để dùng
@@ -844,7 +859,6 @@ export default function WorksheetPreview({ worksheet, meta }) {
   const corners = layout.cornerDecor?.length === 4 ? layout.cornerDecor : ["☀️", "🌈", "✏️", "⭐"];
   const isRibbonHeader = layout.headerStyle === "ribbon_corner";
   const isUnderlineHeader = layout.headerStyle === "simple_underline";
-  const twoColumns = layout.columns === 2 ? splitIntoTwoColumns(worksheet.sections) : null;
 
   return (
     <div id="print-area">
@@ -893,54 +907,22 @@ export default function WorksheetPreview({ worksheet, meta }) {
             </div>
 
             {/*
-             * ================== GIAI ĐOẠN 9 (sửa lỗi vỡ layout 2 cột) ==================
-             * TRƯỚC ĐÂY dùng CSS `column-count: 2` (kiểu "đổ chữ như báo") - kỹ thuật này chỉ phù
-             * hợp với văn bản thuần, KHÔNG đảm bảo giữ nguyên hình dạng 1 khối HTML: khi cột báo
-             * cắt ngang qua giữa 1 ExerciseBox (đặc biệt khối "Nhận diện hình"/"Đếm hình" chứa
-             * nhiều icon SVG nhỏ xếp flex-wrap), khối bị tràn ra ngoài biên cột/khỏi trang - đúng
-             * hiện tượng giáo viên chụp ảnh gửi lần 1.
-             *
-             * ================== SỬA LẦN 2 (đổi từ flex sang float) ==================
-             * Lần sửa đầu dùng `display: flex` (2 cột flex ngang, mỗi cột 1 mảng con riêng) -
-             * hết lỗi tràn ngang, NHƯNG lộ ra lỗi MỚI khi xuất PDF (giáo viên chụp ảnh gửi lần 2,
-             * chữ đè lên nhau ở đúng khu vực gần ranh giới trang in): "In / Tải PDF" ở app này
-             * KHÔNG dùng thư viện PDF riêng - chỉ gọi `window.print()` (xem exportService.js), tức
-             * là trình duyệt tự động NGẮT TRANG dựa trên nội dung HTML/CSS thật. `display: flex`
-             * (và `display: grid`) có hỗ trợ ngắt trang khi in RẤT KHÔNG ổn định giữa các trình
-             * duyệt - khi nội dung dài hơn 1 trang, 2 flex-column có thể ngắt trang KHÔNG đồng bộ
-             * với nhau, khiến phần còn lại của 1 cột đè lên phần đầu trang mới của cột kia.
-             *
-             * Giải pháp ĐÚNG (kỹ thuật `float` cổ điển - CHỦ Ý dùng lại, KHÔNG lỗi thời): CSS
-             * `float: left/right` + `width` cố định là cách DUY NHẤT trong 3 kỹ thuật chia cột
-             * (multicol/flex/float) được các trình duyệt hỗ trợ ngắt trang khi in ỔN ĐỊNH qua
-             * nhiều trang - đây là kỹ thuật tiêu chuẩn cho báo cáo/tài liệu in nhiều cột từ trước
-             * khi flexbox/grid ra đời, và vẫn là lựa chọn AN TOÀN NHẤT cho in ấn đến nay. Mỗi cột
-             * vẫn là 1 mảng con riêng (giữ nguyên cách chia từ lần sửa đầu, mỗi ExerciseBox luôn
-             * nằm TRỌN VẸN trong đúng 1 cột) - chỉ đổi kỹ thuật CSS chia cột, không đổi cách chia
-             * dữ liệu. `overflow: hidden` trên khối bọc ngoài để "clear" 2 cột float (khối bọc tự
-             * cao đúng bằng cột cao nhất), tránh phần QR đáp án/footer bên dưới bị đẩy lên đè vào
-             * cột đang float.
+             * ================== GIAI ĐOẠN F3 (bỏ hẳn bố cục 2 cột) ==================
+             * Lịch sử: multicol -> flex -> float (xem NEXT_STEPS.md/PROJECT_SUMMARY.md), mỗi lần
+             * chỉ sửa được lỗi ngắt trang khi in nhưng để lộ lỗi khác. Lỗi mới nhất giáo viên gửi
+             * ảnh chụp: ở bố cục 2 cột (mỗi cột chỉ 47% bề rộng trang), nhãn tiêu đề dài của
+             * ExerciseBox (`whiteSpace: nowrap`) tràn ra ngoài khung và bị cắt bởi `overflow:
+             * hidden` của khối bọc 2 cột float. Quyết định CHỐT: bỏ hẳn bố cục 2 cột, luôn hiển
+             * thị 1 cột duy nhất (an toàn hơn, chấp nhận phiếu dài hơn) - không còn cần kỹ thuật
+             * chia cột (multicol/flex/float) nào nữa nên không còn rủi ro ngắt trang/tràn khung
+             * kiểu này tái diễn. `layout.columns` (nếu dữ liệu cũ còn field này) không còn được
+             * đọc ở đây nữa.
              */}
-            {layout.columns === 2 ? (
-              <div style={{ overflow: "hidden" }}>
-                <div style={{ float: "left", width: "47%" }}>
-                  {twoColumns.left.map(({ section, i }) => (
-                    <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
-                  ))}
-                </div>
-                <div style={{ float: "right", width: "47%" }}>
-                  {twoColumns.right.map(({ section, i }) => (
-                    <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div>
-                {worksheet.sections.map((section, i) => (
-                  <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
-                ))}
-              </div>
-            )}
+            <div>
+              {worksheet.sections.map((section, i) => (
+                <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
+              ))}
+            </div>
 
             {worksheet.answerKeyText && <AnswerQrCode text={worksheet.answerKeyText} accent={layout.palette.border} />}
 
