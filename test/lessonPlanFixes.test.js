@@ -160,6 +160,12 @@ test("buildLessonPlanDocxSections: docx nhiều tiết CÓ ranh giới 'Hết Ti
   const xml = await zip.file("word/document.xml").async("string");
 
   assert.match(xml, /Hết Tiết 1/, "phải có ranh giới hết Tiết 1 trong file Word");
+  // ⚠️ Fixture này cố ý mô phỏng đúng lỗi giáo viên phản ánh: hoạt động "Hệ thống hoá kiến thức"
+  // (đứng NGAY SAU "Khởi động" - vốn đã kết thúc ở Tiết 2) lại bị AI gán "tiet: 1" (lùi thời
+  // gian). Nếu không chuẩn hoá (normalizeActivitiesTiet), dòng "Hết Tiết 1" sẽ bị chèn LẶP LẠI ở
+  // hoạt động "Luyện tập" ngay sau đó -> phải đảm bảo CHỈ xuất hiện ĐÚNG 1 LẦN trong toàn bộ file.
+  const soLanHetTiet1 = (xml.match(/Hết Tiết 1/g) || []).length;
+  assert.equal(soLanHetTiet1, 1, `"Hết Tiết 1" chỉ được xuất hiện ĐÚNG 1 lần, thực tế: ${soLanHetTiet1} lần`);
   assert.match(xml, /PHỤ LỤC: Phiếu học tập số 1/, "phải có phụ lục Phiếu học tập trong file Word");
   assert.ok(!xml.includes("\\n"), "KHÔNG được còn ký tự \\n thô trong XML (phải là <w:br/> thật)");
   assert.match(xml, /<w:br\/>/, "phải có ít nhất 1 <w:br/> thật cho nội dung nhiều dòng");

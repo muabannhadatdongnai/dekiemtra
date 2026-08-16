@@ -1,7 +1,92 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi hoàn tất 4 việc bảo mật còn thiếu +
-# viết test riêng cho Việc 6/7 Giai đoạn 10 — theo đúng "Việc CHƯA làm" ghi ở mục 0.-5. bên dưới)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi sửa lỗi "rối loạn dòng thời gian" ở
+# Giáo án nhiều tiết + lỗi định dạng số/đơn vị ở Đề cương ôn tập, theo phản hồi thực tế từ giáo viên)
 
-## 0.-6. MỚI NHẤT — Hoàn tất rate-limit theo giáo viên, trần số câu/bài/tiết mỗi lượt gọi,
+## 0.-7. MỚI NHẤT — Sửa lỗi "Hết Tiết 1" bị chèn lặp 2 lần trong Giáo án nhiều tiết (rối loạn dòng
+## thời gian) + lỗi số thập phân/đơn vị đo không đúng chuẩn Việt Nam trong Đề cương ôn tập
+
+**Bối cảnh**: giáo viên phản hồi 2 lỗi cụ thể sau khi dùng thật:
+1. Giáo án 2 tiết ("Bài 1: Ôn tập số tự nhiên") xuất ra dòng "── Hết Tiết 1 (nghỉ giải lao) —
+   Chuyển sang Tiết 2 ──" **HAI LẦN** (1 lần giữa hoạt động "Khởi động", 1 lần giữa hoạt động
+   "Luyện tập") dù Tiết 1 chỉ kết thúc đúng 1 lần trong thực tế — mạch kịch bản đọc bị đứt gãy,
+   không biết điểm dừng thật sự ở đâu.
+2. Đề cương ôn tập Toán Lớp 5 viết số thập phân theo chuẩn quốc tế (dấu chấm, VD "15.6", "12.34")
+   thay vì chuẩn Việt Nam (dấu phẩy, VD "15,6") — học sinh dễ bị trừ điểm nếu áp dụng đúng cách
+   viết này khi làm bài thi thật; đơn vị diện tích cũng viết "km2"/"m2" thay vì "km²"/"m²".
+
+### 1. Lỗi "rối loạn dòng thời gian" ở Giáo án nhiều tiết (nguyên nhân gốc + cách sửa)
+
+**Nguyên nhân gốc (đã xác nhận, không phải AI "ảo giác" ngẫu nhiên)**: Mục III của giáo án LUÔN
+trình bày theo 4 khối HOẠT ĐỘNG cố định (Khởi động → Hệ thống hoá → Luyện tập → Vận dụng — đúng
+khung CV2345), KHÔNG trình bày theo tiết; ranh giới tiết được đánh dấu NGAY BÊN TRONG từng hoạt
+động qua trường `tiet` ở mỗi bước (`tienTrinh[].tiet`), và `PeriodBoundary`
+(`LessonPlanPreview.jsx`)/`periodBoundaryParagraph` (`lessonPlanExportService.js`) chỉ so sánh
+`tiet` với bước liền trước **TRONG CÙNG 1 HOẠT ĐỘNG** (biến `lastTiet` reset về `null` mỗi khi bắt
+đầu 1 `ActivityBlock` mới). Vì AI soạn `tienTrinh` của từng hoạt động có phần ĐỘC LẬP với nhau
+(không theo dõi trạng thái tiết xuyên suốt toàn bài), hoạt động đứng SAU (VD "Luyện tập") có thể
+tự gán lại `tiet: 1` cho bước đầu dù hoạt động đứng NGAY TRƯỚC nó ("Hệ thống hoá") đã ở `tiet: 2`
+— tạo ra 1 ranh giới "Hết Tiết 1" GIẢ, SAI VỊ TRÍ, khiến người đọc thấy Tiết 1 "kết thúc" 2 lần.
+
+**Cách sửa — 2 lớp, ưu tiên lớp code (đáng tin cậy tuyệt đối, không phụ thuộc AI có tuân thủ
+prompt hay không):**
+- **Lớp code (chính, MỚI thêm `src/data/lessonPlanTemplates.js`)**:
+  - `normalizeActivitiesTiet(hoatDong)`: duyệt TOÀN BỘ các bước theo ĐÚNG thứ tự sẽ hiển thị (đúng
+    thứ tự hoạt động → đúng thứ tự bước trong từng hoạt động), ép `tiet` của bước sau KHÔNG BAO
+    GIỜ nhỏ hơn bước ngay trước đó trong dòng thời gian chung (chỉ sửa khi AI "lùi thời gian", giữ
+    nguyên nếu AI đã gán đúng thứ tự không giảm).
+  - `computeActivityStartTiets(normalizedHoatDong)`: tính "tiết đang diễn ra" NGAY TRƯỚC KHI mỗi
+    hoạt động bắt đầu, dùng làm mốc `lastTiet` BAN ĐẦU khi trình bày hoạt động đó — thay vì `null`
+    như cũ (cách cũ còn 1 lỗ hổng khác: nếu ranh giới tiết rơi ĐÚNG vào lúc chuyển từ hoạt động
+    này sang hoạt động kia, thì KHÔNG có "Hết Tiết..." nào được chèn — bị bỏ sót hoàn toàn).
+  - Áp dụng ĐỒNG BỘ ở CẢ 2 nơi hiển thị để không bị lệch nhau: `LessonPlanPreview.jsx` (bản xem
+    trước web — `ActivityBlock` nhận thêm prop `startTiet`) và `lessonPlanExportService.js` (bản
+    xuất Word — `buildTwoColumnActivityTable`/`buildOneColumnActivityParagraphs`/
+    `buildActivitySection` đều nhận thêm tham số `startTiet`).
+- **Lớp prompt (phòng ngừa, `lessonPlanPromptTemplates.js` → `buildMultiPeriodGuidance()`)**: bổ
+  sung đoạn hướng dẫn tường minh yêu cầu AI hình dung TOÀN BỘ các tiết như 1 DÒNG THỜI GIAN DUY
+  NHẤT chảy xuyên suốt cả 4 hoạt động (không phải 4 dòng thời gian riêng), `tiet` phải tăng dần
+  không bao giờ giảm khi đọc tuần tự — giảm khả năng lớp code phía trên phải "vá" thường xuyên.
+
+**Test**: `test/lessonPlanFixes.test.js` — bổ sung fixture tái hiện ĐÚNG lỗi thật (hoạt động "Hệ
+thống hoá" đứng sau "Khởi động" đã sang Tiết 2 nhưng vẫn bị gán `tiet: 1`), assert dòng
+"Hết Tiết 1" xuất hiện ĐÚNG 1 LẦN DUY NHẤT trong file Word xuất ra (trước khi sửa sẽ là 2 lần).
+
+### 2. Lỗi số thập phân/đơn vị đo ở Đề cương ôn tập (`src/data/outlinePromptTemplates.js`)
+
+Bổ sung 3 quy tắc bắt buộc vào khối "QUY TẮC CHUNG" của `buildOutlinePrompt()`:
+- Số thập phân BẮT BUỘC dùng dấu phẩy (`,`) ngăn cách phần nguyên/thập phân theo đúng chuẩn Toán
+  học Việt Nam (VD viết "15,6", TUYỆT ĐỐI KHÔNG viết "15.6") — áp dụng cho MỌI nơi trong đề cương
+  (kiến thức cốt lõi, bài mẫu, lời giải, ngân hàng bài tập, đáp án...). Dấu chấm chỉ còn được dùng
+  để phân tách nhóm 3 chữ số ở SỐ NGUYÊN lớn (VD "1.000.000"), không dùng cho số thập phân.
+- Đơn vị đo có số mũ (diện tích, thể tích...) PHẢI dùng ký hiệu số mũ trên Unicode thật (`km²`,
+  `m²`, `cm³`), KHÔNG viết số thường ngay sau chữ cái (`km2`, `m2`, `cm3`) — vì tính năng này xuất
+  Word bằng Paragraph/TextRun thuần (không có pipeline LaTeX→OMML như Đề kiểm tra), nên đây là
+  cách duy nhất để hiển thị số mũ đúng mà không cần định dạng ký tự phức tạp.
+- Phân số giữ nguyên dạng "tử số/mẫu số" (VD "3/4") — xác nhận đây là lựa chọn AN TOÀN nhất khi
+  chưa có công cụ hiển thị công thức, không cần đổi.
+
+**Test**: `test/outlinePromptTemplates.test.js` (MỚI) — khoá lại 2 quy tắc trên bằng cách assert
+prompt sinh ra PHẢI chứa đúng câu chữ + ví dụ minh hoạ ("15,6", "km²"...).
+
+### Đã tự xác minh thật (trong giới hạn môi trường)
+- `npx esbuild` (transform, không bundle) sạch trên toàn bộ 5 file đã sửa: `lessonPlanTemplates.js`,
+  `LessonPlanPreview.jsx`, `lessonPlanExportService.js`, `lessonPlanPromptTemplates.js`,
+  `outlinePromptTemplates.js`.
+- Viết script tái hiện thủ công đúng kịch bản lỗi thật (hoạt động sau bị gán lùi `tiet`), xác nhận
+  `normalizeActivitiesTiet()`/`computeActivityStartTiets()` cho ra ĐÚNG 1 ranh giới thay vì 2.
+- Chạy THẬT `npm test` (132 test, gồm 2 test MỚI) sau khi `npm install` — **132/132 PASS**, không
+  có test cũ nào bị phá vỡ (đã rà toàn bộ nơi dùng `lessonPlan.hoatDong` để đảm bảo không sót chỗ
+  cần sửa tương tự).
+
+### ⚠️ Việc CHƯA làm / cần giáo viên tự kiểm tra
+- Lớp code (`normalizeActivitiesTiet`) chỉ sửa được trường `tiet` (dữ liệu có cấu trúc) — nếu AI
+  lỡ viết CÂU CHỮ tường thuật sai bên trong `hoatDongGVHS` (VD nhắc "chuyển sang tiết 2" ngay
+  trong nội dung 1 bước dù trường `tiet` của bước đó vẫn đúng), lớp code KHÔNG tự sửa được nội
+  dung câu chữ này — giáo viên vẫn nên đọc lướt lại phần "Khởi động lại" ở tiết sau trước khi dạy.
+- Quy tắc số thập phân/đơn vị đo mới CHỈ áp dụng cho "Đề cương ôn tập" (đúng phạm vi giáo viên
+  phản ánh) — CHƯA rà soát các tính năng khác (Đề kiểm tra, Phiếu bài tập) xem có cùng lỗi hay
+  không; nếu giáo viên gặp lỗi tương tự ở nơi khác, cần báo riêng để sửa đúng chỗ.
+
+## 0.-6. Hoàn tất rate-limit theo giáo viên, trần số câu/bài/tiết mỗi lượt gọi,
 ## security headers, .gitignore + .env.local.example, và test tự động cho Việc 6/7
 
 **Bối cảnh**: tiếp nối đúng 4 việc liệt kê ở mục "⚠️ Việc CHƯA làm" của lần rà soát trước (mục
