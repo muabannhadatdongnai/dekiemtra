@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { LESSON_PLAN_COLUMN_MODES, computeMultiPeriodTimeline } from "@/data/lessonPlanTemplates";
+import {
+  LESSON_PLAN_COLUMN_MODES,
+  computeMultiPeriodTimeline,
+  normalizeActivitiesTiet,
+  computeActivityStartTiets,
+} from "@/data/lessonPlanTemplates";
 import { getSubjectLabel } from "@/data/config";
 
 const cellStyle = { border: "1px solid #94a3b8", padding: "6px 10px", verticalAlign: "top", fontSize: 13 };
@@ -44,9 +49,13 @@ function PeriodBoundary({ tiet }) {
   );
 }
 
-function ActivityBlock({ activity, columnMode, minutes }) {
+function ActivityBlock({ activity, columnMode, minutes, startTiet }) {
   const steps = activity.tienTrinh || [];
-  let lastTiet = null;
+  // startTiet: "tiết đang diễn ra" ngay trước khi hoạt động này bắt đầu (xem
+  // computeActivityStartTiets() - lessonPlanTemplates.js) - dùng làm mốc so sánh ban đầu thay vì
+  // null, để phát hiện được cả ranh giới tiết xảy ra NGAY Ở BƯỚC ĐẦU TIÊN của hoạt động (trước
+  // đây mỗi hoạt động tự đếm lại từ đầu nên bị bỏ sót trường hợp này).
+  let lastTiet = startTiet || null;
 
   return (
     <div style={{ marginBottom: 14, breakInside: "avoid" }}>
@@ -436,6 +445,11 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
   const columnMode = meta?.columnMode || LESSON_PLAN_COLUMN_MODES.ONE_COLUMN;
   const minutesByKey = Object.fromEntries((timeline || []).map((t) => [t.key, t.minutes]));
   const activityKeyByIndex = ["khoi_dong", "kham_pha", "luyen_tap", "van_dung"];
+  // Sửa lỗi "rối loạn dòng thời gian" (ranh giới "Hết Tiết..." bị chèn sai chỗ/chèn lặp khi bài
+  // dạy nhiều tiết) - xem giải thích đầy đủ tại normalizeActivitiesTiet()/computeActivityStartTiets()
+  // trong lessonPlanTemplates.js. Cả 2 hàm PHẢI dùng chung 1 mảng đã chuẩn hoá.
+  const normalizedHoatDong = normalizeActivitiesTiet(lessonPlan.hoatDong);
+  const activityStartTiets = computeActivityStartTiets(normalizedHoatDong);
 
   return (
     <div id="print-area">
@@ -467,8 +481,14 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
               .join(" — ")}
           </p>
         )}
-        {(lessonPlan.hoatDong || []).map((a, i) => (
-          <ActivityBlock key={i} activity={a} columnMode={columnMode} minutes={minutesByKey[activityKeyByIndex[i]]} />
+        {normalizedHoatDong.map((a, i) => (
+          <ActivityBlock
+            key={i}
+            activity={a}
+            columnMode={columnMode}
+            minutes={minutesByKey[activityKeyByIndex[i]]}
+            startTiet={activityStartTiets[i]}
+          />
         ))}
 
         {lessonPlan.tichHopNLS && (
