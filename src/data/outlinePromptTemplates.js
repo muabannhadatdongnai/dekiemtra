@@ -17,6 +17,11 @@
  * "soNgayOnTap" - KHÔNG để AI tự ước lượng, đã chốt với người dùng). "baiMauLoiGiai" (lời giải
  * bài mẫu) giờ LUÔN hiển thị ở CẢ 2 phiên bản xuất file (xem outlineExportService.js) - trước đây
  * bị ẩn nhầm ở bản Học sinh, đây là lỗi nghiêm trọng nhất trong phản hồi Bước 3.
+ *
+ * Phiên sau (sửa "đứt gãy đối chiếu Lộ trình <-> Ngân hàng bài tập"): mỗi bài trong "nganHangBaiTap"
+ * giờ có thêm trường bắt buộc "ngay" (số ngày ôn tập mà bài đó thuộc về, PHẢI khớp với "nhiemVu"
+ * cùng ngày ở "loTrinhOnTap") - outlineExportService.js dùng trường CÓ CẤU TRÚC này để tự động gộp
+ * nhóm + ghi nhãn "[NGÀY N]" ngay trong mục III, thay vì bắt học sinh tự đếm/tự đối chiếu bằng tay.
  */
 
 import { getSubjectProfile } from "./subjectProfiles";
@@ -33,7 +38,7 @@ function buildExerciseCountsBlock(exerciseCounts) {
 function buildExerciseBankSchemaBlock(exerciseCounts) {
   return OUTLINE_LEVEL_ORDER.map((level) => {
     const count = exerciseCounts[level] || 0;
-    return `    "${level}": [ ${count > 0 ? '{ "de": "...", "dapAn": "..." }' : ""} ]`;
+    return `    "${level}": [ ${count > 0 ? '{ "de": "...", "dapAn": "...", "ngay": 1 }' : ""} ]`;
   }).join(",\n");
 }
 
@@ -110,8 +115,12 @@ QUY TẮC BẮT BUỘC - CẤU TRÚC "3 TRỤ CỘT" + LỘ TRÌNH ÔN TẬP:
 3. "nganHangBaiTap" (Trụ cột 3 - Ngân hàng bài tập 3 mức): bài tập để học sinh TỰ LUYỆN, chia
    đúng 3 mức độ tăng dần độ khó, đúng SỐ LƯỢNG giáo viên yêu cầu cho từng mức:
 ${buildExerciseCountsBlock(exerciseCounts)}
-   Khác với bài mẫu ở Trụ cột 2: mỗi bài ở đây CHỈ có "de" (đề bài) và "dapAn" (ĐÁP SỐ NGẮN GỌN,
-   KHÔNG giải thích các bước) - đây là bài tự luyện, không phải bài giảng mẫu.
+   Khác với bài mẫu ở Trụ cột 2: mỗi bài ở đây có "de" (đề bài), "dapAn" (ĐÁP SỐ NGẮN GỌN, KHÔNG
+   giải thích các bước) và BẮT BUỘC thêm "ngay" (SỐ NGUYÊN từ 1 đến ${soNgayOnTap}) - đây là bài
+   tự luyện, không phải bài giảng mẫu. "ngay" cho biết bài này thuộc NGÀY NÀO trong Lộ trình ôn
+   tập (Trụ cột 4) - PHẢI gán khớp với đúng ngày mà "nhiemVu" của Lộ trình nhắc tới bài này, để
+   khi xuất ra, hệ thống tự động gộp nhóm và ghi nhãn "[NGÀY N]" ngay trong Ngân hàng bài tập
+   (học sinh không phải tự đếm/tự đối chiếu số bài với Lộ trình).
    - Mức "${OUTLINE_LEVEL_LABELS[OUTLINE_LEVELS.CO_BAN]}": bài cơ bản, áp dụng trực tiếp kiến thức
      cốt lõi, không đánh đố.
    - Mức "${OUTLINE_LEVEL_LABELS[OUTLINE_LEVELS.NANG_CAO]}": kết hợp 2-3 kiến thức, cần suy luận
@@ -130,7 +139,11 @@ ${buildExerciseCountsBlock(exerciseCounts)}
      3 bài Mức Cơ bản Dạng 1"), phân bổ HỢP LÝ và TĂNG DẦN độ khó qua các ngày (những ngày đầu ưu
      tiên Kiến thức cốt lõi + bài mẫu, những ngày giữa/cuối ưu tiên luyện Ngân hàng bài tập, ngày
      cuối cùng nên là ôn tập tổng hợp/luyện đề). KHÔNG lặp lại nguyên văn nội dung đã liệt kê ở
-     Trụ cột 1-3, chỉ NHẮC TÊN việc cần làm.
+     Trụ cột 1-3, chỉ NHẮC TÊN việc cần làm. ⚠️ QUAN TRỌNG: nếu "nhiemVu" của ngày N có nhắc tới
+     làm bài trong Ngân hàng bài tập, thì CHÍNH XÁC những bài đó ở Trụ cột 3 PHẢI được gán
+     "ngay": N (KHÔNG được nhắc bài trong lời văn mà quên gán số ngày tương ứng, và KHÔNG được gán
+     "ngay" cho bài mà "nhiemVu" ngày đó không hề nhắc tới) - đây là 2 nguồn dữ liệu PHẢI khớp
+     tuyệt đối với nhau vì hệ thống dùng "ngay" để tự động ghi nhãn, không đọc lại câu chữ tự do.
 
 5. "thuNgoPhuHuynh": viết 1 ĐOẠN THƯ NGỎ NGẮN (4-6 câu) gửi PHỤ HUYNH, giọng văn ẤM ÁP, GẦN GŨI
    (không phải văn phong hành chính) - giải thích ngắn gọn phạm vi con đang ôn tập, gợi ý CỤ THỂ

@@ -202,11 +202,29 @@ function buildDangBaiParagraphs(items) {
 }
 
 /**
+ * Ghi nhãn "[NGÀY N]" ngay trước bài đầu tiên của mỗi ngày trong 1 mức độ, dựa vào trường "ngay"
+ * (số nguyên, do AI gán trực tiếp trên từng bài - xem outlinePromptTemplates.js) - KHÔNG dựa vào
+ * việc dò/đối chiếu câu chữ tự do ở "loTrinhOnTap", để tránh lệch giữa Lộ trình và Ngân hàng bài
+ * tập (Bug đối chiếu Lộ trình, phản hồi thực tế). Bài không có "ngay" hợp lệ (thiếu/0/NaN) thì bỏ
+ * qua nhãn, giữ nguyên hành vi cũ (không chặn xuất file nếu AI lỡ thiếu trường mới này).
+ */
+function dayLabelParagraph(ngay) {
+  return new Paragraph({
+    children: [new TextRun({ text: `[NGÀY ${ngay}]`, bold: true, italics: true, size: 20, font: FONT, color: "334155" })],
+    spacing: { before: 100, after: 40 },
+  });
+}
+
+/**
  * Trụ cột 3 - Ngân hàng bài tập 3 mức: mỗi bài đánh số trong đúng mức của nó. Việc E2 (Bước 3) -
  * ĐÃ SỬA: "dapAn" KHÔNG còn in ngay dưới câu hỏi ở BẤT KỲ bản nào nữa (kể cả bản GV-PH) - luôn
  * chừa dòng trống "Bài làm: ..." ở đây, đáp án chuyển hẳn sang phụ lục riêng cuối tài liệu (xem
  * buildAnswerKeyAppendixParagraphs()) chỉ có ở bản GV-PH - lý do "chống xem trộm" (phụ huynh dùng
  * bản GV-PH cho con làm bài thì con không còn nhìn thấy đáp án câu kế tiếp ngay dưới câu hỏi).
+ *
+ * Sửa "đứt gãy đối chiếu Lộ trình" (phản hồi thực tế): chèn thêm nhãn "[NGÀY N]" ngay trước bài
+ * đầu tiên mỗi khi "ngay" đổi giá trị, để học sinh/phụ huynh biết ngay bài nào ứng với ngày nào
+ * trong Lộ trình mà KHÔNG phải tự đếm 1, 2, 3... rồi lật lên đối chiếu.
  */
 function buildNganHangBaiTapParagraphs(nganHangBaiTap) {
   if (!nganHangBaiTap) return [];
@@ -224,7 +242,13 @@ function buildNganHangBaiTapParagraphs(nganHangBaiTap) {
       })
     );
 
+    let lastNgay = null;
     items.forEach((ex, i) => {
+      const ngay = Number(ex.ngay) > 0 ? Number(ex.ngay) : null;
+      if (ngay !== null && ngay !== lastNgay) {
+        paragraphs.push(dayLabelParagraph(ngay));
+        lastNgay = ngay;
+      }
       paragraphs.push(
         new Paragraph({
           children: [new TextRun({ text: `${i + 1}. ${ex.de || ""}`, size: 22, font: FONT })],
@@ -286,7 +310,13 @@ function buildAnswerKeyAppendixParagraphs(nganHangBaiTap) {
       })
     );
 
+    let lastNgay = null;
     items.forEach((ex, i) => {
+      const ngay = Number(ex.ngay) > 0 ? Number(ex.ngay) : null;
+      if (ngay !== null && ngay !== lastNgay) {
+        paragraphs.push(dayLabelParagraph(ngay));
+        lastNgay = ngay;
+      }
       paragraphs.push(
         new Paragraph({
           children: [
