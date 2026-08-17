@@ -29,11 +29,19 @@ export async function POST(request) {
       sgkVolume = null,
       sgkChapterId = null,
       subject = "TOAN",
+      storytellingMode = false,
+      storytellingTheme = null,
     } = body;
 
     if (!grade || !exerciseCounts) {
       return NextResponse.json({ error: "Thiếu tham số: grade, exerciseCounts." }, { status: 400 });
     }
+
+    // GIAI ĐOẠN F: chủ đề storytelling do giáo viên tự gõ (input tự do) - cắt bớt độ dài để
+    // tránh 1 chuỗi bất thường lớn bị nhét thẳng vào prompt gọi AI (cùng tinh thần các clamp
+    // khác trong file này, dù đây chỉ là 1 chuỗi ngắn nên không cần đưa vào contentGenerationLimits.js).
+    const safeStorytellingTheme =
+      typeof storytellingTheme === "string" ? storytellingTheme.slice(0, 200) : null;
 
     // ⚠️ Trần tối đa số bài/lượt gọi (xem contentGenerationLimits.js) - chặn client gửi số
     // lượng bài tập bất thường lớn làm tốn quota Gemini 1 lượt gọi duy nhất.
@@ -58,6 +66,8 @@ export async function POST(request) {
       sgkVolume,
       sgkChapterId,
       subject,
+      storytellingMode,
+      storytellingTheme: safeStorytellingTheme,
     });
     return NextResponse.json({
       success: true,

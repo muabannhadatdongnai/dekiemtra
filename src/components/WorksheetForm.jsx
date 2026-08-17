@@ -54,6 +54,9 @@ export default function WorksheetForm({ onGenerated }) {
   // cố định - thêm/bớt dạng bài trong worksheetExerciseCatalog.js giờ không cần sửa file này.
   const [exerciseCounts, setExerciseCounts] = useState(() => defaultCountsFor("LOP_1", "TOAN"));
   const [includeAnswers, setIncludeAnswers] = useState(false);
+  // ================== GIAI ĐOẠN F (storytelling theo chủ đề) ==================
+  const [storytellingMode, setStorytellingMode] = useState(false);
+  const [storytellingTheme, setStorytellingTheme] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -323,6 +326,8 @@ export default function WorksheetForm({ onGenerated }) {
         favoriteLayoutId,
         sgkVolume,
         sgkChapterId: sgkChapterId || null,
+        storytellingMode,
+        storytellingTheme: storytellingMode ? storytellingTheme : null,
       });
       setLastLayoutId(data?.layout?.id || null);
       setHasGenerated(true);
@@ -525,6 +530,37 @@ export default function WorksheetForm({ onGenerated }) {
         <input type="checkbox" checked={includeAnswers} onChange={(e) => setIncludeAnswers(e.target.checked)} />
         Kèm đáp số (cho bài giải toán có lời văn)
       </label>
+
+      {/* ================== GIAI ĐOẠN F (storytelling theo chủ đề) ==================
+       * CHỈ hiện khi giáo viên đã chọn dạng "Giải toán có lời văn" (exerciseCounts.giai_toan > 0)
+       * - storytelling chỉ tác động đến dạng bài này (xem worksheetGenerator.js), hiện ra khi
+       * không liên quan dễ gây hiểu lầm "bật cũng không thấy gì đổi". Mặc định TẮT (giáo viên chủ
+       * động bật) - giữ nguyên hành vi cũ (mỗi bài 1 chủ đề ngẫu nhiên riêng) khi không bật. */}
+      {(exerciseCounts.giai_toan ?? 0) > 0 && (
+        <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={storytellingMode}
+              onChange={(e) => setStorytellingMode(e.target.checked)}
+            />
+            Kể chuyện theo 1 chủ đề xuyên suốt (cho bài giải toán có lời văn)
+          </label>
+          <p className="text-xs text-slate-500">
+            Khi bật, các bài giải toán sẽ cùng xoay quanh 1 nhân vật/chủ đề như 1 câu chuyện nhiều
+            tập, thay vì mỗi bài 1 chủ đề rời rạc.
+          </p>
+          {storytellingMode && (
+            <input
+              value={storytellingTheme}
+              onChange={(e) => setStorytellingTheme(e.target.value)}
+              placeholder="VD: bạn Bống đi chợ Tết cùng bà (để trống để hệ thống tự chọn ngẫu nhiên)"
+              className={inputClass}
+              maxLength={200}
+            />
+          )}
+        </div>
+      )}
 
       <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
         <p className="text-sm font-semibold text-slate-800">
