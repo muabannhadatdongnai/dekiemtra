@@ -21,6 +21,7 @@ export const EXERCISE_TYPES = {
   NHAN_DIEN_HINH: "nhan_dien_hinh",
   SAP_XEP_THU_TU: "sap_xep_thu_tu", // GIAI ĐOẠN 2
   DEM_HINH_UNG_DUNG: "dem_hinh_ung_dung", // GIAI ĐOẠN 2 - hoạt động ứng dụng đi kèm NHAN_DIEN_HINH
+  TACH_GOP: "tach_gop", // GIAI ĐOẠN F - sơ đồ Tách - Gộp (number bond), riêng Lớp 1
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -114,13 +115,54 @@ function buildSimpleExpr(max) {
   return { display: `${a} + ${b}`, value: a + b };
 }
 
-/** Dãy số cách đều: 1 vài số bị ẩn, học sinh điền theo quy luật (bước +1, +2, -1...). */
+/**
+ * Dãy số cách đều: 1 vài số bị ẩn, học sinh điền theo quy luật (bước +1, +2, -1...).
+ *
+ * ================== GIAI ĐOẠN F (phân cấp độ khó theo khối lớp) ==================
+ * TRƯỚC ĐÂY Lớp 1 dùng chung `steps = [1, 2]` với Lớp 2 (Lớp 2 dùng `[1, 2, 5, 10]`) - giáo
+ * viên phản ánh ĐẾM CÁCH 2 (VD 18,16,14,12,__,8) là kỹ năng QUÁ KHÓ với Lớp 1 (SGK Lớp 1 mọi bộ
+ * sách hiện hành đều CHỈ dạy đếm cách 1, và đếm cách 10/tròn chục ở cuối năm khi mở rộng phạm vi
+ * số - đếm cách 2/5 mới xuất hiện từ Lớp 2). Giờ tách riêng độ khó từng khối:
+ *   - Mầm non: CHỈ cách 1 (giữ nguyên).
+ *   - Lớp 1: ƯU TIÊN cách 1 (80% số lần), THỈNH THOẢNG cách 10/tròn chục (20%) - dùng mảng có
+ *     trọng số [1,1,1,1,10] thay vì random đều 50/50 như kiểu pick(steps) cũ.
+ *   - Lớp 2: cách 1/2/5/10 (giữ nguyên, đây là khối MỚI được học cách 2/cách 5 theo đúng SGK).
+ * Vì maxNumber Lớp 1 chỉ 20 (xem WORKSHEET_GRADES), 1 dãy CÁCH 10 dài 6 số (như cách 1/2) sẽ
+ * không đủ chỗ chứa (0,10,20,30... vượt quá 20) - nên khi rơi trúng step=10 (chỉ áp dụng khi
+ * max=20, tức Lớp 1), rút DÃY NGẮN LẠI còn 3 số (VD 0-10-20) thay vì cố ép 6 số như bình thường,
+ * vẫn đúng khái niệm "đếm tròn chục" mà không tạo ra dãy vô lý ngoài phạm vi số đã học.
+ */
 export function generateDaySo(grade, count = 4) {
   const max = WORKSHEET_GRADES[grade].maxNumber;
   const items = [];
-  const steps = grade === "MAM_NON" ? [1] : grade === "LOP_1" ? [1, 2] : [1, 2, 5, 10];
+  const steps =
+    grade === "MAM_NON" ? [1] : grade === "LOP_1" ? [1, 1, 1, 1, 10] : [1, 2, 5, 10];
   for (let i = 0; i < count; i++) {
     const step = pick(steps) * (Math.random() < 0.3 ? -1 : 1);
+
+    // TRƯỜNG HỢP ĐẶC BIỆT "cách 10/tròn chục" trong phạm vi hẹp (Lớp 1, max=20): công thức tính
+    // khoảng bắt đầu bên dưới (dùng cho cách 1/2/5 vốn có nhiều lựa chọn start) giả định dãy 6 số
+    // luôn vừa trong [1, max] - với step 10 và max chỉ 20, dãy 6 số cách 10 dài tới 50 đơn vị,
+    // KHÔNG BAO GIỜ vừa (dù chỉ 6 số, số cuối đã vượt 20 rất xa). Giải pháp: liệt kê ĐÚNG các số
+    // tròn chục có sẵn trong phạm vi [0, max] (VD max=20 -> đúng 3 số: 0, 10, 20) làm CẢ dãy luôn
+    // (không random start/length nữa vì lựa chọn đã hết sức hẹp), ẩn số Ở GIỮA.
+    if (Math.abs(step) === 10 && max < 10 * 5) {
+      const roundValues = [];
+      for (let v = 0; v <= max; v += 10) roundValues.push(v);
+      if (roundValues.length < 3) {
+        // Phạm vi số quá nhỏ để có đủ 3 số tròn chục (VD Mầm non max=10) - rơi về step 1 an toàn
+        // thay vì tạo dãy cụt lủn không có ý nghĩa luyện tập.
+        items.push(...generateDaySo(grade, 1));
+        continue;
+      }
+      const sequence = step > 0 ? roundValues : [...roundValues].reverse();
+      const hideIndex = 1;
+      const answer = sequence[hideIndex];
+      const display = sequence.map((n, idx) => (idx === hideIndex ? null : n));
+      items.push({ sequence: display, hideIndex, answer, step });
+      continue;
+    }
+
     const length = 6;
     const start = step > 0 ? randInt(1, Math.max(1, max - step * (length - 1))) : randInt(step * (length - 1) * -1 + 1, max);
     const sequence = Array.from({ length }, (_, idx) => start + step * idx);
@@ -156,6 +198,36 @@ export function generateNoiPhepTinh(grade, count = 5) {
   }
   const shuffledResults = [...pairs.map((p) => p.result)].sort(() => Math.random() - 0.5);
   return { pairs, shuffledResults };
+}
+
+/**
+ * ================== GIAI ĐOẠN F (thêm dạng bài "Tách - Gộp") ==================
+ * Sơ đồ Tách - Gộp (number bond / part-whole model): 1 số TỔNG ("whole") được tách thành 2 số
+ * THÀNH PHẦN ("part1"/"part2") sao cho part1 + part2 = whole - đây là dạng bài xuất hiện trong
+ * MỌI bộ SGK Toán Lớp 1 hiện hành (Kết nối tri thức, Chân trời sáng tạo, Cánh diều...) ngay từ
+ * chương đầu, giúp học sinh hiểu bản chất phép cộng/trừ qua mối quan hệ tổng-thành phần, TRƯỚC
+ * khi làm quen ký hiệu +/-. Trước đây "dekiemtra" CHƯA có dạng bài này dù rất phổ biến trong SGK
+ * thực tế - giáo viên phản ánh trực tiếp.
+ *
+ * Giới hạn cap=10: dù Lớp 1 học số tới 20, sơ đồ tách-gộp trong SGK gần như CHỈ dùng phạm vi 0-10
+ * (nền tảng trước khi mở rộng qua phép cộng/trừ có nhớ) - dùng nguyên maxNumber=20 sẽ tạo bài
+ * lệch xa thực tế giảng dạy.
+ *
+ * `hideSlot` random ĐỀU cả 3 khả năng ẩn (không chỉ ẩn part2 như ví dụ giáo viên đưa) để bài
+ * phong phú hơn: ẩn part1 hoặc part2 (kỹ năng "TÁCH" - cho tổng, tìm 1 phần) hoặc ẩn whole (kỹ
+ * năng "GỘP" - cho 2 phần, tìm tổng) - cả 2 chiều đều cần thiết theo đúng tên gọi "Tách - Gộp".
+ */
+export function generateTachGop(grade, count = 4) {
+  const cap = Math.min(WORKSHEET_GRADES[grade].maxNumber, 10);
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const whole = randInt(2, cap); // tối thiểu 2 để luôn tách được thành 2 phần dương (>=1 mỗi phần)
+    const part1 = randInt(1, whole - 1);
+    const part2 = whole - part1;
+    const hideSlot = pick(["part1", "part2", "whole"]);
+    items.push({ whole, part1, part2, hideSlot });
+  }
+  return items;
 }
 
 /** Nhận diện hình - chọn ngẫu nhiên 1 tập con hình cơ bản để học sinh gọi tên + tô màu.

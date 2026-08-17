@@ -2,6 +2,7 @@ import { generateContentWithFailover } from "./geminiKeyPool";
 import {
   WORKSHEET_GRADES,
   generateTinhNham,
+  generateTachGop,
   generateDemVaVietSo,
   generateSoSanh,
   generateDaySo,
@@ -46,6 +47,13 @@ const WORD_PROBLEM_MODEL = "gemini-3.5-flash";
  * người, bối cảnh khác nhau), rồi BẮT BUỘC AI viết đúng theo từng chủ đề đã chọn sẵn, chỉ tự do
  * ở số liệu/câu chữ - không còn để AI tự "bốc" chủ đề (dễ lặp lại lối mòn quen thuộc).
  */
+// ================== GIAI ĐOẠN F (lồng ghép đời sống VN / giáo dục tài chính / môi trường) ======
+// TRƯỚC ĐÂY ngân hàng chủ đề thiên về đồ vật/con vật chung chung (xoài, bi, thuyền giấy...) -
+// giáo viên phản ánh muốn bài toán GẦN GŨI ĐỜI SỐNG HẰNG NGÀY của trẻ em Việt Nam hơn, và thỉnh
+// thoảng lồng ghép NHẸ NHÀNG 2 chủ đề giáo dục: "giáo dục tài chính" (tiết kiệm, mua bán bằng
+// tiền) và "môi trường" (tái chế, tiết kiệm điện/nước, trồng cây) - KHÔNG bắt buộc mọi bài đều có
+// 2 yếu tố này (dễ gượng ép, mất tự nhiên), chỉ cần CÓ MẶT trong ngân hàng để random tự nhiên
+// trúng vào một số bài. Bổ sung ~10 chủ đề mới theo đúng 2 hướng này, GIỮ NGUYÊN các chủ đề cũ.
 const WORD_PROBLEM_THEME_BANK = [
   "bạn An và bạn Bình xếp ghế trong buổi lễ chào cờ ở sân trường",
   "chú thợ mộc đóng những chiếc ghế gỗ nhỏ trong xưởng",
@@ -71,6 +79,18 @@ const WORD_PROBLEM_THEME_BANK = [
   "đàn ong bay đi lấy mật ở vườn hoa",
   "bạn Khoa xếp những cuốn truyện tranh lên giá sách",
   "chú thủy thủ xếp những thùng hàng lên tàu ở bến cảng",
+  // ---- Môi trường (tái chế, bảo vệ thiên nhiên) ----
+  "bạn An và bạn Bình nhặt những vỏ chai nhựa ở sân trường đem đi tái chế",
+  "các bạn nhỏ phân loại những tờ giấy báo cũ để gom tái chế",
+  "bạn Nam trồng những cây con trong vườn trường vào dịp Tết trồng cây",
+  "bạn Hương gom những vỏ lon để mang đến điểm thu gom tái chế",
+  "cô giáo cùng cả lớp nhặt rác trên bãi biển trong buổi ngoại khoá",
+  // ---- Giáo dục tài chính (tiết kiệm, mua bán bằng tiền) ----
+  "bạn Bống bỏ những đồng tiền xu vào heo đất tiết kiệm mỗi ngày",
+  "bạn Long dùng tiền lì xì Tết mua những quyển truyện tranh",
+  "mẹ đưa tiền cho bạn Mai đi chợ mua những mớ rau",
+  "bạn Tâm để dành tiền tiêu vặt mua những chiếc bút chì màu",
+  "ông bà cho bạn Su những tờ tiền lì xì đầu năm để bỏ ống heo",
 ];
 
 /** GIAI ĐOẠN F (storytelling): trả về chủ đề DUY NHẤT dùng xuyên suốt cả phiếu khi giáo viên bật
@@ -138,6 +158,10 @@ YÊU CẦU:
 ${themeInstructionBlock}
 - Ngôn ngữ đơn giản, câu ngắn, đúng lứa tuổi.
 - Số liệu "đẹp" (số nguyên, kết quả tròn, dễ tính nhẩm).
+- Bối cảnh nên gần gũi ĐỜI SỐNG HẰNG NGÀY của trẻ em Việt Nam. Một vài chủ đề trong danh sách/chủ
+  đề trên đã sẵn có yếu tố "giáo dục tài chính" (tiết kiệm, mua bán bằng tiền) hoặc "môi trường"
+  (tái chế, trồng cây, bảo vệ thiên nhiên) - nếu bài toán rơi vào các chủ đề đó thì lồng ghép NHẸ
+  NHÀNG, TỰ NHIÊN đúng tinh thần chủ đề, KHÔNG cần cố nhồi nhét vào những chủ đề khác không liên quan.
 ${includeAnswers ? "- Kèm đáp số cuối cùng cho mỗi bài." : ""}
 ${
   referenceContext
@@ -420,6 +444,7 @@ async function resolveSgkChapterContext({ grade, subject, sgkVolume, sgkChapterI
 // không đổi khi giáo viên không upload mẫu).
 const DEFAULT_SECTION_ORDER = [
   "tinh_nham",
+  "tach_gop", // GIAI ĐOẠN F - cùng nhóm so_hoc với tinh_nham, xếp ngay cạnh nhau
   "dem_va_viet_so",
   "so_sanh",
   "day_so",
@@ -491,6 +516,14 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("tinh_nham") || "Tính nhẩm.",
         mascot: mascotFor("tinh_nham"),
         items: generateTinhNham(grade, safeCounts.tinh_nham),
+      };
+    // GIAI ĐOẠN F: dạng bài MỚI "Tách - Gộp" (xem generateTachGop() trong worksheetSchemas.js).
+    case "tach_gop":
+      return {
+        type: "tach_gop",
+        title: pickInstructionVariant("tach_gop") || "Điền số còn thiếu vào sơ đồ tách - gộp.",
+        mascot: mascotFor("tach_gop"),
+        items: generateTachGop(grade, safeCounts.tach_gop),
       };
     case "dem_va_viet_so":
       return {

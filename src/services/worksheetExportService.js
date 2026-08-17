@@ -135,6 +135,22 @@ function buildDaySoParagraphs(items, showAnswers) {
   }));
 }
 
+// GIAI ĐOẠN F: "Tách - Gộp" (number bond) - Word không hỗ trợ vẽ sơ đồ 2 nhánh chéo dễ dàng như
+// SVG bên WorksheetPreview.jsx, nên biểu diễn dưới dạng phép cộng ngang "phần 1 + phần 2 = tổng"
+// (đúng NGHĨA của sơ đồ tách-gộp, chỉ khác cách trình bày trực quan) - theo ĐÚNG tinh thần
+// BLANK/BLANK_CIRCLE đã dùng cho các dạng bài khác trong file này (text-based, không phải hình vẽ).
+function buildTachGopParagraphs(items, showAnswers) {
+  return items.map((it) => {
+    const w = showAnswers || it.hideSlot !== "whole" ? it.whole : BLANK;
+    const p1 = showAnswers || it.hideSlot !== "part1" ? it.part1 : BLANK;
+    const p2 = showAnswers || it.hideSlot !== "part2" ? it.part2 : BLANK;
+    return {
+      children: [new TextRun({ text: `${p1}   +   ${p2}   =   ${w}`, font: FONT, size: 24 })],
+      spacing: { after: 140 },
+    };
+  });
+}
+
 /**
  * ================== GIAI ĐOẠN 2 (đa dạng hoá dạng hoạt động) ==================
  * Sắp xếp thứ tự: in 3 số xáo trộn -> mũi tên -> kết quả (đã sắp xếp nếu showAnswers, ngược
@@ -416,6 +432,8 @@ function buildSectionContentOptions(section, showAnswers) {
   switch (section.type) {
     case "tinh_nham":
       return buildTinhNhamParagraphs(section.items, showAnswers);
+    case "tach_gop":
+      return buildTachGopParagraphs(section.items, showAnswers);
     case "dem_va_viet_so":
       return buildDemVaVietSoParagraphs(section.items, showAnswers);
     case "so_sanh":

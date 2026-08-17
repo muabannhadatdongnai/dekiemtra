@@ -70,6 +70,29 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     colorThemeTags: ["blue", "teal", "orange"],
   },
   {
+    // GIAI ĐOẠN F: dạng bài MỚI theo phản ánh giáo viên - sơ đồ "Tách - Gộp" (number bond), dạng
+    // bài xuất hiện trong MỌI bộ SGK Toán Lớp 1 hiện hành (xem comment đầy đủ tại
+    // generateTachGop() trong worksheetSchemas.js). Chỉ áp dụng ĐÚNG Lớp 1 (minGrade=maxGrade=
+    // "LOP_1") - đây là khái niệm được dạy chính thức ở giai đoạn này, Mầm non còn quá sớm cho
+    // mối quan hệ tổng-thành phần trừu tượng, Lớp 2 thường đã chuyển hẳn sang ký hiệu +/- thay vì
+    // sơ đồ tách-gộp.
+    key: "tach_gop",
+    subject: "TOAN",
+    label: "Tách - Gộp số",
+    skillGroup: "so_hoc",
+    source: "code",
+    minGrade: "LOP_1",
+    maxGrade: "LOP_1",
+    defaultCount: 4,
+    instructionVariants: [
+      "Điền số còn thiếu vào sơ đồ tách - gộp.",
+      "Số nào còn thiếu? Em hãy điền vào chỗ trống nhé!",
+      "Hoàn thành sơ đồ tách - gộp số sau.",
+    ],
+    mascotPool: ["🧩", "🔗", "🐝", "🐣"],
+    colorThemeTags: ["purple", "orange", "teal"],
+  },
+  {
     key: "dem_va_viet_so",
     subject: "TOAN",
     label: "Đếm và viết số",
