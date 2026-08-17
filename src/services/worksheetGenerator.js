@@ -73,6 +73,16 @@ const WORD_PROBLEM_THEME_BANK = [
   "chú thủy thủ xếp những thùng hàng lên tàu ở bến cảng",
 ];
 
+/** GIAI ĐOẠN F (storytelling): trả về chủ đề DUY NHẤT dùng xuyên suốt cả phiếu khi giáo viên bật
+ * storytelling. Ưu tiên chủ đề giáo viên tự gõ (customTheme) - nếu bỏ trống/toàn khoảng trắng,
+ * random 1 chủ đề từ CHÍNH WORD_PROBLEM_THEME_BANK (dùng lại ngân hàng đã có, không cần ngân
+ * hàng riêng vì mỗi phần tử trong đó vốn đã là 1 "nhân vật + bối cảnh" đủ để kể chuyện nhiều bài). */
+export function pickStorytellingTheme(customTheme) {
+  const trimmed = (customTheme || "").trim();
+  if (trimmed) return trimmed;
+  return WORD_PROBLEM_THEME_BANK[Math.floor(Math.random() * WORD_PROBLEM_THEME_BANK.length)];
+}
+
 /** Chọn ngẫu nhiên đúng `count` chủ đề PHÂN BIỆT từ ngân hàng (nếu count > kích thước ngân
  * hàng, cho phép lặp lại sau khi đã dùng hết 1 lượt, vẫn xáo trộn để không theo thứ tự cố định).
  * Export (dù chỉ dùng nội bộ) để có thể tự verify bằng script gọi hàm trực tiếp - cùng tinh thần
@@ -87,21 +97,45 @@ export function pickWordProblemThemes(count) {
   return themes.slice(0, count);
 }
 
-export function buildWordProblemPrompt({ gradeLabel, maxNumber, count, includeAnswers, referenceContext, themes }) {
-  const themeListBlock = themes
-    .map((theme, i) => `${i + 1}. ${theme}`)
-    .join("\n");
+export function buildWordProblemPrompt({
+  gradeLabel,
+  maxNumber,
+  count,
+  includeAnswers,
+  referenceContext,
+  themes,
+  storytellingTheme = null,
+}) {
+  // ================== GIAI ĐOẠN F (storytelling theo chủ đề) ==================
+  // TRƯỚC ĐÂY (và mặc định vẫn giữ nguyên khi giáo viên KHÔNG bật storytelling): mỗi bài toán 1
+  // chủ đề NGẪU NHIÊN riêng biệt (themes[i]) - đúng mục tiêu chống lặp mô-típ (xem GIAI ĐOẠN 9 ở
+  // trên) nhưng KHÔNG có cảm giác 1 câu chuyện xuyên suốt, các bài rời rạc không liên quan nhau.
+  //
+  // Khi giáo viên chủ động bật storytelling (storytellingTheme có giá trị): TOÀN BỘ phiếu dùng
+  // CHUNG 1 chủ đề/nhân vật duy nhất xuyên suốt mọi bài toán - tạo cảm giác 1 câu chuyện liền
+  // mạch, giống hero mascot đã làm ở layout "adventure_map" (xem GIAI ĐOẠN 4 trong
+  // generateWorksheet()). Prompt yêu cầu AI GIỮ ĐÚNG nhân vật/bối cảnh nhưng để các bài nối
+  // tiếp nhau như 1 câu chuyện nhỏ có diễn biến (không lặp y hệt tình huống bài trước).
+  const themeInstructionBlock = storytellingTheme
+    ? `- TOÀN BỘ ${count} bài toán PHẢI xoay quanh CHUNG 1 chủ đề/nhân vật xuyên suốt sau đây (kiểu
+  kể chuyện nhiều tập, không phải ${count} bài rời rạc): "${storytellingTheme}".
+  Mỗi bài là 1 tình huống/diễn biến MỚI tiếp nối câu chuyện (VD: bài 1 nhân vật bắt đầu làm gì,
+  bài 2 xảy ra tiếp theo, bài 3 kết thúc...), KHÔNG lặp lại y hệt tình huống của bài trước, KHÔNG
+  đổi sang nhân vật/bối cảnh khác ngoài chủ đề đã cho. Chỉ được TỰ DO sáng tạo số liệu cụ thể và
+  diễn biến câu chuyện cho từng bài.`
+    : `- Dưới đây là ĐÚNG ${count} CHỦ ĐỀ đã được chọn NGẪU NHIÊN SẴN cho từng bài theo thứ tự - bài toán
+  thứ i BẮT BUỘC phải dùng ĐÚNG nhân vật/bối cảnh của chủ đề thứ i, KHÔNG được đổi chéo, KHÔNG
+  được thay bằng chủ đề khác ngoài danh sách, KHÔNG được quay lại các mô-típ quen thuộc (thỏ ăn cà rốt,
+  gà con...) nếu chủ đề không yêu cầu. Chỉ được TỰ DO sáng tạo thêm số liệu cụ thể và cách
+  hành văn cho từng bài:\n${themes.map((theme, i) => `${i + 1}. ${theme}`).join("\n")}`;
+
   return `
 Bạn là giáo viên Tiểu học Việt Nam giàu kinh nghiệm, soạn bài toán có lời văn cho học sinh ${gradeLabel}.
 
 YÊU CẦU:
 - Soạn ĐÚNG ${count} bài toán có lời văn, mức độ 1 PHÉP TÍNH duy nhất (cộng hoặc trừ), số liệu trong
   phạm vi 0-${maxNumber}, kết quả không âm.
-- Dưới đây là ĐÚNG ${count} CHỦ ĐỀ đã được chọn NGẪU NHIÊN SẴN cho từng bài theo thứ tự - bài toán
-  thứ i BẮT BUỘC phải dùng ĐÚNG nhân vật/bối cảnh của chủ đề thứ i, KHÔNG được đổi chéo, KHÔNG
-  được thay bằng chủ đề khác ngoài danh sách, KHÔNG được quay lại các mô-típ quen thuộc (thỏ ăn cà rốt,
-  gà con...) nếu chủ đề không yêu cầu. Chỉ được TỰ DO sáng tạo thêm số liệu cụ thể và cách
-  hành văn cho từng bài:\n${themeListBlock}
+${themeInstructionBlock}
 - Ngôn ngữ đơn giản, câu ngắn, đúng lứa tuổi.
 - Số liệu "đẹp" (số nguyên, kết quả tròn, dễ tính nhẩm).
 ${includeAnswers ? "- Kèm đáp số cuối cùng cho mỗi bài." : ""}
@@ -109,8 +143,8 @@ ${
   referenceContext
     ? `- GIAI ĐOẠN 2: giáo viên có cung cấp 1 đoạn TÀI LIỆU THAM KHẢO bên dưới (ngữ cảnh) - nếu có
   thể lồng ghép TỪ VỰNG liên quan vào bài toán mà KHÔNG làm sai lệch chủ đề đã chọn ở trên thì ưu
-  tiên làm vậy, nhưng chủ đề của từng bài vẫn phải đúng danh sách đã cho. TUYỆT ĐỐI KHÔNG chép
-  nguyên văn câu chữ từ tài liệu tham khảo.\n\nTÀI LIỆU THAM KHẢO:\n${referenceContext}`
+  tiên làm vậy, nhưng chủ đề của từng bài vẫn phải đúng danh sách/chủ đề đã cho ở trên. TUYỆT ĐỐI
+  KHÔNG chép nguyên văn câu chữ từ tài liệu tham khảo.\n\nTÀI LIỆU THAM KHẢO:\n${referenceContext}`
     : ""
 }
 
@@ -123,10 +157,13 @@ Trả về JSON đúng schema (không thêm trường khác):
 `.trim();
 }
 
-async function generateWordProblems({ grade, count, includeAnswers, referenceContext }) {
+async function generateWordProblems({ grade, count, includeAnswers, referenceContext, storytellingTheme }) {
   if (count <= 0) return [];
   const gradeConfig = WORKSHEET_GRADES[grade];
-  const themes = pickWordProblemThemes(count);
+  // storytellingTheme != null -> bỏ qua việc chọn N chủ đề phân biệt (không cần thiết, cả phiếu
+  // chỉ dùng 1 chủ đề duy nhất) - themes rỗng, buildWordProblemPrompt tự chuyển sang nhánh
+  // storytelling khi thấy storytellingTheme có giá trị.
+  const themes = storytellingTheme ? [] : pickWordProblemThemes(count);
   const prompt = buildWordProblemPrompt({
     gradeLabel: gradeConfig.label,
     maxNumber: gradeConfig.maxNumber,
@@ -134,6 +171,7 @@ async function generateWordProblems({ grade, count, includeAnswers, referenceCon
     includeAnswers,
     referenceContext,
     themes,
+    storytellingTheme,
   });
 
   try {
@@ -556,6 +594,13 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
  *   định catalog nào được dùng (getSelectableCatalogFor), thứ tự mặc định nào áp dụng
  *   (computeSectionOrder), và môn nào khi tải chương SGK (resolveSgkChapterContext). Với
  *   "TIENG_VIET", TẤT CẢ 4 dạng bài đều cần AI (không có dạng thuần code như Toán).
+ * @param config.storytellingMode  (GIAI ĐOẠN F, tuỳ chọn, mặc định false) giáo viên CHỦ ĐỘNG bật
+ *   để các bài "giải toán có lời văn" (chỉ dạng này, không áp dụng dạng khác) dùng CHUNG 1 chủ
+ *   đề/nhân vật xuyên suốt kiểu 1 câu chuyện nhiều tập, thay vì mỗi bài 1 chủ đề rời rạc (mặc
+ *   định khi tắt). false/bỏ trống -> giữ nguyên hành vi cũ (mỗi bài 1 chủ đề ngẫu nhiên riêng).
+ * @param config.storytellingTheme  (GIAI ĐOẠN F, tuỳ chọn) chủ đề/nhân vật giáo viên tự gõ khi
+ *   storytellingMode=true (VD "bạn Bống đi chợ Tết cùng bà"). Bỏ trống -> hệ thống tự random 1
+ *   chủ đề có sẵn (xem pickStorytellingTheme()). Bị bỏ qua nếu storytellingMode=false.
  */
 export async function generateWorksheet({
   grade,
@@ -569,6 +614,8 @@ export async function generateWorksheet({
   sgkVolume = null,
   sgkChapterId = null,
   subject = "TOAN",
+  storytellingMode = false,
+  storytellingTheme = null,
 }) {
   if (!WORKSHEET_GRADES[grade]) throw new Error(`Khối lớp không hợp lệ: ${grade}`);
 
@@ -611,6 +658,11 @@ export async function generateWorksheet({
   // chính xác nhưng có thể không phải bài đang dạy), cuối cùng mới đến themeHints do AI suy luận
   // từ ảnh/PDF scan (kém chi tiết nhất, chỉ còn hơn không có gì).
   const aiContentContext = sgkContext || referenceContext || sampleSpec?.themeHints || null;
+
+  // GIAI ĐOẠN F (storytelling): chỉ resolve khi giáo viên chủ động bật - tính SẴN 1 lần ở đây
+  // (không phải trong generateWordProblems) để nếu sau này storytelling được mở rộng sang dạng
+  // bài khác (VD Tiếng Việt) thì vẫn dùng chung đúng 1 chủ đề đã chọn, không random lại mỗi nơi.
+  const resolvedStorytellingTheme = storytellingMode ? pickStorytellingTheme(storytellingTheme) : null;
 
   // ================== GIAI ĐOẠN 4 ==================
   // Layout "adventure_map" (bản đồ phiêu lưu) được MÔ TẢ là "mascot chính dẫn dắt xuyên suốt
@@ -668,6 +720,7 @@ export async function generateWorksheet({
         count: safeCounts.giai_toan,
         includeAnswers,
         referenceContext: aiContentContext,
+        storytellingTheme: resolvedStorytellingTheme,
       });
       sections.push({
         type: "giai_toan",
@@ -763,7 +816,16 @@ export async function generateWorksheet({
     ? answerKeyParts.map((p) => `--- ${p.label} ---\n${p.text}`).join("\n\n")
     : null;
 
-  return { sections, layout, answerKeyText, warnings, sgkChapterLabel: sgkLabel };
+  return {
+    sections,
+    layout,
+    answerKeyText,
+    warnings,
+    sgkChapterLabel: sgkLabel,
+    // GIAI ĐOẠN F: trả về chủ đề storytelling ĐÃ CHỐT (kể cả khi random) để UI có thể hiển thị
+    // cho giáo viên biết phiếu đang kể chuyện theo chủ đề gì (null nếu storytellingMode tắt).
+    storytellingTheme: resolvedStorytellingTheme,
+  };
 }
 
 /** Danh sách dạng bài ĐÃ TRIỂN KHAI VÀ CHỌN ĐƯỢC (bỏ "planned" và "hiddenFromForm") cho 1
