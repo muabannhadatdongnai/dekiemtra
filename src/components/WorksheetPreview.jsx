@@ -115,7 +115,7 @@ function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, tit
         border: `3px solid ${accent}`,
         background: bg,
         borderRadius: 18,
-        padding: "0 16px 14px",
+        padding: "14px 16px 14px",
         margin: "24px 0 14px",
         boxShadow: `0 3px 0 ${accent}66`,
         breakInside: "avoid",
@@ -124,21 +124,35 @@ function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, tit
       {/*
        * ================== GIAI ĐOẠN F3 (sửa lỗi nhãn tiêu đề đè lên ô) ==================
        * TRƯỚC ĐÂY nhãn dùng `position: absolute` + `whiteSpace: "nowrap"`: tiêu đề dài không
-       * bao giờ xuống dòng (tràn tự do ra ngoài khung, đặc biệt nặng ở bố cục 2 cột cũ - nay đã
-       * bỏ hẳn, xem GIAI ĐOẠN F3 phía trên) - VÀ vì absolute nên kể cả sau khi cho phép wrap,
-       * nhãn cao lên vẫn có thể đè lên nội dung bên dưới (vốn nằm ở vị trí cố định `marginTop`).
+       * bao giờ xuống dòng (tràn tự do ra ngoài khung) - VÀ vì absolute nên kể cả sau khi cho
+       * phép wrap, nhãn cao lên vẫn có thể đè lên nội dung bên dưới.
        *
-       * Giờ đổi sang flow bình thường (bỏ absolute) + margin-top ÂM để kéo nhãn nổi lên đè viền
-       * trên (giữ đúng hiệu ứng thị giác "nhãn dán nổi khối" ban đầu), nhưng vì nằm trong flow
-       * nên nội dung `children` phía dưới LUÔN được đẩy xuống đúng bằng chiều cao thật của nhãn -
-       * nhãn dài 1 dòng hay 2 dòng đều không thể đè lên ô làm bài nữa.
+       * ================== GIAI ĐOẠN F4 (sửa lỗi MẤT CHỮ khi ngắt trang PDF) ==================
+       * Bản sửa F3 đổi sang flow bình thường + `margin-top` ÂM (-18px) để kéo nhãn nổi lên đè
+       * viền trên, dựa vào `margin-top: 24px` của CHÍNH khung ngoài để chừa đủ chỗ cho phần nhãn
+       * nhô lên. Lỗi giáo viên chụp ảnh gửi (khung "4" bị cắt mất chữ ở đầu trang 2 khi "In/Tải
+       * PDF"): "Tải PDF" ở app này = `window.print()` (xem exportService.js) - và theo ĐÚNG chuẩn
+       * CSS in ấn, khi 1 khối bắt đầu ngay ĐẦU TRANG MỚI (breakInside:"avoid" đẩy cả khung này
+       * xuống trang 2 vì không đủ chỗ ở cuối trang 1), trình duyệt LUÔN collapse margin-top của
+       * nó về 0 - "khoảng chừa" 24px không còn tồn tại ở đầu trang mới, khiến phần nhãn nhô lên
+       * -18px (vốn trông chờ vào 24px đó) bị đúng MÉP TRÊN CÙNG của trang cắt mất - đúng hiện
+       * tượng "mất chữ" trong ảnh (chỉ mất khi khung rơi vào đầu 1 trang, không phải lỗi luôn tái
+       * hiện, nên trước đó không phát hiện qua xem trên màn hình - `window.print()` mới lộ ra).
+       *
+       * Giải pháp ĐÚNG: nhãn không còn nhô ra NGOÀI viền khung nữa (bỏ hẳn margin-top âm) - nằm
+       * TRỌN VẸN bên trong padding-top của khung (đổi từ 0 sang 14px để có chỗ chứa nhãn), tức
+       * nhãn không còn phụ thuộc vào margin của khung ngoài (nay không bị mất khi margin bị
+       * collapse ở đầu trang) - đổi hình dạng viền nhãn "borderRadius: 18" (bo tròn đều, kiểu
+       * "thẻ dán") thay vì để nhô ra ngoài, vẫn giữ được cảm giác "nhãn nổi bật" qua màu nền/viền
+       * trắng/đổ bóng, chỉ khác là không còn đè lên viền khung ngoài nữa - ĐÁNH ĐỔI CHỦ Ý và AN
+       * TOÀN hơn nhiều so với việc dựa vào hành vi margin-collapse-tại-ranh-giới-trang vốn không
+       * ổn định giữa các trình duyệt/khi in.
        */}
       <div
         style={{
           display: "flex",
           alignItems: "flex-start",
           gap: 6,
-          marginTop: -18,
           marginBottom: 10,
           background: badge,
           color: "#fff",
@@ -264,6 +278,79 @@ function DaySoSection({ items, accent }) {
             <span key={idx}>{n === null ? blankBox(accent) : n}</span>
           ))}
         </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== GIAI ĐOẠN F (dạng bài "Tách - Gộp") ==================
+ * Sơ đồ number-bond: 1 ô TỔNG ("whole") ở trên, nối bằng 2 đường chéo xuống 2 ô THÀNH PHẦN
+ * ("part1"/"part2") ở dưới - đúng bố cục quen thuộc trong SGK Toán Lớp 1. Vẽ bằng CSS thuần
+ * (position absolute + transform rotate cho 2 đường chéo) thay vì SVG/thư viện ngoài, theo đúng
+ * phong cách các section khác trong file này (inline style, không phụ thuộc gì thêm).
+ * `renderSlot()` hiển thị số thật hoặc blankBox() tuỳ đúng ô đang bị ẩn (it.hideSlot).
+ */
+function TachGopDiagram({ item, accent }) {
+  const { whole, part1, part2, hideSlot } = item;
+  const boxStyle = {
+    position: "absolute",
+    width: 46,
+    height: 38,
+    border: `2px solid ${accent}`,
+    borderRadius: 10,
+    background: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 17,
+    fontWeight: 700,
+    color: accent,
+  };
+  const renderSlot = (value, slot) => (hideSlot === slot ? blankBox(accent) : value);
+  // Toạ độ container 132x108: ô tổng (whole) tâm (66,34) ở trên; ô phần1 (part1) tâm (23,70) ở
+  // dưới-trái; ô phần2 (part2) tâm (109,70) ở dưới-phải (khớp đúng vị trí boxStyle bên dưới).
+  // 2 đường chéo là 1 thanh ngang mỏng xoay quanh ĐẦU TRÁI (transformOrigin "left center") đặt
+  // tại đúng tâm ô tổng - góc xoay tính bằng lượng giác từ vector (tâm ô tổng -> tâm ô thành
+  // phần) để đường luôn chỉ THẲNG vào đúng tâm ô bên dưới bất kể sau này đổi kích thước.
+  return (
+    <div style={{ position: "relative", width: 132, height: 108 }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 33,
+          left: 66,
+          width: 56,
+          height: 2,
+          background: accent,
+          transform: "rotate(140deg)", // hướng xuống-trái, vào tâm ô part1 (23,70)
+          transformOrigin: "left center",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 33,
+          left: 66,
+          width: 56,
+          height: 2,
+          background: accent,
+          transform: "rotate(40deg)", // hướng xuống-phải, vào tâm ô part2 (109,70)
+          transformOrigin: "left center",
+        }}
+      />
+      <div style={{ ...boxStyle, top: 0, left: 43 }}>{renderSlot(whole, "whole")}</div>
+      <div style={{ ...boxStyle, bottom: 0, left: 0 }}>{renderSlot(part1, "part1")}</div>
+      <div style={{ ...boxStyle, bottom: 0, right: 0 }}>{renderSlot(part2, "part2")}</div>
+    </div>
+  );
+}
+
+function TachGopSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 20, justifyContent: "flex-start" }}>
+      {items.map((it, i) => (
+        <TachGopDiagram key={i} item={it} accent={accent} />
       ))}
     </div>
   );
@@ -823,6 +910,7 @@ function RenderedExerciseBox({ section, index, layout }) {
       cardStyle={layout.sectionCardStyle}
     >
       {section.type === "tinh_nham" && <TinhNhamSection items={section.items} accent={t.border} />}
+      {section.type === "tach_gop" && <TachGopSection items={section.items} accent={t.border} />}
       {section.type === "dem_va_viet_so" && <DemVaVietSoSection items={section.items} accent={t.border} />}
       {section.type === "so_sanh" && <SoSanhSection items={section.items} accent={t.border} />}
       {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
