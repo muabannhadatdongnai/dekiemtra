@@ -19,8 +19,9 @@ import { getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 // GIAI ĐOẠN 9: logic thuần (áp dụng/đảo cấu trúc phiếu mẫu) tách riêng để tự verify được bằng
 // script gọi hàm trực tiếp (xem worksheetSampleStructureUtils.js).
 import { defaultCountsFor, applyDetectedExercisesToCounts } from "@/services/worksheetSampleStructureUtils";
-// GIAI ĐOẠN 5: mapping khối lớp phiếu bài tập -> số lớp SGK (chỉ LOP_1/LOP_2, Mầm non không có
-// SGK theo chương) - module dữ liệu thuần, an toàn phía client giống worksheetExerciseCatalog.js.
+// GIAI ĐOẠN 5 + MỞ RỘNG LỚP 3: mapping khối lớp phiếu bài tập -> số lớp SGK (LOP_1/LOP_2/LOP_3,
+// Mầm non không có SGK theo chương) - module dữ liệu thuần, an toàn phía client giống
+// worksheetExerciseCatalog.js.
 import { WORKSHEET_GRADE_TO_SGK_GRADE } from "@/data/constants";
 // ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - catalog theo chủ đề SGK) ==================
 // Module dữ liệu thuần (không import gì từ worksheetGenerator.js) - an toàn phía client giống
@@ -32,6 +33,7 @@ const GRADES = [
   { value: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)" },
   { value: "LOP_1", label: "Lớp 1" },
   { value: "LOP_2", label: "Lớp 2" },
+  { value: "LOP_3", label: "Lớp 3" }, // MỞ RỘNG LỚP 3, ĐỢT 1
 ];
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
