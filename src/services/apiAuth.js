@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifySessionToken } from "./sessionToken";
 import { checkTeacherGenerateLimit } from "./teacherGenerateRateLimiter";
+import { checkSampleAnalyzeLimit } from "./sampleAnalyzeRateLimiter";
 
 /**
  * apiAuth.js
@@ -53,6 +54,32 @@ export function requireAuth(request) {
  */
 export async function requireWithinTeacherGenerateLimit(username) {
   const result = await checkTeacherGenerateLimit(username);
+  if (result.allowed) return null;
+
+  return NextResponse.json(
+    { error: result.message, rateLimited: true, reason: result.reason, dailyLimit: result.dailyLimit },
+    { status: 429 }
+  );
+}
+
+/**
+ * Dùng NGAY SAU `requireAuth()` ở ĐẦU cả 3 route phân tích file mẫu (`/api/analyze-sample`,
+ * `/api/analyze-lesson-plan-sample`, `/api/analyze-worksheet-sample`) - TRƯỚC khi đọc file/gọi
+ * Gemini. Dùng hạn mức RIÊNG (`sampleAnalyzeRateLimiter.js`), KHÔNG chung với hạn mức sinh nội
+ * dung chính (`requireWithinTeacherGenerateLimit`) - xem giải thích lý do tách trong
+ * `sampleAnalyzeRateLimiter.js`.
+ *
+ * Cách dùng:
+ *   const auth = requireAuth(request);
+ *   if (auth.error) return auth.error;
+ *   const limitError = await requireWithinSampleAnalyzeLimit(auth.session.username);
+ *   if (limitError) return limitError;
+ *
+ * @returns {Promise<import("next/server").NextResponse | null>} null nếu còn trong hạn mức
+ * (và ĐÃ ghi nhận lượt gọi này), NextResponse lỗi 429 nếu vượt hạn mức.
+ */
+export async function requireWithinSampleAnalyzeLimit(username) {
+  const result = await checkSampleAnalyzeLimit(username);
   if (result.allowed) return null;
 
   return NextResponse.json(

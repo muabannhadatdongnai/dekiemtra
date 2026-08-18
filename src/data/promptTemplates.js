@@ -79,6 +79,20 @@ QUY TẮC BẮT BUỘC:
   yêu cầu khác, ví dụ Tiếng Anh).
 - Đầu ra CHỈ trả về JSON hợp lệ theo đúng schema, không kèm giải thích, không markdown code fence.
 
+- ⚠️ SỐ THẬP PHÂN BẮT BUỘC dùng DẤU PHẨY (,) để ngăn cách phần nguyên và phần thập phân, đúng
+  chuẩn trình bày Toán học Việt Nam (VD viết "15,6", TUYỆT ĐỐI KHÔNG viết "15.6" kiểu dấu chấm
+  quốc tế) - áp dụng cho MỌI số thập phân xuất hiện ở bất kỳ đâu (đề bài, phương án, đáp án, lời
+  giải chi tiết...). Dấu chấm (.) CHỈ được dùng để phân tách nhóm ba chữ số ở SỐ NGUYÊN lớn nếu
+  cần (VD "1.000.000"), KHÔNG dùng cho số thập phân. ⚠️ RIÊNG với công thức viết trong LaTeX
+  ($...$/$$...$$): dấu phẩy thường (,) trong môi trường toán học của LaTeX sẽ bị hiểu là dấu phân
+  cách danh sách và tạo khoảng trắng thừa xung quanh - để hiển thị ĐÚNG số thập phân kiểu Việt Nam
+  mà không bị lỗi giãn cách này, hãy viết dấu phẩy trong cặp ngoặc nhọn, VD "15{,}6" (KHÔNG viết
+  "15,6" hay "15.6" trực tiếp trong LaTeX).
+- Đơn vị đo có số mũ (diện tích, thể tích...) ở phần TEXT THƯỜNG (ngoài công thức LaTeX) PHẢI viết
+  bằng ký hiệu số mũ trên thật (Unicode superscript, VD "km²", "m²", "cm³"), KHÔNG viết số thường
+  ngay sau chữ cái (KHÔNG viết "km2", "m2", "cm3"). Trong công thức LaTeX, vẫn dùng cú pháp LaTeX
+  chuẩn cho số mũ (VD "$5 \\text{ m}^2$"), không áp dụng ký hiệu Unicode ở đó.
+
 QUY TẮC RIÊNG CHO MÔN ${subjectProfile.label.toUpperCase()}:
 ${subjectProfile.extraRules}
 
