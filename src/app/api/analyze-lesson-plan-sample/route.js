@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { analyzeLessonPlanSample } from "@/services/lessonPlanSampleAnalyzer";
 import { getCachedLessonPlanSampleSpec, setCachedLessonPlanSampleSpec } from "@/services/lessonPlanSampleCache";
-import { requireAuth } from "@/services/apiAuth";
+import { requireAuth, requireWithinSampleAnalyzeLimit } from "@/services/apiAuth";
 
 /**
  * /api/analyze-lesson-plan-sample
@@ -18,6 +18,9 @@ export async function POST(request) {
     const auth = requireAuth(request);
     if (auth.error) return auth.error;
     const { username } = auth.session;
+
+    const limitError = await requireWithinSampleAnalyzeLimit(username);
+    if (limitError) return limitError;
 
     const formData = await request.formData();
     const file = formData.get("file");

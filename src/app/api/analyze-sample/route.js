@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { analyzeSampleExam } from "@/services/sampleExamAnalyzer";
 import { getCachedSampleExamSpec, setCachedSampleExamSpec } from "@/services/sampleExamCache";
-import { requireAuth } from "@/services/apiAuth";
+import { requireAuth, requireWithinSampleAnalyzeLimit } from "@/services/apiAuth";
 
 /**
  * /api/analyze-sample
@@ -28,6 +28,9 @@ export async function POST(request) {
     // dùng formData.get("username") do client tự gửi (có thể giả mạo tên người khác để dò
     // cache của họ).
     const { username } = auth.session;
+
+    const limitError = await requireWithinSampleAnalyzeLimit(username);
+    if (limitError) return limitError;
 
     const formData = await request.formData();
     const file = formData.get("file");
