@@ -1,7 +1,110 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi sửa lỗi "rối loạn dòng thời gian" ở
-# Giáo án nhiều tiết + lỗi định dạng số/đơn vị ở Đề cương ôn tập, theo phản hồi thực tế từ giáo viên)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi rà soát tổng thể "việc dở dang" theo yêu
+# cầu giáo viên, phiên 10)
 
-## 0.-7. MỚI NHẤT — Sửa lỗi "Hết Tiết 1" bị chèn lặp 2 lần trong Giáo án nhiều tiết (rối loạn dòng
+## 0.-8. MỚI NHẤT — Rà soát tổng thể "việc dở dang" theo yêu cầu giáo viên (phiên 10): 4 việc kỹ
+## thuật + 2 việc hạ tầng bị thiếu, cộng thêm phát hiện quan trọng về tài liệu bị lệch với code
+
+**Bối cảnh**: giáo viên yêu cầu "rà soát lại những việc đang còn dang dở, những lỗi... để hoàn
+thiện hơn" — không có báo lỗi cụ thể nào, nên đã tự chủ động: cài `npm install` + chạy thật
+`npm test`/`npm run build` trong sandbox có mạng, đối chiếu `NEXT_STEPS.md`/`PROJECT_SUMMARY.md`
+với code thật, rồi báo cáo phát hiện trước khi sửa (giáo viên duyệt làm cả 4 việc kỹ thuật).
+
+### Phát hiện quan trọng nhất: tài liệu bị lệch sau so với code — "GIAI ĐOẠN F"
+
+`PROJECT_SUMMARY.md`/`NEXT_STEPS.md` (sửa lần cuối trước phiên 10) hoàn toàn KHÔNG nhắc đến 1 đợt
+việc đã code XONG HẲN cho "Phiếu bài tập": dạng bài mới **"Tách - Gộp số"** (number bond, Lớp 1),
+tính năng **"Storytelling theme"** (giáo viên tự nhập 1 chủ đề xuyên suốt cả phiếu qua
+`storytellingTheme`), và dạng bài đếm/điền **ngày trong tuần** (`generateDaySo`/`daySoDifficulty`).
+Đã kiểm tra: cả 3 tính năng này nối dây ĐẦY ĐỦ (catalog `worksheetExerciseCatalog.js`/
+`worksheetSchemas.js` → `worksheetGenerator.js` → `worksheetExportService.js` →
+`WorksheetPreview.jsx`/`WorksheetForm.jsx`), có test riêng (`test/worksheetTachGop.test.js` và các
+test khác), TẤT CẢ ĐỀU PASS trước khi phiên 10 bắt đầu — tức đây KHÔNG phải code dở dang, chỉ là
+tài liệu tiến độ chưa cập nhật theo kịp. Đã ghi nhận lại đầy đủ trong `NEXT_STEPS.md` (mục "Chưa
+quyết") để không ai nhầm tưởng "Phiếu bài tập" vẫn còn dở như ghi chú cũ.
+
+### Việc #1 — Test tự động cho `reportCommentHistoryStore.js` (nốt phần còn lại của Việc #8 cũ)
+
+Thêm `test/reportCommentHistoryStore.test.js` (11 test, nhánh file JSON local — giống ghi chú
+"nhánh Upstash dùng chung logic" ở các test store khác): `summarizeCommentForHistory()` gộp/lọc
+trường rỗng đúng; lưu/đọc lại đúng nội dung; comment rỗng không lưu; lưu nhiều lần trả về bản MỚI
+NHẤT; `getFullCommentHistory()` trả đúng thứ tự mới→cũ; cắt đúng tối đa 6 bản ghi/học sinh
+(`MAX_HISTORY_PER_STUDENT`); 2 học sinh trùng tên khác lớp không lẫn lịch sử; và **quan trọng
+nhất — test TTL 1 giờ** (`MAX_HISTORY_AGE_MS`): ghi thẳng 1 bản ghi có `savedAt` giả lập quá hạn
+61 phút vào file JSON local (mô phỏng "cơ chế xoá sớm 2 lớp" đã có sẵn trong module), xác nhận bị
+lọc bỏ hoàn toàn khỏi cả `getPreviousComment()` lẫn `getFullCommentHistory()`; ngược lại bản ghi
+mới 59 phút (còn trong hạn) vẫn được trả về bình thường.
+
+### Việc #2 — Test tự động cho `buildParentFriendlyReportSections()`
+
+Thêm `test/reportCommentExportService.test.js` (9 test): đủ 3 mục Phẩm chất/Năng lực/Nhận xét
+chung + môn học cho Tiểu học; nhãn hiển thị THÂN THIỆN ("Về phẩm chất"...), không lộ tên trường kỹ
+thuật thô (`phamChat`...); cấp THCS/THPT ra đúng `circularLabel` riêng (Thông tư 22/2021 thay vì
+27/2020); bỏ qua phần tử lỗi/không có comment, trường/môn học rỗng; giữ đúng thứ tự nhiều học
+sinh; `lop` thiếu trả về chuỗi rỗng (không phải `undefined`); `cap` không hợp lệ không throw.
+
+### Việc #3 — Mở rộng quy tắc số thập phân/đơn vị đo kiểu Việt Nam
+
+- **Đề kiểm tra** (`src/data/promptTemplates.js`, `buildBaseRules()`): bổ sung đúng 2 quy tắc đã
+  có ở Đề cương ôn tập (dấu phẩy thập phân, ký hiệu số mũ trên `km²`/`m²`), CỘNG THÊM 1 quy tắc
+  MỚI mà Đề cương ôn tập chưa cần vì không xuất công thức LaTeX phức tạp bằng: môn Toán ở Đề kiểm
+  tra dùng LaTeX (`$...$`) cho công thức, mà dấu phẩy thường `,` trong LaTeX bị hiểu là ký tự phân
+  cách danh sách, tạo khoảng trắng thừa quanh số thập phân (VD `$15,6$` hiển thị lệch) — nên bổ
+  sung hướng dẫn riêng: viết dấu phẩy trong cặp ngoặc nhọn `{,}` (VD `15{,}6`) khi ở trong LaTeX.
+  Áp dụng cho MỌI môn (không chỉ Toán) vì `buildBaseRules()` dùng chung cho tất cả. Test khoá lại:
+  `test/promptTemplatesVietnameseFormatting.test.js` (4 test).
+- **Phiếu bài tập**: đã RÀ SOÁT và xác nhận KHÔNG áp dụng — catalog hiện chỉ hỗ trợ Lớp 1-2
+  (`maxGrade` cao nhất trong `worksheetExerciseCatalog.js` là `"LOP_2"`), chương trình Toán Lớp 1-2
+  chưa dạy số thập phân lẫn đơn vị đo có số mũ (không có dạng bài diện tích/thể tích nào trong
+  catalog) — thêm quy tắc này vào sẽ chỉ gây nhiễu prompt không cần thiết. Ghi chú lý do ngay
+  trong file test để phiên sau không hiểu nhầm đây là việc còn sót.
+
+### Việc #4 — Rate-limit cho 3 route `/api/analyze-*` (đã ghi trong "Chưa quyết" từ trước)
+
+Phát hiện: 3 route phân tích file mẫu (`analyze-sample` - đề, `analyze-lesson-plan-sample` - giáo
+án, `analyze-worksheet-sample` - phiếu bài tập) đều gọi Gemini nhưng KHÔNG có rate-limit, khác với
+5 route `/api/generate*` đã có `teacherGenerateRateLimiter.js` từ phiên 6 (Việc #7 cũ).
+
+Tạo mới `src/services/sampleAnalyzeRateLimiter.js`: kiến trúc 2 lớp GIỐNG HỆT
+`teacherGenerateRateLimiter.js` (Lớp 1 Burst trong bộ nhớ: tối đa 6 lượt/phút; Lớp 2 Daily bền
+vững: Upstash hoặc file JSON local fallback, mặc định 20 lượt/ngày qua biến môi trường
+`SAMPLE_ANALYZE_DAILY_LIMIT`) — nhưng CỐ Ý dùng **quota RIÊNG** (không dùng chung key/file với
+`teacherGenerateRateLimiter.js`), vì bản chất 2 nhóm route khác nhau: `/api/generate*` là hành
+động CHÍNH cần hạn mức cao (40/ngày), còn `/api/analyze-*` là hành động PHỤ (chỉ cần phân tích 1
+file mẫu ĐÚNG 1 LẦN nhờ có cache theo hash nội dung file ở `sampleExamCache.js`/
+`lessonPlanSampleCache.js`/`worksheetSampleCache.js`), nên cần hạn mức thấp hơn và KHÔNG nên trừ
+vào hạn mức tạo nội dung thật nếu giáo viên lỡ thử nhiều file mẫu khác nhau trong 1 ngày.
+
+Thêm hàm `requireWithinSampleAnalyzeLimit()` vào `src/services/apiAuth.js` (theo đúng khuôn
+`requireWithinTeacherGenerateLimit()` đã có), gọi ngay sau `requireAuth()` ở đầu cả 3 route, TRƯỚC
+khi đọc file/gọi Gemini. Test: `test/sampleAnalyzeRateLimiter.test.js` (12 test, theo đúng khuôn
+`teacherGenerateRateLimiter.test.js`, thêm 1 test riêng xác nhận quota KHÔNG dùng chung file với
+`teacherGenerateRateLimiter.js`).
+
+### Ngoài 4 việc trên — 2 việc hạ tầng phát hiện thêm khi rà soát
+
+- **`.github/workflows/test.yml`**: `NEXT_STEPS.md` (Bước 0) đã ghi việc này từ lâu ("Claude viết
+  sẵn") nhưng chưa từng thực sự tạo file. Đã thêm workflow chạy `npm ci` + `npm test` +
+  `npm run build` tự động mỗi lần push/PR, không cần biến môi trường thật (test chỉ chạy nhánh
+  local, build không gọi API thật).
+- **`.gitignore`**: PHÁT HIỆN BỊ THIẾU HOÀN TOÀN trong zip đưa qua rà soát, dù mục "0.-6." bên
+  dưới ghi đã hoàn tất file này ở phiên trước — có thể do lỗi khi đóng gói zip trước đó, hoặc file
+  chưa từng thực sự được thêm vào repo GitHub thật. Đã tạo lại đầy đủ (`node_modules/`, `.next/`,
+  `.env*.local`, `.data/`...). **⚠️ Giáo viên CẦN tự kiểm tra lịch sử commit GitHub thật** xem các
+  commit TRƯỚC thời điểm này có lỡ chứa `.env.local`/`.data/` không, vì thiếu `.gitignore` nghĩa
+  là những file đó có thể ĐÃ bị commit nhầm trước đây dù thêm `.gitignore` bây giờ cũng không xoá
+  được khỏi lịch sử cũ.
+
+**Test**: `npm test` **183/183 PASS** (132 gốc + 36 test mới của phiên 10: 11 + 9 + 4 + 12, cộng
+vài test lẻ khác đã có sẵn trong repo mà tài liệu trước đó chưa đếm hết). `npm run build` sạch, 3
+route `analyze-*` vẫn đúng kiểu "ƒ Dynamic" (dùng `request.headers` để đọc token, giống các route
+generate khác) — không có lỗi build thật, chỉ có log "Dynamic server usage" bình thường của
+Next.js App Router.
+
+**Việc còn lại (không code được, để giáo viên tự làm)**: xem mục "Nhóm A" trong `NEXT_STEPS.md`.
+
+---
+
+## 0.-7. Sửa lỗi "Hết Tiết 1" bị chèn lặp 2 lần trong Giáo án nhiều tiết (rối loạn dòng
 ## thời gian) + lỗi số thập phân/đơn vị đo không đúng chuẩn Việt Nam trong Đề cương ôn tập
 
 **Bối cảnh**: giáo viên phản hồi 2 lỗi cụ thể sau khi dùng thật:
