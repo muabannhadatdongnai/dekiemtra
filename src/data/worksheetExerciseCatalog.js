@@ -24,7 +24,10 @@
 
 // Thứ tự khối lớp CÓ THỨ HẠNG (để so sánh min/max) - mở rộng thêm khối lớp mới chỉ cần thêm
 // vào cuối mảng này, KHÔNG cần sửa lại từng exercise trong catalog.
-export const GRADE_ORDER = ["MAM_NON", "LOP_1", "LOP_2"];
+// ================== MỞ RỘNG LỚP 3 (Đợt 1) ==================
+// Thêm "LOP_3" vào CUỐI mảng - đúng nguyên tắc đã ghi ở comment file (chỉ cần thêm vào cuối,
+// KHÔNG cần sửa lại từng exercise, trừ những dạng bài CHỦ Ý cần mở maxGrade lên LOP_3 bên dưới).
+export const GRADE_ORDER = ["MAM_NON", "LOP_1", "LOP_2", "LOP_3"];
 
 export function gradeIndex(grade) {
   const idx = GRADE_ORDER.indexOf(grade);
@@ -58,7 +61,8 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "so_hoc",
     source: "code",
     minGrade: "MAM_NON",
-    maxGrade: "LOP_2",
+    // MỞ RỘNG LỚP 3: generateTinhNham() đã có nhánh riêng cho LOP_3 (số tròn chục/trăm/nghìn).
+    maxGrade: "LOP_3",
     defaultCount: 6,
     instructionVariants: [
       "Tính nhẩm.",
@@ -116,7 +120,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "so_hoc",
     source: "code",
     minGrade: "MAM_NON",
-    maxGrade: "LOP_2",
+    // MỞ RỘNG LỚP 3: so sánh số trong phạm vi 100 000 ĐÚNG là nội dung thật Lớp 3 (chủ đề "Các số
+    // đến 100 000") - generateSoSanh() dùng thẳng maxNumber, không cần nhánh riêng.
+    maxGrade: "LOP_3",
     defaultCount: 6,
     instructionVariants: [
       "So sánh. Điền dấu >, <, = thích hợp.",
@@ -133,7 +139,8 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "quy_luat",
     source: "code",
     minGrade: "MAM_NON",
-    maxGrade: "LOP_2",
+    // MỞ RỘNG LỚP 3: generateDaySo() đã có bước nhảy riêng (10/100/1000) cho LOP_3.
+    maxGrade: "LOP_3",
     defaultCount: 4,
     instructionVariants: [
       "Viết số thích hợp vào ô trống.",
@@ -150,7 +157,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "nhan_biet_so",
     source: "code",
     minGrade: "MAM_NON",
-    maxGrade: "LOP_2",
+    // MỞ RỘNG LỚP 3: sắp xếp số trong phạm vi 100 000 vẫn là kỹ năng hợp lý, generateSapXepThuTu()
+    // dùng thẳng maxNumber nên không cần nhánh riêng.
+    maxGrade: "LOP_3",
     // GIAI ĐOẠN 2: dạng bài MỚI, lấp khoảng trống skillGroup "nhan_biet_so" trước đây chỉ có
     // duy nhất "dem_va_viet_so" - đa dạng hoá cách hỏi về cùng nhóm kỹ năng nhận biết số.
     defaultCount: 3,
@@ -169,7 +178,8 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "so_hoc",
     source: "code",
     minGrade: "LOP_1",
-    maxGrade: "LOP_2",
+    // MỞ RỘNG LỚP 3: generateNoiPhepTinh() tự cap max=1000 riêng cho LOP_3 (giữ tính "nhẩm").
+    maxGrade: "LOP_3",
     defaultCount: 5,
     instructionVariants: [
       "Nối phép tính với kết quả đúng.",
@@ -229,7 +239,8 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "van_dung",
     source: "ai", // duy nhất cần AI vì cần biến hoá ngôn ngữ tự nhiên
     minGrade: "LOP_1",
-    maxGrade: "LOP_2",
+    // MỞ RỘNG LỚP 3: buildWordProblemPrompt() đã có nhánh riêng cho phép nhân/chia trong bảng.
+    maxGrade: "LOP_3",
     defaultCount: 2,
     instructionVariants: ["Giải bài toán.", "Em hãy đọc kỹ đề rồi giải bài toán sau.", "Cùng giải bài toán nhé!"],
     mascotPool: ["📖", "🐝", "🌻", "🍚"],
@@ -311,6 +322,28 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     ],
     mascotPool: ["📅", "🐥", "🌤️"],
     colorThemeTags: ["blue", "yellow", "green"],
+  },
+
+  // ================== MỞ RỘNG LỚP 3, ĐỢT 1 (dạng bài MỚI) ==================
+  // "Nhân, chia trong bảng" - đúng chủ đề 2 SGK Toán 3 Kết nối tri thức. minGrade=maxGrade="LOP_3"
+  // (không mở cho Lớp 1-2 - bảng cửu chương là nội dung Lớp 3, chưa học ở khối dưới; không mở lên
+  // Lớp 4-5 vì các khối đó sẽ có dạng bài nhân/chia số lớn hơn RIÊNG, chưa làm ở đợt này).
+  {
+    key: "nhan_chia_bang",
+    subject: "TOAN",
+    label: "Nhân, chia trong bảng",
+    skillGroup: "so_hoc",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 6,
+    instructionVariants: [
+      "Tính nhẩm.",
+      "Em hãy tính nhẩm dựa vào bảng nhân, bảng chia đã học.",
+      "Nhẩm tính thật nhanh rồi điền kết quả vào ô trống.",
+    ],
+    mascotPool: ["🧮", "🔢", "🦉", "🐿️"],
+    colorThemeTags: ["blue", "teal", "purple"],
   },
 
   // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn

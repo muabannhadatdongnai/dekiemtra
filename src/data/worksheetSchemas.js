@@ -5,10 +5,19 @@
  * Chỉ dùng AI cho "giải toán có lời văn" (cần biến hoá ngôn ngữ tự nhiên).
  */
 
+// ================== MỞ RỘNG LỚP 3 (Đợt 1) ==================
+// maxNumber=100000 khớp đúng nội dung "Các số đến 100 000" (chủ đề 11-12, SGK Toán 3 Kết nối tri
+// thức - đã tra cứu thực tế qua PPCT + giải SGK, KHÔNG suy đoán). QUAN TRỌNG: các dạng bài
+// "kỹ năng chung" dùng thẳng maxNumber này cho MỌI phép tính (generateSoSanh, generateSapXepThuTu,
+// generateDaySo...) là ĐÚNG về mặt nội dung (so sánh/sắp xếp số trong phạm vi 100 000 chính là bài
+// học thật của Lớp 3) - CHỈ RIÊNG "tính nhẩm" (generateTinhNham) và "nối phép tính" cần xử lý
+// RIÊNG bên dưới, vì "nhẩm" 2 số ngẫu nhiên bất kỳ trong phạm vi 100 000 (VD 73 428 + 19 205)
+// không còn là "nhẩm" nữa mà là đặt tính cột dọc - không đúng bản chất dạng bài.
 export const WORKSHEET_GRADES = {
   MAM_NON: { key: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)", maxNumber: 10 },
   LOP_1: { key: "LOP_1", label: "Lớp 1", maxNumber: 20 },
   LOP_2: { key: "LOP_2", label: "Lớp 2", maxNumber: 100 },
+  LOP_3: { key: "LOP_3", label: "Lớp 3", maxNumber: 100000 },
 };
 
 export const EXERCISE_TYPES = {
@@ -61,14 +70,43 @@ function pick(arr) {
   return arr[randInt(0, arr.length - 1)];
 }
 
-/** Tính nhẩm: phép + hoặc - đơn giản, kết quả để trống cho học sinh điền. */
+/**
+ * Tính nhẩm: phép + hoặc - đơn giản, kết quả để trống cho học sinh điền.
+ *
+ * ================== MỞ RỘNG LỚP 3 (Đợt 1) ==================
+ * Lớp 3 dùng nhánh RIÊNG: cả 2 số hạng đều là SỐ TRÒN (chục/trăm/nghìn, tuỳ độ lớn) - đúng bản
+ * chất "tính nhẩm" thật (VD 500 + 300, 4000 - 1500), khác hẳn Mầm non/Lớp 1/Lớp 2 (số bất kỳ,
+ * phạm vi đủ nhỏ để nhẩm trực tiếp không cần số tròn).
+ */
 export function generateTinhNham(grade, count = 6) {
   const max = WORKSHEET_GRADES[grade].maxNumber;
   const items = [];
   for (let i = 0; i < count; i++) {
     const operator = Math.random() < 0.5 ? "+" : "-";
     let a, b;
-    if (operator === "+") {
+    if (grade === "LOP_3") {
+      // ĐÃ SỬA (test thực tế phát hiện lỗi): cách cũ (số bất kỳ x bước tròn) vẫn ra được kiểu
+      // "49620 - 5050" - đúng là "tròn chục" về mặt kỹ thuật nhưng KHÔNG dễ nhẩm. Cách đúng: chọn
+      // 1 HÀNG (chục/trăm/nghìn/chục nghìn) làm "đơn vị nhẩm", rồi số = (1 chữ số có nghĩa, tối đa
+      // 2) × hàng đó - đúng khuôn "3000 + 4000", "50 000 - 20 000" quen thuộc trong SGK.
+      const magnitudePool = [10, 100, 1000, 10000].filter((m) => m <= max);
+      const magnitude = pick(magnitudePool.length ? magnitudePool : [10]);
+      const maxCoeff = Math.min(99, Math.floor(max / magnitude));
+      if (operator === "+") {
+        const coeffA = randInt(1, Math.max(1, maxCoeff - 1));
+        a = coeffA * magnitude;
+        // ĐÃ SỬA: cap coeffB bằng maxCoeff (không chỉ bằng phần còn lại của `max`) - nếu không,
+        // coeffB có thể vọt lên 3 chữ số (VD 508) dù coeffA chỉ 2 chữ số, phá vỡ tính "dễ nhẩm".
+        const coeffBLimit = Math.min(maxCoeff, Math.max(1, Math.floor((max - a) / magnitude)));
+        const coeffB = randInt(1, coeffBLimit);
+        b = coeffB * magnitude;
+      } else {
+        const coeffA = randInt(2, maxCoeff);
+        a = coeffA * magnitude;
+        const coeffB = randInt(1, Math.max(1, Math.floor(a / magnitude) - 1));
+        b = coeffB * magnitude;
+      }
+    } else if (operator === "+") {
       a = randInt(1, max - 1);
       b = randInt(1, max - a);
     } else {
@@ -135,8 +173,10 @@ function buildSimpleExpr(max) {
 export function generateDaySo(grade, count = 4) {
   const max = WORKSHEET_GRADES[grade].maxNumber;
   const items = [];
+  // MỞ RỘNG LỚP 3: bước nhảy lớn hơn hẳn (10/100/1000) - khớp phạm vi số đến 100 000, bước 1/2/5
+  // của Lớp 2 sẽ tạo dãy vô nghĩa (gần như không đổi) khi phóng lên phạm vi này.
   const steps =
-    grade === "MAM_NON" ? [1] : grade === "LOP_1" ? [1, 1, 1, 1, 10] : [1, 2, 5, 10];
+    grade === "MAM_NON" ? [1] : grade === "LOP_1" ? [1, 1, 1, 1, 10] : grade === "LOP_3" ? [10, 100, 1000] : [1, 2, 5, 10];
   for (let i = 0; i < count; i++) {
     const step = pick(steps) * (Math.random() < 0.3 ? -1 : 1);
 
@@ -174,9 +214,16 @@ export function generateDaySo(grade, count = 4) {
   return items;
 }
 
-/** Nối phép tính với kết quả đúng - vế trái là phép tính, vế phải là kết quả bị xáo trộn. */
+/**
+ * Nối phép tính với kết quả đúng - vế trái là phép tính, vế phải là kết quả bị xáo trộn.
+ *
+ * ================== MỞ RỘNG LỚP 3 (Đợt 1) ==================
+ * CHỦ Ý cap max = 1000 (không dùng thẳng maxNumber = 100 000) - dạng bài này để học sinh NHẨM
+ * NHANH rồi nối, phép cộng/trừ 2 số 5 chữ số không còn "nhẩm" được nữa (cùng lý do với
+ * generateTinhNham() ở trên). 1000 vẫn đủ thử thách hơn Lớp 2 (max=100) mà còn nhẩm được.
+ */
 export function generateNoiPhepTinh(grade, count = 5) {
-  const max = WORKSHEET_GRADES[grade].maxNumber;
+  const max = grade === "LOP_3" ? 1000 : WORKSHEET_GRADES[grade].maxNumber;
   const pairs = [];
   const usedResults = new Set();
   for (let i = 0; i < count; i++) {
@@ -198,6 +245,35 @@ export function generateNoiPhepTinh(grade, count = 5) {
   }
   const shuffledResults = [...pairs.map((p) => p.result)].sort(() => Math.random() - 0.5);
   return { pairs, shuffledResults };
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 1 (dạng bài MỚI) ==================
+ * "Nhân, chia trong bảng" - đúng chủ đề 2 "Bảng nhân, bảng chia" (SGK Toán 3 Kết nối tri thức,
+ * đã tra cứu thực tế). Bảng cửu chương 2-9, cả 2 chiều: PHÉP NHÂN (a × b, a,b trong 2-9) và PHÉP
+ * CHIA HẾT tương ứng (dựng NGƯỢC từ 1 phép nhân vừa random để đảm bảo luôn chia hết, không bao
+ * giờ ra số dư - đúng mức độ "bảng chia" cơ bản, chưa học phép chia có dư ở dạng bài này).
+ *
+ * TÁI DÙNG NGUYÊN dạng dữ liệu {operandA, operandB, operator, answer} của generateTinhNham() ở
+ * trên - để dùng lại được TinhNhamSection (web)/buildTinhNhamParagraphs (Word) mà KHÔNG cần viết
+ * component mới, giống đúng cách "do_dai_sap_xep" tái dùng "sap_xep_thu_tu" hay "cac_ngay_trong_tuan"
+ * tái dùng "day_so" đã làm trước đó trong file này.
+ */
+export function generateNhanChiaBang(count = 6) {
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const a = randInt(2, 9);
+    const b = randInt(2, 9);
+    const product = a * b;
+    const isDivision = Math.random() < 0.5;
+    if (isDivision) {
+      // Chia hết: product ÷ a = b (luôn đúng, không bao giờ dư).
+      items.push({ operandA: product, operandB: a, operator: "÷", answer: b });
+    } else {
+      items.push({ operandA: a, operandB: b, operator: "×", answer: product });
+    }
+  }
+  return items;
 }
 
 /**

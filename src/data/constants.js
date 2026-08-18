@@ -38,7 +38,14 @@ export const PAGE_MARGIN_MM = { top: 20, bottom: 20, left: 18, right: 18 };
  * LOP_1/LOP_2 (Mầm non KHÔNG có SGK theo chương chính thức, giống cách lessonPlanTemplates.js
  * xử lý "isPreschoolGrade" cho Giáo án - tái dùng đúng nguyên tắc đó).
  */
+// ================== MỞ RỘNG LỚP 3 (Phiếu Bài Tập) ==================
+// Thêm LOP_3: "3" - CHỈ hoạt động thật nếu kho GitHub RAG đã có thư mục sach_giao_khoa/lop_3/
+// (Hoan tự quản lý ở repo ngoài, không thuộc phạm vi thay đổi code này). Nếu thư mục chưa tồn
+// tại, fetchChaptersRequest() ở WorksheetForm.jsx sẽ trả về rỗng/lỗi 1 cách AN TOÀN (catch có sẵn
+// trong githubService.js/loadSgkContext trong worksheetGenerator.js) - phiếu Lớp 3 vẫn tạo được
+// bình thường, chỉ là KHÔNG bám sát 1 bài SGK cụ thể nào (giống hành vi Mầm non trước đây).
 export const WORKSHEET_GRADE_TO_SGK_GRADE = {
   LOP_1: "1",
   LOP_2: "2",
+  LOP_3: "3",
 };

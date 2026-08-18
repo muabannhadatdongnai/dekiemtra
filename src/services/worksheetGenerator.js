@@ -14,6 +14,7 @@ import {
   generateDoDaiSapXep,
   generateXemDongHoGioDung,
   generateCacNgayTrongTuan,
+  generateNhanChiaBang,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -125,7 +126,20 @@ export function buildWordProblemPrompt({
   referenceContext,
   themes,
   storytellingTheme = null,
+  grade = null,
 }) {
+  // ================== MỞ RỘNG LỚP 3 (Đợt 1) ==================
+  // TRƯỚC ĐÂY luôn chỉ cho phép cộng/trừ (đúng với Mầm non-Lớp 2, SGK các khối này CHƯA có bài
+  // toán lời văn nhân/chia). Lớp 3 học nhân/chia trong bảng NGAY từ đầu năm (chủ đề 2 "Bảng nhân,
+  // bảng chia") nên bài toán lời văn Lớp 3 THƯỜNG là nhân/chia, không chỉ cộng/trừ - cho phép cả
+  // 4 phép tính nhưng giới hạn RIÊNG thừa số nhân/chia trong phạm vi bảng cửu chương (2-9) để AI
+  // không tự bịa phép nhân số lớn (không đúng mức Lớp 3, dễ vượt quá khả năng tính của học sinh).
+  const operationInstruction =
+    grade === "LOP_3"
+      ? `mức độ 1 PHÉP TÍNH duy nhất (cộng, trừ, NHÂN hoặc CHIA HẾT) - nếu là phép cộng/trừ thì số liệu
+  trong phạm vi 0-${maxNumber}; nếu là phép nhân/chia thì các thừa số phải trong PHẠM VI BẢNG CỬU
+  CHƯƠNG (2-9), không dùng số lớn hơn`
+      : `mức độ 1 PHÉP TÍNH duy nhất (cộng hoặc trừ), số liệu trong phạm vi 0-${maxNumber}`;
   // ================== GIAI ĐOẠN F (storytelling theo chủ đề) ==================
   // TRƯỚC ĐÂY (và mặc định vẫn giữ nguyên khi giáo viên KHÔNG bật storytelling): mỗi bài toán 1
   // chủ đề NGẪU NHIÊN riêng biệt (themes[i]) - đúng mục tiêu chống lặp mô-típ (xem GIAI ĐOẠN 9 ở
@@ -153,8 +167,7 @@ export function buildWordProblemPrompt({
 Bạn là giáo viên Tiểu học Việt Nam giàu kinh nghiệm, soạn bài toán có lời văn cho học sinh ${gradeLabel}.
 
 YÊU CẦU:
-- Soạn ĐÚNG ${count} bài toán có lời văn, mức độ 1 PHÉP TÍNH duy nhất (cộng hoặc trừ), số liệu trong
-  phạm vi 0-${maxNumber}, kết quả không âm.
+- Soạn ĐÚNG ${count} bài toán có lời văn, ${operationInstruction}, kết quả không âm.
 ${themeInstructionBlock}
 - Ngôn ngữ đơn giản, câu ngắn, đúng lứa tuổi.
 - Số liệu "đẹp" (số nguyên, kết quả tròn, dễ tính nhẩm).
@@ -196,6 +209,7 @@ async function generateWordProblems({ grade, count, includeAnswers, referenceCon
     referenceContext,
     themes,
     storytellingTheme,
+    grade,
   });
 
   try {
@@ -444,6 +458,7 @@ async function resolveSgkChapterContext({ grade, subject, sgkVolume, sgkChapterI
 // không đổi khi giáo viên không upload mẫu).
 const DEFAULT_SECTION_ORDER = [
   "tinh_nham",
+  "nhan_chia_bang", // MỞ RỘNG LỚP 3 - cùng nhóm so_hoc, xếp ngay cạnh "tinh_nham"
   "tach_gop", // GIAI ĐOẠN F - cùng nhóm so_hoc với tinh_nham, xếp ngay cạnh nhau
   "dem_va_viet_so",
   "so_sanh",
@@ -516,6 +531,19 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("tinh_nham") || "Tính nhẩm.",
         mascot: mascotFor("tinh_nham"),
         items: generateTinhNham(grade, safeCounts.tinh_nham),
+      };
+    // ================== MỞ RỘNG LỚP 3, ĐỢT 1 ==================
+    // "Nhân, chia trong bảng" - type: "tinh_nham" CHỦ Ý (không phải "nhan_chia_bang") để TÁI DÙNG
+    // NGUYÊN TinhNhamSection (web)/buildTinhNhamParagraphs (Word) - đúng cách "do_dai_sap_xep"/
+    // "cac_ngay_trong_tuan" đã tái dùng component khác trong file này, vì dữ liệu CÙNG khuôn
+    // {operandA, operandB, operator, answer}. title/mascot vẫn lấy ĐÚNG theo key catalog riêng
+    // "nhan_chia_bang" (khác câu lệnh/mascot với "tinh_nham" thật).
+    case "nhan_chia_bang":
+      return {
+        type: "tinh_nham",
+        title: pickInstructionVariant("nhan_chia_bang") || "Tính nhẩm.",
+        mascot: mascotFor("nhan_chia_bang"),
+        items: generateNhanChiaBang(safeCounts.nhan_chia_bang),
       };
     // GIAI ĐOẠN F: dạng bài MỚI "Tách - Gộp" (xem generateTachGop() trong worksheetSchemas.js).
     case "tach_gop":
