@@ -16,6 +16,9 @@ import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 // MỞ RỘNG LỚP 3, ĐỢT 2: nhãn 3 mức "Chắc chắn/Có thể/Không thể" dùng chung với generator/preview
 // (worksheetSchemas.js) - tránh khai lại danh sách nhãn 3 nơi có thể lệch nhau.
 import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
+// MỞ RỘNG LỚP 3, ĐỢT 3: format số kiểu Việt Nam DÙNG CHUNG với WorksheetPreview.jsx (web) - xem
+// numberFormatUtils.js.
+import { formatSoTuNhien, formatSoTrongChuoi } from "./numberFormatUtils";
 
 /**
  * worksheetExportService.js
@@ -93,10 +96,14 @@ function chunkArray(arr, size) {
 
 // =========================== NỘI DUNG TỪNG DẠNG BÀI (trả về mảng "Paragraph options") ===========================
 
+// MỞ RỘNG LỚP 3, ĐỢT 3: 3 -> 2 mỗi hàng (khớp đổi 3 cột -> 2 cột bên WorksheetPreview.jsx) - số
+// tròn nghìn/chục nghìn của Lớp 3 dài hơn hẳn, 3 cụm/hàng dễ bị dồn/tràn dòng khi in.
 function buildTinhNhamParagraphs(items, showAnswers) {
-  return chunkArray(items, 3).map((row) => ({
+  return chunkArray(items, 2).map((row) => ({
     children: row.flatMap((it, idx) => {
-      const text = `${it.operandA} ${it.operator} ${it.operandB} = ${showAnswers ? it.answer : BLANK}`;
+      const text = `${formatSoTuNhien(it.operandA)} ${it.operator} ${formatSoTuNhien(it.operandB)} = ${
+        showAnswers ? formatSoTuNhien(it.answer) : BLANK
+      }`;
       const run = new TextRun({ text, font: FONT, size: 24 });
       return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
     }),
@@ -117,7 +124,9 @@ function buildDemVaVietSoParagraphs(items, showAnswers) {
 function buildSoSanhParagraphs(items, showAnswers) {
   return chunkArray(items, 2).map((row) => ({
     children: row.flatMap((it, idx) => {
-      const text = `${it.left}   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${it.right}`;
+      const text = `${formatSoTrongChuoi(it.left)}   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${formatSoTrongChuoi(
+        it.right
+      )}`;
       const run = new TextRun({ text, font: FONT, size: 24 });
       return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
     }),
@@ -129,7 +138,9 @@ function buildDaySoParagraphs(items, showAnswers) {
   return items.map((it) => ({
     children: [
       new TextRun({
-        text: it.sequence.map((n) => (n === null ? (showAnswers ? it.answer : BLANK) : n)).join(",   "),
+        text: it.sequence
+          .map((n) => (n === null ? (showAnswers ? formatSoTuNhien(it.answer) : BLANK) : formatSoTuNhien(n)))
+          .join(",   "),
         font: FONT,
         size: 24,
       }),
@@ -167,8 +178,10 @@ function buildSapXepThuTuParagraphs(items, showAnswers) {
   return items.map((it) => {
     const symbol = it.direction === "asc" ? " < " : " > ";
     const unitSuffix = it.unit ? ` ${it.unit}` : "";
-    const numbersText = it.numbers.map((n) => `${n}${unitSuffix}`).join(" ;  ");
-    const resultText = showAnswers ? it.sortedAnswer.join(symbol) : it.sortedAnswer.map(() => BLANK).join(symbol);
+    const numbersText = it.numbers.map((n) => `${formatSoTuNhien(n)}${unitSuffix}`).join(" ;  ");
+    const resultText = showAnswers
+      ? it.sortedAnswer.map((n) => formatSoTuNhien(n)).join(symbol)
+      : it.sortedAnswer.map(() => BLANK).join(symbol);
     return {
       children: [new TextRun({ text: `${numbersText}   ➜   ${resultText}`, font: FONT, size: 24 })],
       spacing: { after: 120 },
@@ -259,11 +272,17 @@ function buildChuViDienTichParagraphs(items, showAnswers) {
   });
 }
 
-/** "Đổi đơn vị đo" - lưới 3 cột giống buildTinhNhamParagraphs, "số + đơn vị" thay vì phép tính. */
+/**
+ * "Đổi đơn vị đo" - lưới 2 cột giống buildTinhNhamParagraphs, "số + đơn vị" thay vì phép tính.
+ * MỞ RỘNG LỚP 3, ĐỢT 3 (phản hồi "Trạm 8"): 3 -> 2 mỗi hàng, khớp đổi bên WorksheetPreview.jsx -
+ * giá trị đổi có thể tới 5 chữ số (14.000 ml...), 3 cụm/hàng quá chật khi in.
+ */
 function buildDoiDonViParagraphs(items, showAnswers) {
-  return chunkArray(items, 3).map((row) => ({
+  return chunkArray(items, 2).map((row) => ({
     children: row.flatMap((it, idx) => {
-      const text = `${it.value} ${it.fromUnit} = ${showAnswers ? it.answer : BLANK} ${it.toUnit}`;
+      const text = `${formatSoTuNhien(it.value)} ${it.fromUnit} = ${
+        showAnswers ? formatSoTuNhien(it.answer) : BLANK
+      } ${it.toUnit}`;
       const run = new TextRun({ text, font: FONT, size: 24 });
       return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
     }),
@@ -277,8 +296,10 @@ function buildTienVietNamParagraphs(items, showAnswers) {
     children: [
       new TextRun({
         text: `${i + 1}. Em có ${it.bills
-          .map((b) => `${b.quantity} tờ ${b.denomination.toLocaleString("vi-VN")} đồng`)
-          .join(" và ")}. Hỏi em có tất cả bao nhiêu tiền?  Trả lời: ${showAnswers ? `${it.answer.toLocaleString("vi-VN")} đồng` : `${BLANK} đồng`}`,
+          .map((b) => `${b.quantity} tờ ${formatSoTuNhien(b.denomination)} đồng`)
+          .join(" và ")}. Hỏi em có tất cả bao nhiêu tiền?  Trả lời: ${
+          showAnswers ? `${formatSoTuNhien(it.answer)} đồng` : `${BLANK} đồng`
+        }`,
         font: FONT,
         size: 24,
       }),
@@ -365,16 +386,16 @@ function buildCacNgayTrongTuanParagraphs(items, showAnswers) {
 function buildNoiPhepTinhParagraphs(data, showAnswers) {
   if (showAnswers) {
     return data.pairs.map((p) => ({
-      children: [new TextRun({ text: `${p.expr} = ${p.result}`, font: FONT, size: 24 })],
+      children: [new TextRun({ text: `${formatSoTrongChuoi(p.expr)} = ${formatSoTuNhien(p.result)}`, font: FONT, size: 24 })],
       spacing: { after: 100 },
     }));
   }
 
   return data.pairs.map((p, i) => ({
     children: [
-      new TextRun({ text: `${p.expr}   ●`, font: FONT, size: 24 }),
+      new TextRun({ text: `${formatSoTrongChuoi(p.expr)}   ●`, font: FONT, size: 24 }),
       new TextRun({ text: "\t", font: FONT, size: 24 }),
-      new TextRun({ text: `●   ${data.shuffledResults[i]}`, font: FONT, size: 24 }),
+      new TextRun({ text: `●   ${formatSoTuNhien(data.shuffledResults[i])}`, font: FONT, size: 24 }),
     ],
     tabStops: [{ type: TabStopType.RIGHT, position: CONTENT_WIDTH_TWIP }],
     spacing: { after: 100 },

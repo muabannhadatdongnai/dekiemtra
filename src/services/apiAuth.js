@@ -19,8 +19,30 @@ import { checkSampleAnalyzeLimit } from "./sampleAnalyzeRateLimiter";
  *     const { username, role } = auth.session;  // danh tính đã được xác thực thật sự
  *     ...
  *   }
+ *
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 3 ("tắt đăng nhập để test") ==================
+ * Hoan yêu cầu: khi truy cập trang, KHÔNG cần đăng nhập, để giáo viên tiện test. CHỦ Ý làm bằng
+ * 1 biến môi trường (`NEXT_PUBLIC_DISABLE_LOGIN=true`) thay vì xoá hẳn cơ chế đăng nhập:
+ *   - Mặc định (không đặt biến này, hoặc đặt khác "true") -> hành vi CŨ, không đổi gì - production
+ *     thật (Vercel) vẫn yêu cầu đăng nhập như trước, không vô tình mở public.
+ *   - Chỉ khi ai đó CHỦ Ý bật biến này (VD trong `.env.local` lúc test ở máy cá nhân) thì
+ *     `requireAuth()` mới bỏ qua việc verify token, trả thẳng về 1 "session giả" cố định.
+ * Dùng tiền tố NEXT_PUBLIC_ (dù đây là code CHẠY Ở SERVER) để CÙNG 1 biến vừa tắt được màn hình
+ * đăng nhập ở client (xem src/app/page.js) vừa tắt được kiểm tra token ở server - biến
+ * NEXT_PUBLIC_ vẫn đọc được bình thường qua `process.env` ở phía server, không cần khai 2 biến
+ * riêng rồi lo 2 nơi lệch nhau (bật 1 nơi quên bật nơi kia).
+ * Session giả dùng CỐ ĐỊNH 1 username ("giao_vien_test") - rate limit (teacherGenerateRateLimiter.js)
+ * và các store theo username (lessonPlanDiversityStore.js, teacherPreferenceStore.js...) vẫn hoạt
+ * động bình thường, chỉ là mọi lượt test đều tính chung vào 1 "giáo viên" duy nhất.
  */
+const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN === "true";
+const TEST_SESSION = { username: "giao_vien_test", fullName: "Giáo viên (chế độ test)", role: "teacher" };
+
 export function requireAuth(request) {
+  if (DISABLE_LOGIN) {
+    return { session: TEST_SESSION, error: null };
+  }
+
   const authHeader = request.headers.get("authorization") || "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice("Bearer ".length) : null;
 
