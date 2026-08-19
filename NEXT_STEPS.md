@@ -1,6 +1,26 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
-> Trạng thái: **GIAI ĐOẠN THIẾT KẾ — CHƯA CODE**. File này để mang sang chat mới không mất ngữ cảnh.
+> Trạng thái: **GIAI ĐOẠN THIẾT KẾ — CHƯA CODE** (phần mở khối Lớp 4-5). File này để mang sang
+> chat mới không mất ngữ cảnh.
+
+## ✅ MỚI NHẤT (Phiên 10) — đã sửa theo phản hồi thực tế sau khi test `dekiemtra-lop3-dot3.zip`
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 10". Tóm tắt:
+1. **Số kiểu Việt Nam (BẮT BUỘC)**: số tự nhiên từ 4 chữ số trở lên giờ LUÔN có dấu chấm phân
+   cách hàng nghìn (VD `63880` → `63.880`) - hàm dùng chung MỚI `src/services/numberFormatUtils.js`
+   (`formatSoTuNhien`/`formatSoTrongChuoi`), áp dụng cả web (WorksheetPreview.jsx) lẫn Word
+   (worksheetExportService.js). Đã giải quyết đúng mục "Vấn đề kỹ thuật cần xử lý khi mở khối" bên
+   dưới (không còn `toLocaleString("vi-VN")` rời rạc nữa).
+2. **"Trạm 8" (Đổi đơn vị đo) + Tính nhẩm**: 3 cột → 2 cột (cả web lẫn Word), ô đáp án
+   (`blankBox`) rộng từ 42px → tối thiểu 64px - không còn tràn số khi in số lớn (VD "19.000 ml").
+3. **Tắt đăng nhập để test**: biến môi trường `NEXT_PUBLIC_DISABLE_LOGIN=true` (đặt trong
+   `.env.local`, mặc định TẮT) - bỏ qua màn hình đăng nhập + kiểm tra token API, tiện giáo viên
+   test nhanh. KHÔNG bật trên môi trường public/production - xem cảnh báo trong `.env.local.example`.
+- `npm test`: 203/203 PASS. `npm run build`: sạch.
+- **Lưu ý phát hiện được**: code hiện tại ĐÃ CÓ `ThuThapSoLieuSection`/`generateThuThapSoLieu`
+  ("Thu thập, phân loại số liệu") dù mục "Trạng thái Lớp 3" bên dưới (viết TRƯỚC phiên này) ghi là
+  "Đợt 3, CHƯA làm" - có vẻ đã được code ở 1 phiên khác chưa cập nhật lại file này. Hoan kiểm tra
+  lại thực tế trên app xem tính năng này đã ĐỦ 4 tầng (catalog/generator/preview/export) hay chỉ
+  mới 1 phần, trước khi coi đây là "đã xong".
 
 ## Bối cảnh
 - Rà soát Phiếu Bài Tập phát hiện: (1) dạng bài Lớp 2 ít hơn Lớp 1; (2) Phiếu Bài Tập hiện chỉ hỗ trợ Mầm non-Lớp 2, cần mở lên Lớp 3-5 (nhóm giáo viên Tiểu học lớn nhất chưa được phục vụ); (3) khoảng cách nội dung lớn giữa Lớp 1-2 và Lớp 5 (số thập phân, số hàng triệu, km²/dm²); (4) vấn đề in màu tốn tiền học sinh vs in đen trắng làm nền/icon bị đen, không rõ.
@@ -38,7 +58,9 @@ Trường CHỈ dùng 1 bộ SGK: **Kết nối tri thức** (đã xác nhận v
 Nguồn: PPCT + giải SGK Toán 3/4/5 KNTT (VietJack, VnDoc, tailieumoi.vn, lop3.vn) — đối chiếu nhiều nguồn, khớp nhau.
 
 ## Vấn đề kỹ thuật cần xử lý khi mở khối
-- Định dạng số kiểu Việt Nam: thập phân dùng dấu phẩy (3,5), số lớn dùng dấu chấm phân cách hàng nghìn (1.234.567) — cần 1 hàm format số DÙNG CHUNG (ngoại lệ so với nguyên tắc isolation). Hiện Lớp 3 mới dùng `toLocaleString("vi-VN")` rời rạc ở `tien_viet_nam` — CHƯA có hàm dùng chung, cần làm khi bắt đầu Lớp 4-5 (số thập phân) để tránh lặp lại vấn đề ở nhiều nơi.
+- ✅ ĐÃ XONG (Phiên 10): định dạng số kiểu Việt Nam dùng dấu chấm phân cách hàng nghìn - hàm dùng
+  chung `src/services/numberFormatUtils.js`, xem chi tiết mục "MỚI NHẤT" đầu file. Số thập phân
+  (dấu phẩy) CHƯA cần vì Lớp 3 chưa học - sẽ mở rộng hàm này khi bắt đầu Lớp 4-5.
 - Đơn vị đo diện tích/thể tích Lớp 4-5 phức tạp hơn nhiều — mỗi bài chỉ nên dùng 1 loại đơn vị, tránh trộn km² lẫn cm² trong cùng câu hỏi.
 - `GRADE_ORDER` hiện tại: `["MAM_NON","LOP_1","LOP_2","LOP_3"]` — mở thêm LOP_4/LOP_5 chỉ cần thêm vào cuối mảng.
 

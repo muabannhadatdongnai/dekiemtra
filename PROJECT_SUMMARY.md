@@ -2027,3 +2027,49 @@ dung DẠY CÁCH LÀM, không phải "đáp án" cần giấu, đúng góp ý c�
 ### Việc còn lại (Nhóm A, người dùng tự làm)
 CHƯA tự bấm thử Bước 3 trên trình duyệt thật với API key thật - xem chi tiết 6 điểm cần kiểm tra
 bằng mắt (a-f) trong `NEXT_STEPS.md` mục "Nhóm A".
+
+## PHIÊN 10 — LỚP 3, ĐỢT 3: format số kiểu Việt Nam, sửa "Trạm 8" (Đổi đơn vị đo), 3 cột → 2 cột, tắt đăng nhập để test
+
+Phạm vi: CHỈ "Phiếu bài tập" (WorksheetPreview.jsx, worksheetExportService.js) + cơ chế đăng
+nhập toàn app (apiAuth.js, page.js) - không đụng các mode khác.
+
+### 1. Hàm format số kiểu Việt Nam DÙNG CHUNG (đúng ghi chú còn treo trong NEXT_STEPS.md)
+- File MỚI `src/services/numberFormatUtils.js`: `formatSoTuNhien(n)` (1 số) + `formatSoTrongChuoi(str)`
+  (chuỗi biểu thức, VD "73428 + 19205" -> "73.428 + 19.205") - dùng `toLocaleString("vi-VN")`.
+  Quy tắc: số từ 4 chữ số trở lên BẮT BUỘC có dấu chấm phân cách hàng nghìn, dưới 1000 giữ nguyên.
+- Áp dụng ở CẢ 2 nơi (web + Word) cho mọi dạng bài Lớp 3 có số lớn: `tinh_nham`, `so_sanh`, `day_so`,
+  `sap_xep_thu_tu`, `noi_phep_tinh`, `doi_don_vi_do`. `tien_viet_nam` trước đây tự gọi
+  `.toLocaleString("vi-VN")` rời rạc 2 nơi - nay gộp về dùng chung `formatSoTuNhien()`, đúng tinh
+  thần "1 hàm dùng chung" NEXT_STEPS.md đã nêu (ngoại lệ so với nguyên tắc isolation của dự án).
+- Test mới `test/numberFormatUtils.test.js` (8 test, bao gồm biên 4 chữ số, số string, null/undefined).
+
+### 2. "Trạm 8" (Đổi đơn vị đo) + "tính nhẩm": 3 cột → 2 cột, ô đáp án rộng hơn
+- Phản hồi thực tế: 3 cột dồn quá chật, số lớn (VD 19000, 14000) tràn ra ngoài ô khi in.
+- `DoiDonViSection`/`TinhNhamSection` (WorksheetPreview.jsx): `gridTemplateColumns` từ
+  `repeat(3, 1fr)` → `repeat(2, 1fr)`, tăng gap.
+- `buildDoiDonViParagraphs`/`buildTinhNhamParagraphs` (worksheetExportService.js): `chunkArray(items, 3)`
+  → `chunkArray(items, 2)` để bản Word khớp đúng bố cục bản web.
+- `blankBox()` (ô trống điền đáp án, WorksheetPreview.jsx): rộng từ 42px → tối thiểu 64px (+padding)
+  để chứa được số đã format dấu chấm (VD "19.000") mà không tràn.
+
+### 3. Tắt đăng nhập để test (biến môi trường, KHÔNG xoá cơ chế đăng nhập)
+- 1 biến `NEXT_PUBLIC_DISABLE_LOGIN` dùng CHUNG cho cả server (`apiAuth.js` - `requireAuth()` trả
+  thẳng 1 session giả cố định, bỏ qua verify token) VÀ client (`page.js` - bỏ qua màn hình
+  `LoginForm`, tự gán user test) - tránh phải khai 2 biến rồi lo lệch nhau.
+- Mặc định KHÔNG bật (`false`/bỏ trống) - hành vi cũ (bắt đăng nhập) giữ nguyên trên production.
+  Đã thêm hướng dẫn + cảnh báo rõ trong `.env.local.example`.
+- Rate-limit/lịch sử theo giáo viên (teacherGenerateRateLimiter.js, teacherPreferenceStore.js...)
+  vẫn hoạt động bình thường khi bật, chỉ dồn hết vào 1 username cố định `giao_vien_test`.
+
+### Đã tự verify
+`npm test`: 203/203 PASS (195 cũ + 8 mới). `npm run build`: sạch, không lỗi (các dòng "Dynamic
+server usage" cho `/api/report-comment-history` và `/api/report-comment-template` là cảnh báo
+CŨ, không liên quan thay đổi phiên này - 2 route này vốn đọc `request.headers` nên Next.js không
+thể prerender tĩnh, vẫn hoạt động bình thường ở runtime). Đã tự kiểm tra `requireAuth()` với
+`NEXT_PUBLIC_DISABLE_LOGIN=true` trả đúng session giả.
+
+### CHƯA làm (đúng phạm vi yêu cầu, để lại đúng như đã ghi trong NEXT_STEPS.md)
+- Chế độ in Màu/Đen trắng: CHƯA làm, chờ theo đúng quyết định đã chốt trước đó.
+- "Thu thập/phân loại số liệu" Đợt 3 (đọc bảng/biểu đồ cột): đã thấy đã có `ThuThapSoLieuSection`
+  trong code hiện tại (khác NEXT_STEPS.md ghi "hoãn") - không đụng vào phần này trong phiên này vì
+  không nằm trong yêu cầu, chỉ ghi nhận sự khác biệt để Hoan biết khi mở chat mới.
