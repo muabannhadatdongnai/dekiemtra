@@ -20,6 +20,7 @@ import {
   generateXemDongHoGioPhut,
   generateTienVietNam,
   generateKhaNangXayRa,
+  generateThuThapSoLieu,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -484,6 +485,9 @@ const DEFAULT_SECTION_ORDER = [
   "doi_don_vi_do",
   "tien_viet_nam",
   "kha_nang_xay_ra",
+  // ================== MỞ RỘNG LỚP 3, ĐỢT 3 ==================
+  // Xếp ngay sau "kha_nang_xay_ra" - cùng nhóm "thống kê, xác suất" trong PPCT SGK Toán 3 KNTT.
+  "thu_thap_so_lieu",
   "nhan_dien_hinh",
   "xem_dong_ho_gio_dung",
   "xem_dong_ho_gio_phut",
@@ -660,6 +664,20 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         mascot: mascotFor("kha_nang_xay_ra"),
         items: generateKhaNangXayRa(safeCounts.kha_nang_xay_ra),
       };
+    // ================== MỞ RỘNG LỚP 3, ĐỢT 3 ==================
+    // Khác các case khác: generateThuThapSoLieu trả về {title, data, questions} (1 bảng số liệu
+    // DUY NHẤT + nhiều câu hỏi rút ra từ bảng đó), không phải mảng "items" độc lập từng câu.
+    case "thu_thap_so_lieu": {
+      const survey = generateThuThapSoLieu(safeCounts.thu_thap_so_lieu);
+      return {
+        type: "thu_thap_so_lieu",
+        title: pickInstructionVariant("thu_thap_so_lieu") || "Quan sát bảng số liệu rồi trả lời câu hỏi.",
+        mascot: mascotFor("thu_thap_so_lieu"),
+        surveyTitle: survey.title,
+        data: survey.data,
+        questions: survey.questions,
+      };
+    }
     case "cac_ngay_trong_tuan":
       return {
         type: "cac_ngay_trong_tuan",

@@ -31,6 +31,7 @@ export const EXERCISE_TYPES = {
   SAP_XEP_THU_TU: "sap_xep_thu_tu", // GIAI ĐOẠN 2
   DEM_HINH_UNG_DUNG: "dem_hinh_ung_dung", // GIAI ĐOẠN 2 - hoạt động ứng dụng đi kèm NHAN_DIEN_HINH
   TACH_GOP: "tach_gop", // GIAI ĐOẠN F - sơ đồ Tách - Gộp (number bond), riêng Lớp 1
+  THU_THAP_SO_LIEU: "thu_thap_so_lieu", // MỞ RỘNG LỚP 3, ĐỢT 3 - thống kê: bảng số liệu + câu hỏi
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -633,5 +634,81 @@ const PROBABILITY_STATEMENT_BANK = [
 export function generateKhaNangXayRa(count = 5) {
   const shuffled = [...PROBABILITY_STATEMENT_BANK].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+// ===== Chủ đề "Thu thập, phân loại, kiểm đếm số liệu" (Lớp 3, Đợt 3) =====
+
+/**
+ * Ngân hàng chủ đề khảo sát "yêu thích" - đúng dạng bài quen thuộc SGK Toán 3 KNTT chủ đề
+ * "Một số yếu tố thống kê" (bảng số liệu/biểu đồ tranh đơn giản về sở thích của các bạn học
+ * sinh). `noun` dùng cho câu hỏi dạng "<noun> nào được nhiều bạn yêu thích nhất?" - viết hoa
+ * chữ cái đầu sẵn để chèn thẳng vào đầu câu.
+ */
+const DATA_SURVEY_TOPIC_BANK = [
+  { theme: "loại trái cây", noun: "Loại quả", categories: ["Cam", "Xoài", "Chuối", "Táo", "Nho"] },
+  { theme: "màu sắc", noun: "Màu", categories: ["Đỏ", "Xanh", "Vàng", "Tím", "Hồng"] },
+  { theme: "con vật nuôi", noun: "Con vật", categories: ["Chó", "Mèo", "Cá", "Chim", "Thỏ"] },
+  { theme: "môn thể thao", noun: "Môn thể thao", categories: ["Bóng đá", "Bóng rổ", "Cầu lông", "Bơi", "Bóng bàn"] },
+  { theme: "môn học", noun: "Môn học", categories: ["Toán", "Tiếng Việt", "Mĩ thuật", "Âm nhạc", "Thể dục"] },
+];
+
+/**
+ * 1 phiếu = 1 bảng/biểu đồ số liệu DUY NHẤT (đúng thực tế: khảo sát 1 chủ đề rồi hỏi nhiều câu
+ * dựa trên CÙNG 1 bảng đó) kèm `count` câu hỏi rút ra từ bảng đó - khác các dạng bài khác trong
+ * file này (mỗi "item" độc lập), nên trả về 1 object { title, data, questions } thay vì mảng
+ * items rời rạc. `data`: mảng {label, value} - value random 3-15, ĐẢM BẢO max/min duy nhất
+ * (không trùng) để câu hỏi "nhiều nhất/ít nhất" luôn có 1 đáp án rõ ràng, không gây tranh cãi.
+ */
+export function generateThuThapSoLieu(count = 4) {
+  const topic = pick(DATA_SURVEY_TOPIC_BANK);
+  const numCats = randInt(4, Math.min(5, topic.categories.length));
+  const shuffledCats = [...topic.categories].sort(() => Math.random() - 0.5).slice(0, numCats);
+
+  // Đảm bảo giá trị lớn nhất và nhỏ nhất duy nhất (không có 2 mục cùng bằng max/min) - random lại
+  // toàn bộ (thay vì chỉnh từng phần tử, dễ vô tình tạo ra hoà mới) tới khi thoả điều kiện.
+  let values;
+  let guard = 0;
+  do {
+    values = shuffledCats.map(() => randInt(3, 15));
+    guard++;
+  } while (
+    guard < 50 &&
+    (values.filter((v) => v === Math.max(...values)).length > 1 || values.filter((v) => v === Math.min(...values)).length > 1)
+  );
+
+  const data = shuffledCats.map((label, i) => ({ label, value: values[i] }));
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+  const maxItem = data.reduce((a, b) => (b.value > a.value ? b : a));
+  const minItem = data.reduce((a, b) => (b.value < a.value ? b : a));
+
+  const pool = [
+    ...data.map((d) => ({
+      text: `Có bao nhiêu bạn yêu thích ${d.label}?`,
+      answer: `${d.value} bạn`,
+    })),
+    { text: `${topic.noun} nào được nhiều bạn yêu thích nhất?`, answer: maxItem.label },
+    { text: `${topic.noun} nào được ít bạn yêu thích nhất?`, answer: minItem.label },
+    { text: "Có tất cả bao nhiêu bạn tham gia khảo sát?", answer: `${total} bạn` },
+  ];
+  if (data.length >= 2) {
+    const sorted = [...data].sort((a, b) => b.value - a.value);
+    const a = sorted[0];
+    const b = sorted[sorted.length - 1];
+    if (a.value !== b.value) {
+      pool.push({
+        text: `Số bạn yêu thích ${a.label} nhiều hơn số bạn yêu thích ${b.label} bao nhiêu bạn?`,
+        answer: `${a.value - b.value} bạn`,
+      });
+    }
+  }
+
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
+  const questions = shuffledPool.slice(0, Math.min(count, shuffledPool.length));
+
+  return {
+    title: `Kết quả khảo sát về ${topic.theme} yêu thích của các bạn học sinh lớp 3A`,
+    data,
+    questions,
+  };
 }
 

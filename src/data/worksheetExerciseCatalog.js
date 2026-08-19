@@ -426,6 +426,24 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     mascotPool: ["🎲", "🔮", "🤔"],
     colorThemeTags: ["purple", "pink", "blue"],
   },
+  {
+    // ===== MỞ RỘNG LỚP 3, ĐỢT 3 =====
+    key: "thu_thap_so_lieu",
+    subject: "TOAN",
+    label: "Thu thập, phân loại số liệu",
+    skillGroup: "thong_ke",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 4,
+    instructionVariants: [
+      "Quan sát bảng số liệu rồi trả lời câu hỏi.",
+      "Dựa vào bảng số liệu, em hãy trả lời các câu hỏi sau.",
+      "Đọc bảng số liệu rồi khoanh tay trả lời nhé!",
+    ],
+    mascotPool: ["📊", "📋", "🔢"],
+    colorThemeTags: ["blue", "teal", "yellow"],
+  },
 
   // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn
   // ngữ - từ vựng/câu văn, không tính toán được bằng code như các dạng Toán). Trước đây chỉ

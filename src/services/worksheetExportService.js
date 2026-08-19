@@ -307,6 +307,38 @@ function buildKhaNangXayRaParagraphs(items, showAnswers) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 3 ==================
+ * "Thu thập, phân loại số liệu" - Word không dựng được thanh màu tỉ lệ như CSS bên web, nên
+ * biểu diễn bảng số liệu bằng ký tự khối "■" lặp lại theo đúng số lượng (dễ đọc bằng mắt hệt
+ * biểu đồ cột, không cần vẽ hình) - liệt kê ngay dưới tiêu đề khảo sát, sau đó là câu hỏi.
+ */
+function buildThuThapSoLieuParagraphs(surveyTitle, data, questions, showAnswers) {
+  const titlePara = {
+    children: [new TextRun({ text: surveyTitle, font: FONT, size: 24, bold: true })],
+    spacing: { after: 100 },
+  };
+  const dataParas = data.map((d) => ({
+    children: [
+      new TextRun({ text: `${d.label}: `, font: FONT, size: 24 }),
+      new TextRun({ text: "■".repeat(d.value), font: FONT, size: 24 }),
+      new TextRun({ text: `  (${d.value})`, font: FONT, size: 24 }),
+    ],
+    spacing: { after: 60 },
+  }));
+  const questionParas = questions.map((q, i) => ({
+    children: [
+      new TextRun({
+        text: `${i + 1}. ${q.text}  Trả lời: ${showAnswers ? q.answer : BLANK}`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 140, before: i === 0 ? 120 : 0 },
+  }));
+  return [titlePara, ...dataParas, ...questionParas];
+}
+
+/**
  * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
  * Điền ngày còn thiếu - nối bằng " — " giống bản web (CacNgayTrongTuanSection), thay dấu phẩy
  * bằng gạch ngang để rõ đây là 1 CHUỖI liên tiếp có thứ tự, không phải danh sách rời rạc.
@@ -552,6 +584,8 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildTienVietNamParagraphs(section.items, showAnswers);
     case "kha_nang_xay_ra":
       return buildKhaNangXayRaParagraphs(section.items, showAnswers);
+    case "thu_thap_so_lieu":
+      return buildThuThapSoLieuParagraphs(section.surveyTitle, section.data, section.questions, showAnswers);
     case "cac_ngay_trong_tuan":
       return buildCacNgayTrongTuanParagraphs(section.items, showAnswers);
     case "nhan_dien_hinh":
