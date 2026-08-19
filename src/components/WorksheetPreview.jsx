@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
+// MỞ RỘNG LỚP 3, ĐỢT 2: nhãn 3 mức "Chắc chắn/Có thể/Không thể" dùng chung với generator
+// (worksheetSchemas.js) - tránh khai lại danh sách nhãn 2 nơi có thể lệch nhau.
+import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
 
 /**
  * WorksheetPreview.jsx
@@ -470,7 +473,13 @@ function DoDaiSoSanhSection({ items, accent }) {
  * đồng hồ cần 1 góc kim khác nhau tuỳ dữ liệu, không phải hữu hạn hình cố định). "Giờ đúng"
  * (đúng mức độ chương trình Lớp 1) -> kim phút LUÔN chỉ đúng số 12.
  */
-function ClockFace({ hour, size = 88 }) {
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * Thêm tham số `minute` (mặc định 0) - khi minute=0, hourAngle/minuteAngle tính ra giống HỆT bản
+ * cũ (Lớp 1, giờ đúng) nên KHÔNG đổi hành vi hiện có, chỉ mở rộng để vẽ được cả kim phút lệch
+ * theo từng vạch 5 phút (Lớp 3, xem generateXemDongHoGioPhut() trong worksheetSchemas.js).
+ */
+function ClockFace({ hour, minute = 0, size = 88 }) {
   const cx = 50;
   const cy = 50;
   const toRad = (deg) => (deg * Math.PI) / 180;
@@ -478,8 +487,10 @@ function ClockFace({ hour, size = 88 }) {
     x: cx + r * Math.cos(toRad(angleDeg)),
     y: cy + r * Math.sin(toRad(angleDeg)),
   });
-  const hourAngle = ((hour % 12) * 30) - 90;
-  const minuteAngle = -90; // giờ đúng -> kim phút luôn chỉ số 12
+  // Kim giờ lệch thêm theo phút (0.5 độ/phút) - đúng cách đồng hồ thật di chuyển kim giờ dần dần
+  // giữa 2 số, không đứng khựng lại đúng số khi phút khác 0.
+  const hourAngle = (hour % 12) * 30 + minute * 0.5 - 90;
+  const minuteAngle = minute * 6 - 90;
   const hourTip = pointAt(hourAngle, 19);
   const minuteTip = pointAt(minuteAngle, 30);
   const numbers = Array.from({ length: 12 }, (_, idx) => {
@@ -510,6 +521,134 @@ function XemDongHoGioDungSection({ items, accent }) {
           <ClockFace hour={it.hour} />
           <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13 }}>
             {blankBox(accent)} <span>giờ</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * "Xem đồng hồ (giờ, phút)" - khác XemDongHoGioDungSection ở 2 điểm: (1) ClockFace nhận thêm
+ * `minute` để kim phút lệch đúng vị trí; (2) CÓ 2 ô trống (giờ VÀ phút), không chỉ 1 ô như bản
+ * giờ đúng Lớp 1.
+ */
+function XemDongHoGioPhutSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          <ClockFace hour={it.hour} minute={it.minute} />
+          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13 }}>
+            {blankBox(accent)} <span>giờ</span> {blankBox(accent)} <span>phút</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * "Chu vi, diện tích hình chữ nhật - hình vuông" - mỗi câu là 1 đoạn văn ngắn tả hình + số đo,
+ * kèm 1 ô trống để điền kết quả. Đơn vị diện tích hiển thị "cm²" (ký tự Unicode superscript có
+ * sẵn, không cần thư viện) - khác chu vi chỉ "cm" thường.
+ */
+function ChuViDienTichSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 15 }}>
+      {items.map((it, i) => {
+        const desc =
+          it.shape === "vuong"
+            ? `Hình vuông có cạnh ${it.side} ${it.unit}.`
+            : `Hình chữ nhật có chiều dài ${it.length} ${it.unit}, chiều rộng ${it.width} ${it.unit}.`;
+        const ask = it.metric === "chu_vi" ? "Tính chu vi hình đó." : "Tính diện tích hình đó.";
+        const resultUnit = it.metric === "dien_tich" ? `${it.unit}²` : it.unit;
+        return (
+          <div key={i}>
+            <div>
+              {i + 1}. {desc} {ask}
+            </div>
+            <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+              Bài giải: {blankBox(accent)} {resultUnit}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * "Đổi đơn vị đo" - lưới 3 cột giống TinhNhamSection, nhưng vế trái/phải là "số + đơn vị" thay vì
+ * phép tính (không tái dùng thẳng được TinhNhamSection vì thiếu chỗ hiển thị đơn vị).
+ */
+function DoiDonViSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px 16px", fontSize: 15 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {it.value} {it.fromUnit} = {blankBox(accent)} {it.toUnit}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * "Tiền Việt Nam" - liệt kê các tờ tiền + số lượng bằng chữ (dễ đọc hơn hiện hình ảnh tờ tiền
+ * thật - tránh vấn đề bản quyền hình ảnh tiền tệ), học sinh tính tổng.
+ */
+function TienVietNamSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 15 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div>
+            {i + 1}. Em có {it.bills.map((b) => `${b.quantity} tờ ${b.denomination.toLocaleString("vi-VN")} đồng`).join(" và ")}.
+            Hỏi em có tất cả bao nhiêu tiền?
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            Trả lời: {blankBox(accent)} đồng
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * "Khả năng xảy ra của một sự kiện" - 3 nhãn (Chắc chắn/Có thể/Không thể) hiển thị dạng khung bo
+ * tròn để học sinh khoanh tay vào đáp án đúng khi in ra giấy - LUÔN hiện cả 3 lựa chọn TRẮNG
+ * (không tô sẵn đáp án đúng), giống mọi section khác trong file này (bản xem trước web LUÔN là
+ * bản học sinh, đáp án bản giáo viên chỉ có ở export Word - xem worksheetExportService.js).
+ */
+function KhaNangXayRaSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 15 }}>
+      {items.map((it, i) => (
+        <div key={i}>
+          <div>
+            {i + 1}. {it.text}
+          </div>
+          <div style={{ display: "flex", gap: 10, marginTop: 6, flexWrap: "wrap" }}>
+            {Object.values(PROBABILITY_LEVEL_LABELS).map((label) => (
+              <span
+                key={label}
+                style={{
+                  border: `1.5px solid ${accent}`,
+                  borderRadius: 999,
+                  padding: "3px 12px",
+                  background: "#fff",
+                }}
+              >
+                {label}
+              </span>
+            ))}
           </div>
         </div>
       ))}
@@ -919,6 +1058,11 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "do_dai_so_sanh" && <DoDaiSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "do_dai_sap_xep" && <SapXepThuTuSection items={section.items} accent={t.border} />}
       {section.type === "xem_dong_ho_gio_dung" && <XemDongHoGioDungSection items={section.items} accent={t.border} />}
+      {section.type === "xem_dong_ho_gio_phut" && <XemDongHoGioPhutSection items={section.items} accent={t.border} />}
+      {section.type === "chu_vi_dien_tich" && <ChuViDienTichSection items={section.items} accent={t.border} />}
+      {section.type === "doi_don_vi_do" && <DoiDonViSection items={section.items} accent={t.border} />}
+      {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
+      {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
       {section.type === "cac_ngay_trong_tuan" && <CacNgayTrongTuanSection items={section.items} accent={t.border} />}
       {section.type === "nhan_dien_hinh" && <NhanDienHinhSection shapes={section.shapes} accent={t.border} />}
       {section.type === "dem_hinh_ung_dung" && <DemHinhUngDungSection data={section.data} accent={t.border} />}
