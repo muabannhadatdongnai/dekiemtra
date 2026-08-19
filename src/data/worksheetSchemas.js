@@ -474,3 +474,164 @@ export function generateCacNgayTrongTuan(count = 3) {
   return items;
 }
 
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * 5 dạng bài MỚI bám đúng mạch nội dung SGK Toán 3 Kết nối tri thức (đã tra cứu thực tế qua PPCT
+ * + giải SGK, xem NEXT_STEPS.md): "Chu vi/diện tích hình chữ nhật-hình vuông", "Đổi đơn vị đo",
+ * "Xem đồng hồ (giờ, phút)", "Tiền Việt Nam", "Khả năng xảy ra của một sự kiện". Tất cả vẫn sinh
+ * THUẦN BẰNG CODE (không cần AI), giữ đúng triết lý cả file.
+ */
+
+// ===== Chủ đề "Chu vi, diện tích hình chữ nhật - hình vuông" =====
+
+/**
+ * Mỗi câu: 1 hình (vuông hoặc chữ nhật) với số đo cho sẵn, yêu cầu tính CHU VI hoặc DIỆN TÍCH
+ * (random, không cố định 1 loại suốt phiếu - đúng cách SGK trộn cả 2 dạng câu hỏi). Phạm vi số đo
+ * 3-20cm để phép nhân/cộng ra kết quả vẫn nằm trong khả năng tính tay của học sinh Lớp 3 (không
+ * vượt quá xa phạm vi bảng cửu chương khi tính diện tích).
+ */
+export function generateChuViDienTich(count = 4) {
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const isSquare = Math.random() < 0.5;
+    const metric = Math.random() < 0.5 ? "chu_vi" : "dien_tich";
+    if (isSquare) {
+      const side = randInt(3, 20);
+      const answer = metric === "chu_vi" ? side * 4 : side * side;
+      items.push({ shape: "vuong", side, metric, answer, unit: "cm" });
+    } else {
+      const length = randInt(4, 20);
+      const width = randInt(2, length - 1); // rộng luôn NHỎ HƠN dài, đúng định nghĩa hình chữ nhật
+      const answer = metric === "chu_vi" ? (length + width) * 2 : length * width;
+      items.push({ shape: "hcn", length, width, metric, answer, unit: "cm" });
+    }
+  }
+  return items;
+}
+
+// ===== Chủ đề "Đổi đơn vị đo" (độ dài / khối lượng / dung tích) =====
+
+/**
+ * Mỗi "cặp đơn vị" gồm đơn vị LỚN + đơn vị NHỎ + tỉ lệ quy đổi - CHỈ liệt kê các cặp LIỀN KỀ
+ * (hoặc cách 1 bậc, VD m-cm) THẬT SỰ xuất hiện trong SGK Lớp 3 (chương "Đơn vị đo độ dài",
+ * "Đơn vị đo khối lượng, dung tích") - KHÔNG liệt kê mọi cặp có thể (VD km-mm) vì SGK không dạy
+ * quy đổi cách xa như vậy ở Lớp 3.
+ */
+const LENGTH_UNIT_PAIRS = [
+  { big: "km", small: "m", ratio: 1000 },
+  { big: "m", small: "dm", ratio: 10 },
+  { big: "m", small: "cm", ratio: 100 },
+  { big: "dm", small: "cm", ratio: 10 },
+  { big: "cm", small: "mm", ratio: 10 },
+];
+const MASS_UNIT_PAIRS = [{ big: "kg", small: "g", ratio: 1000 }];
+const VOLUME_UNIT_PAIRS = [{ big: "l", small: "ml", ratio: 1000 }];
+
+/**
+ * Random 1 cặp đơn vị + 1 chiều đổi (lớn->nhỏ hoặc nhỏ->lớn). Chiều "nhỏ->lớn" LUÔN dựng ngược từ
+ * 1 bội số nguyên của tỉ lệ quy đổi - đảm bảo chia hết tuyệt đối, không bao giờ ra số thập phân
+ * (Lớp 3 CHƯA học số thập phân).
+ */
+export function generateDoiDonVi(count = 5) {
+  const allPairs = [
+    ...LENGTH_UNIT_PAIRS.map((p) => ({ ...p, category: "length" })),
+    ...MASS_UNIT_PAIRS.map((p) => ({ ...p, category: "mass" })),
+    ...VOLUME_UNIT_PAIRS.map((p) => ({ ...p, category: "volume" })),
+  ];
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const pair = pick(allPairs);
+    const bigToSmall = Math.random() < 0.5;
+    if (bigToSmall) {
+      const value = randInt(1, 20);
+      items.push({ value, fromUnit: pair.big, toUnit: pair.small, answer: value * pair.ratio });
+    } else {
+      const multiplier = randInt(1, 20);
+      items.push({ value: multiplier * pair.ratio, fromUnit: pair.small, toUnit: pair.big, answer: multiplier });
+    }
+  }
+  return items;
+}
+
+// ===== Chủ đề "Thời gian" (mở rộng Lớp 3: giờ VÀ phút, khác Lớp 1 chỉ giờ đúng) =====
+
+/**
+ * Phút LUÔN là bội số của 5 (0,5,10,...,55) - đúng mức đọc đồng hồ Lớp 3 (kim phút chỉ vào các
+ * vạch chia 5 phút, CHƯA yêu cầu đọc chính xác từng phút lẻ). Tránh lặp y hệt 1 thời điểm nhiều
+ * lần trong cùng phiếu (so sánh cả giờ LẪN phút, khác generateXemDongHoGioDung chỉ so giờ).
+ */
+export function generateXemDongHoGioPhut(count = 4) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const hour = randInt(1, 12);
+    const minute = pick([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]);
+    const keyStr = `${hour}:${minute}`;
+    if (used.has(keyStr)) continue;
+    used.add(keyStr);
+    items.push({ hour, minute });
+  }
+  return items;
+}
+
+// ===== Chủ đề "Tiền Việt Nam" =====
+
+/** Mệnh giá tiền giấy phổ biến, khớp đúng nội dung "Tiền Việt Nam" SGK Toán 3. */
+const MONEY_DENOMINATIONS = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
+
+/**
+ * Mỗi câu: 2-3 loại tờ tiền khác nhau kèm số lượng, học sinh tính TỔNG số tiền - đúng bài tập
+ * "đếm tiền" điển hình (VD "2 tờ 10 000đ và 3 tờ 5 000đ, hỏi tất cả bao nhiêu tiền?").
+ */
+export function generateTienVietNam(count = 4) {
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const numTypes = randInt(2, 3);
+    const denoms = [...MONEY_DENOMINATIONS].sort(() => Math.random() - 0.5).slice(0, numTypes);
+    const bills = denoms.map((denomination) => ({ denomination, quantity: randInt(1, 5) }));
+    const answer = bills.reduce((sum, b) => sum + b.denomination * b.quantity, 0);
+    items.push({ bills, answer });
+  }
+  return items;
+}
+
+// ===== Chủ đề "Thống kê, xác suất" (Khả năng xảy ra của một sự kiện) =====
+
+/**
+ * Ngân hàng câu phát biểu PHÂN LOẠI SẴN theo mức độ chắc chắn - đây là dạng bài "định tính" (chọn
+ * nhãn đúng cho 1 phát biểu), KHÔNG tính toán được bằng công thức nên phải dùng ngân hàng câu có
+ * sẵn (khác các dạng bài số học khác trong file này), nhưng vẫn sinh THUẦN BẰNG CODE (chỉ random
+ * chọn tập con, không gọi AI) - đúng khái niệm 3 mức "Chắc chắn / Có thể / Không thể xảy ra" dạy
+ * ở chủ đề "Một số yếu tố thống kê, xác suất" SGK Toán 3 Kết nối tri thức.
+ */
+export const PROBABILITY_LEVEL_LABELS = {
+  chac_chan: "Chắc chắn",
+  co_the: "Có thể",
+  khong_the: "Không thể",
+};
+
+const PROBABILITY_STATEMENT_BANK = [
+  { text: "Mặt Trời mọc ở hướng Đông.", level: "chac_chan" },
+  { text: "Một năm có 12 tháng.", level: "chac_chan" },
+  { text: "Một tuần có 7 ngày.", level: "chac_chan" },
+  { text: "Nước sôi ở nhiệt độ 100°C khi đun ở áp suất bình thường.", level: "chac_chan" },
+  { text: "Hôm nay là Chủ Nhật thì ngày mai là Thứ Hai.", level: "chac_chan" },
+  { text: "Ngày mai trời sẽ có nắng.", level: "co_the" },
+  { text: "Khi tung một đồng xu, mặt ngửa sẽ xuất hiện.", level: "co_the" },
+  { text: "Bạn Lan sẽ được điểm 10 trong bài kiểm tra tới.", level: "co_the" },
+  { text: "Ngày mai em sẽ gặp một người bạn mới.", level: "co_the" },
+  { text: "Đội bóng của lớp em sẽ thắng trận đấu sắp tới.", level: "co_the" },
+  { text: "Con gà mái đẻ ra trứng vịt.", level: "khong_the" },
+  { text: "Con mèo tự biết bay như chim.", level: "khong_the" },
+  { text: "Hòn đá tự đứng dậy và biết nói chuyện.", level: "khong_the" },
+  { text: "Con cá sống được trên cạn mà không cần nước.", level: "khong_the" },
+  { text: "Con voi nhỏ hơn con kiến.", level: "khong_the" },
+];
+
+export function generateKhaNangXayRa(count = 5) {
+  const shuffled = [...PROBABILITY_STATEMENT_BANK].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+

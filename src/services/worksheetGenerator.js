@@ -15,6 +15,11 @@ import {
   generateXemDongHoGioDung,
   generateCacNgayTrongTuan,
   generateNhanChiaBang,
+  generateChuViDienTich,
+  generateDoiDonVi,
+  generateXemDongHoGioPhut,
+  generateTienVietNam,
+  generateKhaNangXayRa,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -471,8 +476,17 @@ const DEFAULT_SECTION_ORDER = [
   "do_dai_so_sanh",
   "do_dai_sap_xep",
   "noi_phep_tinh",
+  // ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+  // 5 dạng bài mới - xếp SAU "noi_phep_tinh" (vẫn cùng mạch "kỹ năng số học" của phiếu) và TRƯỚC
+  // "nhan_dien_hinh" (mạch hình học/trực quan), theo đúng thứ tự chủ đề xuất hiện trong PPCT SGK
+  // Toán 3 KNTT (đơn vị đo -> hình học/chu vi-diện tích -> thời gian/tiền tệ -> thống kê).
+  "chu_vi_dien_tich",
+  "doi_don_vi_do",
+  "tien_viet_nam",
+  "kha_nang_xay_ra",
   "nhan_dien_hinh",
   "xem_dong_ho_gio_dung",
+  "xem_dong_ho_gio_phut",
   "cac_ngay_trong_tuan",
   "giai_toan",
 ];
@@ -609,6 +623,42 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("xem_dong_ho_gio_dung") || "Xem đồng hồ rồi viết giờ thích hợp vào chỗ trống.",
         mascot: mascotFor("xem_dong_ho_gio_dung"),
         items: generateXemDongHoGioDung(safeCounts.xem_dong_ho_gio_dung),
+      };
+    // ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+    case "xem_dong_ho_gio_phut":
+      return {
+        type: "xem_dong_ho_gio_phut",
+        title: pickInstructionVariant("xem_dong_ho_gio_phut") || "Xem đồng hồ rồi viết giờ, phút thích hợp vào chỗ trống.",
+        mascot: mascotFor("xem_dong_ho_gio_phut"),
+        items: generateXemDongHoGioPhut(safeCounts.xem_dong_ho_gio_phut),
+      };
+    case "chu_vi_dien_tich":
+      return {
+        type: "chu_vi_dien_tich",
+        title: pickInstructionVariant("chu_vi_dien_tich") || "Tính chu vi hoặc diện tích hình đã cho.",
+        mascot: mascotFor("chu_vi_dien_tich"),
+        items: generateChuViDienTich(safeCounts.chu_vi_dien_tich),
+      };
+    case "doi_don_vi_do":
+      return {
+        type: "doi_don_vi_do",
+        title: pickInstructionVariant("doi_don_vi_do") || "Đổi các số đo sau.",
+        mascot: mascotFor("doi_don_vi_do"),
+        items: generateDoiDonVi(safeCounts.doi_don_vi_do),
+      };
+    case "tien_viet_nam":
+      return {
+        type: "tien_viet_nam",
+        title: pickInstructionVariant("tien_viet_nam") || "Tính tổng số tiền.",
+        mascot: mascotFor("tien_viet_nam"),
+        items: generateTienVietNam(safeCounts.tien_viet_nam),
+      };
+    case "kha_nang_xay_ra":
+      return {
+        type: "kha_nang_xay_ra",
+        title: pickInstructionVariant("kha_nang_xay_ra") || "Khoanh vào khả năng xảy ra đúng của mỗi sự kiện sau.",
+        mascot: mascotFor("kha_nang_xay_ra"),
+        items: generateKhaNangXayRa(safeCounts.kha_nang_xay_ra),
       };
     case "cac_ngay_trong_tuan":
       return {

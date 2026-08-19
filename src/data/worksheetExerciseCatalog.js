@@ -346,6 +346,87 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     colorThemeTags: ["blue", "teal", "purple"],
   },
 
+  // ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+  // 5 dạng bài MỚI, tất cả minGrade=maxGrade="LOP_3" (đúng mạch nội dung Lớp 3, xem
+  // NEXT_STEPS.md để rõ tra cứu PPCT SGK Toán 3 Kết nối tri thức).
+  {
+    key: "chu_vi_dien_tich",
+    subject: "TOAN",
+    label: "Chu vi, diện tích (hình vuông, HCN)",
+    skillGroup: "hinh_hoc",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 4,
+    instructionVariants: [
+      "Tính chu vi hoặc diện tích hình đã cho.",
+      "Em hãy tính chu vi/diện tích các hình sau.",
+      "Đọc kỹ đề rồi tính chu vi hoặc diện tích nhé!",
+    ],
+    mascotPool: ["📐", "📏", "🐢"],
+    colorThemeTags: ["teal", "blue", "green"],
+  },
+  {
+    key: "doi_don_vi_do",
+    subject: "TOAN",
+    label: "Đổi đơn vị đo (độ dài, khối lượng, dung tích)",
+    skillGroup: "do_luong",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 6,
+    instructionVariants: ["Đổi các số đo sau.", "Em hãy đổi đơn vị đo thích hợp vào chỗ trống.", "Điền số thích hợp vào chỗ trống nhé!"],
+    mascotPool: ["⚖️", "📏", "🧴"],
+    colorThemeTags: ["blue", "orange", "teal"],
+  },
+  {
+    key: "xem_dong_ho_gio_phut",
+    subject: "TOAN",
+    label: "Xem đồng hồ (giờ, phút)",
+    skillGroup: "thoi_gian",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 4,
+    instructionVariants: [
+      "Xem đồng hồ rồi viết giờ, phút thích hợp vào chỗ trống.",
+      "Đồng hồ chỉ mấy giờ mấy phút? Em hãy viết vào chỗ trống nhé!",
+      "Quan sát kim đồng hồ rồi ghi lại đúng giờ, phút.",
+    ],
+    mascotPool: ["⏰", "🦉", "🐰"],
+    colorThemeTags: ["orange", "purple", "yellow"],
+  },
+  {
+    key: "tien_viet_nam",
+    subject: "TOAN",
+    label: "Tiền Việt Nam",
+    skillGroup: "do_luong",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 4,
+    instructionVariants: ["Tính tổng số tiền.", "Em hãy tính xem có tất cả bao nhiêu tiền.", "Đếm và tính tổng số tiền nhé!"],
+    mascotPool: ["💰", "🪙", "🛍️"],
+    colorThemeTags: ["yellow", "green", "orange"],
+  },
+  {
+    key: "kha_nang_xay_ra",
+    subject: "TOAN",
+    label: "Khả năng xảy ra của một sự kiện",
+    skillGroup: "thong_ke",
+    source: "code",
+    minGrade: "LOP_3",
+    maxGrade: "LOP_3",
+    defaultCount: 5,
+    instructionVariants: [
+      "Khoanh vào khả năng xảy ra đúng của mỗi sự kiện sau.",
+      "Em hãy chọn đúng mức độ: Chắc chắn / Có thể / Không thể.",
+      "Đọc kỹ rồi khoanh vào khả năng xảy ra đúng nhé!",
+    ],
+    mascotPool: ["🎲", "🔮", "🤔"],
+    colorThemeTags: ["purple", "pink", "blue"],
+  },
+
   // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn
   // ngữ - từ vựng/câu văn, không tính toán được bằng code như các dạng Toán). Trước đây chỉ
   // khai báo "chỗ đứng" (source:"planned") để schema layout/mascot dùng chung được ngay - giờ

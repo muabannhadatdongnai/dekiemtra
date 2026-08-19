@@ -13,6 +13,9 @@ import {
 import { saveAs } from "file-saver";
 import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
 import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
+// MỞ RỘNG LỚP 3, ĐỢT 2: nhãn 3 mức "Chắc chắn/Có thể/Không thể" dùng chung với generator/preview
+// (worksheetSchemas.js) - tránh khai lại danh sách nhãn 3 nơi có thể lệch nhau.
+import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
 
 /**
  * worksheetExportService.js
@@ -212,6 +215,95 @@ function buildXemDongHoGioDungParagraphs(items, showAnswers) {
     }),
     spacing: { after: 140 },
   }));
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
+ * "Xem đồng hồ (giờ, phút)" - KHÔNG dùng emoji đồng hồ (chỉ hỗ trợ giờ tròn/giờ rưỡi trong bảng
+ * mã Unicode, không đủ độ chi tiết cho phút bội số 5 tuỳ ý) - dùng text thuần "Đồng hồ chỉ: ..."
+ * Bản xem trước web (WorksheetPreview.jsx) VẪN vẽ mặt đồng hồ chính xác bằng SVG (dùng cho "Tải
+ * PDF" qua window.print()) - Word chỉ là bản tải xuống PHỤ, chấp nhận giảm độ trực quan ở đây.
+ */
+function buildXemDongHoGioPhutParagraphs(items, showAnswers) {
+  return items.map((it, i) => ({
+    children: [
+      new TextRun({
+        text: `${i + 1}. Đồng hồ chỉ: ${showAnswers ? `${it.hour} giờ ${it.minute} phút` : `${BLANK} giờ ${BLANK} phút`}`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 120 },
+  }));
+}
+
+/** "Chu vi, diện tích hình chữ nhật - hình vuông" - đoạn văn tả hình + câu hỏi + chỗ trống. */
+function buildChuViDienTichParagraphs(items, showAnswers) {
+  return items.map((it, i) => {
+    const desc =
+      it.shape === "vuong"
+        ? `Hình vuông có cạnh ${it.side} ${it.unit}.`
+        : `Hình chữ nhật có chiều dài ${it.length} ${it.unit}, chiều rộng ${it.width} ${it.unit}.`;
+    const ask = it.metric === "chu_vi" ? "Tính chu vi hình đó." : "Tính diện tích hình đó.";
+    const resultUnit = it.metric === "dien_tich" ? `${it.unit}2` : it.unit; // Word font thường không có superscript "²" ổn định - dùng "cm2"
+    return {
+      children: [
+        new TextRun({
+          text: `${i + 1}. ${desc} ${ask}  Bài giải: ${showAnswers ? `${it.answer} ${resultUnit}` : `${BLANK} ${resultUnit}`}`,
+          font: FONT,
+          size: 24,
+        }),
+      ],
+      spacing: { after: 140 },
+    };
+  });
+}
+
+/** "Đổi đơn vị đo" - lưới 3 cột giống buildTinhNhamParagraphs, "số + đơn vị" thay vì phép tính. */
+function buildDoiDonViParagraphs(items, showAnswers) {
+  return chunkArray(items, 3).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const text = `${it.value} ${it.fromUnit} = ${showAnswers ? it.answer : BLANK} ${it.toUnit}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
+/** "Tiền Việt Nam" - liệt kê tờ tiền bằng chữ, tính tổng. */
+function buildTienVietNamParagraphs(items, showAnswers) {
+  return items.map((it, i) => ({
+    children: [
+      new TextRun({
+        text: `${i + 1}. Em có ${it.bills
+          .map((b) => `${b.quantity} tờ ${b.denomination.toLocaleString("vi-VN")} đồng`)
+          .join(" và ")}. Hỏi em có tất cả bao nhiêu tiền?  Trả lời: ${showAnswers ? `${it.answer.toLocaleString("vi-VN")} đồng` : `${BLANK} đồng`}`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 140 },
+  }));
+}
+
+/**
+ * "Khả năng xảy ra của một sự kiện" - bản giáo viên (showAnswers=true) IN HOA nhãn đúng để dễ
+ * nhận ra ngay (docx.js dựng bold dễ hơn màu nền như web) - bản học sinh liệt kê nguyên 3 nhãn.
+ */
+function buildKhaNangXayRaParagraphs(items, showAnswers) {
+  return items.map((it, i) => {
+    const optionsText = Object.entries(PROBABILITY_LEVEL_LABELS)
+      .map(([key, label]) => (showAnswers && key === it.level ? `[${label}]` : label))
+      .join("   /   ");
+    return {
+      children: [
+        new TextRun({ text: `${i + 1}. ${it.text}`, font: FONT, size: 24 }),
+        new TextRun({ text: `      ${optionsText}`, font: FONT, size: 24, bold: showAnswers }),
+      ],
+      spacing: { after: 140 },
+    };
+  });
 }
 
 /**
@@ -450,6 +542,16 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildSapXepThuTuParagraphs(section.items, showAnswers);
     case "xem_dong_ho_gio_dung":
       return buildXemDongHoGioDungParagraphs(section.items, showAnswers);
+    case "xem_dong_ho_gio_phut":
+      return buildXemDongHoGioPhutParagraphs(section.items, showAnswers);
+    case "chu_vi_dien_tich":
+      return buildChuViDienTichParagraphs(section.items, showAnswers);
+    case "doi_don_vi_do":
+      return buildDoiDonViParagraphs(section.items, showAnswers);
+    case "tien_viet_nam":
+      return buildTienVietNamParagraphs(section.items, showAnswers);
+    case "kha_nang_xay_ra":
+      return buildKhaNangXayRaParagraphs(section.items, showAnswers);
     case "cac_ngay_trong_tuan":
       return buildCacNgayTrongTuanParagraphs(section.items, showAnswers);
     case "nhan_dien_hinh":
