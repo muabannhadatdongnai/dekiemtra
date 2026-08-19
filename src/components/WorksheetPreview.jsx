@@ -657,6 +657,50 @@ function KhaNangXayRaSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 3 ==================
+ * "Thu thập, phân loại số liệu" - biểu đồ cột NGANG đơn giản (mỗi hàng: nhãn + thanh màu dài
+ * theo tỉ lệ giá trị/giá trị lớn nhất + số liệu) rồi danh sách câu hỏi rút ra từ CÙNG 1 bảng đó.
+ * Dùng thanh ngang (không phải cột dọc) vì dễ canh chỉnh chiều rộng bằng % trong flexbox hơn
+ * chiều cao, và vẫn đọc trực quan không kém biểu đồ cột dọc thường thấy trong SGK.
+ */
+function ThuThapSoLieuSection({ surveyTitle, data, questions, accent }) {
+  const maxValue = Math.max(...data.map((d) => d.value), 1);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 15 }}>
+      <div style={{ fontWeight: 600 }}>{surveyTitle}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {data.map((d, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 90, flexShrink: 0, textAlign: "right" }}>{d.label}</div>
+            <div
+              style={{
+                background: accent,
+                opacity: 0.75,
+                height: 20,
+                borderRadius: 4,
+                width: `${(d.value / maxValue) * 70}%`,
+                minWidth: 20,
+              }}
+            />
+            <div style={{ fontWeight: 600 }}>{d.value}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {questions.map((q, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+            <span>
+              {i + 1}. {q.text}
+            </span>
+            {blankBox(accent)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
  * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
  * Điền tên ngày còn thiếu trong 1 đoạn liên tiếp của tuần - CÙNG khuôn dữ liệu với DaySoSection
  * (sequence có null = chỗ trống) nhưng nối bằng " — " thay vì dấu phẩy (tên ngày dài hơn số, dấu
@@ -1063,6 +1107,9 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "doi_don_vi_do" && <DoiDonViSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
+      {section.type === "thu_thap_so_lieu" && (
+        <ThuThapSoLieuSection surveyTitle={section.surveyTitle} data={section.data} questions={section.questions} accent={t.border} />
+      )}
       {section.type === "cac_ngay_trong_tuan" && <CacNgayTrongTuanSection items={section.items} accent={t.border} />}
       {section.type === "nhan_dien_hinh" && <NhanDienHinhSection shapes={section.shapes} accent={t.border} />}
       {section.type === "dem_hinh_ung_dung" && <DemHinhUngDungSection data={section.data} accent={t.border} />}

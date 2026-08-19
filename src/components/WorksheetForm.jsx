@@ -145,7 +145,7 @@ export default function WorksheetForm({ onGenerated }) {
 
   // ================== GIAI ĐOẠN 9, BƯỚC 2 (Tầng B - catalog theo chủ đề SGK) ==================
   // Danh sách "gói chủ đề" khả dụng cho ĐÚNG khối lớp/môn đang chọn - rỗng ([]) với hầu hết tổ
-  // hợp (đợt này CHỈ có 2 gói cho Lớp 1/Toán, xem worksheetTopicPackages.js), UI bên dưới tự ẩn
+  // hợp (hiện có Lớp 1/Toán và Lớp 3/Toán, xem worksheetTopicPackages.js), UI bên dưới tự ẩn
   // khi rỗng nên không cần điều kiện hasSgkForGrade riêng.
   const topicPackages = useMemo(() => getTopicPackagesFor(grade, subject), [grade, subject]);
 
