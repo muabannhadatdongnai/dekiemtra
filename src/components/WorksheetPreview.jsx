@@ -5,6 +5,9 @@ import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutT
 // MỞ RỘNG LỚP 3, ĐỢT 2: nhãn 3 mức "Chắc chắn/Có thể/Không thể" dùng chung với generator
 // (worksheetSchemas.js) - tránh khai lại danh sách nhãn 2 nơi có thể lệch nhau.
 import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
+// MỞ RỘNG LỚP 3, ĐỢT 3: format số kiểu Việt Nam (dấu chấm phân cách hàng nghìn) DÙNG CHUNG với
+// worksheetExportService.js - xem numberFormatUtils.js.
+import { formatSoTuNhien, formatSoTrongChuoi } from "@/services/numberFormatUtils";
 
 /**
  * WorksheetPreview.jsx
@@ -201,12 +204,19 @@ function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, tit
 // GIAI ĐOẠN F3 (tăng cỡ ô làm bài): 34x26 quá nhỏ so với khổ A4 thật khi in - học sinh khó viết
 // số vào trong. Bỏ 2 cột giải phóng bề rộng trang (trước đây mỗi cột chỉ 47%) nên có đủ chỗ tăng
 // kích thước ô mà không lo tràn dòng.
+//
+// MỞ RỘNG LỚP 3, ĐỢT 3: rộng thêm 42 -> 64 - từ khi mở khối Lớp 3 (số đến 100 000, xem
+// worksheetSchemas.js), đáp án có thể dài tới 5-6 ký tự kể cả dấu chấm phân cách hàng nghìn (VD
+// "19.000") - ô 42px cũ chỉ vừa 2-3 ký tự, học sinh viết số lớn sẽ bị tràn ra ngoài (đúng phản
+// hồi thực tế ở "Trạm 8" - đổi đơn vị đo). Giữ NGUYÊN 1 kích thước DUY NHẤT cho mọi dạng bài
+// (không tách riêng theo dạng bài) để không lệch cỡ ô giữa các khối trên cùng 1 phiếu.
 const blankBox = (accent = "#94A3B8") => (
   <span
     style={{
       display: "inline-block",
-      width: 42,
+      minWidth: 64,
       height: 32,
+      padding: "0 4px",
       border: `1.5px solid ${accent}`,
       borderRadius: 6,
       background: "#fff",
@@ -215,12 +225,15 @@ const blankBox = (accent = "#94A3B8") => (
   />
 );
 
+// MỞ RỘNG LỚP 3, ĐỢT 3: 3 cột -> 2 cột (giáo viên phản ánh 3 cột dồn quá chật, nhất là từ khi
+// Lớp 3 có phép tính số tròn nghìn/chục nghìn dài hơn hẳn Lớp 1-2) - 2 cột cho bài + ô đáp án
+// rộng rãi hơn, đỡ tràn khi số dài (63.880 + 20.000 = ...).
 function TinhNhamSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px 16px", fontSize: 15 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px 20px", fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {it.operandA} {it.operator} {it.operandB} = {blankBox(accent)}
+          {formatSoTuNhien(it.operandA)} {it.operator} {formatSoTuNhien(it.operandB)} = {blankBox(accent)}
         </div>
       ))}
     </div>
@@ -254,7 +267,7 @@ function SoSanhSection({ items, accent }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px 16px", fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {it.left}
+          {formatSoTrongChuoi(it.left)}
           <span
             style={{
               display: "inline-block",
@@ -265,7 +278,7 @@ function SoSanhSection({ items, accent }) {
               background: "#fff",
             }}
           />
-          {it.right}
+          {formatSoTrongChuoi(it.right)}
         </div>
       ))}
     </div>
@@ -278,7 +291,7 @@ function DaySoSection({ items, accent }) {
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, fontSize: 15, alignItems: "center" }}>
           {it.sequence.map((n, idx) => (
-            <span key={idx}>{n === null ? blankBox(accent) : n}</span>
+            <span key={idx}>{n === null ? blankBox(accent) : formatSoTuNhien(n)}</span>
           ))}
         </div>
       ))}
@@ -377,7 +390,9 @@ function SapXepThuTuSection({ items, accent }) {
         const unitSuffix = it.unit ? ` ${it.unit}` : "";
         return (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 15 }}>
-            <span style={{ marginRight: 10 }}>{it.numbers.map((n) => `${n}${unitSuffix}`).join(" ;  ")}</span>
+            <span style={{ marginRight: 10 }}>
+              {it.numbers.map((n) => `${formatSoTuNhien(n)}${unitSuffix}`).join(" ;  ")}
+            </span>
             <span style={{ color: accent, fontWeight: 700 }}>➜</span>
             {it.sortedAnswer.map((_, idx) => (
               <span key={idx} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -398,14 +413,14 @@ function NoiPhepTinhSection({ data, accent }) {
       <div>
         {data.pairs.map((p, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
-            {p.expr} <span style={{ marginLeft: 6, color: accent, fontWeight: 700 }}>●</span>
+            {formatSoTrongChuoi(p.expr)} <span style={{ marginLeft: 6, color: accent, fontWeight: 700 }}>●</span>
           </div>
         ))}
       </div>
       <div style={{ textAlign: "right" }}>
         {data.shuffledResults.map((r, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
-            <span style={{ marginRight: 6, color: accent, fontWeight: 700 }}>●</span> {r}
+            <span style={{ marginRight: 6, color: accent, fontWeight: 700 }}>●</span> {formatSoTuNhien(r)}
           </div>
         ))}
       </div>
@@ -582,15 +597,20 @@ function ChuViDienTichSection({ items, accent }) {
 
 /**
  * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
- * "Đổi đơn vị đo" - lưới 3 cột giống TinhNhamSection, nhưng vế trái/phải là "số + đơn vị" thay vì
+ * "Đổi đơn vị đo" - lưới 2 cột giống TinhNhamSection, nhưng vế trái/phải là "số + đơn vị" thay vì
  * phép tính (không tái dùng thẳng được TinhNhamSection vì thiếu chỗ hiển thị đơn vị).
+ *
+ * ================== MỞ RỘNG LỚP 3, ĐỢT 3 (phản hồi "Trạm 8") ==================
+ * TRƯỚC ĐÂY 3 cột: giá trị đổi có thể tới 5 chữ số (VD 14000 ml, 20000 m) làm ô đáp án 3-cột bị
+ * chật, số lớn tràn ra ngoài ô khi in. Đổi xuống 2 cột (giống TinhNhamSection) để mỗi dòng có
+ * nhiều bề rộng hơn, ô đáp án (blankBox) rộng và thoáng hơn hẳn.
  */
 function DoiDonViSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px 16px", fontSize: 15 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px 20px", fontSize: 15 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {it.value} {it.fromUnit} = {blankBox(accent)} {it.toUnit}
+          {formatSoTuNhien(it.value)} {it.fromUnit} = {blankBox(accent)} {it.toUnit}
         </div>
       ))}
     </div>
@@ -608,7 +628,7 @@ function TienVietNamSection({ items, accent }) {
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <div>
-            {i + 1}. Em có {it.bills.map((b) => `${b.quantity} tờ ${b.denomination.toLocaleString("vi-VN")} đồng`).join(" và ")}.
+            {i + 1}. Em có {it.bills.map((b) => `${b.quantity} tờ ${formatSoTuNhien(b.denomination)} đồng`).join(" và ")}.
             Hỏi em có tất cả bao nhiêu tiền?
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>

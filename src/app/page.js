@@ -52,6 +52,13 @@ const MODES = {
 // EMPTY_*_RESULT các mode khác vì dữ liệu là DANH SÁCH nhiều học sinh, không phải 1 đề/giáo án.
 const EMPTY_REPORT_COMMENT_RESULT = { cap: null, doDai: null, results: [] };
 
+// ================== MỞ RỘNG LỚP 3, ĐỢT 3 ("tắt đăng nhập để test") ==================
+// Cùng 1 biến với src/services/apiAuth.js (xem giải thích đầy đủ ở đó) - khi bật, bỏ qua hẳn màn
+// hình đăng nhập, tự gán 1 "phiên test" cố định để giáo viên vào thẳng trang chính. KHÔNG đổi gì
+// khi biến này chưa được đặt (mặc định "false") - hành vi cũ (bắt đăng nhập) giữ nguyên.
+const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN === "true";
+const TEST_USER = { username: "giao_vien_test", fullName: "Giáo viên (chế độ test)", role: "teacher" };
+
 export default function HomePage() {
   const [user, setUser] = useState(null);
   const [checkedSession, setCheckedSession] = useState(false);
@@ -78,13 +85,13 @@ export default function HomePage() {
 
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
-    setUser(getSession());
+    setUser(DISABLE_LOGIN ? TEST_USER : getSession());
     setCheckedSession(true);
   }, []);
 
   function handleLogout() {
     clearSession();
-    setUser(null);
+    setUser(DISABLE_LOGIN ? TEST_USER : null); // chế độ test: đăng xuất xong vẫn ở lại trang chính, không bắt đăng nhập lại
     setExamResult(EMPTY_EXAM_RESULT);
     setVariants([]);
     setActiveVariantIndex(0);
