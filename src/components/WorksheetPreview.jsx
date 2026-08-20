@@ -692,6 +692,28 @@ function SoThapPhanSoSanhSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 2 ==================
+ * "Cộng, trừ số thập phân" - cùng bố cục lưới 2 cột dạng "a op b = ___" như TinhNhamSection (các
+ * dạng bài số tự nhiên), chỉ khác nội dung hiển thị dùng formatSoThapPhan với đúng số chữ số thập
+ * phân gốc của TỪNG toán hạng (leftDec.length/rightDec.length) - giữ hiển thị "3,4 + 5,72" đúng
+ * như đề bài gốc (KHÔNG ép cùng số chữ số thập phân trước khi hiển thị, vì SGK Toán 5 KNTT dạy
+ * học sinh tự nhận ra cần thêm số 0 khi đặt tính, không phải đề bài đã làm sẵn việc đó).
+ */
+function SoThapPhanCongTruSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length)} {it.operator}{" "}
+          {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length)} ={" "}
+          {blankBox(accent, 40)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
  * "Góc và đơn vị đo góc" - vẽ 2 tia chung gốc bằng SVG theo đúng số đo góc (degrees), học sinh
  * tự nhìn hình rồi gọi tên loại góc (không hiện số đo bằng chữ để tránh học sinh chỉ dựa vào số
@@ -1258,6 +1280,7 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "bieu_thuc_chu" && <BieuThucChuSection items={section.items} accent={t.border} />}
       {section.type === "phan_so_so_sanh" && <PhanSoSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "so_thap_phan_so_sanh" && <SoThapPhanSoSanhSection items={section.items} accent={t.border} />}
+      {section.type === "so_thap_phan_cong_tru" && <SoThapPhanCongTruSection items={section.items} accent={t.border} />}
       {section.type === "goc_nhan_biet" && <GocNhanBietSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
