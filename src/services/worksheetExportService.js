@@ -308,6 +308,57 @@ function buildPhanSoRutGonParagraphs(items, showAnswers) {
   }));
 }
 
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * "Biểu thức chữ" - in "biểu thức (khi a = X) = kết quả/BLANK", 2 cột như "Rút gọn phân số".
+ */
+function buildBieuThucChuParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const text = `${it.expression} (khi a = ${it.aValue}) = ${showAnswers ? formatSoTuNhien(it.answer) : BLANK}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * "So sánh phân số" - in "n1/d1 ... n2/d2" với dấu so sánh (hoặc BLANK), 2 cột.
+ */
+function buildPhanSoSoSanhParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const text = `${it.n1}/${it.d1}   ${showAnswers ? it.answer : BLANK}   ${it.n2}/${it.d2}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * "Góc và đơn vị đo góc" - Word KHÔNG hỗ trợ vẽ SVG như bản web (AngleFigure trong
+ * WorksheetPreview.jsx) - giống cách "Xem đồng hồ" đã xử lý trước đây (dùng text vì không cần độ
+ * chi tiết đồ hoạ, xem NEXT_STEPS.md Lớp 3 Đợt 2), bản Word mô tả góc bằng SỐ ĐO trực tiếp thay
+ * vì hình vẽ - đổi lại vẫn giữ đúng bản chất bài tập (nhận biết loại góc), chỉ khác kênh trình
+ * bày (nhìn hình vs đọc số đo).
+ */
+function buildGocNhanBietParagraphs(items, showAnswers) {
+  return items.map((it, i) => ({
+    children: [
+      new TextRun({
+        text: `${i + 1}. Góc có số đo ${it.degrees}° là góc ${showAnswers ? it.answer : BLANK}`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 100 },
+  }));
+}
+
 /** "Tiền Việt Nam" - liệt kê tờ tiền bằng chữ, tính tổng. */
 function buildTienVietNamParagraphs(items, showAnswers) {
   return items.map((it, i) => ({
@@ -621,6 +672,12 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildDoiDonViParagraphs(section.items, showAnswers);
     case "phan_so_rut_gon":
       return buildPhanSoRutGonParagraphs(section.items, showAnswers);
+    case "bieu_thuc_chu":
+      return buildBieuThucChuParagraphs(section.items, showAnswers);
+    case "phan_so_so_sanh":
+      return buildPhanSoSoSanhParagraphs(section.items, showAnswers);
+    case "goc_nhan_biet":
+      return buildGocNhanBietParagraphs(section.items, showAnswers);
     case "tien_viet_nam":
       return buildTienVietNamParagraphs(section.items, showAnswers);
     case "kha_nang_xay_ra":

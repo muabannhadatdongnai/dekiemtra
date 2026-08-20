@@ -472,6 +472,65 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     mascotPool: ["🍕", "🍰", "🧩"],
     colorThemeTags: ["yellow", "purple", "teal"],
   },
+  {
+    // ===== MỞ RỘNG LỚP 4, ĐỢT 2 =====
+    key: "bieu_thuc_chu",
+    subject: "TOAN",
+    label: "Biểu thức chữ",
+    skillGroup: "so_hoc",
+    source: "code",
+    minGrade: "LOP_4",
+    maxGrade: "LOP_4",
+    defaultCount: 6,
+    instructionVariants: [
+      "Tính giá trị của biểu thức.",
+      "Em hãy thay giá trị của a rồi tính kết quả.",
+      "Tính giá trị biểu thức khi biết giá trị của a.",
+    ],
+    mascotPool: ["🔤", "🧠", "✏️"],
+    colorThemeTags: ["blue", "purple", "green"],
+  },
+  {
+    // ===== MỞ RỘNG LỚP 4, ĐỢT 2 =====
+    // Khác "Rút gọn phân số" (Đợt 1) - đây là dạng SO SÁNH 2 phân số, dùng chữ "n1/d1" thay vì
+    // key trùng để tránh nhầm với generatePhanSoRutGon().
+    key: "phan_so_so_sanh",
+    subject: "TOAN",
+    label: "So sánh phân số",
+    skillGroup: "phan_so",
+    source: "code",
+    minGrade: "LOP_4",
+    maxGrade: "LOP_4",
+    defaultCount: 6,
+    instructionVariants: [
+      "So sánh. Điền dấu >, <, = thích hợp.",
+      "Em hãy so sánh 2 phân số rồi điền dấu thích hợp.",
+      "So sánh thật kỹ rồi điền dấu đúng nhé!",
+    ],
+    mascotPool: ["🍕", "🍰", "🥧"],
+    colorThemeTags: ["orange", "yellow", "purple"],
+  },
+  {
+    // ===== MỞ RỘNG LỚP 4, ĐỢT 2 =====
+    // "Góc và đơn vị đo góc" - CHỈ yêu cầu nhận biết/phân loại góc theo số đo cho sẵn (xem giải
+    // thích đầy đủ trong generateGocNhanBiet(), worksheetSchemas.js) - chưa yêu cầu tự đo bằng
+    // thước đo góc.
+    key: "goc_nhan_biet",
+    subject: "TOAN",
+    label: "Góc và đơn vị đo góc",
+    skillGroup: "hinh_hoc",
+    source: "code",
+    minGrade: "LOP_4",
+    maxGrade: "LOP_4",
+    defaultCount: 6,
+    instructionVariants: [
+      "Quan sát mỗi góc rồi cho biết đó là góc gì.",
+      "Em hãy gọi tên loại góc (nhọn, vuông, tù, bẹt) của mỗi hình sau.",
+      "Mỗi góc dưới đây là góc nhọn, vuông, tù hay bẹt?",
+    ],
+    mascotPool: ["📐", "📏", "🔺"],
+    colorThemeTags: ["teal", "blue", "orange"],
+  },
 
   // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn
   // ngữ - từ vựng/câu văn, không tính toán được bằng code như các dạng Toán). Trước đây chỉ

@@ -764,3 +764,121 @@ export function generatePhanSoRutGon(count = 6) {
   return items;
 }
 
+// ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+// "Biểu thức chữ" - đúng mạch "Biểu thức có chứa chữ" trong SGK Toán 4 KNTT (làm quen ẩn số:
+// cho biết giá trị của chữ, tính giá trị biểu thức). Dùng ĐÚNG 1 chữ "a" (SGK Toán 4 luôn giới
+// thiệu bằng 1 chữ trước, chưa ghép nhiều chữ - "a + b" là nội dung sau, để dành đợt sau nếu
+// cần) - biểu thức gồm 2 bước tính (+/-/×) với 1 số ĐÃ CHO SẴN, học sinh thay a = giá trị rồi
+// tính ra kết quả. Số liệu chọn nhỏ để vẫn tính nhẩm được (không cần đặt tính cột dọc).
+function buildBieuThucChuExpression() {
+  const a = randInt(2, 20);
+  // Chọn ngẫu nhiên 1 hoặc 2 bước tính để đa dạng độ khó, luôn giữ số liệu đủ nhỏ để nhẩm được
+  // và luôn trừ ra không âm (phù hợp học sinh Lớp 4, chưa học số âm).
+  const steps = Math.random() < 0.5 ? 1 : 2;
+  const parts = ["a"];
+  let value = a;
+  for (let i = 0; i < steps; i++) {
+    // ĐÃ SỬA (sanity-check phát hiện lỗi): khi `value` tạm thời về 0 giữa 2 bước tính, nhánh trừ
+    // cũ vẫn ép b tối thiểu = 1 (dùng max(1, ...)) -> trừ tiếp ra số ÂM (VD "a - 6 - 1" khi a=6).
+    // Sửa: LOẠI hẳn phép trừ khỏi lựa chọn khi value <= 0 (không còn gì để trừ nữa).
+    const availableOps = value > 0 ? ["+", "-", "×"] : ["+", "×"];
+    const op = pick(availableOps);
+    if (op === "×") {
+      const b = randInt(2, 5);
+      parts.push(`× ${b}`);
+      value = value * b;
+    } else if (op === "+") {
+      const b = randInt(1, 30);
+      parts.push(`+ ${b}`);
+      value = value + b;
+    } else {
+      // trừ: b nằm trong [1, value] (value chắc chắn > 0 ở đây) - không bao giờ ra kết quả âm.
+      const b = randInt(1, Math.min(20, value));
+      parts.push(`- ${b}`);
+      value = value - b;
+    }
+  }
+  return { expression: parts.join(" "), aValue: a, answer: value };
+}
+
+export function generateBieuThucChu(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const item = buildBieuThucChuExpression();
+    const dedupeKey = `${item.expression}|${item.aValue}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push(item);
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+// "So sánh phân số" - khác "Rút gọn phân số" (đã có Đợt 1): ở đây cho 2 phân số CÙNG MẪU SỐ hoặc
+// CÙNG TỬ SỐ (2 cách so sánh cơ bản nhất dạy trước quy đồng tổng quát trong SGK Toán 4 KNTT),
+// học sinh điền dấu >, <, =. Tính đáp án bằng so sánh chéo (a/b vs c/d <=> a*d vs c*b) để ĐÚNG
+// toán học trong MỌI trường hợp, không chỉ riêng 2 nhánh cùng mẫu/cùng tử.
+function compareFractions(n1, d1, n2, d2) {
+  const left = n1 * d2;
+  const right = n2 * d1;
+  if (left > right) return ">";
+  if (left < right) return "<";
+  return "=";
+}
+
+export function generatePhanSoSoSanh(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const sameDenominator = Math.random() < 0.5;
+    let n1, d1, n2, d2;
+    if (sameDenominator) {
+      d1 = d2 = randInt(3, 12);
+      n1 = randInt(1, d1 - 1);
+      n2 = randInt(1, d1 - 1);
+    } else {
+      n1 = n2 = randInt(1, 8);
+      d1 = randInt(n1 + 1, n1 + 8);
+      d2 = randInt(n1 + 1, n1 + 8);
+    }
+    const dedupeKey = `${n1}/${d1}_${n2}/${d2}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({ n1, d1, n2, d2, answer: compareFractions(n1, d1, n2, d2) });
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+// "Góc và đơn vị đo góc" - đúng mạch "Góc nhọn, góc tù, góc bẹt" trong SGK Toán 4 KNTT. Chỉ yêu
+// cầu NHẬN BIẾT/PHÂN LOẠI góc theo số đo cho sẵn (không yêu cầu tự đo bằng thước đo góc - việc đo
+// tay thật cần dụng cụ vật lý, không phù hợp với phiếu bài tập tạo tự động) - đúng mức độ "làm
+// quen" của Lớp 4, chưa sang tính toán góc phức tạp hơn (dành cho Lớp 5 nếu cần). Số đo random
+// nhưng LOẠI TRỪ các mốc dễ gây tranh cãi khi làm tròn hiển thị (VD né quá sát 90/180).
+const ANGLE_TYPES = [
+  { type: "nhọn", min: 10, max: 85 }, // 0 < góc nhọn < 90
+  { type: "vuông", fixed: 90 },
+  { type: "tù", min: 95, max: 175 }, // 90 < góc tù < 180
+  { type: "bẹt", fixed: 180 },
+];
+
+export function generateGocNhanBiet(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const kind = pick(ANGLE_TYPES);
+    const degrees = kind.fixed ?? randInt(kind.min, kind.max);
+    if (used.has(degrees)) continue;
+    used.add(degrees);
+    items.push({ degrees, answer: kind.type });
+  }
+  return items;
+}
+

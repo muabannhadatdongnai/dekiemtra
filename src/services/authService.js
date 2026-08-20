@@ -62,3 +62,33 @@ export function clearSession() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(STORAGE_KEY);
 }
+
+/**
+ * ================== SỬA LỖI (Phiên 12): "Phiên đăng nhập đã hết" hiện SAI khi web đang ở
+ * chế độ CÔNG KHAI (NEXT_PUBLIC_DISABLE_LOGIN không đặt = "false", tức public mặc định - xem
+ * apiAuth.js/page.js) ==================
+ * Nguyên nhân: `WorksheetForm.jsx`/`OutlineForm.jsx`/`ExamMatrixForm.jsx`/`LessonPlanForm.jsx`
+ * đều tự gọi thẳng `getSession()` (đọc localStorage) trước khi gửi request, rồi báo lỗi + CHẶN
+ * request nếu không có session - nhưng ở chế độ public, giáo viên KHÔNG bao giờ đăng nhập nên
+ * localStorage KHÔNG BAO GIỜ có session -> mọi lượt "Tạo phiếu bài tập" (và upload phiếu mẫu)
+ * đều bị chặn ngay trên trình duyệt, dù server (`apiAuth.js`) đã bỏ qua xác thực. Trong khi đó
+ * `page.js` xử lý ĐÚNG (tự gán TEST_USER khi DISABLE_LOGIN) nên màn hình đăng nhập không hiện ra
+ * - khiến giáo viên vào thẳng được trang chính rồi mới dính lỗi lúc bấm nút, dễ gây nhầm lẫn.
+ *
+ * Cách sửa: thêm `DISABLE_LOGIN`/`TEST_SESSION` NGAY TẠI ĐÂY (cùng logic với `apiAuth.js`/
+ * `page.js`) + hàm `getEffectiveSession()` = phiên thật sự nên dùng để gọi API, trả về
+ * `TEST_SESSION` ngay khi đang ở chế độ public (không cần localStorage), hoặc `getSession()` như
+ * cũ khi đăng nhập vẫn đang bật. 4 form trên đổi từ `getSession()` sang `getEffectiveSession()`
+ * ở đúng những chỗ dùng để CHẶN submit + lấy `username` gửi kèm request.
+ */
+export const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN !== "false";
+export const TEST_SESSION = {
+  username: "giao_vien_test",
+  fullName: "Giáo viên (chế độ test)",
+  role: "teacher",
+};
+
+export function getEffectiveSession() {
+  if (DISABLE_LOGIN) return TEST_SESSION;
+  return getSession();
+}

@@ -22,6 +22,9 @@ import {
   generateKhaNangXayRa,
   generateThuThapSoLieu,
   generatePhanSoRutGon,
+  generateBieuThucChu,
+  generatePhanSoSoSanh,
+  generateGocNhanBiet,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -493,6 +496,14 @@ const DEFAULT_SECTION_ORDER = [
   // "phan_so_rut_gon" xếp sau khối Lớp 3, trước "nhan_dien_hinh" - vẫn cùng mạch "kỹ năng số
   // học" của phiếu (Lớp 4 chỉ chọn được khi grade=LOP_4 nên không ảnh hưởng phiếu Lớp 1-3).
   "phan_so_rut_gon",
+  // ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+  // 3 dạng bài mới - xếp ngay sau "phan_so_rut_gon" (cùng mạch "phân số"/"kỹ năng số học" Lớp 4,
+  // chỉ chọn được khi grade=LOP_4 nên không ảnh hưởng phiếu Lớp 1-3), "goc_nhan_biet" xếp cuối
+  // cùng (mạch hình học) ngay trước "nhan_dien_hinh" - đúng thứ tự chủ đề SGK Toán 4 KNTT (biểu
+  // thức chữ -> phân số -> góc).
+  "bieu_thuc_chu",
+  "phan_so_so_sanh",
+  "goc_nhan_biet",
   "nhan_dien_hinh",
   "xem_dong_ho_gio_dung",
   "xem_dong_ho_gio_phut",
@@ -689,6 +700,28 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("phan_so_rut_gon") || "Rút gọn các phân số sau.",
         mascot: mascotFor("phan_so_rut_gon"),
         items: generatePhanSoRutGon(safeCounts.phan_so_rut_gon),
+      };
+    // ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+    case "bieu_thuc_chu":
+      return {
+        type: "bieu_thuc_chu",
+        title: pickInstructionVariant("bieu_thuc_chu") || "Tính giá trị của biểu thức.",
+        mascot: mascotFor("bieu_thuc_chu"),
+        items: generateBieuThucChu(safeCounts.bieu_thuc_chu),
+      };
+    case "phan_so_so_sanh":
+      return {
+        type: "phan_so_so_sanh",
+        title: pickInstructionVariant("phan_so_so_sanh") || "So sánh. Điền dấu >, <, = thích hợp.",
+        mascot: mascotFor("phan_so_so_sanh"),
+        items: generatePhanSoSoSanh(safeCounts.phan_so_so_sanh),
+      };
+    case "goc_nhan_biet":
+      return {
+        type: "goc_nhan_biet",
+        title: pickInstructionVariant("goc_nhan_biet") || "Quan sát mỗi góc rồi cho biết đó là góc gì.",
+        mascot: mascotFor("goc_nhan_biet"),
+        items: generateGocNhanBiet(safeCounts.goc_nhan_biet),
       };
     case "cac_ngay_trong_tuan":
       return {
