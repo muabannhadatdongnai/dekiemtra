@@ -13,11 +13,18 @@
 // học thật của Lớp 3) - CHỈ RIÊNG "tính nhẩm" (generateTinhNham) và "nối phép tính" cần xử lý
 // RIÊNG bên dưới, vì "nhẩm" 2 số ngẫu nhiên bất kỳ trong phạm vi 100 000 (VD 73 428 + 19 205)
 // không còn là "nhẩm" nữa mà là đặt tính cột dọc - không đúng bản chất dạng bài.
+// ================== MỞ RỘNG LỚP 4 (Đợt 1) ==================
+// maxNumber=1000000 khớp đúng nội dung "Các số đến 1 000 000" (SGK Toán 4 Kết nối tri thức, xem
+// NEXT_STEPS.md phần catalog Lớp 4-5 đã tra cứu). Cùng nguyên tắc như Lớp 3: các dạng bài "kỹ
+// năng chung" (so_sanh, sap_xep_thu_tu, day_so...) dùng thẳng maxNumber này là ĐÚNG nội dung;
+// riêng "tính nhẩm"/"nối phép tính" cần nhánh xử lý riêng bên dưới (giống lý do đã giải thích ở
+// Lớp 3) để không biến "nhẩm" thành đặt tính cột dọc với số quá lớn.
 export const WORKSHEET_GRADES = {
   MAM_NON: { key: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)", maxNumber: 10 },
   LOP_1: { key: "LOP_1", label: "Lớp 1", maxNumber: 20 },
   LOP_2: { key: "LOP_2", label: "Lớp 2", maxNumber: 100 },
   LOP_3: { key: "LOP_3", label: "Lớp 3", maxNumber: 100000 },
+  LOP_4: { key: "LOP_4", label: "Lớp 4", maxNumber: 1000000 },
 };
 
 export const EXERCISE_TYPES = {
@@ -85,12 +92,14 @@ export function generateTinhNham(grade, count = 6) {
   for (let i = 0; i < count; i++) {
     const operator = Math.random() < 0.5 ? "+" : "-";
     let a, b;
-    if (grade === "LOP_3") {
+    if (grade === "LOP_3" || grade === "LOP_4") {
       // ĐÃ SỬA (test thực tế phát hiện lỗi): cách cũ (số bất kỳ x bước tròn) vẫn ra được kiểu
       // "49620 - 5050" - đúng là "tròn chục" về mặt kỹ thuật nhưng KHÔNG dễ nhẩm. Cách đúng: chọn
       // 1 HÀNG (chục/trăm/nghìn/chục nghìn) làm "đơn vị nhẩm", rồi số = (1 chữ số có nghĩa, tối đa
       // 2) × hàng đó - đúng khuôn "3000 + 4000", "50 000 - 20 000" quen thuộc trong SGK.
-      const magnitudePool = [10, 100, 1000, 10000].filter((m) => m <= max);
+      // MỞ RỘNG LỚP 4: thêm hàng "100 000" vào kho (max Lớp 4 = 1 000 000) - vẫn cùng công thức,
+      // chỉ filter theo `max` nên KHÔNG cần nhánh riêng cho Lớp 4.
+      const magnitudePool = [10, 100, 1000, 10000, 100000].filter((m) => m <= max);
       const magnitude = pick(magnitudePool.length ? magnitudePool : [10]);
       const maxCoeff = Math.min(99, Math.floor(max / magnitude));
       if (operator === "+") {
@@ -177,7 +186,15 @@ export function generateDaySo(grade, count = 4) {
   // MỞ RỘNG LỚP 3: bước nhảy lớn hơn hẳn (10/100/1000) - khớp phạm vi số đến 100 000, bước 1/2/5
   // của Lớp 2 sẽ tạo dãy vô nghĩa (gần như không đổi) khi phóng lên phạm vi này.
   const steps =
-    grade === "MAM_NON" ? [1] : grade === "LOP_1" ? [1, 1, 1, 1, 10] : grade === "LOP_3" ? [10, 100, 1000] : [1, 2, 5, 10];
+    grade === "MAM_NON"
+      ? [1]
+      : grade === "LOP_1"
+      ? [1, 1, 1, 1, 10]
+      : grade === "LOP_3"
+      ? [10, 100, 1000]
+      : grade === "LOP_4" // MỞ RỘNG LỚP 4: bước nhảy lớn hơn, khớp phạm vi số đến 1 000 000
+      ? [1000, 10000, 100000]
+      : [1, 2, 5, 10];
   for (let i = 0; i < count; i++) {
     const step = pick(steps) * (Math.random() < 0.3 ? -1 : 1);
 
@@ -222,9 +239,12 @@ export function generateDaySo(grade, count = 4) {
  * CHỦ Ý cap max = 1000 (không dùng thẳng maxNumber = 100 000) - dạng bài này để học sinh NHẨM
  * NHANH rồi nối, phép cộng/trừ 2 số 5 chữ số không còn "nhẩm" được nữa (cùng lý do với
  * generateTinhNham() ở trên). 1000 vẫn đủ thử thách hơn Lớp 2 (max=100) mà còn nhẩm được.
+ *
+ * MỞ RỘNG LỚP 4: cap riêng 10 000 (cao hơn Lớp 3 nhưng vẫn nhẩm được, không dùng thẳng
+ * maxNumber=1 000 000 - cùng lý do đã giải thích ở trên).
  */
 export function generateNoiPhepTinh(grade, count = 5) {
-  const max = grade === "LOP_3" ? 1000 : WORKSHEET_GRADES[grade].maxNumber;
+  const max = grade === "LOP_3" ? 1000 : grade === "LOP_4" ? 10000 : WORKSHEET_GRADES[grade].maxNumber;
   const pairs = [];
   const usedResults = new Set();
   for (let i = 0; i < count; i++) {
@@ -710,5 +730,37 @@ export function generateThuThapSoLieu(count = 4) {
     data,
     questions,
   };
+}
+
+// ================== MỞ RỘNG LỚP 4, ĐỢT 1 ==================
+// "Rút gọn phân số" - đúng mạch "Phân số" trong SGK Toán 4 Kết nối tri thức (xem NEXT_STEPS.md).
+// Cách sinh: chọn 1 phân số TỐI GIẢN có sẵn trong kho (mẫu số 2-9), rồi nhân cả tử/mẫu với 1 hệ
+// số ngẫu nhiên (2-6) để ra phân số CHƯA tối giản đề bài - đáp án chính là phân số gốc trong kho.
+// Hiển thị dạng chữ "tử/mẫu" (không vẽ phân số nằm ngang có gạch ngang) - giống cách dự án đã xử
+// lý "Xem đồng hồ giờ, phút" ở bản Word (dùng text vì không cần độ chi tiết đồ hoạ, xem
+// NEXT_STEPS.md Lớp 3 Đợt 2) - tránh phải dựng thêm layout phân số phức tạp ở cả web lẫn Word
+// ngay từ đợt đầu tiên mở Lớp 4.
+const SIMPLE_FRACTIONS = [
+  [1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [4, 5],
+  [1, 6], [5, 6], [1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7],
+  [1, 8], [3, 8], [5, 8], [7, 8], [1, 9], [2, 9], [4, 9], [5, 9], [7, 9], [8, 9],
+];
+
+export function generatePhanSoRutGon(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const [ansNum, ansDen] = pick(SIMPLE_FRACTIONS);
+    const k = randInt(2, 6);
+    const numerator = ansNum * k;
+    const denominator = ansDen * k;
+    const dedupeKey = `${numerator}/${denominator}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({ numerator, denominator, answerNumerator: ansNum, answerDenominator: ansDen });
+  }
+  return items;
 }
 

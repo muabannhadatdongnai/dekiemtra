@@ -48,4 +48,9 @@ export const WORKSHEET_GRADE_TO_SGK_GRADE = {
   LOP_1: "1",
   LOP_2: "2",
   LOP_3: "3",
+  // MỞ RỘNG LỚP 4: dùng chung kho chương/bài SGK với Đề kiểm tra (Exam Generator), nơi Lớp 4 đã
+  // được hỗ trợ từ trước (xem src/data/gradeProfiles.js) - nên kho GitHub knowledge repo chắc
+  // chắn đã có sẵn nội dung "4". Nếu Hoan test thấy dropdown "Chủ đề SGK" rỗng/lỗi cho Lớp 4, báo
+  // lại để kiểm tra tên thư mục thực tế trong repo.
+  LOP_4: "4",
 };

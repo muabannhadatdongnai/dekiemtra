@@ -290,6 +290,24 @@ function buildDoiDonViParagraphs(items, showAnswers) {
   }));
 }
 
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 1 ==================
+ * "Rút gọn phân số" - hiển thị dạng chữ "tử/mẫu" (cùng lý do như bản web, xem
+ * PhanSoRutGonSection trong WorksheetPreview.jsx) - 2 cột mỗi dòng như DoiDonVi.
+ */
+function buildPhanSoRutGonParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const text = showAnswers
+        ? `${it.numerator}/${it.denominator} = ${it.answerNumerator}/${it.answerDenominator}`
+        : `${it.numerator}/${it.denominator} = ${BLANK}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
 /** "Tiền Việt Nam" - liệt kê tờ tiền bằng chữ, tính tổng. */
 function buildTienVietNamParagraphs(items, showAnswers) {
   return items.map((it, i) => ({
@@ -601,6 +619,8 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildChuViDienTichParagraphs(section.items, showAnswers);
     case "doi_don_vi_do":
       return buildDoiDonViParagraphs(section.items, showAnswers);
+    case "phan_so_rut_gon":
+      return buildPhanSoRutGonParagraphs(section.items, showAnswers);
     case "tien_viet_nam":
       return buildTienVietNamParagraphs(section.items, showAnswers);
     case "kha_nang_xay_ra":

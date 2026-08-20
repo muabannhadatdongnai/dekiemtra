@@ -27,7 +27,10 @@
 // ================== MỞ RỘNG LỚP 3 (Đợt 1) ==================
 // Thêm "LOP_3" vào CUỐI mảng - đúng nguyên tắc đã ghi ở comment file (chỉ cần thêm vào cuối,
 // KHÔNG cần sửa lại từng exercise, trừ những dạng bài CHỦ Ý cần mở maxGrade lên LOP_3 bên dưới).
-export const GRADE_ORDER = ["MAM_NON", "LOP_1", "LOP_2", "LOP_3"];
+// ================== MỞ RỘNG LỚP 4 (Đợt 1) ==================
+// Cùng nguyên tắc - thêm "LOP_4" vào cuối, CHỦ Ý mở maxGrade lên LOP_4 cho 1 số dạng bài "kỹ
+// năng chung" bên dưới (tinh_nham, so_sanh, day_so, sap_xep_thu_tu, noi_phep_tinh, giai_toan).
+export const GRADE_ORDER = ["MAM_NON", "LOP_1", "LOP_2", "LOP_3", "LOP_4"];
 
 export function gradeIndex(grade) {
   const idx = GRADE_ORDER.indexOf(grade);
@@ -61,8 +64,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "so_hoc",
     source: "code",
     minGrade: "MAM_NON",
-    // MỞ RỘNG LỚP 3: generateTinhNham() đã có nhánh riêng cho LOP_3 (số tròn chục/trăm/nghìn).
-    maxGrade: "LOP_3",
+    // MỞ RỘNG LỚP 3/4: generateTinhNham() đã có nhánh riêng cho LOP_3/LOP_4 (số tròn chục/trăm/
+    // nghìn/chục nghìn/trăm nghìn - xem worksheetSchemas.js).
+    maxGrade: "LOP_4",
     defaultCount: 6,
     instructionVariants: [
       "Tính nhẩm.",
@@ -120,9 +124,10 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "so_hoc",
     source: "code",
     minGrade: "MAM_NON",
-    // MỞ RỘNG LỚP 3: so sánh số trong phạm vi 100 000 ĐÚNG là nội dung thật Lớp 3 (chủ đề "Các số
-    // đến 100 000") - generateSoSanh() dùng thẳng maxNumber, không cần nhánh riêng.
-    maxGrade: "LOP_3",
+    // MỞ RỘNG LỚP 3/4: so sánh số trong phạm vi 100 000/1 000 000 ĐÚNG là nội dung thật Lớp 3/4
+    // (chủ đề "Các số đến 100 000"/"Các số đến 1 000 000") - generateSoSanh() dùng thẳng
+    // maxNumber, không cần nhánh riêng.
+    maxGrade: "LOP_4",
     defaultCount: 6,
     instructionVariants: [
       "So sánh. Điền dấu >, <, = thích hợp.",
@@ -139,8 +144,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "quy_luat",
     source: "code",
     minGrade: "MAM_NON",
-    // MỞ RỘNG LỚP 3: generateDaySo() đã có bước nhảy riêng (10/100/1000) cho LOP_3.
-    maxGrade: "LOP_3",
+    // MỞ RỘNG LỚP 3/4: generateDaySo() đã có bước nhảy riêng (10/100/1000 cho LOP_3;
+    // 1000/10000/100000 cho LOP_4).
+    maxGrade: "LOP_4",
     defaultCount: 4,
     instructionVariants: [
       "Viết số thích hợp vào ô trống.",
@@ -157,9 +163,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "nhan_biet_so",
     source: "code",
     minGrade: "MAM_NON",
-    // MỞ RỘNG LỚP 3: sắp xếp số trong phạm vi 100 000 vẫn là kỹ năng hợp lý, generateSapXepThuTu()
-    // dùng thẳng maxNumber nên không cần nhánh riêng.
-    maxGrade: "LOP_3",
+    // MỞ RỘNG LỚP 3/4: sắp xếp số trong phạm vi 100 000/1 000 000 vẫn là kỹ năng hợp lý,
+    // generateSapXepThuTu() dùng thẳng maxNumber nên không cần nhánh riêng.
+    maxGrade: "LOP_4",
     // GIAI ĐOẠN 2: dạng bài MỚI, lấp khoảng trống skillGroup "nhan_biet_so" trước đây chỉ có
     // duy nhất "dem_va_viet_so" - đa dạng hoá cách hỏi về cùng nhóm kỹ năng nhận biết số.
     defaultCount: 3,
@@ -178,8 +184,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "so_hoc",
     source: "code",
     minGrade: "LOP_1",
-    // MỞ RỘNG LỚP 3: generateNoiPhepTinh() tự cap max=1000 riêng cho LOP_3 (giữ tính "nhẩm").
-    maxGrade: "LOP_3",
+    // MỞ RỘNG LỚP 3/4: generateNoiPhepTinh() tự cap max=1000 (LOP_3) / 10000 (LOP_4) để giữ
+    // tính "nhẩm".
+    maxGrade: "LOP_4",
     defaultCount: 5,
     instructionVariants: [
       "Nối phép tính với kết quả đúng.",
@@ -239,8 +246,9 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     skillGroup: "van_dung",
     source: "ai", // duy nhất cần AI vì cần biến hoá ngôn ngữ tự nhiên
     minGrade: "LOP_1",
-    // MỞ RỘNG LỚP 3: buildWordProblemPrompt() đã có nhánh riêng cho phép nhân/chia trong bảng.
-    maxGrade: "LOP_3",
+    // MỞ RỘNG LỚP 3/4: buildWordProblemPrompt() đã có nhánh riêng cho phép nhân/chia trong bảng;
+    // Lớp 4 dùng thẳng gradeConfig.label/maxNumber (đã tự động qua WORKSHEET_GRADES.LOP_4).
+    maxGrade: "LOP_4",
     defaultCount: 2,
     instructionVariants: ["Giải bài toán.", "Em hãy đọc kỹ đề rồi giải bài toán sau.", "Cùng giải bài toán nhé!"],
     mascotPool: ["📖", "🐝", "🌻", "🍚"],
@@ -443,6 +451,26 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     ],
     mascotPool: ["📊", "📋", "🔢"],
     colorThemeTags: ["blue", "teal", "yellow"],
+  },
+  {
+    // ===== MỞ RỘNG LỚP 4, ĐỢT 1 =====
+    // Hiển thị dạng chữ "tử/mẫu" (xem giải thích trong generatePhanSoRutGon(), worksheetSchemas.js)
+    // - CHỦ Ý chưa dựng layout phân số nằm ngang có gạch ngang ở đợt mở Lớp 4 đầu tiên này.
+    key: "phan_so_rut_gon",
+    subject: "TOAN",
+    label: "Rút gọn phân số",
+    skillGroup: "phan_so",
+    source: "code",
+    minGrade: "LOP_4",
+    maxGrade: "LOP_4",
+    defaultCount: 6,
+    instructionVariants: [
+      "Rút gọn các phân số sau.",
+      "Em hãy rút gọn mỗi phân số về phân số tối giản.",
+      "Rút gọn thật đúng các phân số sau nhé!",
+    ],
+    mascotPool: ["🍕", "🍰", "🧩"],
+    colorThemeTags: ["yellow", "purple", "teal"],
   },
 
   // ===== Tiếng Việt - GIAI ĐOẠN 6 (bên ngoài): generator thật đã có (cần AI vì đây là ngôn

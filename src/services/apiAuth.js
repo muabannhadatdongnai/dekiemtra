@@ -22,11 +22,17 @@ import { checkSampleAnalyzeLimit } from "./sampleAnalyzeRateLimiter";
  *
  * ================== MỞ RỘNG LỚP 3, ĐỢT 3 ("tắt đăng nhập để test") ==================
  * Hoan yêu cầu: khi truy cập trang, KHÔNG cần đăng nhập, để giáo viên tiện test. CHỦ Ý làm bằng
- * 1 biến môi trường (`NEXT_PUBLIC_DISABLE_LOGIN=true`) thay vì xoá hẳn cơ chế đăng nhập:
- *   - Mặc định (không đặt biến này, hoặc đặt khác "true") -> hành vi CŨ, không đổi gì - production
- *     thật (Vercel) vẫn yêu cầu đăng nhập như trước, không vô tình mở public.
- *   - Chỉ khi ai đó CHỦ Ý bật biến này (VD trong `.env.local` lúc test ở máy cá nhân) thì
- *     `requireAuth()` mới bỏ qua việc verify token, trả thẳng về 1 "session giả" cố định.
+ * 1 biến môi trường thay vì xoá hẳn cơ chế đăng nhập, để CÓ THỂ bật lại sau này chỉ bằng cách đổi
+ * 1 giá trị biến môi trường, không cần sửa code lại:
+ *   - ================== CẬP NHẬT (mở public mặc định) ==================
+ *     Mặc định (KHÔNG đặt biến này) -> giờ là CÔNG KHAI, không cần đăng nhập. Trước đây mặc định
+ *     là "yêu cầu đăng nhập" và chỉ tắt khi CHỦ Ý đặt `NEXT_PUBLIC_DISABLE_LOGIN=true` - nhưng vì
+ *     Vercel production không có sẵn biến này nên trang production vẫn bị chặn đăng nhập ngoài ý
+ *     muốn. Đảo lại mặc định theo đúng yêu cầu mới nhất của Hoan (public trước, bật đăng nhập lại
+ *     sau khi cần).
+ *   - Khi CHỦ Ý muốn BẬT LẠI đăng nhập (sau này) -> đặt `NEXT_PUBLIC_DISABLE_LOGIN=false` trong
+ *     biến môi trường (Vercel: Project Settings -> Environment Variables, rồi deploy lại; máy cá
+ *     nhân: `.env.local`). KHÔNG cần sửa code - chỉ đổi giá trị biến môi trường này.
  * Dùng tiền tố NEXT_PUBLIC_ (dù đây là code CHẠY Ở SERVER) để CÙNG 1 biến vừa tắt được màn hình
  * đăng nhập ở client (xem src/app/page.js) vừa tắt được kiểm tra token ở server - biến
  * NEXT_PUBLIC_ vẫn đọc được bình thường qua `process.env` ở phía server, không cần khai 2 biến
@@ -35,8 +41,9 @@ import { checkSampleAnalyzeLimit } from "./sampleAnalyzeRateLimiter";
  * và các store theo username (lessonPlanDiversityStore.js, teacherPreferenceStore.js...) vẫn hoạt
  * động bình thường, chỉ là mọi lượt test đều tính chung vào 1 "giáo viên" duy nhất.
  */
-const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN === "true";
+const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN !== "false";
 const TEST_SESSION = { username: "giao_vien_test", fullName: "Giáo viên (chế độ test)", role: "teacher" };
+
 
 export function requireAuth(request) {
   if (DISABLE_LOGIN) {

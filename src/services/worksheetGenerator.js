@@ -21,6 +21,7 @@ import {
   generateTienVietNam,
   generateKhaNangXayRa,
   generateThuThapSoLieu,
+  generatePhanSoRutGon,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -488,6 +489,10 @@ const DEFAULT_SECTION_ORDER = [
   // ================== MỞ RỘNG LỚP 3, ĐỢT 3 ==================
   // Xếp ngay sau "kha_nang_xay_ra" - cùng nhóm "thống kê, xác suất" trong PPCT SGK Toán 3 KNTT.
   "thu_thap_so_lieu",
+  // ================== MỞ RỘNG LỚP 4, ĐỢT 1 ==================
+  // "phan_so_rut_gon" xếp sau khối Lớp 3, trước "nhan_dien_hinh" - vẫn cùng mạch "kỹ năng số
+  // học" của phiếu (Lớp 4 chỉ chọn được khi grade=LOP_4 nên không ảnh hưởng phiếu Lớp 1-3).
+  "phan_so_rut_gon",
   "nhan_dien_hinh",
   "xem_dong_ho_gio_dung",
   "xem_dong_ho_gio_phut",
@@ -678,6 +683,13 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         questions: survey.questions,
       };
     }
+    case "phan_so_rut_gon":
+      return {
+        type: "phan_so_rut_gon",
+        title: pickInstructionVariant("phan_so_rut_gon") || "Rút gọn các phân số sau.",
+        mascot: mascotFor("phan_so_rut_gon"),
+        items: generatePhanSoRutGon(safeCounts.phan_so_rut_gon),
+      };
     case "cac_ngay_trong_tuan":
       return {
         type: "cac_ngay_trong_tuan",
