@@ -35,6 +35,7 @@ const GRADES = [
   { value: "LOP_2", label: "Lớp 2" },
   { value: "LOP_3", label: "Lớp 3" }, // MỞ RỘNG LỚP 3, ĐỢT 1
   { value: "LOP_4", label: "Lớp 4" }, // MỞ RỘNG LỚP 4, ĐỢT 1
+  { value: "LOP_5", label: "Lớp 5" }, // MỞ RỘNG LỚP 5, ĐỢT 1
 ];
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";

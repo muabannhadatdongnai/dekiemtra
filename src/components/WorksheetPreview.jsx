@@ -7,7 +7,7 @@ import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutT
 import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
 // MỞ RỘNG LỚP 3, ĐỢT 3: format số kiểu Việt Nam (dấu chấm phân cách hàng nghìn) DÙNG CHUNG với
 // worksheetExportService.js - xem numberFormatUtils.js.
-import { formatSoTuNhien, formatSoTrongChuoi } from "@/services/numberFormatUtils";
+import { formatSoTuNhien, formatSoTrongChuoi, formatSoThapPhan } from "@/services/numberFormatUtils";
 
 /**
  * WorksheetPreview.jsx
@@ -671,6 +671,27 @@ function PhanSoSoSanhSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 1 ==================
+ * "So sánh số thập phân" - cùng bố cục lưới 2 cột như PhanSoSoSanhSection (nhất quán với các dạng
+ * "so sánh, điền dấu" đã có), chỉ khác nội dung hiển thị (số thập phân dùng dấu phẩy kiểu Việt
+ * Nam qua formatSoThapPhan, không phải phân số). Số chữ số thập phân giữ ĐÚNG như dữ liệu gốc
+ * (leftDec.length/rightDec.length) - không ép cố định 2 chữ số, vì đây chính là trọng tâm bài học
+ * (học sinh cần thấy "3,5" và "3,45" khác độ dài, không phải luôn 2 chữ số như nhau).
+ */
+function SoThapPhanSoSanhSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length)}{" "}
+          {blankBox(accent, 28)} {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
  * "Góc và đơn vị đo góc" - vẽ 2 tia chung gốc bằng SVG theo đúng số đo góc (degrees), học sinh
  * tự nhìn hình rồi gọi tên loại góc (không hiện số đo bằng chữ để tránh học sinh chỉ dựa vào số
@@ -1236,6 +1257,7 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "phan_so_rut_gon" && <PhanSoRutGonSection items={section.items} accent={t.border} />}
       {section.type === "bieu_thuc_chu" && <BieuThucChuSection items={section.items} accent={t.border} />}
       {section.type === "phan_so_so_sanh" && <PhanSoSoSanhSection items={section.items} accent={t.border} />}
+      {section.type === "so_thap_phan_so_sanh" && <SoThapPhanSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "goc_nhan_biet" && <GocNhanBietSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
