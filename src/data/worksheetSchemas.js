@@ -19,12 +19,18 @@
 // năng chung" (so_sanh, sap_xep_thu_tu, day_so...) dùng thẳng maxNumber này là ĐÚNG nội dung;
 // riêng "tính nhẩm"/"nối phép tính" cần nhánh xử lý riêng bên dưới (giống lý do đã giải thích ở
 // Lớp 3) để không biến "nhẩm" thành đặt tính cột dọc với số quá lớn.
+// ================== MỞ RỘNG LỚP 5 (Đợt 1) ==================
+// maxNumber giữ = LOP_4 (1 000 000) vì Lớp 5 KHÔNG mở rộng thêm phạm vi số TỰ NHIÊN (SGK Toán 5
+// KNTT tập trung vào SỐ THẬP PHÂN, không dạy số tự nhiên lớn hơn Lớp 4) - xem NEXT_STEPS.md mục
+// "Vấn đề kỹ thuật cần giải quyết TRƯỚC khi code Lớp 5". Các dạng bài số thập phân dùng generator
+// RIÊNG (generateSoThapPhanSoSanh...), KHÔNG dùng maxNumber này.
 export const WORKSHEET_GRADES = {
   MAM_NON: { key: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)", maxNumber: 10 },
   LOP_1: { key: "LOP_1", label: "Lớp 1", maxNumber: 20 },
   LOP_2: { key: "LOP_2", label: "Lớp 2", maxNumber: 100 },
   LOP_3: { key: "LOP_3", label: "Lớp 3", maxNumber: 100000 },
   LOP_4: { key: "LOP_4", label: "Lớp 4", maxNumber: 1000000 },
+  LOP_5: { key: "LOP_5", label: "Lớp 5", maxNumber: 1000000 },
 };
 
 export const EXERCISE_TYPES = {
@@ -39,6 +45,7 @@ export const EXERCISE_TYPES = {
   DEM_HINH_UNG_DUNG: "dem_hinh_ung_dung", // GIAI ĐOẠN 2 - hoạt động ứng dụng đi kèm NHAN_DIEN_HINH
   TACH_GOP: "tach_gop", // GIAI ĐOẠN F - sơ đồ Tách - Gộp (number bond), riêng Lớp 1
   THU_THAP_SO_LIEU: "thu_thap_so_lieu", // MỞ RỘNG LỚP 3, ĐỢT 3 - thống kê: bảng số liệu + câu hỏi
+  SO_THAP_PHAN_SO_SANH: "so_thap_phan_so_sanh", // MỞ RỘNG LỚP 5, ĐỢT 1 - so sánh số thập phân
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -878,6 +885,64 @@ export function generateGocNhanBiet(count = 6) {
     if (used.has(degrees)) continue;
     used.add(degrees);
     items.push({ degrees, answer: kind.type });
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 5, ĐỢT 1 ==================
+// "So sánh số thập phân" - dạng bài ĐẦU TIÊN của Lớp 5, mở đầu mảng số thập phân (xem
+// NEXT_STEPS.md mục "Trạng thái Lớp 5"). KHÔNG dùng thẳng WORKSHEET_GRADES.LOP_5.maxNumber (đó là
+// số TỰ NHIÊN) - sinh riêng phần nguyên (0-999, đủ nhỏ để học sinh không bị rối bởi số quá lớn khi
+// đang tập trung vào phần thập phân) + phần thập phân (1 hoặc 2 chữ số, ngẫu nhiên mỗi số) rồi
+// GHÉP CHUỖI thủ công (không cộng number, vì phép cộng number thập phân trong JS bị sai số nhị
+// phân, VD 0.1+0.2 !== 0.3 - ghép chuỗi tránh hoàn toàn rủi ro này).
+// Cố ý cho 1 tỉ lệ các cặp có SỐ CHỮ SỐ THẬP PHÂN KHÁC NHAU (VD "3,5" vs "3,45") - đúng trọng tâm
+// SGK Toán 5 KNTT (học sinh hay nhầm "3,5 < 3,45" vì đếm chữ số thay vì hiểu giá trị hàng), so với
+// so sánh 2 số CÙNG số chữ số thập phân (dễ hơn, chỉ cần so sánh như số tự nhiên).
+function randomDecimalPart(digits) {
+  // Số 0 ở cuối (VD "05") vẫn hợp lệ về mặt thập phân nhưng hiếm gặp trong đề - né để đề tự nhiên hơn.
+  const min = digits === 1 ? 1 : 10;
+  const max = digits === 1 ? 9 : 99;
+  return String(randInt(min, max));
+}
+
+function compareDecimalStrings(intA, decA, intB, decB) {
+  const a = Number(`${intA}.${decA}`);
+  const b = Number(`${intB}.${decB}`);
+  // So sánh bằng cách quy về CÙNG số chữ số thập phân (thêm số 0 vào cuối chuỗi ngắn hơn) rồi so
+  // sánh như số nguyên - tránh hoàn toàn sai số dấu phẩy động của phép so sánh Number trực tiếp
+  // (an toàn hơn vì mọi giá trị ở đây đều có tối đa 2 chữ số thập phân, không có phần vô hạn).
+  const width = Math.max(decA.length, decB.length);
+  const normA = Number(intA) * 10 ** width + Number(decA.padEnd(width, "0"));
+  const normB = Number(intB) * 10 ** width + Number(decB.padEnd(width, "0"));
+  if (normA > normB) return ">";
+  if (normA < normB) return "<";
+  return "=";
+}
+
+export function generateSoThapPhanSoSanh(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const intA = randInt(0, 999);
+    const intB = Math.random() < 0.5 ? intA : randInt(0, 999); // 1 nửa số cặp cùng phần nguyên - buộc học sinh so sánh phần thập phân
+    const digitsA = Math.random() < 0.5 ? 1 : 2;
+    // ~40% số cặp CỐ Ý lệch số chữ số thập phân (VD 1 số 1 chữ số, 1 số 2 chữ số) - đúng trọng tâm bài học nêu trên.
+    const digitsB = Math.random() < 0.4 ? (digitsA === 1 ? 2 : 1) : digitsA;
+    const decA = randomDecimalPart(digitsA);
+    const decB = randomDecimalPart(digitsB);
+    const dedupeKey = `${intA},${decA}_${intB},${decB}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({
+      leftInt: intA,
+      leftDec: decA,
+      rightInt: intB,
+      rightDec: decB,
+      answer: compareDecimalStrings(intA, decA, intB, decB),
+    });
   }
   return items;
 }

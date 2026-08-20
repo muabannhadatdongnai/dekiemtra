@@ -53,4 +53,8 @@ export const WORKSHEET_GRADE_TO_SGK_GRADE = {
   // chắn đã có sẵn nội dung "4". Nếu Hoan test thấy dropdown "Chủ đề SGK" rỗng/lỗi cho Lớp 4, báo
   // lại để kiểm tra tên thư mục thực tế trong repo.
   LOP_4: "4",
+  // MỞ RỘNG LỚP 5, ĐỢT 1: cùng lý do như LOP_4 - dùng chung kho chương/bài SGK với Đề kiểm tra,
+  // nơi Lớp 5 nhiều khả năng đã được hỗ trợ sẵn (xem src/data/gradeProfiles.js) - CHƯA XÁC NHẬN
+  // thực tế thư mục "5" trong kho GitHub, cần Hoan test giống Lớp 4.
+  LOP_5: "5",
 };

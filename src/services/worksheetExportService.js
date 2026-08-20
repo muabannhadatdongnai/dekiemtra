@@ -18,7 +18,7 @@ import { PAGE_A4_MM, PAGE_MARGIN_MM } from "@/data/constants";
 import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
 // MỞ RỘNG LỚP 3, ĐỢT 3: format số kiểu Việt Nam DÙNG CHUNG với WorksheetPreview.jsx (web) - xem
 // numberFormatUtils.js.
-import { formatSoTuNhien, formatSoTrongChuoi } from "./numberFormatUtils";
+import { formatSoTuNhien, formatSoTrongChuoi, formatSoThapPhan } from "./numberFormatUtils";
 
 /**
  * worksheetExportService.js
@@ -331,6 +331,25 @@ function buildPhanSoSoSanhParagraphs(items, showAnswers) {
   return chunkArray(items, 2).map((row) => ({
     children: row.flatMap((it, idx) => {
       const text = `${it.n1}/${it.d1}   ${showAnswers ? it.answer : BLANK}   ${it.n2}/${it.d2}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 1 ==================
+ * "So sánh số thập phân" - cùng khuôn buildPhanSoSoSanhParagraphs() (lưới 2 cột/hàng), chỉ khác
+ * nội dung hiển thị. Dùng formatSoThapPhan() với đúng số chữ số thập phân gốc (leftDec.length) để
+ * đồng bộ dấu phẩy Việt Nam + giữ nguyên số 0 ở cuối như bản web (SoThapPhanSoSanhSection).
+ */
+function buildSoThapPhanSoSanhParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length);
+      const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length);
+      const text = `${left}   ${showAnswers ? it.answer : BLANK}   ${right}`;
       const run = new TextRun({ text, font: FONT, size: 24 });
       return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
     }),
@@ -676,6 +695,8 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildBieuThucChuParagraphs(section.items, showAnswers);
     case "phan_so_so_sanh":
       return buildPhanSoSoSanhParagraphs(section.items, showAnswers);
+    case "so_thap_phan_so_sanh":
+      return buildSoThapPhanSoSanhParagraphs(section.items, showAnswers);
     case "goc_nhan_biet":
       return buildGocNhanBietParagraphs(section.items, showAnswers);
     case "tien_viet_nam":

@@ -30,7 +30,7 @@
 // ================== MỞ RỘNG LỚP 4 (Đợt 1) ==================
 // Cùng nguyên tắc - thêm "LOP_4" vào cuối, CHỦ Ý mở maxGrade lên LOP_4 cho 1 số dạng bài "kỹ
 // năng chung" bên dưới (tinh_nham, so_sanh, day_so, sap_xep_thu_tu, noi_phep_tinh, giai_toan).
-export const GRADE_ORDER = ["MAM_NON", "LOP_1", "LOP_2", "LOP_3", "LOP_4"];
+export const GRADE_ORDER = ["MAM_NON", "LOP_1", "LOP_2", "LOP_3", "LOP_4", "LOP_5"]; // MỞ RỘNG LỚP 5, ĐỢT 1
 
 export function gradeIndex(grade) {
   const idx = GRADE_ORDER.indexOf(grade);
@@ -588,6 +588,27 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     instructionVariants: ["Đặt 2 câu theo mẫu Ai/Con gì + làm gì.", "Đặt 2 câu theo mẫu Ai/cái gì/con gì + thế nào."],
     mascotPool: ["💡", "🖊️"],
     colorThemeTags: ["purple", "pink"],
+  },
+  {
+    // ===== MỞ RỘNG LỚP 5, ĐỢT 1 =====
+    // Dạng bài ĐẦU TIÊN của Lớp 5 - mở đầu mảng "số thập phân" (xem NEXT_STEPS.md mục "Trạng
+    // thái Lớp 5"). minGrade=maxGrade=LOP_5 nên KHÔNG hiện ở phiếu Lớp 1-4 (đúng nguyên tắc đã
+    // áp dụng cho các dạng bài riêng khối trước đây, VD "phan_so_rut_gon" của Lớp 4).
+    key: "so_thap_phan_so_sanh",
+    subject: "TOAN",
+    label: "So sánh số thập phân",
+    skillGroup: "so_thap_phan",
+    source: "code",
+    minGrade: "LOP_5",
+    maxGrade: "LOP_5",
+    defaultCount: 6,
+    instructionVariants: [
+      "So sánh. Điền dấu >, <, = thích hợp.",
+      "Em hãy so sánh 2 số thập phân rồi điền dấu thích hợp.",
+      "So sánh thật kỹ phần thập phân rồi điền dấu đúng nhé!",
+    ],
+    mascotPool: ["🔢", "📏", "✨"],
+    colorThemeTags: ["blue", "green", "purple"],
   },
 ];
 

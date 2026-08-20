@@ -25,6 +25,7 @@ import {
   generateBieuThucChu,
   generatePhanSoSoSanh,
   generateGocNhanBiet,
+  generateSoThapPhanSoSanh,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -508,6 +509,11 @@ const DEFAULT_SECTION_ORDER = [
   "xem_dong_ho_gio_dung",
   "xem_dong_ho_gio_phut",
   "cac_ngay_trong_tuan",
+  // ================== MỞ RỘNG LỚP 5, ĐỢT 1 ==================
+  // "so_thap_phan_so_sanh" xếp trước "giai_toan" (giữ nguyên tắc "giai_toan" luôn cuối cùng, vì
+  // đây là phần AI - đặt cuối để giáo viên xem hết phần code-driven trước) - chỉ chọn được khi
+  // grade=LOP_5 nên không ảnh hưởng phiếu Lớp 1-4.
+  "so_thap_phan_so_sanh",
   "giai_toan",
 ];
 
@@ -722,6 +728,13 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("goc_nhan_biet") || "Quan sát mỗi góc rồi cho biết đó là góc gì.",
         mascot: mascotFor("goc_nhan_biet"),
         items: generateGocNhanBiet(safeCounts.goc_nhan_biet),
+      };
+    case "so_thap_phan_so_sanh":
+      return {
+        type: "so_thap_phan_so_sanh",
+        title: pickInstructionVariant("so_thap_phan_so_sanh") || "So sánh. Điền dấu >, <, = thích hợp.",
+        mascot: mascotFor("so_thap_phan_so_sanh"),
+        items: generateSoThapPhanSoSanh(safeCounts.so_thap_phan_so_sanh),
       };
     case "cac_ngay_trong_tuan":
       return {
