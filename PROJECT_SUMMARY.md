@@ -1,3 +1,88 @@
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 11: public mặc định + sửa nút Chủ đề
+# SGK + mở Lớp 4 Đợt 1)
+
+## PHIÊN 11 — Public mặc định, sửa lỗi UX nút "Chủ đề SGK", mở Lớp 4 Đợt 1
+
+**Bối cảnh**: Hoan yêu cầu 3 việc trong 1 lượt: (1) tắt hẳn màn hình đăng nhập, cho truy cập công
+khai (giữ nguyên cơ chế, có thể bật lại sau); (2) báo lỗi "không thể bấm chọn chức năng" kèm ảnh
+chụp nút "Chủ đề SGK (tuỳ chọn)"; (3) làm tiếp Lớp 4 và Lớp 5.
+
+### 1. Public mặc định (đảo mặc định `NEXT_PUBLIC_DISABLE_LOGIN`)
+Trước đây: mặc định (không đặt biến) = yêu cầu đăng nhập; phải CHỦ Ý đặt `=true` mới công khai.
+Vấn đề: Vercel production thường KHÔNG có sẵn biến `NEXT_PUBLIC_DISABLE_LOGIN` trong cấu hình, nên
+trang thật vẫn bị chặn đăng nhập dù ý định là công khai ngay từ đầu.
+Sửa: đảo điều kiện thành `process.env.NEXT_PUBLIC_DISABLE_LOGIN !== "false"` ở CẢ 2 nơi
+(`src/services/apiAuth.js` phía server, `src/app/page.js` phía client) - giờ mặc định (không đặt
+gì) = công khai; muốn bật lại đăng nhập chỉ cần đặt biến này = `"false"` trên Vercel rồi deploy
+lại, không đổi code. Cơ chế đăng nhập cũ (username/password, session token HMAC...) giữ nguyên
+100%, chỉ đổi giá trị mặc định của cờ bật/tắt. Đã cập nhật `.env.local.example` khớp (mặc định
+`true`, kèm cảnh báo cách bật lại).
+
+### 2. Sửa lỗi UX nút "Chủ đề SGK (tuỳ chọn)"
+Điều tra: trace toàn bộ chuỗi `WorksheetForm.jsx` → `worksheetTopicPackages.js` →
+`worksheetExerciseCatalog.js` - xác nhận `applyTopicPackage()` cập nhật ĐÚNG `exerciseCounts`, các
+exerciseKeys trong gói đều khớp key thật trong catalog. KHÔNG có lỗi logic. Lỗi thực tế: bấm nút
+không có bất kỳ phản hồi thị giác nào (không đổi màu, không cuộn tới, không có dấu hiệu "đã bật")
+nên giáo viên tưởng nút không hoạt động dù bên dưới đã đổi số lượng đúng.
+Sửa trong `WorksheetForm.jsx`:
+- Thêm `exerciseListRef` (gắn vào khu vực "Chọn dạng bài + số lượng") + `flashKeys` state - bấm
+  nút chủ đề -> tự cuộn mượt tới khu vực đó, các dòng dạng bài vừa được bật đổi màu nền
+  xanh nhạt trong ~1.5s rồi tự tắt (dùng CSS transition, không cần thư viện animation).
+- Thêm `isTopicPackageApplied(topic)` - tính TOÀN BỘ exerciseKeys của gói có count > 0 hay không,
+  tính LẠI mỗi lần render từ `exerciseCounts` thật (không phải cờ tạm lưu lúc bấm) - nút tự đổi
+  màu xanh đặc (`bg-teal-600`) + icon `CheckCircle2` khi gói đã được áp dụng, tự đổi lại màu nhạt
+  nếu giáo viên tự xoá hết số lượng sau đó. Cách này ĐÚNG kể cả sau khi đổi khối lớp/tải lại trang
+  (state được suy ra từ dữ liệu thật, không phụ thuộc lịch sử thao tác).
+
+### 3. Mở Lớp 4, Đợt 1
+Theo đúng khuôn mẫu đã dùng khi mở Lớp 3 (xem PHIÊN cũ hơn, mục "MỞ RỘNG LỚP 3 ĐỢT 1"):
+- `src/data/worksheetSchemas.js`: thêm `WORKSHEET_GRADES.LOP_4 = { maxNumber: 1000000 }`. Mở rộng
+  `generateTinhNham()`: nhánh "số tròn theo hàng" (đã có cho LOP_3) giờ áp dụng CẢ LOP_3 và LOP_4,
+  thêm hàng `100000` vào `magnitudePool` (tự lọc theo `max` nên không cần nhánh code riêng cho
+  LOP_4). `generateDaySo()`: thêm bước nhảy `[1000, 10000, 100000]` cho LOP_4 (LOP_3 vẫn
+  `[10,100,1000]`). `generateNoiPhepTinh()`: cap riêng `10000` cho LOP_4 (LOP_3 vẫn `1000`) - giữ
+  đúng tính "nhẩm được", không đặt tính cột dọc số quá lớn.
+- `src/data/worksheetExerciseCatalog.js`: thêm `"LOP_4"` vào cuối `GRADE_ORDER`. Mở `maxGrade` từ
+  `"LOP_3"` lên `"LOP_4"` cho 6 entries: `tinh_nham`, `so_sanh`, `day_so`, `sap_xep_thu_tu`,
+  `noi_phep_tinh`, `giai_toan` (đều là dạng bài "kỹ năng chung" không cần logic mới cho việc mở
+  khối, chỉ dùng thẳng `WORKSHEET_GRADES[grade].maxNumber` sẵn có).
+- `src/data/constants.js`: thêm `WORKSHEET_GRADE_TO_SGK_GRADE.LOP_4 = "4"` - dùng chung kho GitHub
+  knowledge repo với tính năng "Đề kiểm tra" (Exam Generator), nơi Lớp 4 đã được hỗ trợ từ trước
+  (xem `src/data/gradeProfiles.js`) - suy luận hợp lý nhưng **CHƯA XÁC NHẬN THỰC TẾ** kho GitHub có
+  đúng thư mục "4" hay không (sandbox không truy cập được kho đó để kiểm tra trực tiếp).
+- `src/components/WorksheetForm.jsx`: thêm `{ value: "LOP_4", label: "Lớp 4" }` vào mảng `GRADES`.
+
+**Dạng bài mới: "Rút gọn phân số" (`phan_so_rut_gon`)** — riêng Lớp 4 (`minGrade`=`maxGrade`=
+`LOP_4`), nối đủ 4 tầng:
+- `worksheetSchemas.js`: `generatePhanSoRutGon(count)` - chọn 1 phân số tối giản có sẵn trong kho
+  `SIMPLE_FRACTIONS` (mẫu số 2-9), nhân cả tử/mẫu với hệ số ngẫu nhiên 2-6 để ra đề bài (phân số
+  chưa tối giản), đáp án là phân số gốc. Có chống trùng trong cùng 1 lượt sinh (`used` Set).
+- `worksheetExerciseCatalog.js`: entry mới `phan_so_rut_gon`, `skillGroup: "phan_so"`, 3 câu lệnh
+  đề bài xen kẽ, mascot 🍕🍰🧩.
+- `worksheetGenerator.js`: import `generatePhanSoRutGon`, thêm vào `DEFAULT_SECTION_ORDER` (ngay
+  sau `thu_thap_so_lieu`, trước `nhan_dien_hinh`), thêm `case "phan_so_rut_gon"` trong switch.
+- `WorksheetPreview.jsx`: component mới `PhanSoRutGonSection` - hiển thị dạng chữ "tử/mẫu = ☐"
+  (CHỦ Ý CHƯA dựng layout phân số nằm ngang có gạch ngang - giữ đơn giản cho đợt mở khối đầu
+  tiên, giống cách "Xem đồng hồ giờ phút" từng dùng text cho bản Word ở Lớp 3 Đợt 2).
+- `worksheetExportService.js`: hàm mới `buildPhanSoRutGonParagraphs` - 2 cột/dòng như `doi_don_vi_do`,
+  bản đáp án hiện `tử/mẫu = tử_gốc/mẫu_gốc`, bản học sinh hiện `tử/mẫu = ☐`.
+
+**Đã kiểm thử:**
+- `npm test`: 203/203 PASS (bộ test HIỆN CÓ - chưa viết test riêng cho các thay đổi Phiên 11, xem
+  mục "Cần Hoan test" trong `NEXT_STEPS.md`).
+- `npm run build`: sạch, exit code 0.
+- Script sanity-check độc lập (chạy tay, KHÔNG nằm trong bộ test chính thức `test/*.test.js`) xác
+  nhận: `generatePhanSoRutGon(8)` luôn rút gọn đúng toán học (kiểm bằng UCLN độc lập); `GRADE_ORDER`
+  và `WORKSHEET_GRADES.LOP_4` đúng như thiết kế; `getSelectableCatalogFor("LOP_4","TOAN")` trả đúng
+  7 dạng bài (6 dạng mở rộng + `phan_so_rut_gon`); `generateTinhNham("LOP_4",...)` ra số tròn hàng
+  hợp lý (VD `38000 - 12000`, `300000 - 100000`); `generateDaySo`/`generateNoiPhepTinh` cho LOP_4
+  đều nằm đúng phạm vi đã thiết kế.
+- **CHƯA chạy `npm run dev` thực tế trên trình duyệt** (môi trường sandbox không có UI trình
+  duyệt để bấm thử) - Hoan cần tự kéo về chạy thử, đặc biệt: dropdown "Chủ đề SGK theo bài" cho
+  Lớp 4 (phụ thuộc kho GitHub, xem lưu ý ở trên), và hiệu ứng cuộn/chớp sáng của nút "Chủ đề SGK".
+
+---
+
 # AI Exam Generator — Tóm tắt dự án (bản cập nhật sau khi rà soát tổng thể "việc dở dang" theo yêu
 # cầu giáo viên, phiên 10)
 
