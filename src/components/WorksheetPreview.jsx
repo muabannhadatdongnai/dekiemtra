@@ -618,6 +618,23 @@ function DoiDonViSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 1 ==================
+ * "Rút gọn phân số" - hiển thị dạng chữ "tử/mẫu" (xem giải thích trong generatePhanSoRutGon(),
+ * worksheetSchemas.js) - CHỦ Ý chưa dựng layout phân số nằm ngang có gạch ngang ở đợt này.
+ */
+function PhanSoRutGonSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {i + 1}. {it.numerator}/{it.denominator} = {blankBox(accent)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * ================== MỞ RỘNG LỚP 3, ĐỢT 2 ==================
  * "Tiền Việt Nam" - liệt kê các tờ tiền + số lượng bằng chữ (dễ đọc hơn hiện hình ảnh tờ tiền
  * thật - tránh vấn đề bản quyền hình ảnh tiền tệ), học sinh tính tổng.
@@ -1125,6 +1142,7 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "xem_dong_ho_gio_phut" && <XemDongHoGioPhutSection items={section.items} accent={t.border} />}
       {section.type === "chu_vi_dien_tich" && <ChuViDienTichSection items={section.items} accent={t.border} />}
       {section.type === "doi_don_vi_do" && <DoiDonViSection items={section.items} accent={t.border} />}
+      {section.type === "phan_so_rut_gon" && <PhanSoRutGonSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
       {section.type === "thu_thap_so_lieu" && (

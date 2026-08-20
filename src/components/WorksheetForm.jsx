@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Loader2, Sparkles, Upload, CheckCircle2, XCircle, RefreshCw, Star, Save, ClipboardCheck } from "lucide-react";
 import { getSession } from "@/services/authService";
 import {
@@ -34,6 +34,7 @@ const GRADES = [
   { value: "LOP_1", label: "Lớp 1" },
   { value: "LOP_2", label: "Lớp 2" },
   { value: "LOP_3", label: "Lớp 3" }, // MỞ RỘNG LỚP 3, ĐỢT 1
+  { value: "LOP_4", label: "Lớp 4" }, // MỞ RỘNG LỚP 4, ĐỢT 1
 ];
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
@@ -155,6 +156,16 @@ export default function WorksheetForm({ onGenerated }) {
    * phiếu mẫu upload là tín hiệu CHẮC CHẮN "đây là cấu trúc thật giáo viên đang dùng" nên ghi đè
    * hợp lý; còn bấm 1 gói chủ đề chỉ là "tôi muốn thêm phần này vào phiếu" - ghi đè sẽ xoá mất
    * lựa chọn giáo viên đã tự chỉnh trước đó, gây bất ngờ khó chịu hơn là hữu ích. */
+  /** ================== SỬA LỖI ("bấm không thấy phản ứng gì") ==================
+   * Trước đây applyTopicPackage() CÓ cập nhật đúng exerciseCounts (không phải lỗi logic), nhưng
+   * KHÔNG có bất kỳ phản hồi thị giác nào ngay tại chỗ bấm -> giáo viên tưởng nút không hoạt
+   * động dù bên dưới đã đổi. Nay thêm 2 việc: (1) cuộn tới đúng khu vực "Chọn dạng bài" + chớp
+   * sáng (flash) các dòng vừa bật trong ~1.5s, (2) đổi hẳn màu nút thành "đã bật" (tính lại MỖI
+   * LẦN render từ exerciseCounts hiện tại, không phải cờ tạm - nên vẫn đúng kể cả sau khi giáo
+   * viên tự sửa số ở dưới hoặc đổi khối lớp). */
+  const exerciseListRef = useRef(null);
+  const [flashKeys, setFlashKeys] = useState([]);
+
   function applyTopicPackage(topic) {
     setExerciseCounts((prev) => {
       const next = { ...prev };
@@ -164,6 +175,14 @@ export default function WorksheetForm({ onGenerated }) {
       }
       return next;
     });
+    exerciseListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setFlashKeys(topic.exerciseKeys);
+    setTimeout(() => setFlashKeys((cur) => (cur === topic.exerciseKeys ? [] : cur)), 1500);
+  }
+
+  /** true khi TOÀN BỘ dạng bài của gói này đang có số lượng > 0 - dùng tô đậm nút "đã bật". */
+  function isTopicPackageApplied(topic) {
+    return topic.exerciseKeys.every((key) => (exerciseCounts[key] ?? 0) > 0);
   }
 
   // Đổi khối lớp HOẶC môn học -> đồng bộ lại exerciseCounts: giữ số đã nhập cho dạng bài vẫn còn
@@ -464,23 +483,31 @@ export default function WorksheetForm({ onGenerated }) {
             Chủ đề SGK (tuỳ chọn) - bấm để bật nhanh cả nhóm dạng bài liên quan
           </label>
           <div className="flex flex-wrap gap-2">
-            {topicPackages.map((topic) => (
-              <button
-                key={topic.id}
-                type="button"
-                onClick={() => applyTopicPackage(topic)}
-                title={topic.description}
-                className="rounded-full border border-teal-300 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-800 hover:bg-teal-100"
-              >
-                {topic.icon} {topic.label}
-              </button>
-            ))}
+            {topicPackages.map((topic) => {
+              const applied = isTopicPackageApplied(topic);
+              return (
+                <button
+                  key={topic.id}
+                  type="button"
+                  onClick={() => applyTopicPackage(topic)}
+                  title={topic.description}
+                  className={
+                    applied
+                      ? "flex items-center gap-1 rounded-full border border-teal-600 bg-teal-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm"
+                      : "flex items-center gap-1 rounded-full border border-teal-300 bg-teal-50 px-3 py-1.5 text-sm font-medium text-teal-800 hover:bg-teal-100"
+                  }
+                >
+                  {applied && <CheckCircle2 size={14} />}
+                  {topic.icon} {topic.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
 
-      <div className="space-y-2">
+      <div ref={exerciseListRef} className="space-y-2 scroll-mt-4">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold text-slate-800">Chọn dạng bài + số lượng</p>
           {/* GIAI ĐOẠN 3 MỚI: gợi ý dùng lại công thức đề đã lưu cho ĐÚNG khối lớp này - không tự
@@ -497,7 +524,14 @@ export default function WorksheetForm({ onGenerated }) {
           )}
         </div>
         {visibleExercises.map(({ key, label, source }) => (
-          <div key={key} className="flex items-center justify-between rounded-md border border-slate-200 px-3 py-2">
+          <div
+            key={key}
+            className={
+              flashKeys.includes(key)
+                ? "flex items-center justify-between rounded-md border border-teal-400 bg-teal-50 px-3 py-2 transition-colors duration-500"
+                : "flex items-center justify-between rounded-md border border-slate-200 px-3 py-2 transition-colors duration-500"
+            }
+          >
             <span className="text-sm text-slate-700">
               {label}
               {source === "ai" && <span className="text-slate-400"> (dùng AI)</span>}

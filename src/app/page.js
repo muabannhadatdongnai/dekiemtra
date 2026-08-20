@@ -54,9 +54,12 @@ const EMPTY_REPORT_COMMENT_RESULT = { cap: null, doDai: null, results: [] };
 
 // ================== MỞ RỘNG LỚP 3, ĐỢT 3 ("tắt đăng nhập để test") ==================
 // Cùng 1 biến với src/services/apiAuth.js (xem giải thích đầy đủ ở đó) - khi bật, bỏ qua hẳn màn
-// hình đăng nhập, tự gán 1 "phiên test" cố định để giáo viên vào thẳng trang chính. KHÔNG đổi gì
-// khi biến này chưa được đặt (mặc định "false") - hành vi cũ (bắt đăng nhập) giữ nguyên.
-const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN === "true";
+// hình đăng nhập, tự gán 1 "phiên test" cố định để giáo viên vào thẳng trang chính.
+// ================== CẬP NHẬT (mở public mặc định) ==================
+// Mặc định (không đặt biến này) giờ là CÔNG KHAI (không đăng nhập) - đổi theo yêu cầu mới nhất.
+// Muốn bật lại đăng nhập sau này: đặt NEXT_PUBLIC_DISABLE_LOGIN=false rồi deploy lại - KHÔNG cần
+// sửa code. Xem giải thích đầy đủ trong src/services/apiAuth.js.
+const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN !== "false";
 const TEST_USER = { username: "giao_vien_test", fullName: "Giáo viên (chế độ test)", role: "teacher" };
 
 export default function HomePage() {
