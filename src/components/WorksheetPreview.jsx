@@ -210,11 +210,11 @@ function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, tit
 // "19.000") - ô 42px cũ chỉ vừa 2-3 ký tự, học sinh viết số lớn sẽ bị tràn ra ngoài (đúng phản
 // hồi thực tế ở "Trạm 8" - đổi đơn vị đo). Giữ NGUYÊN 1 kích thước DUY NHẤT cho mọi dạng bài
 // (không tách riêng theo dạng bài) để không lệch cỡ ô giữa các khối trên cùng 1 phiếu.
-const blankBox = (accent = "#94A3B8") => (
+const blankBox = (accent = "#94A3B8", minWidth = 64) => (
   <span
     style={{
       display: "inline-block",
-      minWidth: 64,
+      minWidth,
       height: 32,
       padding: "0 4px",
       border: `1.5px solid ${accent}`,
@@ -628,6 +628,97 @@ function PhanSoRutGonSection({ items, accent }) {
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
           {i + 1}. {it.numerator}/{it.denominator} = {blankBox(accent)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * "Biểu thức chữ" - hiển thị biểu thức + "khi a = X", 1 ô trống cho kết quả.
+ */
+function BieuThucChuSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          <span>
+            {i + 1}. {it.expression} (khi <strong>a = {it.aValue}</strong>) =
+          </span>
+          {blankBox(accent)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * "So sánh phân số" - hiển thị dạng chữ "tử/mẫu" (cùng cách "Rút gọn phân số" Đợt 1), 1 ô trống
+ * để điền dấu >, <, =.
+ */
+function PhanSoSoSanhSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {i + 1}. {it.n1}/{it.d1} {blankBox(accent, 28)} {it.n2}/{it.d2}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * "Góc và đơn vị đo góc" - vẽ 2 tia chung gốc bằng SVG theo đúng số đo góc (degrees), học sinh
+ * tự nhìn hình rồi gọi tên loại góc (không hiện số đo bằng chữ để tránh học sinh chỉ dựa vào số
+ * mà không cần quan sát hình - đúng tinh thần "nhận biết trực quan" của SGK Toán 4 KNTT).
+ */
+function AngleFigure({ degrees, size = 100 }) {
+  const cx = 15;
+  const cy = 85;
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  // Tia thứ nhất luôn nằm ngang (0°), tia thứ hai lệch lên trên đúng "degrees" độ.
+  const rayLen = 68;
+  const p1 = { x: cx + rayLen, y: cy };
+  const p2 = {
+    x: cx + rayLen * Math.cos(toRad(degrees)),
+    y: cy - rayLen * Math.sin(toRad(degrees)),
+  };
+  // Vẽ cung nhỏ đánh dấu góc giữa 2 tia.
+  const arcR = 20;
+  const arcStart = { x: cx + arcR, y: cy };
+  const arcEnd = {
+    x: cx + arcR * Math.cos(toRad(degrees)),
+    y: cy - arcR * Math.sin(toRad(degrees)),
+  };
+  const largeArc = degrees > 180 ? 1 : 0;
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size}>
+      <line x1={cx} y1={cy} x2={p1.x} y2={p1.y} stroke="#334155" strokeWidth="3" strokeLinecap="round" />
+      <line x1={cx} y1={cy} x2={p2.x} y2={p2.y} stroke="#334155" strokeWidth="3" strokeLinecap="round" />
+      <path
+        d={`M ${arcStart.x} ${arcStart.y} A ${arcR} ${arcR} 0 ${largeArc} 0 ${arcEnd.x} ${arcEnd.y}`}
+        fill="none"
+        stroke="#f97316"
+        strokeWidth="2"
+      />
+      <circle cx={cx} cy={cy} r="2.5" fill="#334155" />
+    </svg>
+  );
+}
+
+function GocNhanBietSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          <AngleFigure degrees={it.degrees} />
+          <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 13 }}>
+            {i + 1}. Góc {blankBox(accent, 60)}
+          </div>
         </div>
       ))}
     </div>
@@ -1143,6 +1234,9 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "chu_vi_dien_tich" && <ChuViDienTichSection items={section.items} accent={t.border} />}
       {section.type === "doi_don_vi_do" && <DoiDonViSection items={section.items} accent={t.border} />}
       {section.type === "phan_so_rut_gon" && <PhanSoRutGonSection items={section.items} accent={t.border} />}
+      {section.type === "bieu_thuc_chu" && <BieuThucChuSection items={section.items} accent={t.border} />}
+      {section.type === "phan_so_so_sanh" && <PhanSoSoSanhSection items={section.items} accent={t.border} />}
+      {section.type === "goc_nhan_biet" && <GocNhanBietSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
       {section.type === "thu_thap_so_lieu" && (

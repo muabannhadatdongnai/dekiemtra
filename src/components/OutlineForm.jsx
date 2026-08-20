@@ -13,7 +13,7 @@ import {
 } from "@/data/outlineTemplates";
 import { buildOutlineBlueprint } from "@/data/outlineBlueprint";
 import { buildOutlineResult } from "@/data/outlineResult";
-import { getSession } from "@/services/authService";
+import { getEffectiveSession } from "@/services/authService";
 import { fetchChaptersRequest, generateOutlineRequest } from "@/services/apiClient";
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
@@ -106,7 +106,7 @@ export default function OutlineForm({ onGenerated }) {
       return;
     }
 
-    const session = getSession();
+    const session = getEffectiveSession();
     if (!session) {
       setError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
       return;

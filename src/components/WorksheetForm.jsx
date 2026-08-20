@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Loader2, Sparkles, Upload, CheckCircle2, XCircle, RefreshCw, Star, Save, ClipboardCheck } from "lucide-react";
-import { getSession } from "@/services/authService";
+import { getEffectiveSession } from "@/services/authService";
 import {
   generateWorksheetRequest,
   analyzeWorksheetSampleRequest,
@@ -274,7 +274,7 @@ export default function WorksheetForm({ onGenerated }) {
     setPreSampleExerciseCounts(null);
     if (!file) return;
 
-    const session = getSession();
+    const session = getEffectiveSession();
     if (!session) {
       setSampleError("Phiên đăng nhập đã hết, vui lòng tải lại trang.");
       return;
@@ -327,7 +327,7 @@ export default function WorksheetForm({ onGenerated }) {
       setError("Chọn ít nhất 1 dạng bài tập.");
       return;
     }
-    const session = getSession();
+    const session = getEffectiveSession();
     if (!session) {
       setError("Phiên đăng nhập đã hết, vui lòng tải lại trang.");
       return;

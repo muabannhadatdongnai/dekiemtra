@@ -15,7 +15,7 @@ import { listIntegrations } from "@/data/lessonPlanIntegrations";
 import { listLessonPlanStyles, LESSON_PLAN_STYLE_IDS, CUSTOM_STYLE_MAX_LENGTH } from "@/data/lessonPlanStyles";
 import { buildLessonPlanBlueprint } from "@/data/lessonPlanBlueprint";
 import { buildLessonPlanResult } from "@/data/lessonPlanResult";
-import { getSession } from "@/services/authService";
+import { getEffectiveSession } from "@/services/authService";
 import {
   fetchChaptersRequest,
   generateLessonPlanRequest,
@@ -169,7 +169,7 @@ export default function LessonPlanForm({ onGenerated }) {
     setSampleError("");
     if (!file) return;
 
-    const session = getSession();
+    const session = getEffectiveSession();
     if (!session) {
       setSampleError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
       return;

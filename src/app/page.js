@@ -22,7 +22,7 @@ import OutlineForm from "@/components/OutlineForm";
 import OutlinePreview from "@/components/OutlinePreview";
 import OutlineExportActions from "@/components/OutlineExportActions";
 import UsageWidget from "@/components/UsageWidget";
-import { getSession, clearSession } from "@/services/authService";
+import { getSession, clearSession, DISABLE_LOGIN, TEST_SESSION as TEST_USER } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
 import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
@@ -59,8 +59,10 @@ const EMPTY_REPORT_COMMENT_RESULT = { cap: null, doDai: null, results: [] };
 // Mặc định (không đặt biến này) giờ là CÔNG KHAI (không đăng nhập) - đổi theo yêu cầu mới nhất.
 // Muốn bật lại đăng nhập sau này: đặt NEXT_PUBLIC_DISABLE_LOGIN=false rồi deploy lại - KHÔNG cần
 // sửa code. Xem giải thích đầy đủ trong src/services/apiAuth.js.
-const DISABLE_LOGIN = process.env.NEXT_PUBLIC_DISABLE_LOGIN !== "false";
-const TEST_USER = { username: "giao_vien_test", fullName: "Giáo viên (chế độ test)", role: "teacher" };
+// ĐÃ CHUYỂN: DISABLE_LOGIN/TEST_USER giờ định nghĩa DUY NHẤT 1 nơi trong authService.js (đổi tên
+// thành TEST_SESSION ở đó, alias lại "TEST_USER" khi import để không phải sửa các chỗ dùng bên
+// dưới) - tránh định nghĩa lặp lại ở nhiều file dễ lệch nhau (đã từng là nguyên nhân gây lỗi
+// "Phiên đăng nhập đã hết" sai trong chế độ public, xem chú thích trong authService.js).
 
 export default function HomePage() {
   const [user, setUser] = useState(null);

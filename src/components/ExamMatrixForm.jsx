@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
 import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
-import { getSession } from "@/services/authService";
+import { getEffectiveSession } from "@/services/authService";
 import { GRADES, SUBJECTS, getSubjectLabel } from "@/data/config";
 import { buildExamBlueprint } from "@/data/examBlueprint";
 import { buildExamResult } from "@/data/examResult";
@@ -157,7 +157,7 @@ export default function ExamMatrixForm({ onGenerated }) {
     setSampleError("");
     if (!file) return;
 
-    const session = getSession();
+    const session = getEffectiveSession();
     if (!session) {
       setSampleError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
       return;
@@ -199,7 +199,7 @@ export default function ExamMatrixForm({ onGenerated }) {
       return;
     }
 
-    const session = getSession();
+    const session = getEffectiveSession();
     if (!session) {
       setError("Phiên đăng nhập đã hết, vui lòng tải lại trang và đăng nhập lại.");
       return;
