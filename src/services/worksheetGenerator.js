@@ -614,13 +614,20 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         mascot: mascotFor("day_so"),
         items: generateDaySo(grade, safeCounts.day_so),
       };
-    case "sap_xep_thu_tu":
+    case "sap_xep_thu_tu": {
+      const items = generateSapXepThuTu(grade, safeCounts.sap_xep_thu_tu);
       return {
         type: "sap_xep_thu_tu",
-        title: pickInstructionVariant("sap_xep_thu_tu") || "Sắp xếp các số theo thứ tự từ bé đến lớn.",
+        // ================== SỬA LỖI (Phiên 14) ==================
+        // TRƯỚC ĐÂY dùng thẳng pickInstructionVariant() (kho câu random, câu đầu tiên cố định
+        // "...từ bé đến lớn") trong khi generateSapXepThuTu() có thể trả hướng "desc" - gây lệch
+        // đề bài/bài làm. SỬA: tự dựng câu lệnh khớp ĐÚNG hướng thật đã random (items[0].direction
+        // - mọi dòng trong section giờ luôn cùng 1 hướng, xem comment trong worksheetSchemas.js).
+        title: items[0]?.direction === "desc" ? "Sắp xếp các số theo thứ tự từ lớn đến bé." : "Sắp xếp các số theo thứ tự từ bé đến lớn.",
         mascot: mascotFor("sap_xep_thu_tu"),
-        items: generateSapXepThuTu(grade, safeCounts.sap_xep_thu_tu),
+        items,
       };
+    }
     case "noi_phep_tinh":
       return {
         type: "noi_phep_tinh",
@@ -637,12 +644,16 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         items: generateDoDaiSoSanh(safeCounts.do_dai_so_sanh),
       };
     case "do_dai_sap_xep":
-      return {
-        type: "do_dai_sap_xep",
-        title: pickInstructionVariant("do_dai_sap_xep") || "Sắp xếp độ dài các băng giấy theo thứ tự.",
-        mascot: mascotFor("do_dai_sap_xep"),
-        items: generateDoDaiSapXep(safeCounts.do_dai_sap_xep),
-      };
+      {
+        const items = generateDoDaiSapXep(safeCounts.do_dai_sap_xep);
+        return {
+          type: "do_dai_sap_xep",
+          // Cùng sửa lỗi như "sap_xep_thu_tu" ở trên - câu lệnh khớp đúng hướng thật đã random.
+          title: items[0]?.direction === "desc" ? "Sắp xếp độ dài các băng giấy theo thứ tự từ dài đến ngắn." : "Sắp xếp độ dài các băng giấy theo thứ tự từ ngắn đến dài.",
+          mascot: mascotFor("do_dai_sap_xep"),
+          items,
+        };
+      }
     case "xem_dong_ho_gio_dung":
       return {
         type: "xem_dong_ho_gio_dung",

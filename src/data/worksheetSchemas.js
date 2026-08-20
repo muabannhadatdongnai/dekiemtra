@@ -287,19 +287,32 @@ export function generateNoiPhepTinh(grade, count = 5) {
  * component mới, giống đúng cách "do_dai_sap_xep" tái dùng "sap_xep_thu_tu" hay "cac_ngay_trong_tuan"
  * tái dùng "day_so" đã làm trước đó trong file này.
  */
+/**
+ * ================== SỬA LỖI (Phiên 14) ==================
+ * TRƯỚC ĐÂY không có bước loại trùng - random độc lập từng dòng nên hoàn toàn có thể ra 2 dòng
+ * giống hệt nhau (VD "2 × 2 = ?" xuất hiện 2 lần liền kề, giáo viên phản ánh thực tế). SỬA: thêm
+ * `used` Set + vòng lặp while có `guard` chống lặp vô hạn - ĐÚNG khuôn đã áp dụng cho các generator
+ * khác trong file này (generatePhanSoSoSanh, generateGocNhanBiet...). Dedupe key dùng ĐÚNG bộ 3
+ * (operandA, operator, operandB) hiển thị ra đề - không dedupe theo `answer` vì nhiều phép tính
+ * khác nhau có thể ra cùng kết quả (VD "2×6" và "3×4" đều = 12, vẫn là 2 câu hỏi hợp lệ khác nhau).
+ */
 export function generateNhanChiaBang(count = 6) {
   const items = [];
-  for (let i = 0; i < count; i++) {
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
     const a = randInt(2, 9);
     const b = randInt(2, 9);
     const product = a * b;
     const isDivision = Math.random() < 0.5;
-    if (isDivision) {
-      // Chia hết: product ÷ a = b (luôn đúng, không bao giờ dư).
-      items.push({ operandA: product, operandB: a, operator: "÷", answer: b });
-    } else {
-      items.push({ operandA: a, operandB: b, operator: "×", answer: product });
-    }
+    const item = isDivision
+      ? { operandA: product, operandB: a, operator: "÷", answer: b }
+      : { operandA: a, operandB: b, operator: "×", answer: product };
+    const dedupeKey = `${item.operandA}${item.operator}${item.operandB}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push(item);
   }
   return items;
 }
@@ -350,14 +363,28 @@ export function generateNhanDienHinh(count = 5) {
  * cố định 1 chiều suốt phiếu) để bớt đơn điệu - khớp tinh thần bài mẫu "Sắp xếp các số đo độ
  * dài theo thứ tự từ bé đến lớn" trong phiếu lớp 2 giáo viên gửi làm nguồn cảm hứng ban đầu.
  */
+/**
+ * ================== GIAI ĐOẠN 2 ==================
+ * Sắp xếp thứ tự bé→lớn hoặc lớn→bé.
+ *
+ * ================== SỬA LỖI (Phiên 14) ==================
+ * TRƯỚC ĐÂY: `direction` được random RIÊNG cho TỪNG dòng trong vòng lặp (VD dòng 1 ra "desc" dùng
+ * dấu ">", dòng 2-3 ra "asc" dùng dấu "<") - trong khi `worksheetGenerator.js` chỉ hiện DUY NHẤT 1
+ * câu lệnh đầu bài cố định "...từ bé đến lớn" cho cả section, gây lệch giữa đề bài và bài làm thật
+ * (giáo viên phản ánh: đề bảo "bé đến lớn" nhưng có dòng lại yêu cầu ngầm "lớn đến bé" qua dấu >).
+ * SỬA: random `direction` DUY NHẤT 1 LẦN cho CẢ section (mọi dòng dùng chung 1 hướng sắp xếp) -
+ * khớp đúng bản chất "1 dạng bài = 1 yêu cầu duy nhất" của phiếu bài tập. Trả thêm field
+ * `direction` ở cấp ngoài cùng (không chỉ trong từng phần tử `sets`) để `worksheetGenerator.js` có
+ * thể tự chọn ĐÚNG câu lệnh khớp hướng đã random - xem `pickSapXepInstructionText()` bên dưới.
+ */
 export function generateSapXepThuTu(grade, count = 3) {
   const max = WORKSHEET_GRADES[grade].maxNumber;
+  const direction = Math.random() < 0.5 ? "asc" : "desc";
   const sets = [];
   for (let i = 0; i < count; i++) {
     const numbers = new Set();
     while (numbers.size < 3) numbers.add(randInt(0, max));
     const ascending = [...numbers].sort((a, b) => a - b);
-    const direction = Math.random() < 0.5 ? "asc" : "desc";
     const sortedAnswer = direction === "asc" ? ascending : [...ascending].reverse();
     const shuffled = [...numbers].sort(() => Math.random() - 0.5);
     sets.push({ numbers: shuffled, sortedAnswer, direction });
@@ -450,13 +477,18 @@ export function generateDoDaiSoSanh(count = 4) {
  * SapXepThuTuSection (web) / buildSapXepThuTuParagraphs (Word) mà KHÔNG cần viết component mới -
  * chỉ khác đơn vị hiển thị là "cm" đi kèm mỗi số (xử lý ở tầng hiển thị, xem WorksheetPreview.jsx/
  * worksheetExportService.js). */
+/**
+ * ================== SỬA LỖI (Phiên 14, cùng lý do generateSapXepThuTu) ==================
+ * Random `direction` DUY NHẤT 1 lần cho cả section, không random riêng từng dòng - tránh lệch với
+ * câu lệnh đầu bài cố định.
+ */
 export function generateDoDaiSapXep(count = 3) {
+  const direction = Math.random() < 0.5 ? "asc" : "desc";
   const sets = [];
   for (let i = 0; i < count; i++) {
     const cmSet = new Set();
     while (cmSet.size < 3) cmSet.add(randInt(3, 30));
     const ascending = [...cmSet].sort((a, b) => a - b);
-    const direction = Math.random() < 0.5 ? "asc" : "desc";
     const sortedAnswer = direction === "asc" ? ascending : [...ascending].reverse();
     const shuffled = [...cmSet].sort(() => Math.random() - 0.5);
     sets.push({ numbers: shuffled, sortedAnswer, direction, unit: "cm" });
