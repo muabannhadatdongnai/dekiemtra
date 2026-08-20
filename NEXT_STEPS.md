@@ -1,8 +1,30 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
-> Trạng thái: **ĐANG CODE Lớp 4** (Đợt 1 xong). File này để mang sang chat mới không mất ngữ cảnh.
+> Trạng thái: **ĐANG CODE Lớp 4** (Đợt 2 xong). File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 11) — public mặc định + sửa lỗi nút Chủ đề SGK + mở Lớp 4 Đợt 1
+## ✅ MỚI NHẤT (Phiên 12) — sửa lỗi "Phiên đăng nhập đã hết" (public) + mở Lớp 4 Đợt 2
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 12". Tóm tắt:
+1. **Sửa lỗi "Phiên đăng nhập đã hết" hiện SAI khi web đang public**: 4 form (`WorksheetForm`,
+   `OutlineForm`, `ExamMatrixForm`, `LessonPlanForm`) tự gọi `getSession()` (đọc localStorage) rồi
+   CHẶN request nếu không có session - nhưng chế độ public không bao giờ có session trong
+   localStorage. Sửa: `getEffectiveSession()` mới trong `authService.js`, đổi cả 4 form dùng hàm
+   này thay vì `getSession()` trần.
+2. **Lớp 4, Đợt 2** - 3 dạng bài mới: `bieu_thuc_chu` (Biểu thức chữ), `phan_so_so_sanh` (So sánh
+   phân số), `goc_nhan_biet` (Góc và đơn vị đo góc - vẽ SVG ở web, mô tả bằng số đo ở Word). Phát
+   hiện + sửa 1 bug thật qua sanity-check (`bieu_thuc_chu` có thể ra kết quả âm khi giá trị tạm về
+   0 giữa 2 bước trừ).
+- `npm test`: 213/213 PASS (203 cũ + 10 mới cho Lớp 4 Đợt 2). `npm run build`: sạch. Đã test
+  end-to-end qua `generateWorksheet()` thật (không chỉ test generator riêng lẻ).
+
+### ⚠️ Cần Hoan test thực tế (chưa test được trong sandbox)
+1. **Nút "Tạo phiếu bài tập"** trên trình duyệt thật - xác nhận lỗi "Phiên đăng nhập đã hết" đã
+   biến mất hoàn toàn (kể cả sau khi tải lại trang nhiều lần, xoá cache trình duyệt).
+2. **Hình vẽ góc (SVG)** trong dạng bài "Góc và đơn vị đo góc" - xem tỷ lệ/kích thước hiển thị có
+   ổn trên các kích thước màn hình khác nhau (điện thoại, máy tính) hay không.
+3. **Bản Word xuất ra** cho cả 3 dạng bài mới - đặc biệt "Góc và đơn vị đo góc" (bản Word mô tả
+   bằng số đo, khác hẳn bản web có hình vẽ - cần xem có tự nhiên/dễ hiểu không).
+
+## ✅ (Phiên 11) — public mặc định + sửa lỗi nút Chủ đề SGK + mở Lớp 4 Đợt 1
 Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 11". Tóm tắt:
 1. **Tắt đăng nhập VĨNH VIỄN (public mặc định)**: đảo mặc định của `NEXT_PUBLIC_DISABLE_LOGIN`
    trong `src/services/apiAuth.js` + `src/app/page.js` - giờ **KHÔNG đặt biến này = công khai**
@@ -118,18 +140,40 @@ bài" cho Lớp 4 có tải được không.
 
 **Còn lại cho Lớp 4 (theo catalog đã xác nhận SGK KNTT trong NEXT_STEPS.md, phần "Catalog Toán Lớp
 3-5" bên dưới):**
-- **Góc và đơn vị đo góc** (góc nhọn/tù/bẹt) — mảng hoàn toàn mới, cần dựng hình vẽ góc (SVG hoặc
-  tương tự `ClockFace`) — độ phức tạp đồ hoạ cao hơn hẳn `phan_so_rut_gon`, nên tách đợt riêng.
-- **Biểu thức chữ** (làm quen ẩn số, vd "a + 5 khi a = 3") — thuần chữ/số, độ phức tạp tương đương
-  `phan_so_rut_gon`, có thể làm sớm ở Đợt 2.
-- **Phân số nâng cao**: tìm phân số của một số, so sánh phân số (khác mảng với rút gọn).
+- **Tìm phân số của một số** (VD "Tìm 2/3 của 18") — phần còn lại của "Phân số nâng cao", KHÁC với
+  `phan_so_so_sanh` (đã làm ở Đợt 2, đó là so sánh 2 phân số chứ chưa phải "tìm phân số của 1 số").
 - **Giải toán 3 bước tính** — có thể chỉ cần mở rộng prompt AI của `giai_toan` (đã dùng chung),
   không cần dạng bài mới riêng — cần kiểm tra thực tế prompt hiện tại có tự nhiên ra bài 3 bước
   khi grade=LOP_4 hay không.
 - **Dãy số liệu thống kê** (mở rộng từ Lớp 3) — có thể mở `maxGrade` cho `thu_thap_so_lieu` lên
   LOP_4 nếu nội dung không đổi nhiều, cần xem lại generator có cứng số liệu Lớp 3 hay không.
 - Cân nhắc thêm "gói chủ đề" Lớp 4 trong `worksheetTopicPackages.js` (như đã làm cho Lớp 1/Lớp 3)
-  sau khi có ít nhất 3-4 dạng bài Lớp 4.
+  — giờ đã có 4 dạng bài Lớp 4 (`phan_so_rut_gon`, `bieu_thuc_chu`, `phan_so_so_sanh`,
+  `goc_nhan_biet`), đủ để cân nhắc.
+
+## ✅ (Phiên 12) — Lớp 4, Đợt 2 (xong)
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 12". Tóm tắt: 3 dạng bài mới
+`bieu_thuc_chu`/`phan_so_so_sanh`/`goc_nhan_biet`, nối đủ 4 tầng, có test tự động riêng
+(`test/worksheetLop4Dot2.test.js`), đã test end-to-end qua `generateWorksheet()` thật.
+
+## Trạng thái Lớp 5 (Toán) — CHƯA BẮT ĐẦU
+Khối lượng rất lớn, cần tách nhiều đợt như Lớp 3/Lớp 4. Nội dung cần (xem "Catalog Toán Lớp 3-5"
+bên dưới): số thập phân (đọc/viết/so sánh/4 phép tính - **cần generator số thập phân RIÊNG**, khác
+hẳn số nguyên hiện có); tỉ số phần trăm; hình tam giác/hình thang/hình tròn (chu vi/diện tích);
+thể tích + đơn vị đo thể tích; diện tích xung quanh/toàn phần hình hộp chữ nhật/lập phương/trụ; số
+đo thời gian; vận tốc-quãng đường-thời gian (toán chuyển động đều).
+
+**Vấn đề kỹ thuật cần giải quyết TRƯỚC khi code Lớp 5:**
+- `numberFormatUtils.js` hiện dùng `toLocaleString("vi-VN")` nên VỀ LÝ THUYẾT đã tự xử lý đúng số
+  thập phân (dấu phẩy) - nhưng CHƯA test thực tế với số thập phân, cần viết test riêng xác nhận
+  trước khi dùng cho Lớp 5.
+- `WORKSHEET_GRADES.LOP_5` cần thêm vào `worksheetSchemas.js` + `GRADE_ORDER` cần thêm `"LOP_5"`
+  vào cuối mảng trong `worksheetExerciseCatalog.js` (chỉ cần thêm vào cuối, không sửa lại từng
+  exercise, đúng nguyên tắc đã áp dụng cho Lớp 3/Lớp 4).
+- Các dạng bài "kỹ năng chung" (`so_sanh`, `sap_xep_thu_tu`, `day_so`...) hiện dùng số NGUYÊN
+  (`WORKSHEET_GRADES[grade].maxNumber`) - Lớp 5 cần nhánh xử lý số THẬP PHÂN riêng (không thể chỉ
+  mở `maxGrade` như đã làm cho Lớp 3/Lớp 4, vì bản chất số liệu khác hẳn).
+
 
 ## Thiết kế chế độ in Màu/Đen trắng (draft)
 - Thêm field `printMode: "color" | "bw"` (mặc định `"color"`).

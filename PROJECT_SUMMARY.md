@@ -1,7 +1,73 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 11: public mặc định + sửa nút Chủ đề
-# SGK + mở Lớp 4 Đợt 1)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 12: sửa lỗi "Phiên đăng nhập đã hết"
+# sai trong chế độ public + mở Lớp 4 Đợt 2 (Biểu thức chữ, So sánh phân số, Góc và đơn vị đo góc))
 
-## PHIÊN 11 — Public mặc định, sửa lỗi UX nút "Chủ đề SGK", mở Lớp 4 Đợt 1
+## PHIÊN 12 — Sửa lỗi "Phiên đăng nhập đã hết" (chế độ public) + Lớp 4 Đợt 2
+
+**Bối cảnh**: Hoan test thực tế thấy lỗi "Phiên đăng nhập đã hết, vui lòng tải lại trang" khi bấm
+"Tạo phiếu bài tập" (có ảnh chụp màn hình kèm theo), đồng thời yêu cầu làm tiếp Lớp 4 (góc & đơn
+vị đo góc, biểu thức chữ, phân số nâng cao) và toàn bộ Lớp 5.
+
+### 1. Sửa lỗi "Phiên đăng nhập đã hết" hiện SAI trong chế độ public
+**Nguyên nhân thật (đã xác nhận qua code, KHÔNG phải lỗi hiểu nhầm)**: web đang chạy ở chế độ
+công khai (`NEXT_PUBLIC_DISABLE_LOGIN` mặc định = public kể từ PHIÊN 11), nên `page.js` tự gán
+"phiên test" và KHÔNG hiện màn hình đăng nhập — nhưng cả 4 form (`WorksheetForm.jsx`,
+`OutlineForm.jsx`, `ExamMatrixForm.jsx`, `LessonPlanForm.jsx`) đều tự gọi thẳng `getSession()`
+(đọc localStorage) trước khi gửi request rồi CHẶN request nếu không có session. Ở chế độ public,
+giáo viên không bao giờ đăng nhập nên localStorage không bao giờ có session -> mọi lượt "Tạo
+phiếu bài tập"/"Tạo đề"/"Soạn giáo án"/"Tạo đề cương" (và cả upload file mẫu) đều bị chặn ngay
+trên trình duyệt, dù server (`apiAuth.js`) đã bỏ qua xác thực từ trước.
+
+**Sửa**: thêm `DISABLE_LOGIN`/`TEST_SESSION`/`getEffectiveSession()` DUY NHẤT 1 nơi trong
+`src/services/authService.js` (cùng logic với `apiAuth.js`) - trả về session test cố định ngay
+khi đang public (không cần đọc localStorage), hoặc `getSession()` như cũ khi đăng nhập vẫn bật.
+Đổi cả 4 form sang dùng `getEffectiveSession()` thay vì `getSession()` trần ở đúng chỗ dùng để
+chặn submit + lấy `username` gửi kèm request. Đồng bộ hoá `page.js` để import `DISABLE_LOGIN`/
+`TEST_SESSION` từ `authService.js` thay vì khai lại (tránh lệch nhau lần sau).
+
+### 2. Lớp 4, Đợt 2 — 3 dạng bài mới (nối đủ 4 tầng: catalog → generator → preview → export Word)
+Đúng mạch nội dung SGK Toán 4 KNTT đã xác nhận trong NEXT_STEPS.md ("Catalog Toán Lớp 3-5"):
+- **`bieu_thuc_chu`** ("Biểu thức chữ") — biểu thức 1-2 bước tính với 1 chữ `a`, cho giá trị `a`,
+  học sinh tính kết quả. `generateBieuThucChu()` trong `worksheetSchemas.js`. **Bug thật phát
+  hiện qua sanity-check 5000 lượt** (không phải chỉ lý thuyết): khi giá trị tạm thời về 0 giữa 2
+  bước tính, nhánh trừ cũ vẫn ép trừ tiếp -> ra kết quả ÂM (VD "a - 6 - 1" khi a=6 -> -1, sai vì
+  Lớp 4 chưa học số âm). Đã sửa: loại hẳn phép trừ khỏi lựa chọn khi giá trị tạm <= 0.
+- **`phan_so_so_sanh`** ("So sánh phân số") — so sánh 2 phân số (nhánh cùng mẫu/cùng tử), tính
+  đáp án bằng so sánh chéo (n1×d2 vs n2×d1) nên ĐÚNG toán học trong mọi trường hợp. Khác
+  `phan_so_rut_gon` (đã có từ Đợt 1, dạng RÚT GỌN chứ không phải SO SÁNH).
+- **`goc_nhan_biet`** ("Góc và đơn vị đo góc") — CHỈ yêu cầu nhận biết/phân loại góc (nhọn/vuông/
+  tù/bẹt) theo số đo cho sẵn, KHÔNG yêu cầu tự đo bằng thước đo góc (dụng cụ vật lý, không phù
+  hợp phiếu tự động). Bản web (`AngleFigure` trong `WorksheetPreview.jsx`) vẽ 2 tia bằng SVG theo
+  đúng số đo (không hiện số bằng chữ, buộc học sinh quan sát hình). Bản Word (không vẽ được SVG,
+  giống cách "Xem đồng hồ" đã xử lý trước đây) mô tả góc bằng SỐ ĐO trực tiếp thay vì hình vẽ.
+
+`blankBox()` (WorksheetPreview.jsx) thêm tham số `minWidth` tuỳ chọn (mặc định vẫn 64px như cũ,
+không đổi hành vi các dạng bài khác) để dùng ô hẹp hơn cho dấu so sánh phân số.
+
+### Đã tự verify
+- Sanity-check thủ công 5000 lượt/dạng bài (tự tính lại đáp án bằng công thức ĐỘC LẬP với
+  generator, không gọi lại chính hàm đang test) - phát hiện + sửa đúng 1 bug thật (mục trên).
+- Test tự động MỚI `test/worksheetLop4Dot2.test.js` (10 test, cùng nguyên tắc tính lại đáp án độc
+  lập như `worksheetTachGop.test.js`).
+- `npm test`: 213/213 PASS (203 cũ + 10 mới). `npm run build`: sạch, không lỗi.
+- Test end-to-end thật qua `generateWorksheet({ grade: "LOP_4", exerciseCounts: {...} })` (không
+  phải chỉ test generator riêng lẻ) - xác nhận cả 4 dạng bài Lớp 4 (`phan_so_rut_gon`,
+  `bieu_thuc_chu`, `phan_so_so_sanh`, `goc_nhan_biet`) chạy đúng qua orchestrator thật, đúng thứ
+  tự `DEFAULT_SECTION_ORDER`, đúng cấu trúc dữ liệu từng section.
+- **CHƯA chạy thử thực tế trên trình duyệt** (môi trường code không có UI) - Hoan cần tự kéo về
+  bấm thử, đặc biệt xem hình vẽ góc (SVG) hiển thị đúng tỷ lệ trên nhiều kích thước màn hình.
+
+### CHƯA làm (để lại cho phiên sau)
+- **Toàn bộ Lớp 5** — khối lượng rất lớn (số thập phân, tỉ số phần trăm, hình tam giác/thang/
+  tròn, thể tích, vận tốc-quãng đường-thời gian...), CHƯA bắt đầu, cần tách thành nhiều đợt như
+  Lớp 3/Lớp 4 đã làm. Xem mục "Catalog Toán Lớp 3-5" trong NEXT_STEPS.md để biết nội dung cần.
+- "Giải toán 3 bước tính" (Lớp 4) — có thể chỉ cần mở rộng prompt AI của `giai_toan`, chưa kiểm
+  tra thực tế.
+- "Dãy số liệu thống kê" mở rộng từ Lớp 3 lên Lớp 4 — chưa xem lại generator có cứng số liệu Lớp
+  3 hay không.
+- Gói chủ đề Lớp 4 (`worksheetTopicPackages.js`) — giờ đã có 4 dạng bài Lớp 4, đủ để cân nhắc
+  thêm gói chủ đề như Lớp 1/Lớp 3.
+
+
 
 **Bối cảnh**: Hoan yêu cầu 3 việc trong 1 lượt: (1) tắt hẳn màn hình đăng nhập, cho truy cập công
 khai (giữ nguyên cơ chế, có thể bật lại sau); (2) báo lỗi "không thể bấm chọn chức năng" kèm ảnh
