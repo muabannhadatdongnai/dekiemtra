@@ -26,6 +26,7 @@ import {
   generatePhanSoSoSanh,
   generateGocNhanBiet,
   generateSoThapPhanSoSanh,
+  generateSoThapPhanCongTru,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -514,6 +515,10 @@ const DEFAULT_SECTION_ORDER = [
   // đây là phần AI - đặt cuối để giáo viên xem hết phần code-driven trước) - chỉ chọn được khi
   // grade=LOP_5 nên không ảnh hưởng phiếu Lớp 1-4.
   "so_thap_phan_so_sanh",
+  // ================== MỞ RỘNG LỚP 5, ĐỢT 2 ==================
+  // "so_thap_phan_cong_tru" xếp ngay sau "so_thap_phan_so_sanh" (cùng mạch "số thập phân" - học
+  // sinh so sánh trước rồi mới cộng/trừ, đúng thứ tự SGK Toán 5 KNTT), vẫn trước "giai_toan".
+  "so_thap_phan_cong_tru",
   "giai_toan",
 ];
 
@@ -746,6 +751,13 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("so_thap_phan_so_sanh") || "So sánh. Điền dấu >, <, = thích hợp.",
         mascot: mascotFor("so_thap_phan_so_sanh"),
         items: generateSoThapPhanSoSanh(safeCounts.so_thap_phan_so_sanh),
+      };
+    case "so_thap_phan_cong_tru":
+      return {
+        type: "so_thap_phan_cong_tru",
+        title: pickInstructionVariant("so_thap_phan_cong_tru") || "Đặt tính rồi tính.",
+        mascot: mascotFor("so_thap_phan_cong_tru"),
+        items: generateSoThapPhanCongTru(safeCounts.so_thap_phan_cong_tru),
       };
     case "cac_ngay_trong_tuan":
       return {

@@ -358,6 +358,27 @@ function buildSoThapPhanSoSanhParagraphs(items, showAnswers) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 2 ==================
+ * "Cộng, trừ số thập phân" - cùng khuôn buildTinhNhamParagraphs() (lưới 2 cột, "a op b = kết
+ * quả/BLANK"), chỉ khác dùng formatSoThapPhan() cho cả 2 toán hạng LẪN đáp án - đáp án ghép lại từ
+ * answerInt/answerDec (đã tính sẵn bằng số nguyên quy đổi trong generateSoThapPhanCongTru(), xem
+ * chú thích trong worksheetSchemas.js) để tránh sai số dấu phẩy động khi hiển thị.
+ */
+function buildSoThapPhanCongTruParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length);
+      const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length);
+      const answer = formatSoThapPhan(Number(`${it.answerInt}.${it.answerDec}`), it.answerDec.length);
+      const text = `${left} ${it.operator} ${right} = ${showAnswers ? answer : BLANK}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
+/**
  * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
  * "Góc và đơn vị đo góc" - Word KHÔNG hỗ trợ vẽ SVG như bản web (AngleFigure trong
  * WorksheetPreview.jsx) - giống cách "Xem đồng hồ" đã xử lý trước đây (dùng text vì không cần độ
@@ -697,6 +718,8 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildPhanSoSoSanhParagraphs(section.items, showAnswers);
     case "so_thap_phan_so_sanh":
       return buildSoThapPhanSoSanhParagraphs(section.items, showAnswers);
+    case "so_thap_phan_cong_tru":
+      return buildSoThapPhanCongTruParagraphs(section.items, showAnswers);
     case "goc_nhan_biet":
       return buildGocNhanBietParagraphs(section.items, showAnswers);
     case "tien_viet_nam":

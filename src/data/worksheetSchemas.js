@@ -46,6 +46,7 @@ export const EXERCISE_TYPES = {
   TACH_GOP: "tach_gop", // GIAI ĐOẠN F - sơ đồ Tách - Gộp (number bond), riêng Lớp 1
   THU_THAP_SO_LIEU: "thu_thap_so_lieu", // MỞ RỘNG LỚP 3, ĐỢT 3 - thống kê: bảng số liệu + câu hỏi
   SO_THAP_PHAN_SO_SANH: "so_thap_phan_so_sanh", // MỞ RỘNG LỚP 5, ĐỢT 1 - so sánh số thập phân
+  SO_THAP_PHAN_CONG_TRU: "so_thap_phan_cong_tru", // MỞ RỘNG LỚP 5, ĐỢT 2 - cộng/trừ số thập phân
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -974,6 +975,69 @@ export function generateSoThapPhanSoSanh(count = 6) {
       rightInt: intB,
       rightDec: decB,
       answer: compareDecimalStrings(intA, decA, intB, decB),
+    });
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 5, ĐỢT 2 ==================
+// "Phép cộng, trừ số thập phân" - dạng bài thứ 2 của mảng số thập phân (sau "so sánh" ở Đợt 1).
+// Cố ý cho phép 2 số có SỐ CHỮ SỐ THẬP PHÂN KHÁC NHAU (VD "3,4 + 5,72") - đúng nội dung SGK Toán 5
+// KNTT dạy học sinh "viết thêm 0 vào tận cùng bên phải phần thập phân" để 2 số cùng số chữ số
+// trước khi cộng/trừ theo cột dọc. Toàn bộ phép tính quy về SỐ NGUYÊN (nhân 10^width) trước khi
+// cộng/trừ rồi mới quy đổi ngược lại - tránh HOÀN TOÀN sai số dấu phẩy động JS (cùng nguyên tắc
+// "ghép chuỗi/quy đổi số nguyên" như generateSoThapPhanSoSanh() ở Đợt 1), không cộng/trừ trực tiếp
+// trên kiểu Number thập phân.
+// Phép trừ: LUÔN đảm bảo số bị trừ >= số trừ (Lớp 5 chưa học số thập phân âm) - nếu random ra
+// ngược thì tự hoán đổi 2 toán hạng (đỡ lãng phí vòng lặp so với loại bỏ rồi random lại), né riêng
+// trường hợp 2 số bằng nhau (kết quả 0, ít giá trị luyện tập cộng/trừ có nhớ).
+function decimalToNormalized(intPart, decPart, width) {
+  return Number(intPart) * 10 ** width + Number(decPart.padEnd(width, "0"));
+}
+
+function normalizedToDecimal(normalized, width) {
+  const intPart = Math.floor(normalized / 10 ** width);
+  const decPart = String(normalized % 10 ** width).padStart(width, "0");
+  return { intPart, decPart };
+}
+
+export function generateSoThapPhanCongTru(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const operator = Math.random() < 0.5 ? "+" : "-";
+    let intA = randInt(0, 99);
+    let intB = randInt(0, 99);
+    const digitsA = Math.random() < 0.5 ? 1 : 2;
+    // ~35% số cặp CỐ Ý lệch số chữ số thập phân - đúng trọng tâm bài học nêu trên (thấp hơn tỉ lệ
+    // 40% của "so sánh" ở Đợt 1 vì cộng/trừ có nhớ vốn đã khó hơn so sánh, tránh dồn 2 độ khó cùng lúc).
+    const digitsB = Math.random() < 0.35 ? (digitsA === 1 ? 2 : 1) : digitsA;
+    let decA = randomDecimalPart(digitsA);
+    let decB = randomDecimalPart(digitsB);
+    const width = Math.max(decA.length, decB.length);
+    let normA = decimalToNormalized(intA, decA, width);
+    let normB = decimalToNormalized(intB, decB, width);
+    if (operator === "-" && normA < normB) {
+      [intA, intB] = [intB, intA];
+      [decA, decB] = [decB, decA];
+      [normA, normB] = [normB, normA];
+    }
+    if (operator === "-" && normA === normB) continue;
+    const dedupeKey = `${operator}_${intA},${decA}_${intB},${decB}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    const resultNorm = operator === "+" ? normA + normB : normA - normB;
+    const { intPart: answerInt, decPart: answerDec } = normalizedToDecimal(resultNorm, width);
+    items.push({
+      leftInt: intA,
+      leftDec: decA,
+      rightInt: intB,
+      rightDec: decB,
+      operator,
+      answerInt,
+      answerDec,
     });
   }
   return items;

@@ -610,6 +610,26 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     mascotPool: ["🔢", "📏", "✨"],
     colorThemeTags: ["blue", "green", "purple"],
   },
+  {
+    // ===== MỞ RỘNG LỚP 5, ĐỢT 2 =====
+    // Dạng bài thứ 2 của mảng "số thập phân" (sau "so sánh" ở Đợt 1) - minGrade=maxGrade=LOP_5
+    // nên KHÔNG hiện ở phiếu Lớp 1-4, cùng nguyên tắc isolation đã áp dụng xuyên suốt dự án.
+    key: "so_thap_phan_cong_tru",
+    subject: "TOAN",
+    label: "Cộng, trừ số thập phân",
+    skillGroup: "so_thap_phan",
+    source: "code",
+    minGrade: "LOP_5",
+    maxGrade: "LOP_5",
+    defaultCount: 6,
+    instructionVariants: [
+      "Đặt tính rồi tính.",
+      "Tính. Nhớ đặt dấu phẩy thẳng cột nhé!",
+      "Em hãy tính kết quả các phép tính sau.",
+    ],
+    mascotPool: ["➕", "➖", "🧮"],
+    colorThemeTags: ["blue", "orange", "green"],
+  },
 ];
 
 /** Lấy toàn bộ block phù hợp với 1 khối lớp + môn học cụ thể. */
