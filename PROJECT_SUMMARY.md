@@ -1,5 +1,51 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 12: sửa lỗi "Phiên đăng nhập đã hết"
-# sai trong chế độ public + mở Lớp 4 Đợt 2 (Biểu thức chữ, So sánh phân số, Góc và đơn vị đo góc))
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 13: phát hiện + backfill tài liệu
+# Lớp 5 Đợt 1 (đã có sẵn trong code nhưng chưa ghi vào NEXT_STEPS.md) + Lớp 5 Đợt 2 (Cộng, trừ
+# số thập phân))
+
+## PHIÊN 13 — Backfill tài liệu Lớp 5 Đợt 1 + Lớp 5 Đợt 2 (Cộng, trừ số thập phân)
+
+**Bối cảnh**: Hoan yêu cầu "làm tiếp lớp 5". Rà soát code thật trước khi code (đúng nguyên tắc
+"Audit before building") phát hiện `NEXT_STEPS.md` vẫn ghi "Trạng thái Lớp 5 (Toán) — CHƯA BẮT
+ĐẦU", nhưng code thực tế **đã có sẵn** Lớp 5 Đợt 1 hoàn chỉnh (`WORKSHEET_GRADES.LOP_5`,
+`GRADE_ORDER` đã thêm `LOP_5`, `formatSoThapPhan()`, dạng bài "So sánh số thập phân"
+`so_thap_phan_so_sanh` nối đủ 4 tầng, kèm `test/worksheetLop5Dot1.test.js` 8 test) — lặp lại đúng
+kiểu lệch tài liệu đã gặp ở PHIÊN 10 (tính năng "Thu thập số liệu" Lớp 3). Không rõ được code ở
+phiên chat nào trước đó chưa cập nhật lại `NEXT_STEPS.md`.
+
+### 1. Backfill tài liệu cho Lớp 5 Đợt 1 (không đổi code, chỉ cập nhật NEXT_STEPS.md cho khớp thực tế)
+Xác nhận qua code + chạy test rằng Lớp 5 Đợt 1 ("So sánh số thập phân") đã hoàn chỉnh, nối đủ 4
+tầng (catalog/generator/preview/export Word), có test tự động riêng, `npm test` xanh. Cập nhật
+lại mục "Trạng thái Lớp 5 (Toán)" trong `NEXT_STEPS.md` từ "CHƯA BẮT ĐẦU" thành đúng thực tế.
+
+### 2. Lớp 5, Đợt 2 — dạng bài mới "Cộng, trừ số thập phân" (`so_thap_phan_cong_tru`)
+Nối đủ 4 tầng theo đúng khuôn Đợt 1:
+- **Catalog** (`worksheetExerciseCatalog.js`): `minGrade=maxGrade=LOP_5`, `skillGroup:
+  "so_thap_phan"` (cùng nhóm với "So sánh số thập phân").
+- **Generator** (`worksheetSchemas.js`, hàm `generateSoThapPhanCongTru()`): cho phép 2 số có SỐ
+  CHỮ SỐ THẬP PHÂN KHÁC NHAU (VD "3,4 + 5,72") — đúng trọng tâm SGK Toán 5 KNTT (học sinh phải tự
+  nhận ra cần thêm số 0 khi đặt tính cột dọc). Toàn bộ phép cộng/trừ quy đổi qua SỐ NGUYÊN (nhân
+  `10^width`) trước khi tính rồi mới quy đổi ngược — tránh HOÀN TOÀN sai số dấu phẩy động JS,
+  cùng nguyên tắc `generateSoThapPhanSoSanh()` đã dùng ở Đợt 1. Phép trừ luôn đảm bảo số bị trừ >=
+  số trừ (tự hoán đổi toán hạng nếu random ra ngược, né riêng trường hợp kết quả = 0).
+- **Preview web** (`WorksheetPreview.jsx`, `SoThapPhanCongTruSection`): lưới 2 cột "a op b = ___",
+  cùng bố cục `TinhNhamSection` của các khối số tự nhiên, dùng `formatSoThapPhan()` theo đúng số
+  chữ số thập phân gốc từng toán hạng.
+- **Export Word** (`worksheetExportService.js`, `buildSoThapPhanCongTruParagraphs()`): cùng khuôn
+  `buildTinhNhamParagraphs()`, đáp án ghép từ `answerInt`/`answerDec` đã tính sẵn (không tính lại
+  bằng phép cộng Number thô để tránh sai số).
+
+**Đã kiểm thử**: `test/worksheetLop5Dot2.test.js` (7 test mới) — đáp án tính lại ĐỘC LẬP bằng
+`toFixed(2)` (không gọi lại logic quy đổi số nguyên bên trong generator, giống cách Đợt 1 đã kiểm
+chứng), xác nhận phép trừ không ra số âm/kết quả 0, không trùng lặp phép tính, dạng bài chỉ lộ ra
+đúng khối Lớp 5. Đã chạy sanity-check end-to-end qua `generateWorksheet()` thật (không chỉ test
+generator riêng lẻ) — xác nhận 3 phép tính mẫu đúng toán học. `npm test`: 232/232 PASS (225 cũ +
+7 mới). `npm run build`: sạch (exit 0).
+
+### Còn lại cho Lớp 5 (theo catalog đã xác nhận SGK KNTT trong `NEXT_STEPS.md`)
+Nhân/chia số thập phân; tỉ số phần trăm; hình tam giác/hình thang/hình tròn (chu vi/diện tích);
+thể tích + đơn vị đo thể tích (cm³/dm³); diện tích xung quanh/toàn phần hình hộp chữ nhật/lập
+phương/trụ; số đo thời gian; vận tốc-quãng đường-thời gian (toán chuyển động đều). Cân nhắc "gói
+chủ đề" Lớp 5 (`worksheetTopicPackages.js`) sau khi có thêm vài dạng bài nữa (hiện mới 2/nhiều).
 
 ## PHIÊN 12 — Sửa lỗi "Phiên đăng nhập đã hết" (chế độ public) + Lớp 4 Đợt 2
 

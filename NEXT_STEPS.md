@@ -1,8 +1,21 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
-> Trạng thái: **ĐANG CODE Lớp 4** (Đợt 2 xong). File này để mang sang chat mới không mất ngữ cảnh.
+> Trạng thái: **ĐANG CODE Lớp 5** (Đợt 2 xong). File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 12) — sửa lỗi "Phiên đăng nhập đã hết" (public) + mở Lớp 4 Đợt 2
+## ✅ MỚI NHẤT (Phiên 13) — Backfill tài liệu Lớp 5 Đợt 1 + Lớp 5 Đợt 2 (Cộng, trừ số thập phân)
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 13". Tóm tắt:
+1. **Phát hiện tài liệu bị lệch**: rà soát code trước khi làm phát hiện Lớp 5 Đợt 1 ("So sánh số
+   thập phân") **đã được code xong hoàn chỉnh từ trước** (4 tầng đủ + test riêng) dù mục "Trạng
+   thái Lớp 5" bên dưới (viết TRƯỚC phiên này) từng ghi "CHƯA BẮT ĐẦU" — cùng kiểu lệch tài liệu
+   đã gặp ở Phiên 10 (tính năng "Thu thập số liệu" Lớp 3). Đã cập nhật lại phần "Trạng thái Lớp 5"
+   cho khớp thực tế.
+2. **Lớp 5, Đợt 2** — dạng bài mới: `so_thap_phan_cong_tru` (Cộng, trừ số thập phân), cho phép 2
+   toán hạng lệch số chữ số thập phân (VD "3,4 + 5,72"), tính bằng số nguyên quy đổi để tránh sai
+   số dấu phẩy động, phép trừ luôn đảm bảo không ra số âm.
+- `npm test`: 232/232 PASS (225 cũ + 7 mới cho Lớp 5 Đợt 2). `npm run build`: sạch. Đã test
+  end-to-end qua `generateWorksheet()` thật (không chỉ test generator riêng lẻ).
+
+## ✅ (Phiên 12) — sửa lỗi "Phiên đăng nhập đã hết" (public) + mở Lớp 4 Đợt 2
 Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 12". Tóm tắt:
 1. **Sửa lỗi "Phiên đăng nhập đã hết" hiện SAI khi web đang public**: 4 form (`WorksheetForm`,
    `OutlineForm`, `ExamMatrixForm`, `LessonPlanForm`) tự gọi `getSession()` (đọc localStorage) rồi
@@ -156,23 +169,43 @@ Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊ
 `bieu_thuc_chu`/`phan_so_so_sanh`/`goc_nhan_biet`, nối đủ 4 tầng, có test tự động riêng
 (`test/worksheetLop4Dot2.test.js`), đã test end-to-end qua `generateWorksheet()` thật.
 
-## Trạng thái Lớp 5 (Toán) — CHƯA BẮT ĐẦU
+## Trạng thái Lớp 5 (Toán) — ĐANG CODE (Đợt 1 + Đợt 2 xong)
 Khối lượng rất lớn, cần tách nhiều đợt như Lớp 3/Lớp 4. Nội dung cần (xem "Catalog Toán Lớp 3-5"
 bên dưới): số thập phân (đọc/viết/so sánh/4 phép tính - **cần generator số thập phân RIÊNG**, khác
 hẳn số nguyên hiện có); tỉ số phần trăm; hình tam giác/hình thang/hình tròn (chu vi/diện tích);
 thể tích + đơn vị đo thể tích; diện tích xung quanh/toàn phần hình hộp chữ nhật/lập phương/trụ; số
 đo thời gian; vận tốc-quãng đường-thời gian (toán chuyển động đều).
 
-**Vấn đề kỹ thuật cần giải quyết TRƯỚC khi code Lớp 5:**
-- `numberFormatUtils.js` hiện dùng `toLocaleString("vi-VN")` nên VỀ LÝ THUYẾT đã tự xử lý đúng số
-  thập phân (dấu phẩy) - nhưng CHƯA test thực tế với số thập phân, cần viết test riêng xác nhận
-  trước khi dùng cho Lớp 5.
-- `WORKSHEET_GRADES.LOP_5` cần thêm vào `worksheetSchemas.js` + `GRADE_ORDER` cần thêm `"LOP_5"`
-  vào cuối mảng trong `worksheetExerciseCatalog.js` (chỉ cần thêm vào cuối, không sửa lại từng
-  exercise, đúng nguyên tắc đã áp dụng cho Lớp 3/Lớp 4).
-- Các dạng bài "kỹ năng chung" (`so_sanh`, `sap_xep_thu_tu`, `day_so`...) hiện dùng số NGUYÊN
-  (`WORKSHEET_GRADES[grade].maxNumber`) - Lớp 5 cần nhánh xử lý số THẬP PHÂN riêng (không thể chỉ
-  mở `maxGrade` như đã làm cho Lớp 3/Lớp 4, vì bản chất số liệu khác hẳn).
+**Vấn đề kỹ thuật đã giải quyết (trước khi code Lớp 5):**
+- ✅ `formatSoThapPhan()` (`numberFormatUtils.js`) - hàm RIÊNG cho số thập phân (khác
+  `formatSoTuNhien()`), ép đúng số chữ số thập phân cố định bằng `toFixed()` thay vì dùng thẳng
+  `toLocaleString` (vốn tự rút gọn số 0 vô nghĩa ở cuối, sai với bài toán "số thập phân bằng
+  nhau" của SGK Lớp 5). Có test riêng xác nhận.
+- ✅ `WORKSHEET_GRADES.LOP_5` + `GRADE_ORDER` đã thêm `"LOP_5"` vào cuối mảng.
+- ✅ Các dạng bài Lớp 5 dùng nhánh xử lý số THẬP PHÂN RIÊNG (không tái dùng `maxNumber` số
+  nguyên như đã làm cho Lớp 3/Lớp 4) - quy đổi qua số nguyên (`nhân 10^width`) trước khi
+  so sánh/cộng/trừ rồi mới quy đổi ngược, tránh sai số dấu phẩy động JS.
+
+**Đợt 1 (xong, Phiên không rõ - phát hiện qua rà soát code ở Phiên 13, xem mục "MỚI NHẤT" đầu
+file):** dạng bài `so_thap_phan_so_sanh` (So sánh số thập phân) - phần nguyên 0-999, phần thập
+phân 1-2 chữ số ngẫu nhiên, cố ý cho ~40% cặp lệch số chữ số thập phân (VD "3,5" vs "3,45") đúng
+trọng tâm SGK. Test: `test/worksheetLop5Dot1.test.js` (8 test).
+
+**Đợt 2 (xong, Phiên 13):** dạng bài `so_thap_phan_cong_tru` (Cộng, trừ số thập phân) - phần
+nguyên 0-99, cố ý cho ~35% cặp lệch số chữ số thập phân, phép trừ luôn đảm bảo số bị trừ >= số
+trừ (tự hoán đổi toán hạng nếu random ngược). Test: `test/worksheetLop5Dot2.test.js` (7 test).
+
+**Còn lại cho Lớp 5:**
+- Nhân/chia số thập phân (nhân/chia với số tự nhiên là bước dễ hơn, có thể làm trước khi sang
+  nhân/chia 2 số thập phân với nhau).
+- Tỉ số phần trăm.
+- Hình tam giác/hình thang/hình tròn (chu vi/diện tích) - cần xem lại `chu_vi_dien_tich` của
+  Lớp 3 (hiện chỉ có vuông/HCN) có nên mở rộng hay tách dạng bài riêng cho Lớp 5.
+- Thể tích + đơn vị đo thể tích (cm³/dm³); diện tích xung quanh/toàn phần hình hộp chữ nhật/lập
+  phương/trụ - cần layout/preview mới (khác các dạng bài "điền số" đơn giản đã có).
+- Số đo thời gian; vận tốc-quãng đường-thời gian (toán chuyển động đều) - có thể cần AI (`giai_toan`)
+  thay vì generator thuần code, giống cách "giải toán" đã làm cho các khối trước.
+- Cân nhắc thêm "gói chủ đề" Lớp 5 (`worksheetTopicPackages.js`) sau khi có thêm vài dạng bài nữa.
 
 
 ## Thiết kế chế độ in Màu/Đen trắng (draft)
