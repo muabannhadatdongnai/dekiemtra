@@ -1,5 +1,89 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 14: Lớp 5 Đợt 3 — Nhân, chia số
-# thập phân)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 15: Lớp 5 Đợt 4 — 10 dạng bài còn
+# lại, hoàn tất toàn bộ Lớp 5)
+
+## PHIÊN 15 — Lớp 5, Đợt 4: 10 dạng bài còn lại (hoàn tất Lớp 5)
+
+**Bối cảnh**: Hoan yêu cầu làm tiếp toàn bộ phần còn lại của Lớp 5 trong 1 lần: tỉ số phần trăm;
+hình tam giác/hình thang/hình tròn; thể tích + đơn vị đo thể tích; diện tích xung quanh/toàn phần
+hình hộp chữ nhật/lập phương/trụ; số đo thời gian; vận tốc-quãng đường-thời gian; chia có dư/chia
+thập phân cho thập phân (nâng cao hơn). Khối lượng lớn (10 dạng bài) nên tách RIÊNG từng dạng thay
+vì gộp chung "hình học Lớp 5" mơ hồ — đúng nguyên tắc isolation xuyên suốt dự án, dễ bật/tắt riêng
+từng dạng cho giáo viên.
+
+### 1. Quyết định thiết kế quan trọng: KHÔNG vẽ hình (SVG) cho hình học
+Tam giác/hình thang/hình tròn/hình hộp/hình trụ đều trình bày bằng MÔ TẢ VĂN BẢN ("Hình tam giác có
+đáy 12 cm, chiều cao 8 cm...") thay vì vẽ SVG — đúng phong cách `ChuViDienTichSection` đã có sẵn từ
+Lớp 3, và tránh khối lượng công việc vẽ hình rất lớn (5 hình khác nhau) trong khi giá trị sư phạm
+tăng thêm không rõ ràng bằng so với "Góc và đơn vị đo góc" (Lớp 4) — dạng đó BẮT BUỘC phải vẽ vì
+bài toán chính là "đọc số đo từ hình vẽ", còn ở đây số liệu đã cho sẵn bằng số.
+
+### 2. 10 dạng bài mới (`src/data/worksheetSchemas.js`)
+1. **`ti_so_phan_tram`** (Tỉ số phần trăm) — trộn 3 dạng con SGK dạy liên tiếp: tìm tỉ số % của 2
+   số, tìm giá trị % của 1 số, tìm 1 số biết giá trị % của nó. Sinh NGƯỢC từ % "đẹp" (bội số của 5)
+   × số "đẹp" (bội số của 20) — đảm bảo luôn ra số nguyên tuyệt đối, không cần làm tròn %.
+   **Bug thật phát hiện qua test**: pool số "đẹp" ban đầu lẫn 50 và 150 (không phải bội số của 20)
+   → tổ hợp (b=150, p=75%) ra 112,5 không nguyên. Đã sửa pool chỉ gồm bội số của 20 đúng nghĩa.
+2. **`hinh_tam_giac_hinh_thang`** — diện tích tam giác (~45%), diện tích hình thang (~45%), chu vi
+   tam giác (~10%, ôn tập). Chủ động ép đáy×chiều cao luôn CHẴN để diện tích luôn là số nguyên
+   (dạng bài này chưa trộn số thập phân — số thập phân đã có 4 dạng bài riêng ở Đợt 1-3/4).
+3. **`hinh_tron`** — cho sẵn bán kính hoặc đường kính (luôn số chẵn), hỏi chu vi hoặc diện tích,
+   dùng π ≈ 3,14. Viết hàm `piTimesToDecimal()` nhân bằng SỐ NGUYÊN (× 314 rồi ÷ 100) — tránh HOÀN
+   TOÀN sai số dấu phẩy động JS, tự rút gọn số 0 vô nghĩa cuối phần thập phân (VD 31,40 → "31,4")
+   giống cách SGK trình bày đáp số. Tái dùng `piTimesToDecimal()` cho cả hình trụ ở mục 5.
+4. **`the_tich_hhcn_lp`** — thể tích hình hộp chữ nhật (dài×rộng×cao) và lập phương (cạnh³), số đo
+   nhỏ (3-15 cm) đúng phạm vi luyện tập SGK.
+5. **`doi_don_vi_the_tich`** — đổi đơn vị m³↔dm³↔cm³ (tỉ lệ 1000). Tách RIÊNG khỏi bảng đơn vị
+   dung tích (l/ml) của Lớp 3 — thể tích và dung tích là 2 khái niệm khác nhau dù có liên hệ.
+6. **`dien_tich_xq_tp`** — trộn 3 hình (HHCN/lập phương/hình trụ), mỗi hình random hỏi xung quanh
+   hoặc toàn phần. Hình trụ: nhân π MỘT LẦN DUY NHẤT cho cả tổng (Sxq = π×2rh, Stp = π×(2rh+2r²))
+   thay vì nhân π riêng cho từng số hạng rồi cộng — tránh cộng dồn sai số làm tròn giữa 2 lần nhân.
+7. **`so_do_thoi_gian`** — cộng/trừ giờ-phút (chưa làm giây). Phép trừ LUÔN đảm bảo số bị trừ ≥ số
+   trừ (tự hoán đổi nếu random ngược, cùng nguyên tắc phép trừ số thập phân ở Đợt 2).
+8. **`van_toc_quang_duong_thoi_gian`** — toán chuyển động đều v=s:t. Sinh NGƯỢC từ v và t "đẹp" rồi
+   NHÂN ra s — đảm bảo khi hỏi ngược lại t (từ v và s) luôn chia hết tuyệt đối, không ra thập phân.
+9. **`phep_chia_co_du`** — ôn tập nâng cao (số bị chia 100-9999, lớn hơn hẳn "bảng chia" Lớp 3),
+   CỐ Ý luôn có dư (cộng thêm 1-vài đơn vị nếu random ra chia hết).
+10. **`so_thap_phan_chia_nang_cao`** — mảng còn thiếu của Đợt 3: trộn (a) chia SỐ TỰ NHIÊN cho SỐ
+    TỰ NHIÊN ra THƯƠNG THẬP PHÂN (~40%) và (b) chia SỐ THẬP PHÂN cho SỐ THẬP PHÂN (~60%, khó hơn).
+    Tái dùng `decimalToNormalized()`/`normalizedToDecimal()` — sinh NGƯỢC y hệt nguyên tắc
+    `generateSoThapPhanNhan()` (Đợt 3): thương "đẹp" × số chia = số bị chia, chỉ đổi vai trò hiển
+    thị (phép NHÂN lúc sinh → phép CHIA lúc hiển thị đề) — chia hết tuyệt đối 100%.
+
+### 3. Preview web (`WorksheetPreview.jsx`) + Export Word (`worksheetExportService.js`)
+- **`WordProblemBlankSection`** (web) / **`buildWordProblemBlankParagraphs()`** (Word): component
+  DÙNG CHUNG cho 6/10 dạng bài có cùng khuôn "câu văn mô tả đề bài + Bài giải: ô trống + đơn vị"
+  (tỉ số phần trăm, tam giác/hình thang, hình tròn, thể tích, diện tích xq/tp, vận tốc) — nhận vào
+  hàm `describe(it)` riêng cho mỗi dạng để build câu văn, tránh viết lặp lại 6 component gần giống
+  hệt nhau (đúng nguyên tắc tái dùng đã áp dụng cho `SoThapPhanNhanChiaSection` ở Đợt 3).
+- **`doi_don_vi_the_tich`** tái dùng THẲNG `DoiDonViSection`/`buildDoiDonViParagraphs()` (Lớp 3) —
+  đúng cùng hình dạng dữ liệu (`value/fromUnit/toUnit`), không viết lại.
+- **`so_thap_phan_chia_nang_cao`** tái dùng THẲNG `SoThapPhanNhanChiaSection`/
+  `buildSoThapPhanNhanChiaParagraphs()` (Lớp 5 Đợt 3) — đúng cùng hình dạng dữ liệu.
+- **`so_do_thoi_gian`** và **`phep_chia_co_du`** cần component RIÊNG (2 ô trống mỗi bài, khác khuôn
+  "1 phép tính = 1 ô trống" của các dạng khác): `SoDoThoiGianSection`/`buildSoDoThoiGianParagraphs()`
+  (ô trống giờ + ô trống phút) và `PhepChiaCoDuSection`/`buildPhepChiaCoDuParagraphs()` (ô trống
+  thương + ô trống dư).
+
+### 4. `worksheetGenerator.js` (tầng orchestrator)
+Thêm 10 case mới vào `buildSimpleSection()`, xếp vào `DEFAULT_SECTION_ORDER` ngay sau
+`so_thap_phan_chia` (Đợt 3) theo ĐÚNG thứ tự chủ đề PPCT SGK Toán 5 KNTT: chia nâng cao → chia có
+dư → tỉ số % → hình học → đo lường/vận tốc, vẫn xếp TRƯỚC `giai_toan` (AI luôn cuối cùng). Không
+cần sửa `safeCounts`/`WorksheetForm.jsx` vì cả 2 đều đã tự động lấy dữ liệu từ
+`getSelectableCatalogFor()` (catalog-driven, thiết kế từ các đợt trước).
+
+**Đã kiểm thử**: `test/worksheetLop5Dot4.test.js` (16 test mới) — đáp án mỗi dạng bài tính lại ĐỘC
+LẬP bằng công thức toán thông thường (không gọi lại logic nội bộ generator), chạy lặp 100-300 lần
+mỗi test để phủ hết các nhánh ngẫu nhiên (VD "tỉ số %" đủ cả 3 dạng con, "chia nâng cao" đủ cả 2
+dạng con). Xác nhận: dạng bài chỉ lộ đúng khối Lớp 5 (không lộ Lớp 1-4); công thức tam giác/hình
+thang/HHCN/lập phương/thể tích/diện tích xq-tp đúng; phép nhân π bằng số nguyên (`piTimesToDecimal`)
+khớp kết quả tính tay; số đo thời gian cộng/trừ không bao giờ âm; v×t=s luôn đúng; phép chia có dư
+luôn thực sự có dư (0 < dư < số chia); chia nâng cao chia hết tuyệt đối. `npm test`: 255/255 PASS
+(239 cũ + 16 mới). `npm run build`: sạch.
+
+### Lớp 5 hiện đã ĐẦY ĐỦ 14 dạng bài (Đợt 1-4)
+Còn lại chỉ là tinh chỉnh sau phản hồi thực tế từ giáo viên (xem "Còn lại cho Lớp 5" trong
+`NEXT_STEPS.md`): cân nhắc "giải toán có lời văn tổng hợp" bằng AI phối hợp nhiều chủ đề, gói chủ
+đề (`worksheetTopicPackages.js`), và chế độ in Đen trắng (để dành từ các đợt trước).
 
 ## PHIÊN 14 — Lớp 5, Đợt 3: Nhân số thập phân + Chia số thập phân cho số tự nhiên
 

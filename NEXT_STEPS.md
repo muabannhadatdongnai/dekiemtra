@@ -1,8 +1,26 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
-> Trạng thái: **ĐANG CODE Lớp 5** (Đợt 3 xong). File này để mang sang chat mới không mất ngữ cảnh.
+> Trạng thái: **Lớp 5 (Toán) đã xong Đợt 1-4** (14 dạng bài). File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 14) — Lớp 5, Đợt 3: Nhân, chia số thập phân
+## ✅ MỚI NHẤT (Phiên 15) — Lớp 5, Đợt 4: 10 dạng bài còn lại (hoàn tất Lớp 5)
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 15". Tóm tắt:
+1. 10 dạng bài mới: `ti_so_phan_tram` (tỉ số phần trăm, 3 dạng con), `hinh_tam_giac_hinh_thang`
+   (diện tích tam giác/hình thang + chu vi tam giác), `hinh_tron` (chu vi/diện tích, π≈3,14),
+   `the_tich_hhcn_lp` (thể tích HHCN/lập phương), `doi_don_vi_the_tich` (đổi đơn vị m³/dm³/cm³),
+   `dien_tich_xq_tp` (diện tích xung quanh/toàn phần HHCN/lập phương/hình trụ), `so_do_thoi_gian`
+   (cộng/trừ giờ-phút), `van_toc_quang_duong_thoi_gian` (toán chuyển động đều), `phep_chia_co_du`
+   (chia số tự nhiên có dư), `so_thap_phan_chia_nang_cao` (chia thập phân cho thập phân + chia ra
+   thương thập phân - mảng còn thiếu của Đợt 3).
+2. Component dùng CHUNG `WordProblemBlankSection`/`buildWordProblemBlankParagraphs` (web + Word)
+   cho 6/10 dạng bài có cùng khuôn "câu văn + 1 ô trống điền đáp số" - tránh viết lặp lại.
+3. Tái dùng THẲNG `DoiDonViSection`/`buildDoiDonViParagraphs` (Lớp 3) và `SoThapPhanNhanChiaSection`/
+   `buildSoThapPhanNhanChiaParagraphs` (Lớp 5 Đợt 3) cho 2 dạng bài đúng cùng hình dạng dữ liệu.
+4. Phát hiện + sửa 1 bug thật qua test: pool số "đẹp" của `ti_so_phan_tram` ban đầu lẫn vài giá trị
+   không phải bội số của 20 (VD 50, 150) → có tổ hợp ra kết quả .5 không nguyên. Đã sửa pool chỉ
+   gồm bội số của 20.
+- `npm test`: 255/255 PASS (239 cũ + 16 mới). `npm run build`: sạch.
+
+## ✅ (Phiên 14) — Lớp 5, Đợt 3: Nhân, chia số thập phân
 Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 14". Tóm tắt:
 1. `so_thap_phan_nhan` (Nhân số thập phân) - trộn nhân với số tự nhiên (~65%) và nhân 2 số thập
    phân với nhau (~35%), số chữ số thập phân của tích = tổng 2 thừa số.
@@ -179,7 +197,7 @@ Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊ
 `bieu_thuc_chu`/`phan_so_so_sanh`/`goc_nhan_biet`, nối đủ 4 tầng, có test tự động riêng
 (`test/worksheetLop4Dot2.test.js`), đã test end-to-end qua `generateWorksheet()` thật.
 
-## Trạng thái Lớp 5 (Toán) — ĐANG CODE (Đợt 1 + Đợt 2 + Đợt 3 xong)
+## Trạng thái Lớp 5 (Toán) — Đợt 1-4 xong (14 dạng bài, xem PROJECT_SUMMARY.md "PHIÊN 15")
 Khối lượng rất lớn, cần tách nhiều đợt như Lớp 3/Lớp 4. Nội dung cần (xem "Catalog Toán Lớp 3-5"
 bên dưới): số thập phân (đọc/viết/so sánh/4 phép tính - **cần generator số thập phân RIÊNG**, khác
 hẳn số nguyên hiện có); tỉ số phần trăm; hình tam giác/hình thang/hình tròn (chu vi/diện tích);
@@ -215,17 +233,18 @@ liệu như Đợt 2):
   dư), sinh ngược từ thương "đẹp" rồi nhân lên ra số bị chia - đảm bảo chia hết 100%.
 Test: `test/worksheetLop5Dot3.test.js` (8 test).
 
-**Còn lại cho Lớp 5:**
-- Tỉ số phần trăm.
-- Hình tam giác/hình thang/hình tròn (chu vi/diện tích) - cần xem lại `chu_vi_dien_tich` của
-  Lớp 3 (hiện chỉ có vuông/HCN) có nên mở rộng hay tách dạng bài riêng cho Lớp 5.
-- Thể tích + đơn vị đo thể tích (cm³/dm³); diện tích xung quanh/toàn phần hình hộp chữ nhật/lập
-  phương/trụ - cần layout/preview mới (khác các dạng bài "điền số" đơn giản đã có).
-- Số đo thời gian; vận tốc-quãng đường-thời gian (toán chuyển động đều) - có thể cần AI (`giai_toan`)
-  thay vì generator thuần code, giống cách "giải toán" đã làm cho các khối trước.
-- "Chia có dư"/"chia số thập phân cho số thập phân" (nâng cao hơn "chia hết tuyệt đối" đã làm ở
-  Đợt 3) - cân nhắc làm sau khi có phản hồi thực tế từ giáo viên về mức độ hiện tại.
-- Cân nhắc thêm "gói chủ đề" Lớp 5 (`worksheetTopicPackages.js`) sau khi có thêm vài dạng bài nữa.
+**Đợt 4 (xong, Phiên 15) — 10 dạng bài còn lại, xem "PHIÊN 15" trong PROJECT_SUMMARY.md:**
+`ti_so_phan_tram`, `hinh_tam_giac_hinh_thang`, `hinh_tron`, `the_tich_hhcn_lp`,
+`doi_don_vi_the_tich`, `dien_tich_xq_tp`, `so_do_thoi_gian`, `van_toc_quang_duong_thoi_gian`,
+`phep_chia_co_du`, `so_thap_phan_chia_nang_cao`. Test: `test/worksheetLop5Dot4.test.js` (16 test).
+
+**Còn lại cho Lớp 5 (không nhiều, chủ yếu là tinh chỉnh sau phản hồi thực tế):**
+- Cân nhắc thêm dạng "giải toán có lời văn tổng hợp" (dùng AI `giai_toan`) riêng cho Lớp 5, phối
+  hợp nhiều chủ đề trong 1 đề bài (VD vận tốc + số đo thời gian) - hiện Đợt 4 mới làm generator
+  code thuần cho từng chủ đề tách biệt.
+- Cân nhắc thêm "gói chủ đề" Lớp 5 (`worksheetTopicPackages.js`) nay đã có khá đầy đủ dạng bài
+  (14 dạng) - nên làm sau khi có phản hồi thực tế từ giáo viên.
+- Chế độ in Đen trắng (đã note ở các đợt trước, vẫn để dành - chưa làm cho Lớp 5).
 
 
 ## Thiết kế chế độ in Màu/Đen trắng (draft)
