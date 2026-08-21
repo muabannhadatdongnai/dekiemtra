@@ -420,6 +420,198 @@ function buildGocNhanBietParagraphs(items, showAnswers) {
   }));
 }
 
+/**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 4 ==================
+ * Hàm build DÙNG CHUNG cho các dạng bài "giải toán có lời + 1 ô trống điền đáp số" (tỉ số phần
+ * trăm, tam giác/hình thang, hình tròn, thể tích, diện tích xq/tp, vận tốc-quãng đường-thời gian) -
+ * cùng khuôn buildChuViDienTichParagraphs() (Lớp 3): "câu đề bài  Bài giải: đáp án/BLANK đơn vị"
+ * trên 1 dòng, mỗi dạng bài chỉ khác câu văn/đáp án tự build qua `describe(it)` truyền vào.
+ */
+function buildWordProblemBlankParagraphs(items, showAnswers, describe) {
+  return items.map((it, i) => {
+    const { text, unit, answerText } = describe(it);
+    return {
+      children: [
+        new TextRun({
+          text: `${i + 1}. ${text}  Bài giải: ${showAnswers ? `${answerText} ${unit}` : `${BLANK} ${unit}`}`,
+          font: FONT,
+          size: 24,
+        }),
+      ],
+      spacing: { after: 140 },
+    };
+  });
+}
+
+/** "Tỉ số phần trăm" - xem TiSoPhanTramSection (WorksheetPreview.jsx) cho câu văn tương ứng. */
+function buildTiSoPhanTramParagraphs(items, showAnswers) {
+  return buildWordProblemBlankParagraphs(items, showAnswers, (it) => {
+    if (it.subKind === "ti_so") {
+      return {
+        text: `Tìm tỉ số phần trăm của ${formatSoTuNhien(it.a)} và ${formatSoTuNhien(it.b)}.`,
+        unit: "%",
+        answerText: it.answer,
+      };
+    }
+    if (it.subKind === "gia_tri") {
+      return { text: `Tìm ${it.percent}% của ${formatSoTuNhien(it.n)}.`, unit: "", answerText: formatSoTuNhien(it.answer) };
+    }
+    return {
+      text: `Tìm một số biết ${it.percent}% của số đó là ${formatSoTuNhien(it.value)}.`,
+      unit: "",
+      answerText: formatSoTuNhien(it.answer),
+    };
+  });
+}
+
+/** "Diện tích hình tam giác, hình thang" - xem HinhTamGiacHinhThangSection. */
+function buildHinhTamGiacHinhThangParagraphs(items, showAnswers) {
+  return buildWordProblemBlankParagraphs(items, showAnswers, (it) => {
+    if (it.subKind === "tam_giac_dien_tich") {
+      return {
+        text: `Hình tam giác có đáy ${it.a} cm và chiều cao ${it.h} cm. Tính diện tích hình tam giác đó.`,
+        unit: "cm2",
+        answerText: it.answer,
+      };
+    }
+    if (it.subKind === "hinh_thang_dien_tich") {
+      return {
+        text: `Hình thang có đáy lớn ${it.a} cm, đáy bé ${it.b} cm và chiều cao ${it.h} cm. Tính diện tích hình thang đó.`,
+        unit: "cm2",
+        answerText: it.answer,
+      };
+    }
+    return {
+      text: `Hình tam giác có 3 cạnh lần lượt là ${it.s1} cm, ${it.s2} cm và ${it.s3} cm. Tính chu vi hình tam giác đó.`,
+      unit: "cm",
+      answerText: it.answer,
+    };
+  });
+}
+
+/** "Chu vi, diện tích hình tròn" - dùng π ≈ 3,14, xem HinhTronSection. */
+function buildHinhTronParagraphs(items, showAnswers) {
+  return buildWordProblemBlankParagraphs(items, showAnswers, (it) => {
+    const givenText = it.given === "ban_kinh" ? `bán kính ${it.value} cm` : `đường kính ${it.value} cm`;
+    const ask = it.metric === "chu_vi" ? "Tính chu vi hình tròn đó." : "Tính diện tích hình tròn đó.";
+    const answer = formatSoThapPhan(
+      Number(`${it.answerInt}.${it.answerDec || "0"}`),
+      it.answerDec ? it.answerDec.length : 0
+    );
+    return {
+      text: `Hình tròn có ${givenText}. ${ask}`,
+      unit: it.metric === "chu_vi" ? "cm" : "cm2",
+      answerText: answer,
+    };
+  });
+}
+
+/** "Thể tích hình hộp chữ nhật, hình lập phương" - xem TheTichHhcnLpSection. */
+function buildTheTichHhcnLpParagraphs(items, showAnswers) {
+  return buildWordProblemBlankParagraphs(items, showAnswers, (it) => {
+    if (it.subKind === "hhcn") {
+      return {
+        text: `Hình hộp chữ nhật có chiều dài ${it.a} cm, chiều rộng ${it.b} cm và chiều cao ${it.c} cm. Tính thể tích hình đó.`,
+        unit: "cm3",
+        answerText: it.answer,
+      };
+    }
+    return { text: `Hình lập phương có cạnh ${it.a} cm. Tính thể tích hình đó.`, unit: "cm3", answerText: it.answer };
+  });
+}
+
+/** "Diện tích xung quanh, diện tích toàn phần" - xem DienTichXqTpSection. */
+function buildDienTichXqTpParagraphs(items, showAnswers) {
+  return buildWordProblemBlankParagraphs(items, showAnswers, (it) => {
+    const metricText = it.metric === "xq" ? "diện tích xung quanh" : "diện tích toàn phần";
+    if (it.shape === "hhcn") {
+      return {
+        text: `Hình hộp chữ nhật có chiều dài ${it.a} cm, chiều rộng ${it.b} cm và chiều cao ${it.c} cm. Tính ${metricText} hình đó.`,
+        unit: "cm2",
+        answerText: it.answer,
+      };
+    }
+    if (it.shape === "lap_phuong") {
+      return { text: `Hình lập phương có cạnh ${it.a} cm. Tính ${metricText} hình đó.`, unit: "cm2", answerText: it.answer };
+    }
+    const answer = formatSoThapPhan(
+      Number(`${it.answerInt}.${it.answerDec || "0"}`),
+      it.answerDec ? it.answerDec.length : 0
+    );
+    return {
+      text: `Hình trụ có bán kính đáy ${it.r} cm và chiều cao ${it.h} cm. Tính ${metricText} hình đó (lấy π ≈ 3,14).`,
+      unit: "cm2",
+      answerText: answer,
+    };
+  });
+}
+
+/** "Vận tốc, quãng đường, thời gian" - xem VanTocQuangDuongThoiGianSection. */
+function buildVanTocQuangDuongThoiGianParagraphs(items, showAnswers) {
+  return buildWordProblemBlankParagraphs(items, showAnswers, (it) => {
+    if (it.ask === "v") {
+      return {
+        text: `Một xe đi được quãng đường ${it.s} km trong ${it.t} giờ. Tính vận tốc của xe đó.`,
+        unit: "km/giờ",
+        answerText: it.v,
+      };
+    }
+    if (it.ask === "s") {
+      return {
+        text: `Một xe đi với vận tốc ${it.v} km/giờ trong ${it.t} giờ. Tính quãng đường xe đó đi được.`,
+        unit: "km",
+        answerText: it.s,
+      };
+    }
+    return {
+      text: `Một xe đi với vận tốc ${it.v} km/giờ, đi được quãng đường ${it.s} km. Hỏi xe đó đi hết bao nhiêu thời gian?`,
+      unit: "giờ",
+      answerText: it.t,
+    };
+  });
+}
+
+/** "Đổi đơn vị đo thể tích" - tái dùng THẲNG buildDoiDonViParagraphs() (cùng hình dạng dữ liệu
+ * value/fromUnit/toUnit) - xem generateDoiDonViTheTich() trong worksheetSchemas.js. */
+
+/**
+ * "Cộng, trừ số đo thời gian" - 2 ô trống (giờ VÀ phút), khác khuôn "1 phép tính = 1 ô trống".
+ * formatTimeHM() ẩn "0 giờ"/"0 phút" khi bằng 0, giống bản web (SoDoThoiGianSection).
+ */
+function formatTimeHM(h, m) {
+  if (h > 0 && m > 0) return `${h} giờ ${m} phút`;
+  if (h > 0) return `${h} giờ`;
+  return `${m} phút`;
+}
+function buildSoDoThoiGianParagraphs(items, showAnswers) {
+  return items.map((it, i) => ({
+    children: [
+      new TextRun({
+        text: `${i + 1}. ${formatTimeHM(it.leftH, it.leftM)} ${it.operator} ${formatTimeHM(it.rightH, it.rightM)} = ${
+          showAnswers ? formatTimeHM(it.answerH, it.answerM) : `${BLANK} giờ ${BLANK} phút`
+        }`,
+        font: FONT,
+        size: 24,
+      }),
+    ],
+    spacing: { after: 100 },
+  }));
+}
+
+/** "Phép chia có dư" - 2 ô trống (thương và số dư), 2 cột/dòng như buildDoiDonViParagraphs. */
+function buildPhepChiaCoDuParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const text = showAnswers
+        ? `${formatSoTuNhien(it.dividend)} : ${it.divisor} = ${it.answerQuotient} (dư ${it.answerRemainder})`
+        : `${formatSoTuNhien(it.dividend)} : ${it.divisor} = ${BLANK} (dư ${BLANK})`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
 /** "Tiền Việt Nam" - liệt kê tờ tiền bằng chữ, tính tổng. */
 function buildTienVietNamParagraphs(items, showAnswers) {
   return items.map((it, i) => ({
@@ -743,7 +935,26 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildSoThapPhanCongTruParagraphs(section.items, showAnswers);
     case "so_thap_phan_nhan":
     case "so_thap_phan_chia":
+    case "so_thap_phan_chia_nang_cao":
       return buildSoThapPhanNhanChiaParagraphs(section.items, showAnswers);
+    case "ti_so_phan_tram":
+      return buildTiSoPhanTramParagraphs(section.items, showAnswers);
+    case "hinh_tam_giac_hinh_thang":
+      return buildHinhTamGiacHinhThangParagraphs(section.items, showAnswers);
+    case "hinh_tron":
+      return buildHinhTronParagraphs(section.items, showAnswers);
+    case "the_tich_hhcn_lp":
+      return buildTheTichHhcnLpParagraphs(section.items, showAnswers);
+    case "doi_don_vi_the_tich":
+      return buildDoiDonViParagraphs(section.items, showAnswers);
+    case "dien_tich_xq_tp":
+      return buildDienTichXqTpParagraphs(section.items, showAnswers);
+    case "so_do_thoi_gian":
+      return buildSoDoThoiGianParagraphs(section.items, showAnswers);
+    case "van_toc_quang_duong_thoi_gian":
+      return buildVanTocQuangDuongThoiGianParagraphs(section.items, showAnswers);
+    case "phep_chia_co_du":
+      return buildPhepChiaCoDuParagraphs(section.items, showAnswers);
     case "goc_nhan_biet":
       return buildGocNhanBietParagraphs(section.items, showAnswers);
     case "tien_viet_nam":

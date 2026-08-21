@@ -49,6 +49,17 @@ export const EXERCISE_TYPES = {
   SO_THAP_PHAN_CONG_TRU: "so_thap_phan_cong_tru", // MỞ RỘNG LỚP 5, ĐỢT 2 - cộng/trừ số thập phân
   SO_THAP_PHAN_NHAN: "so_thap_phan_nhan", // MỞ RỘNG LỚP 5, ĐỢT 3 - nhân số thập phân
   SO_THAP_PHAN_CHIA: "so_thap_phan_chia", // MỞ RỘNG LỚP 5, ĐỢT 3 - chia số thập phân cho số tự nhiên
+  // ================== MỞ RỘNG LỚP 5, ĐỢT 4 ==================
+  TI_SO_PHAN_TRAM: "ti_so_phan_tram", // Tỉ số phần trăm (3 dạng: tìm tỉ số %, tìm giá trị %, tìm số biết %)
+  HINH_TAM_GIAC_HINH_THANG: "hinh_tam_giac_hinh_thang", // Diện tích tam giác/hình thang (+ chu vi tam giác)
+  HINH_TRON: "hinh_tron", // Chu vi, diện tích hình tròn (dùng π ≈ 3,14)
+  THE_TICH_HHCN_LP: "the_tich_hhcn_lp", // Thể tích hình hộp chữ nhật, hình lập phương
+  DOI_DON_VI_THE_TICH: "doi_don_vi_the_tich", // Đổi đơn vị đo thể tích (m³/dm³/cm³)
+  DIEN_TICH_XQ_TP: "dien_tich_xq_tp", // Diện tích xung quanh/toàn phần HHCN/lập phương/trụ
+  SO_DO_THOI_GIAN: "so_do_thoi_gian", // Cộng, trừ số đo thời gian (giờ, phút)
+  VAN_TOC_QUANG_DUONG_THOI_GIAN: "van_toc_quang_duong_thoi_gian", // Toán chuyển động đều
+  PHEP_CHIA_CO_DU: "phep_chia_co_du", // Chia số tự nhiên có dư (ôn tập nâng cao)
+  SO_THAP_PHAN_CHIA_NANG_CAO: "so_thap_phan_chia_nang_cao", // Chia thập phân cho thập phân / chia ra thương thập phân
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -1137,6 +1148,382 @@ export function generateSoThapPhanChia(count = 6) {
       answerInt: quotientInt,
       answerDec: quotientDec,
     });
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 5, ĐỢT 4 ==================
+// 7 chủ đề còn lại của Lớp 5 (xem NEXT_STEPS.md mục "Còn lại cho Lớp 5"): tỉ số phần trăm; hình
+// tam giác/hình thang/hình tròn; thể tích + đơn vị đo thể tích; diện tích xung quanh/toàn phần;
+// số đo thời gian; vận tốc-quãng đường-thời gian; chia có dư/chia thập phân cho thập phân nâng
+// cao. Tách thành 10 dạng bài riêng biệt (đúng nguyên tắc isolation xuyên suốt dự án) thay vì gộp
+// chung 1 dạng "hình học Lớp 5" mơ hồ - dễ bật/tắt riêng từng dạng cho giáo viên.
+//
+// Nhóm "văn bản có lời + 1 ô trống điền đáp số" (tỉ số phần trăm, tam giác/hình thang, hình tròn,
+// thể tích, diện tích xq/tp, vận tốc) CHỦ Ý không tính sẵn "answer" hiển thị (giống
+// ChuViDienTichSection của Lớp 3 - phiếu bài tập không có đáp án in kèm) nhưng VẪN trả về field
+// answer/đủ dữ kiện để viết test xác nhận công thức đúng (test coverage as gate).
+
+/**
+ * "Tỉ số phần trăm" - 3 dạng con trộn ngẫu nhiên, đúng 3 dạng toán SGK Toán 5 KNTT dạy liên tiếp:
+ * (1) tìm tỉ số % của 2 số, (2) tìm giá trị % của 1 số, (3) tìm 1 số biết giá trị % của nó.
+ * Sinh NGƯỢC từ % "đẹp" (bội số của 5) để luôn ra số nguyên tuyệt đối, không cần làm tròn %.
+ */
+export function generateTiSoPhanTram(count = 6) {
+  const PERCENTS = [5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 80];
+  // CHỦ Ý chỉ dùng bội số của 20 (không phải bội số của 10/tuỳ ý) - đảm bảo b*p LUÔN chia hết 100
+  // với MỌI p là bội số của 5 trong PERCENTS ở trên (b=20k -> b*p/100 = k*p/5, mà p luôn chia hết
+  // 5 nên k*p/5 luôn nguyên). ĐÃ SỬA lỗi thực tế (test phát hiện): trước đây có lẫn vài giá trị
+  // KHÔNG phải bội số của 20 (VD 50, 150) -> có tổ hợp (b=150, p=75) ra kết quả .5 không nguyên.
+  const NICE_MULTIPLES_OF_20 = [20, 40, 60, 80, 100, 120, 160, 200, 240, 300];
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
+    const subKind = pick(["ti_so", "gia_tri", "tim_so"]);
+    if (subKind === "ti_so") {
+      const b = pick(NICE_MULTIPLES_OF_20);
+      const p = pick(PERCENTS);
+      const a = (b * p) / 100;
+      const dedupeKey = `ti_so_${a}_${b}`;
+      if (used.has(dedupeKey)) continue;
+      used.add(dedupeKey);
+      items.push({ subKind, a, b, answer: p });
+    } else if (subKind === "gia_tri") {
+      const n = pick(NICE_MULTIPLES_OF_20);
+      const p = pick(PERCENTS);
+      const value = (n * p) / 100;
+      const dedupeKey = `gia_tri_${p}_${n}`;
+      if (used.has(dedupeKey)) continue;
+      used.add(dedupeKey);
+      items.push({ subKind, percent: p, n, answer: value });
+    } else {
+      const n = pick(NICE_MULTIPLES_OF_20);
+      const p = pick(PERCENTS);
+      const value = (n * p) / 100;
+      const dedupeKey = `tim_so_${p}_${value}`;
+      if (used.has(dedupeKey)) continue;
+      used.add(dedupeKey);
+      items.push({ subKind, percent: p, value, answer: n });
+    }
+  }
+  return items;
+}
+
+/**
+ * "Diện tích hình tam giác, hình thang" - trộn 3 dạng: diện tích tam giác (~45%), diện tích hình
+ * thang (~45%), chu vi tam giác (~10%, chỉ để ôn - trọng tâm SGK Toán 5 KNTT vẫn là DIỆN TÍCH).
+ * Chủ động chọn đáy/chiều cao sao cho tích LUÔN CHẴN (a*h hoặc (a+b)*h chia hết 2) - tránh diện
+ * tích ra số thập phân (nội dung "diện tích tam giác/hình thang" ở SGK Toán 5 KNTT dùng số đo
+ * nguyên, chưa trộn số thập phân ở dạng bài NÀY - số thập phân đã có 4 dạng bài riêng ở Đợt 1-3).
+ */
+export function generateHinhTamGiacHinhThang(count = 6) {
+  const items = [];
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
+    const roll = Math.random();
+    if (roll < 0.45) {
+      const a = randInt(4, 30);
+      let h = randInt(4, 20);
+      if ((a * h) % 2 !== 0) h += 1; // ép tích chẵn - đảm bảo diện tích luôn là số nguyên
+      items.push({ subKind: "tam_giac_dien_tich", a, h, answer: (a * h) / 2 });
+    } else if (roll < 0.9) {
+      const b = randInt(4, 20); // đáy bé
+      const a = b + randInt(2, 15); // đáy lớn > đáy bé
+      let h = randInt(4, 20);
+      if (((a + b) * h) % 2 !== 0) h += 1;
+      items.push({ subKind: "hinh_thang_dien_tich", a, b, h, answer: ((a + b) * h) / 2 });
+    } else {
+      const s1 = randInt(5, 25);
+      const s2 = randInt(5, 25);
+      const s3 = randInt(5, 25);
+      items.push({ subKind: "tam_giac_chu_vi", s1, s2, s3, answer: s1 + s2 + s3 });
+    }
+  }
+  return items;
+}
+
+/**
+ * Nhân 1 số nguyên với π ≈ 3,14 (quy tắc SGK Toán 5 KNTT), giữ nguyên bằng số nguyên (nhân với
+ * 314 rồi chia 100) - tránh HOÀN TOÀN sai số dấu phẩy động JS, cùng nguyên tắc "quy đổi số nguyên"
+ * đã dùng xuyên suốt các dạng bài số thập phân ở Đợt 1-3. Tự rút gọn số 0 vô nghĩa cuối phần thập
+ * phân (VD 31,40 -> "31,4") giống cách sách giáo khoa thường trình bày đáp số.
+ */
+function piTimesToDecimal(intValue) {
+  const cents = intValue * 314;
+  const intPart = Math.floor(cents / 100);
+  const rem = cents % 100;
+  if (rem === 0) return { intPart, decPart: "" };
+  if (rem % 10 === 0) return { intPart, decPart: String(rem / 10) };
+  return { intPart, decPart: String(rem).padStart(2, "0") };
+}
+
+/**
+ * "Chu vi, diện tích hình tròn" - cho SẴN bán kính (~55%) hoặc đường kính (~45%, luôn số CHẴN để
+ * bán kính suy ra là số nguyên), hỏi chu vi hoặc diện tích. Dùng piTimesToDecimal() ở trên để tính
+ * đúng đáp số (không hiển thị trong phiếu, chỉ phục vụ test) mà không sai số dấu phẩy động.
+ */
+export function generateHinhTron(count = 6) {
+  const items = [];
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
+    const given = Math.random() < 0.55 ? "ban_kinh" : "duong_kinh";
+    const r = randInt(2, 20);
+    const value = given === "ban_kinh" ? r : r * 2;
+    const metric = Math.random() < 0.5 ? "chu_vi" : "dien_tich";
+    const intVal = metric === "chu_vi" ? r * 2 : r * r;
+    const { intPart, decPart } = piTimesToDecimal(intVal);
+    items.push({ given, value, r, metric, answerInt: intPart, answerDec: decPart });
+  }
+  return items;
+}
+
+/**
+ * "Thể tích hình hộp chữ nhật, hình lập phương" - trộn ~50/50, số đo nhỏ (3-15 cm) để tích không
+ * quá lớn, đúng phạm vi luyện tập của SGK Toán 5 KNTT (V = dài × rộng × cao / cạnh³).
+ */
+export function generateTheTichHopLapPhuong(count = 6) {
+  const items = [];
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
+    if (Math.random() < 0.5) {
+      const a = randInt(3, 15);
+      const b = randInt(3, 15);
+      const c = randInt(3, 15);
+      items.push({ subKind: "hhcn", a, b, c, answer: a * b * c });
+    } else {
+      const a = randInt(3, 15);
+      items.push({ subKind: "lap_phuong", a, answer: a * a * a });
+    }
+  }
+  return items;
+}
+
+// "Đổi đơn vị đo thể tích" - CHỈ 2 cặp m³-dm³-cm³ (tỉ lệ 1000, đúng nội dung SGK Toán 5 KNTT
+// "Bảng đơn vị đo thể tích"). Tách RIÊNG khỏi VOLUME_UNIT_PAIRS (Lớp 3, đơn vị "l/ml" - dung tích
+// KHÁC thể tích) - đúng nguyên tắc isolation, không tái dùng generateDoiDonVi() của Lớp 3.
+const VOLUME_UNIT_PAIRS_THE_TICH = [
+  { big: "m³", small: "dm³", ratio: 1000 },
+  { big: "dm³", small: "cm³", ratio: 1000 },
+];
+
+export function generateDoiDonViTheTich(count = 5) {
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    const pair = pick(VOLUME_UNIT_PAIRS_THE_TICH);
+    const bigToSmall = Math.random() < 0.5;
+    if (bigToSmall) {
+      const value = randInt(1, 20);
+      items.push({ value, fromUnit: pair.big, toUnit: pair.small, answer: value * pair.ratio });
+    } else {
+      const multiplier = randInt(1, 20);
+      items.push({ value: multiplier * pair.ratio, fromUnit: pair.small, toUnit: pair.big, answer: multiplier });
+    }
+  }
+  return items;
+}
+
+/**
+ * "Diện tích xung quanh, diện tích toàn phần" - trộn 3 hình (HHCN/lập phương/hình trụ), mỗi hình
+ * random hỏi xq hoặc tp. Hình trụ dùng piTimesToDecimal() như "hình tròn" ở trên (Sxq = π×2×r×h,
+ * Stp = Sxq + π×2×r²) - tính theo TỔNG số nguyên trước khi nhân π 1 LẦN DUY NHẤT để tránh cộng dồn
+ * sai số làm tròn giữa 2 lần nhân π riêng lẻ.
+ */
+export function generateDienTichXqTp(count = 6) {
+  const items = [];
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
+    const shape = pick(["hhcn", "lap_phuong", "hinh_tru"]);
+    const metric = Math.random() < 0.5 ? "xq" : "tp";
+    if (shape === "hhcn") {
+      const a = randInt(3, 15);
+      const b = randInt(3, 15);
+      const c = randInt(3, 15);
+      const sxq = (a + b) * 2 * c;
+      const answer = metric === "xq" ? sxq : sxq + 2 * a * b;
+      items.push({ shape, a, b, c, metric, answer });
+    } else if (shape === "lap_phuong") {
+      const a = randInt(3, 15);
+      const sxq = a * a * 4;
+      const answer = metric === "xq" ? sxq : a * a * 6;
+      items.push({ shape, a, metric, answer });
+    } else {
+      const r = randInt(2, 10);
+      const h = randInt(3, 15);
+      const xqIntVal = 2 * r * h; // Sxq = π × (2 × r × h)
+      const tpIntVal = xqIntVal + 2 * r * r; // Stp = π × (2rh + 2r²) - nhân π 1 lần cho cả tổng
+      const intVal = metric === "xq" ? xqIntVal : tpIntVal;
+      const { intPart, decPart } = piTimesToDecimal(intVal);
+      items.push({ shape, r, h, metric, answerInt: intPart, answerDec: decPart });
+    }
+  }
+  return items;
+}
+
+/**
+ * Gộp 2 số giờ/phút về tổng số phút, và ngược lại - dùng chung cho "cộng, trừ số đo thời gian".
+ */
+function timeToMinutes(h, m) {
+  return h * 60 + m;
+}
+function minutesToTime(totalMinutes) {
+  return { h: Math.floor(totalMinutes / 60), m: totalMinutes % 60 };
+}
+
+/**
+ * "Cộng, trừ số đo thời gian" - giờ/phút (CHƯA làm giây - để dành đợt sau nếu cần). Phép trừ LUÔN
+ * đảm bảo số bị trừ >= số trừ (tự hoán đổi nếu random ngược, cùng nguyên tắc đã dùng cho phép trừ
+ * số thập phân ở Đợt 2) - Lớp 5 chưa học số đo thời gian âm.
+ */
+export function generateSoDoThoiGian(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const operator = Math.random() < 0.5 ? "+" : "-";
+    let leftH = randInt(0, 8);
+    let leftM = randInt(0, 59);
+    let rightH = randInt(0, 8);
+    let rightM = randInt(0, 59);
+    if (leftH === 0 && leftM === 0) leftM = randInt(1, 59);
+    if (rightH === 0 && rightM === 0) rightM = randInt(1, 59);
+    let leftTotal = timeToMinutes(leftH, leftM);
+    let rightTotal = timeToMinutes(rightH, rightM);
+    if (operator === "-" && leftTotal < rightTotal) {
+      [leftH, rightH] = [rightH, leftH];
+      [leftM, rightM] = [rightM, leftM];
+      [leftTotal, rightTotal] = [rightTotal, leftTotal];
+    }
+    if (operator === "-" && leftTotal === rightTotal) continue;
+    const dedupeKey = `${operator}_${leftH}:${leftM}_${rightH}:${rightM}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    const resultTotal = operator === "+" ? leftTotal + rightTotal : leftTotal - rightTotal;
+    const { h: answerH, m: answerM } = minutesToTime(resultTotal);
+    items.push({ leftH, leftM, rightH, rightM, operator, answerH, answerM });
+  }
+  return items;
+}
+
+/**
+ * "Vận tốc, quãng đường, thời gian" - toán chuyển động đều v = s : t. Sinh NGƯỢC từ v (km/giờ,
+ * "đẹp") và t (giờ, số nguyên nhỏ) rồi NHÂN ra s - đảm bảo s luôn chia hết cho v (khi hỏi ngược lại
+ * t từ v và s), không bao giờ ra số thập phân (Lớp 5 học vận tốc/quãng đường/thời gian với số tự
+ * nhiên trước, số thập phân/phân số để dành mức nâng cao hơn).
+ */
+export function generateVanTocQuangDuongThoiGian(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const v = randInt(4, 60);
+    const t = randInt(2, 6);
+    const s = v * t;
+    const ask = pick(["v", "s", "t"]);
+    const dedupeKey = `${ask}_${v}_${s}_${t}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({ ask, v, s, t });
+  }
+  return items;
+}
+
+/**
+ * "Phép chia có dư" - ôn tập nâng cao (số bị chia lớn hơn hẳn phạm vi "bảng chia" đã luyện ở Lớp
+ * 3), CỐ Ý luôn có dư (loại bỏ trường hợp chia hết) - đúng trọng tâm "có dư" của dạng bài này.
+ */
+export function generatePhepChiaCoDu(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const divisor = randInt(2, 9);
+    let dividend = randInt(100, 9999);
+    if (dividend % divisor === 0) dividend += randInt(1, divisor - 1);
+    const dedupeKey = `${dividend}:${divisor}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({
+      dividend,
+      divisor,
+      answerQuotient: Math.floor(dividend / divisor),
+      answerRemainder: dividend % divisor,
+    });
+  }
+  return items;
+}
+
+/**
+ * "Chia số thập phân (nâng cao)" - mảng còn thiếu của Đợt 3 (chỉ mới làm "chia số thập phân cho
+ * số tự nhiên, chia hết"): trộn (1) chia số TỰ NHIÊN cho số TỰ NHIÊN ra THƯƠNG THẬP PHÂN (~40%) và
+ * (2) chia số THẬP PHÂN cho số THẬP PHÂN (~60%, khó hơn). TÁI DÙNG decimalToNormalized()/
+ * normalizedToDecimal() đã viết ở Đợt 2-3 - sinh NGƯỢC từ thương "đẹp" × số chia = số bị chia
+ * (giống hệt nguyên tắc generateSoThapPhanNhan() ở Đợt 3, chỉ đổi vai trò hiển thị: phép NHÂN lúc
+ * sinh trở thành phép CHIA lúc hiển thị đề bài) - đảm bảo chia hết tuyệt đối 100%, không có dư.
+ */
+export function generateSoThapPhanChiaNangCao(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const isNaturalDivision = Math.random() < 0.4;
+    if (isNaturalDivision) {
+      const divisor = randInt(2, 9);
+      const quotientInt = randInt(1, 49);
+      const digits = Math.random() < 0.6 ? 1 : 2;
+      const quotientDec = randomDecimalPart(digits);
+      const quotientNorm = decimalToNormalized(quotientInt, quotientDec, quotientDec.length);
+      const dividendNorm = quotientNorm * divisor;
+      const dividend = dividendNorm / 10 ** quotientDec.length;
+      if (!Number.isInteger(dividend)) continue; // an toàn - không nên xảy ra vì quotientNorm luôn nguyên
+      const dedupeKey = `nat_${dividend}:${divisor}`;
+      if (used.has(dedupeKey)) continue;
+      used.add(dedupeKey);
+      items.push({
+        leftInt: dividend,
+        leftDec: "",
+        rightInt: divisor,
+        rightDec: "",
+        operator: "÷",
+        answerInt: quotientInt,
+        answerDec: quotientDec,
+      });
+    } else {
+      const divisorInt = randInt(1, 20);
+      const divisorDec = randomDecimalPart(1);
+      if (divisorInt === 0 && divisorDec === "0") continue; // né số chia gần 0
+      const quotientInt = randInt(0, 30);
+      const quotientDigits = Math.random() < 0.6 ? 1 : 2;
+      const quotientDec = randomDecimalPart(quotientDigits);
+
+      const normDivisor = decimalToNormalized(divisorInt, divisorDec, divisorDec.length);
+      const normQuotient = decimalToNormalized(quotientInt, quotientDec, quotientDec.length);
+      const width = divisorDec.length + quotientDec.length;
+      const dividendNorm = normDivisor * normQuotient;
+      const { intPart: dividendInt, decPart: dividendDec } = normalizedToDecimal(dividendNorm, width);
+
+      const dedupeKey = `dec_${dividendInt},${dividendDec}:${divisorInt},${divisorDec}`;
+      if (used.has(dedupeKey)) continue;
+      used.add(dedupeKey);
+      items.push({
+        leftInt: dividendInt,
+        leftDec: dividendDec,
+        rightInt: divisorInt,
+        rightDec: divisorDec,
+        operator: "÷",
+        answerInt: quotientInt,
+        answerDec: quotientDec,
+      });
+    }
   }
   return items;
 }

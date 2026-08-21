@@ -29,6 +29,16 @@ import {
   generateSoThapPhanCongTru,
   generateSoThapPhanNhan,
   generateSoThapPhanChia,
+  generateTiSoPhanTram,
+  generateHinhTamGiacHinhThang,
+  generateHinhTron,
+  generateTheTichHopLapPhuong,
+  generateDoiDonViTheTich,
+  generateDienTichXqTp,
+  generateSoDoThoiGian,
+  generateVanTocQuangDuongThoiGian,
+  generatePhepChiaCoDu,
+  generateSoThapPhanChiaNangCao,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -526,6 +536,20 @@ const DEFAULT_SECTION_ORDER = [
   // "4 phép tính số thập phân" của SGK: so sánh -> cộng/trừ -> nhân -> chia), vẫn trước "giai_toan".
   "so_thap_phan_nhan",
   "so_thap_phan_chia",
+  // ================== MỞ RỘNG LỚP 5, ĐỢT 4 ==================
+  // Xếp tiếp ngay sau "so_thap_phan_chia" (Đợt 3) - đúng mạch "số thập phân" (chia nâng cao +
+  // chia có dư ôn tập), rồi tới tỉ số phần trăm, hình học, đo lường/vận tốc theo ĐÚNG thứ tự chủ
+  // đề PPCT SGK Toán 5 KNTT. Vẫn xếp TRƯỚC "giai_toan" (giữ nguyên tắc AI luôn cuối cùng).
+  "so_thap_phan_chia_nang_cao",
+  "phep_chia_co_du",
+  "ti_so_phan_tram",
+  "hinh_tam_giac_hinh_thang",
+  "hinh_tron",
+  "the_tich_hhcn_lp",
+  "doi_don_vi_the_tich",
+  "dien_tich_xq_tp",
+  "so_do_thoi_gian",
+  "van_toc_quang_duong_thoi_gian",
   "giai_toan",
 ];
 
@@ -779,6 +803,77 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("so_thap_phan_chia") || "Đặt tính rồi tính.",
         mascot: mascotFor("so_thap_phan_chia"),
         items: generateSoThapPhanChia(safeCounts.so_thap_phan_chia),
+      };
+    // ================== MỞ RỘNG LỚP 5, ĐỢT 4 ==================
+    case "ti_so_phan_tram":
+      return {
+        type: "ti_so_phan_tram",
+        title: pickInstructionVariant("ti_so_phan_tram") || "Giải các bài toán sau.",
+        mascot: mascotFor("ti_so_phan_tram"),
+        items: generateTiSoPhanTram(safeCounts.ti_so_phan_tram),
+      };
+    case "hinh_tam_giac_hinh_thang":
+      return {
+        type: "hinh_tam_giac_hinh_thang",
+        title: pickInstructionVariant("hinh_tam_giac_hinh_thang") || "Giải các bài toán sau.",
+        mascot: mascotFor("hinh_tam_giac_hinh_thang"),
+        items: generateHinhTamGiacHinhThang(safeCounts.hinh_tam_giac_hinh_thang),
+      };
+    case "hinh_tron":
+      return {
+        type: "hinh_tron",
+        title: pickInstructionVariant("hinh_tron") || "Giải các bài toán sau (lấy π ≈ 3,14).",
+        mascot: mascotFor("hinh_tron"),
+        items: generateHinhTron(safeCounts.hinh_tron),
+      };
+    case "the_tich_hhcn_lp":
+      return {
+        type: "the_tich_hhcn_lp",
+        title: pickInstructionVariant("the_tich_hhcn_lp") || "Giải các bài toán sau.",
+        mascot: mascotFor("the_tich_hhcn_lp"),
+        items: generateTheTichHopLapPhuong(safeCounts.the_tich_hhcn_lp),
+      };
+    case "doi_don_vi_the_tich":
+      return {
+        type: "doi_don_vi_the_tich",
+        title: pickInstructionVariant("doi_don_vi_the_tich") || "Viết số thích hợp vào chỗ trống.",
+        mascot: mascotFor("doi_don_vi_the_tich"),
+        items: generateDoiDonViTheTich(safeCounts.doi_don_vi_the_tich),
+      };
+    case "dien_tich_xq_tp":
+      return {
+        type: "dien_tich_xq_tp",
+        title: pickInstructionVariant("dien_tich_xq_tp") || "Giải các bài toán sau.",
+        mascot: mascotFor("dien_tich_xq_tp"),
+        items: generateDienTichXqTp(safeCounts.dien_tich_xq_tp),
+      };
+    case "so_do_thoi_gian":
+      return {
+        type: "so_do_thoi_gian",
+        title: pickInstructionVariant("so_do_thoi_gian") || "Tính.",
+        mascot: mascotFor("so_do_thoi_gian"),
+        items: generateSoDoThoiGian(safeCounts.so_do_thoi_gian),
+      };
+    case "van_toc_quang_duong_thoi_gian":
+      return {
+        type: "van_toc_quang_duong_thoi_gian",
+        title: pickInstructionVariant("van_toc_quang_duong_thoi_gian") || "Giải các bài toán sau.",
+        mascot: mascotFor("van_toc_quang_duong_thoi_gian"),
+        items: generateVanTocQuangDuongThoiGian(safeCounts.van_toc_quang_duong_thoi_gian),
+      };
+    case "phep_chia_co_du":
+      return {
+        type: "phep_chia_co_du",
+        title: pickInstructionVariant("phep_chia_co_du") || "Đặt tính rồi tính.",
+        mascot: mascotFor("phep_chia_co_du"),
+        items: generatePhepChiaCoDu(safeCounts.phep_chia_co_du),
+      };
+    case "so_thap_phan_chia_nang_cao":
+      return {
+        type: "so_thap_phan_chia_nang_cao",
+        title: pickInstructionVariant("so_thap_phan_chia_nang_cao") || "Đặt tính rồi tính.",
+        mascot: mascotFor("so_thap_phan_chia_nang_cao"),
+        items: generateSoThapPhanChiaNangCao(safeCounts.so_thap_phan_chia_nang_cao),
       };
     case "cac_ngay_trong_tuan":
       return {
