@@ -379,6 +379,27 @@ function buildSoThapPhanCongTruParagraphs(items, showAnswers) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 3 ==================
+ * "Nhân số thập phân" + "Chia số thập phân cho số tự nhiên" - DÙNG CHUNG 1 hàm build cho cả 2
+ * dạng bài (cùng khuôn buildSoThapPhanCongTruParagraphs() ở Đợt 2, chỉ khác operator "×"/"÷" và
+ * rightDec có thể rỗng khi toán hạng là số tự nhiên - formatSoThapPhan() tự hiểu decimals=0 là số
+ * nguyên không dấu phẩy, xem numberFormatUtils.js).
+ */
+function buildSoThapPhanNhanChiaParagraphs(items, showAnswers) {
+  return chunkArray(items, 2).map((row) => ({
+    children: row.flatMap((it, idx) => {
+      const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec || "0"}`), it.leftDec.length);
+      const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec || "0"}`), it.rightDec.length);
+      const answer = formatSoThapPhan(Number(`${it.answerInt}.${it.answerDec}`), it.answerDec.length);
+      const text = `${left} ${it.operator} ${right} = ${showAnswers ? answer : BLANK}`;
+      const run = new TextRun({ text, font: FONT, size: 24 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 100 },
+  }));
+}
+
+/**
  * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
  * "Góc và đơn vị đo góc" - Word KHÔNG hỗ trợ vẽ SVG như bản web (AngleFigure trong
  * WorksheetPreview.jsx) - giống cách "Xem đồng hồ" đã xử lý trước đây (dùng text vì không cần độ
@@ -720,6 +741,9 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildSoThapPhanSoSanhParagraphs(section.items, showAnswers);
     case "so_thap_phan_cong_tru":
       return buildSoThapPhanCongTruParagraphs(section.items, showAnswers);
+    case "so_thap_phan_nhan":
+    case "so_thap_phan_chia":
+      return buildSoThapPhanNhanChiaParagraphs(section.items, showAnswers);
     case "goc_nhan_biet":
       return buildGocNhanBietParagraphs(section.items, showAnswers);
     case "tien_viet_nam":

@@ -27,6 +27,8 @@ import {
   generateGocNhanBiet,
   generateSoThapPhanSoSanh,
   generateSoThapPhanCongTru,
+  generateSoThapPhanNhan,
+  generateSoThapPhanChia,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -519,6 +521,11 @@ const DEFAULT_SECTION_ORDER = [
   // "so_thap_phan_cong_tru" xếp ngay sau "so_thap_phan_so_sanh" (cùng mạch "số thập phân" - học
   // sinh so sánh trước rồi mới cộng/trừ, đúng thứ tự SGK Toán 5 KNTT), vẫn trước "giai_toan".
   "so_thap_phan_cong_tru",
+  // ================== MỞ RỘNG LỚP 5, ĐỢT 3 ==================
+  // "so_thap_phan_nhan"/"so_thap_phan_chia" xếp tiếp ngay sau "so_thap_phan_cong_tru" (đúng mạch
+  // "4 phép tính số thập phân" của SGK: so sánh -> cộng/trừ -> nhân -> chia), vẫn trước "giai_toan".
+  "so_thap_phan_nhan",
+  "so_thap_phan_chia",
   "giai_toan",
 ];
 
@@ -758,6 +765,20 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("so_thap_phan_cong_tru") || "Đặt tính rồi tính.",
         mascot: mascotFor("so_thap_phan_cong_tru"),
         items: generateSoThapPhanCongTru(safeCounts.so_thap_phan_cong_tru),
+      };
+    case "so_thap_phan_nhan":
+      return {
+        type: "so_thap_phan_nhan",
+        title: pickInstructionVariant("so_thap_phan_nhan") || "Đặt tính rồi tính.",
+        mascot: mascotFor("so_thap_phan_nhan"),
+        items: generateSoThapPhanNhan(safeCounts.so_thap_phan_nhan),
+      };
+    case "so_thap_phan_chia":
+      return {
+        type: "so_thap_phan_chia",
+        title: pickInstructionVariant("so_thap_phan_chia") || "Đặt tính rồi tính.",
+        mascot: mascotFor("so_thap_phan_chia"),
+        items: generateSoThapPhanChia(safeCounts.so_thap_phan_chia),
       };
     case "cac_ngay_trong_tuan":
       return {

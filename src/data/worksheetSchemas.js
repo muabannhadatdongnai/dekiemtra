@@ -47,6 +47,8 @@ export const EXERCISE_TYPES = {
   THU_THAP_SO_LIEU: "thu_thap_so_lieu", // MỞ RỘNG LỚP 3, ĐỢT 3 - thống kê: bảng số liệu + câu hỏi
   SO_THAP_PHAN_SO_SANH: "so_thap_phan_so_sanh", // MỞ RỘNG LỚP 5, ĐỢT 1 - so sánh số thập phân
   SO_THAP_PHAN_CONG_TRU: "so_thap_phan_cong_tru", // MỞ RỘNG LỚP 5, ĐỢT 2 - cộng/trừ số thập phân
+  SO_THAP_PHAN_NHAN: "so_thap_phan_nhan", // MỞ RỘNG LỚP 5, ĐỢT 3 - nhân số thập phân
+  SO_THAP_PHAN_CHIA: "so_thap_phan_chia", // MỞ RỘNG LỚP 5, ĐỢT 3 - chia số thập phân cho số tự nhiên
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -1038,6 +1040,102 @@ export function generateSoThapPhanCongTru(count = 6) {
       operator,
       answerInt,
       answerDec,
+    });
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 5, ĐỢT 3 ==================
+// "Nhân số thập phân" - dạng bài thứ 3 của mảng số thập phân (sau so sánh Đợt 1, cộng/trừ Đợt 2).
+// Trộn 2 mức độ: NHÂN VỚI SỐ TỰ NHIÊN (~65%, mức cơ bản SGK dạy trước, thừa số tự nhiên nhỏ 2-9
+// kiểu "bảng nhân" để tích không quá lớn khi tính tay) và NHÂN 2 SỐ THẬP PHÂN VỚI NHAU (~35%, mức
+// nâng cao hơn - số chữ số thập phân của TÍCH = TỔNG số chữ số thập phân của 2 thừa số, đúng quy
+// tắc SGK Toán 5 KNTT "đếm tổng số chữ số ở phần thập phân của 2 thừa số rồi đếm từ phải sang").
+// TÁI DÙNG decimalToNormalized()/normalizedToDecimal() đã viết ở Đợt 2 nhưng cho MỤC ĐÍCH KHÁC:
+// ở Đợt 2 dùng 1 width CHUNG để quy 2 số về cùng hàng trước khi cộng/trừ; ở đây mỗi thừa số dùng
+// ĐÚNG width RIÊNG của nó (decA.length/decB.length, không ép chung) để lấy số nguyên biểu diễn
+// chính xác thừa số đó, rồi NHÂN 2 số nguyên với nhau - width của KẾT QUẢ là TỔNG 2 width, đúng
+// bản chất phép nhân thập phân. Vẫn quy hết về số nguyên trước khi tính nên tránh HOÀN TOÀN sai
+// số dấu phẩy động JS.
+// Số tự nhiên biểu diễn qua decDigits=0 (chuỗi rỗng "") - decimalToNormalized(intB, "", 0) cho ra
+// đúng intB (Number("") === 0 trong JS) - formatSoThapPhan() cũng tự hiểu decimals=0 là số nguyên,
+// không có dấu phẩy (xem numberFormatUtils.js).
+export function generateSoThapPhanNhan(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const isVsNaturalNumber = Math.random() < 0.65;
+    const intA = randInt(0, 49);
+    const digitsA = Math.random() < 0.6 ? 1 : 2;
+    const decA = randomDecimalPart(digitsA);
+
+    let intB, decB;
+    if (isVsNaturalNumber) {
+      intB = randInt(2, 9); // thừa số tự nhiên nhỏ (mức "bảng nhân") - tránh tích quá lớn khó tính tay
+      decB = "";
+    } else {
+      intB = randInt(0, 20); // int phần thập phân thứ 2 nhỏ hơn để tích không quá lớn
+      const digitsB = Math.random() < 0.7 ? 1 : 2;
+      decB = randomDecimalPart(digitsB);
+    }
+
+    const normA = decimalToNormalized(intA, decA, decA.length);
+    const normB = decimalToNormalized(intB, decB, decB.length);
+    const width = decA.length + decB.length;
+    const resultNorm = normA * normB;
+    const { intPart: answerInt, decPart: answerDec } = normalizedToDecimal(resultNorm, width);
+
+    const dedupeKey = `${intA},${decA}x${intB},${decB}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({
+      leftInt: intA,
+      leftDec: decA,
+      rightInt: intB,
+      rightDec: decB,
+      operator: "×",
+      answerInt,
+      answerDec,
+    });
+  }
+  return items;
+}
+
+// ================== MỞ RỘNG LỚP 5, ĐỢT 3 ==================
+// "Chia số thập phân cho số tự nhiên" - PHIÊN BẢN "chia hết tuyệt đối" (không dư). SGK Toán 5
+// KNTT còn có "chia số tự nhiên cho số tự nhiên ra thương thập phân" và "chia số thập phân cho số
+// thập phân" - CHƯA làm ở đợt này, để dành đợt sau (xem NEXT_STEPS.md).
+// Sinh NGƯỢC: chọn THƯƠNG (kết quả) "đẹp" trước rồi NHÂN LÊN ra SỐ BỊ CHIA - đảm bảo chia hết
+// tuyệt đối 100%, không cần thử-sai hay có rủi ro làm tròn. Cùng nguyên tắc "sinh ngược từ đáp án"
+// mà generateNhanChiaBang() (Lớp 3) đã dùng cho phép chia hết số tự nhiên trong bảng cửu chương.
+export function generateSoThapPhanChia(count = 6) {
+  const items = [];
+  const used = new Set();
+  let guard = 0;
+  while (items.length < count && guard < count * 20) {
+    guard++;
+    const divisor = randInt(2, 9);
+    const quotientInt = randInt(0, 49);
+    const digits = Math.random() < 0.6 ? 1 : 2;
+    const quotientDec = randomDecimalPart(digits);
+
+    const quotientNorm = decimalToNormalized(quotientInt, quotientDec, quotientDec.length);
+    const dividendNorm = quotientNorm * divisor;
+    const { intPart: dividendInt, decPart: dividendDec } = normalizedToDecimal(dividendNorm, quotientDec.length);
+
+    const dedupeKey = `${dividendInt},${dividendDec}:${divisor}`;
+    if (used.has(dedupeKey)) continue;
+    used.add(dedupeKey);
+    items.push({
+      leftInt: dividendInt,
+      leftDec: dividendDec,
+      rightInt: divisor,
+      rightDec: "",
+      operator: "÷",
+      answerInt: quotientInt,
+      answerDec: quotientDec,
     });
   }
   return items;

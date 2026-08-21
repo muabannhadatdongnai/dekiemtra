@@ -630,6 +630,42 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     mascotPool: ["➕", "➖", "🧮"],
     colorThemeTags: ["blue", "orange", "green"],
   },
+  {
+    // ===== MỞ RỘNG LỚP 5, ĐỢT 3 =====
+    key: "so_thap_phan_nhan",
+    subject: "TOAN",
+    label: "Nhân số thập phân",
+    skillGroup: "so_thap_phan",
+    source: "code",
+    minGrade: "LOP_5",
+    maxGrade: "LOP_5",
+    defaultCount: 6,
+    instructionVariants: [
+      "Đặt tính rồi tính.",
+      "Tính.",
+      "Em hãy tính kết quả các phép nhân sau.",
+    ],
+    mascotPool: ["✖️", "🧮", "✨"],
+    colorThemeTags: ["purple", "blue", "orange"],
+  },
+  {
+    // ===== MỞ RỘNG LỚP 5, ĐỢT 3 =====
+    key: "so_thap_phan_chia",
+    subject: "TOAN",
+    label: "Chia số thập phân cho số tự nhiên",
+    skillGroup: "so_thap_phan",
+    source: "code",
+    minGrade: "LOP_5",
+    maxGrade: "LOP_5",
+    defaultCount: 6,
+    instructionVariants: [
+      "Đặt tính rồi tính.",
+      "Tính.",
+      "Em hãy tính kết quả các phép chia sau.",
+    ],
+    mascotPool: ["➗", "🧮", "🔍"],
+    colorThemeTags: ["green", "blue", "purple"],
+  },
 ];
 
 /** Lấy toàn bộ block phù hợp với 1 khối lớp + môn học cụ thể. */
