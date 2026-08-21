@@ -714,6 +714,28 @@ function SoThapPhanCongTruSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 3 ==================
+ * "Nhân số thập phân" + "Chia số thập phân cho số tự nhiên" - DÙNG CHUNG 1 component vì 2 dạng
+ * bài có CÙNG HÌNH DẠNG dữ liệu (leftInt/leftDec/rightInt/rightDec/operator/answerInt/answerDec)
+ * như "Cộng, trừ số thập phân" ở Đợt 2 - chỉ khác operator ("×"/"÷") và cách sinh số. Tránh viết
+ * lặp lại y hệt SoThapPhanCongTruSection, đúng nguyên tắc tái dùng component đã áp dụng xuyên
+ * suốt dự án (VD TinhNhamSection dùng chung cho nhiều dạng bài số tự nhiên).
+ */
+function SoThapPhanNhanChiaSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec || "0"}`), it.leftDec.length)} {it.operator}{" "}
+          {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec || "0"}`), it.rightDec.length)} ={" "}
+          {blankBox(accent, 40)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
  * "Góc và đơn vị đo góc" - vẽ 2 tia chung gốc bằng SVG theo đúng số đo góc (degrees), học sinh
  * tự nhìn hình rồi gọi tên loại góc (không hiện số đo bằng chữ để tránh học sinh chỉ dựa vào số
@@ -1281,6 +1303,9 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "phan_so_so_sanh" && <PhanSoSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "so_thap_phan_so_sanh" && <SoThapPhanSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "so_thap_phan_cong_tru" && <SoThapPhanCongTruSection items={section.items} accent={t.border} />}
+      {(section.type === "so_thap_phan_nhan" || section.type === "so_thap_phan_chia") && (
+        <SoThapPhanNhanChiaSection items={section.items} accent={t.border} />
+      )}
       {section.type === "goc_nhan_biet" && <GocNhanBietSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
