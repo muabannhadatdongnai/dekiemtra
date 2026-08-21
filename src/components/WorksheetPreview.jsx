@@ -736,6 +736,215 @@ function SoThapPhanNhanChiaSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 5, ĐỢT 4 ==================
+ * Component DÙNG CHUNG cho các dạng bài "giải toán có lời + 1 ô trống điền đáp số" (tỉ số phần
+ * trăm, tam giác/hình thang, hình tròn, thể tích, diện tích xq/tp, vận tốc-quãng đường-thời gian)
+ * - cùng bố cục "mô tả đề bài -> Bài giải: ___ đơn vị" như ChuViDienTichSection (Lớp 3), chỉ khác
+ * mỗi dạng tự build câu văn riêng qua hàm `describe(it)` truyền vào (tránh viết lặp lại 6 component
+ * gần như y hệt nhau, đúng nguyên tắc tái dùng đã áp dụng cho SoThapPhanNhanChiaSection ở Đợt 3).
+ */
+function WordProblemBlankSection({ items, accent, describe }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 15 }}>
+      {items.map((it, i) => {
+        const { text, unit } = describe(it);
+        return (
+          <div key={i}>
+            <div>
+              {i + 1}. {text}
+            </div>
+            <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+              Bài giải: {blankBox(accent)} {unit}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** "Tỉ số phần trăm" - 3 dạng con (xem generateTiSoPhanTram(), worksheetSchemas.js). */
+function TiSoPhanTramSection({ items, accent }) {
+  return (
+    <WordProblemBlankSection
+      items={items}
+      accent={accent}
+      describe={(it) => {
+        if (it.subKind === "ti_so") {
+          return { text: `Tìm tỉ số phần trăm của ${formatSoTuNhien(it.a)} và ${formatSoTuNhien(it.b)}.`, unit: "%" };
+        }
+        if (it.subKind === "gia_tri") {
+          return { text: `Tìm ${it.percent}% của ${formatSoTuNhien(it.n)}.`, unit: "" };
+        }
+        return { text: `Tìm một số biết ${it.percent}% của số đó là ${formatSoTuNhien(it.value)}.`, unit: "" };
+      }}
+    />
+  );
+}
+
+/** "Diện tích hình tam giác, hình thang" - 3 dạng con (xem generateHinhTamGiacHinhThang()). */
+function HinhTamGiacHinhThangSection({ items, accent }) {
+  return (
+    <WordProblemBlankSection
+      items={items}
+      accent={accent}
+      describe={(it) => {
+        if (it.subKind === "tam_giac_dien_tich") {
+          return {
+            text: `Hình tam giác có đáy ${it.a} cm và chiều cao ${it.h} cm. Tính diện tích hình tam giác đó.`,
+            unit: "cm²",
+          };
+        }
+        if (it.subKind === "hinh_thang_dien_tich") {
+          return {
+            text: `Hình thang có đáy lớn ${it.a} cm, đáy bé ${it.b} cm và chiều cao ${it.h} cm. Tính diện tích hình thang đó.`,
+            unit: "cm²",
+          };
+        }
+        return {
+          text: `Hình tam giác có 3 cạnh lần lượt là ${it.s1} cm, ${it.s2} cm và ${it.s3} cm. Tính chu vi hình tam giác đó.`,
+          unit: "cm",
+        };
+      }}
+    />
+  );
+}
+
+/** "Chu vi, diện tích hình tròn" - dùng π ≈ 3,14 (xem generateHinhTron()). */
+function HinhTronSection({ items, accent }) {
+  return (
+    <WordProblemBlankSection
+      items={items}
+      accent={accent}
+      describe={(it) => {
+        const givenText = it.given === "ban_kinh" ? `bán kính ${it.value} cm` : `đường kính ${it.value} cm`;
+        const ask = it.metric === "chu_vi" ? "Tính chu vi hình tròn đó." : "Tính diện tích hình tròn đó.";
+        return {
+          text: `Hình tròn có ${givenText}. ${ask}`,
+          unit: it.metric === "chu_vi" ? "cm" : "cm²",
+        };
+      }}
+    />
+  );
+}
+
+/** "Thể tích hình hộp chữ nhật, hình lập phương" (xem generateTheTichHopLapPhuong()). */
+function TheTichHhcnLpSection({ items, accent }) {
+  return (
+    <WordProblemBlankSection
+      items={items}
+      accent={accent}
+      describe={(it) => {
+        if (it.subKind === "hhcn") {
+          return {
+            text: `Hình hộp chữ nhật có chiều dài ${it.a} cm, chiều rộng ${it.b} cm và chiều cao ${it.c} cm. Tính thể tích hình đó.`,
+            unit: "cm³",
+          };
+        }
+        return { text: `Hình lập phương có cạnh ${it.a} cm. Tính thể tích hình đó.`, unit: "cm³" };
+      }}
+    />
+  );
+}
+
+/** "Diện tích xung quanh, diện tích toàn phần" (xem generateDienTichXqTp()). */
+function DienTichXqTpSection({ items, accent }) {
+  return (
+    <WordProblemBlankSection
+      items={items}
+      accent={accent}
+      describe={(it) => {
+        const metricText = it.metric === "xq" ? "diện tích xung quanh" : "diện tích toàn phần";
+        if (it.shape === "hhcn") {
+          return {
+            text: `Hình hộp chữ nhật có chiều dài ${it.a} cm, chiều rộng ${it.b} cm và chiều cao ${it.c} cm. Tính ${metricText} hình đó.`,
+            unit: "cm²",
+          };
+        }
+        if (it.shape === "lap_phuong") {
+          return { text: `Hình lập phương có cạnh ${it.a} cm. Tính ${metricText} hình đó.`, unit: "cm²" };
+        }
+        return {
+          text: `Hình trụ có bán kính đáy ${it.r} cm và chiều cao ${it.h} cm. Tính ${metricText} hình đó (lấy π ≈ 3,14).`,
+          unit: "cm²",
+        };
+      }}
+    />
+  );
+}
+
+/** "Vận tốc, quãng đường, thời gian" (xem generateVanTocQuangDuongThoiGian()). */
+function VanTocQuangDuongThoiGianSection({ items, accent }) {
+  return (
+    <WordProblemBlankSection
+      items={items}
+      accent={accent}
+      describe={(it) => {
+        if (it.ask === "v") {
+          return {
+            text: `Một xe đi được quãng đường ${it.s} km trong ${it.t} giờ. Tính vận tốc của xe đó.`,
+            unit: "km/giờ",
+          };
+        }
+        if (it.ask === "s") {
+          return {
+            text: `Một xe đi với vận tốc ${it.v} km/giờ trong ${it.t} giờ. Tính quãng đường xe đó đi được.`,
+            unit: "km",
+          };
+        }
+        return {
+          text: `Một xe đi với vận tốc ${it.v} km/giờ, đi được quãng đường ${it.s} km. Hỏi xe đó đi hết bao nhiêu thời gian?`,
+          unit: "giờ",
+        };
+      }}
+    />
+  );
+}
+
+/**
+ * "Đổi đơn vị đo thể tích" - hiển thị dạng "value fromUnit = ___ toUnit" giống hệt DoiDonViSection
+ * (Lớp 3) nhưng generator RIÊNG cho đơn vị thể tích (xem generateDoiDonViTheTich()) - tái dùng
+ * THẲNG component DoiDonViSection đã có sẵn (không viết lại) vì đúng CÙNG hình dạng dữ liệu
+ * (value/fromUnit/toUnit).
+ */
+
+/**
+ * "Cộng, trừ số đo thời gian" - 2 ô trống (giờ VÀ phút) khác các dạng "1 phép tính = 1 ô trống" đã
+ * có, nên cần component riêng. formatTimeHM() ẩn "0 giờ"/"0 phút" khi giá trị đó bằng 0 cho tự
+ * nhiên (VD "45 phút" thay vì "0 giờ 45 phút").
+ */
+function formatTimeHM(h, m) {
+  if (h > 0 && m > 0) return `${h} giờ ${m} phút`;
+  if (h > 0) return `${h} giờ`;
+  return `${m} phút`;
+}
+function SoDoThoiGianSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 15 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          {i + 1}. {formatTimeHM(it.leftH, it.leftM)} {it.operator} {formatTimeHM(it.rightH, it.rightM)} ={" "}
+          {blankBox(accent, 44)} giờ {blankBox(accent, 44)} phút
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** "Phép chia có dư" - 2 ô trống (thương và số dư), xem generatePhepChiaCoDu(). */
+function PhepChiaCoDuSection({ items, accent }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          {i + 1}. {formatSoTuNhien(it.dividend)} : {it.divisor} = {blankBox(accent, 40)} (dư {blankBox(accent, 36)})
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
  * "Góc và đơn vị đo góc" - vẽ 2 tia chung gốc bằng SVG theo đúng số đo góc (degrees), học sinh
  * tự nhìn hình rồi gọi tên loại góc (không hiện số đo bằng chữ để tránh học sinh chỉ dựa vào số
@@ -1303,9 +1512,24 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "phan_so_so_sanh" && <PhanSoSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "so_thap_phan_so_sanh" && <SoThapPhanSoSanhSection items={section.items} accent={t.border} />}
       {section.type === "so_thap_phan_cong_tru" && <SoThapPhanCongTruSection items={section.items} accent={t.border} />}
-      {(section.type === "so_thap_phan_nhan" || section.type === "so_thap_phan_chia") && (
+      {(section.type === "so_thap_phan_nhan" ||
+        section.type === "so_thap_phan_chia" ||
+        section.type === "so_thap_phan_chia_nang_cao") && (
         <SoThapPhanNhanChiaSection items={section.items} accent={t.border} />
       )}
+      {section.type === "ti_so_phan_tram" && <TiSoPhanTramSection items={section.items} accent={t.border} />}
+      {section.type === "hinh_tam_giac_hinh_thang" && (
+        <HinhTamGiacHinhThangSection items={section.items} accent={t.border} />
+      )}
+      {section.type === "hinh_tron" && <HinhTronSection items={section.items} accent={t.border} />}
+      {section.type === "the_tich_hhcn_lp" && <TheTichHhcnLpSection items={section.items} accent={t.border} />}
+      {section.type === "doi_don_vi_the_tich" && <DoiDonViSection items={section.items} accent={t.border} />}
+      {section.type === "dien_tich_xq_tp" && <DienTichXqTpSection items={section.items} accent={t.border} />}
+      {section.type === "so_do_thoi_gian" && <SoDoThoiGianSection items={section.items} accent={t.border} />}
+      {section.type === "van_toc_quang_duong_thoi_gian" && (
+        <VanTocQuangDuongThoiGianSection items={section.items} accent={t.border} />
+      )}
+      {section.type === "phep_chia_co_du" && <PhepChiaCoDuSection items={section.items} accent={t.border} />}
       {section.type === "goc_nhan_biet" && <GocNhanBietSection items={section.items} accent={t.border} />}
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
