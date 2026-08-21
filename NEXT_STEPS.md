@@ -1,8 +1,18 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
-> Trạng thái: **ĐANG CODE Lớp 5** (Đợt 2 xong). File này để mang sang chat mới không mất ngữ cảnh.
+> Trạng thái: **ĐANG CODE Lớp 5** (Đợt 3 xong). File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 13) — Backfill tài liệu Lớp 5 Đợt 1 + Lớp 5 Đợt 2 (Cộng, trừ số thập phân)
+## ✅ MỚI NHẤT (Phiên 14) — Lớp 5, Đợt 3: Nhân, chia số thập phân
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 14". Tóm tắt:
+1. `so_thap_phan_nhan` (Nhân số thập phân) - trộn nhân với số tự nhiên (~65%) và nhân 2 số thập
+   phân với nhau (~35%), số chữ số thập phân của tích = tổng 2 thừa số.
+2. `so_thap_phan_chia` (Chia số thập phân cho số tự nhiên) - phiên bản chia hết tuyệt đối (chưa
+   làm chia có dư/chia thập phân cho thập phân), sinh ngược từ thương "đẹp".
+3. Preview web + export Word dùng CHUNG component/hàm cho cả 2 dạng bài (cùng hình dạng dữ liệu).
+- `npm test`: 240/240 PASS (232 cũ + 8 mới). `npm run build`: sạch. Đã sanity-check end-to-end
+  qua `generateWorksheet()` thật.
+
+## ✅ (Phiên 13) — Backfill tài liệu Lớp 5 Đợt 1 + Lớp 5 Đợt 2 (Cộng, trừ số thập phân)
 Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 13". Tóm tắt:
 1. **Phát hiện tài liệu bị lệch**: rà soát code trước khi làm phát hiện Lớp 5 Đợt 1 ("So sánh số
    thập phân") **đã được code xong hoàn chỉnh từ trước** (4 tầng đủ + test riêng) dù mục "Trạng
@@ -169,7 +179,7 @@ Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊ
 `bieu_thuc_chu`/`phan_so_so_sanh`/`goc_nhan_biet`, nối đủ 4 tầng, có test tự động riêng
 (`test/worksheetLop4Dot2.test.js`), đã test end-to-end qua `generateWorksheet()` thật.
 
-## Trạng thái Lớp 5 (Toán) — ĐANG CODE (Đợt 1 + Đợt 2 xong)
+## Trạng thái Lớp 5 (Toán) — ĐANG CODE (Đợt 1 + Đợt 2 + Đợt 3 xong)
 Khối lượng rất lớn, cần tách nhiều đợt như Lớp 3/Lớp 4. Nội dung cần (xem "Catalog Toán Lớp 3-5"
 bên dưới): số thập phân (đọc/viết/so sánh/4 phép tính - **cần generator số thập phân RIÊNG**, khác
 hẳn số nguyên hiện có); tỉ số phần trăm; hình tam giác/hình thang/hình tròn (chu vi/diện tích);
@@ -195,9 +205,17 @@ trọng tâm SGK. Test: `test/worksheetLop5Dot1.test.js` (8 test).
 nguyên 0-99, cố ý cho ~35% cặp lệch số chữ số thập phân, phép trừ luôn đảm bảo số bị trừ >= số
 trừ (tự hoán đổi toán hạng nếu random ngược). Test: `test/worksheetLop5Dot2.test.js` (7 test).
 
+**Đợt 3 (xong, Phiên 14):** 2 dạng bài mới, dùng CHUNG component/hàm hiển thị (cùng hình dạng dữ
+liệu như Đợt 2):
+- `so_thap_phan_nhan` (Nhân số thập phân) - trộn nhân với số tự nhiên (~65%, thừa số 2-9 kiểu
+  "bảng nhân") và nhân 2 số thập phân với nhau (~35%). Số chữ số thập phân của tích = TỔNG số
+  chữ số thập phân 2 thừa số (tính bằng cách quy MỖI thừa số về số nguyên theo width riêng rồi
+  nhân, cộng 2 width lại làm width kết quả).
+- `so_thap_phan_chia` (Chia số thập phân cho số tự nhiên) - phiên bản chia hết TUYỆT ĐỐI (không
+  dư), sinh ngược từ thương "đẹp" rồi nhân lên ra số bị chia - đảm bảo chia hết 100%.
+Test: `test/worksheetLop5Dot3.test.js` (8 test).
+
 **Còn lại cho Lớp 5:**
-- Nhân/chia số thập phân (nhân/chia với số tự nhiên là bước dễ hơn, có thể làm trước khi sang
-  nhân/chia 2 số thập phân với nhau).
 - Tỉ số phần trăm.
 - Hình tam giác/hình thang/hình tròn (chu vi/diện tích) - cần xem lại `chu_vi_dien_tich` của
   Lớp 3 (hiện chỉ có vuông/HCN) có nên mở rộng hay tách dạng bài riêng cho Lớp 5.
@@ -205,6 +223,8 @@ trừ (tự hoán đổi toán hạng nếu random ngược). Test: `test/worksh
   phương/trụ - cần layout/preview mới (khác các dạng bài "điền số" đơn giản đã có).
 - Số đo thời gian; vận tốc-quãng đường-thời gian (toán chuyển động đều) - có thể cần AI (`giai_toan`)
   thay vì generator thuần code, giống cách "giải toán" đã làm cho các khối trước.
+- "Chia có dư"/"chia số thập phân cho số thập phân" (nâng cao hơn "chia hết tuyệt đối" đã làm ở
+  Đợt 3) - cân nhắc làm sau khi có phản hồi thực tế từ giáo viên về mức độ hiện tại.
 - Cân nhắc thêm "gói chủ đề" Lớp 5 (`worksheetTopicPackages.js`) sau khi có thêm vài dạng bài nữa.
 
 

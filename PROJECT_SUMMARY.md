@@ -1,6 +1,46 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 13: phát hiện + backfill tài liệu
-# Lớp 5 Đợt 1 (đã có sẵn trong code nhưng chưa ghi vào NEXT_STEPS.md) + Lớp 5 Đợt 2 (Cộng, trừ
-# số thập phân))
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 14: Lớp 5 Đợt 3 — Nhân, chia số
+# thập phân)
+
+## PHIÊN 14 — Lớp 5, Đợt 3: Nhân số thập phân + Chia số thập phân cho số tự nhiên
+
+**Bối cảnh**: Hoan yêu cầu làm tiếp Lớp 5, chọn đúng hướng đã đề xuất cuối Phiên 13: nhân/chia số
+thập phân.
+
+### 1. "Nhân số thập phân" (`so_thap_phan_nhan`)
+Trộn 2 mức độ: **nhân với số tự nhiên** (~65%, thừa số tự nhiên 2-9 kiểu "bảng nhân", mức cơ bản
+SGK dạy trước) và **nhân 2 số thập phân với nhau** (~35%, mức nâng cao hơn). Số chữ số thập phân
+của TÍCH = TỔNG số chữ số thập phân của 2 thừa số — đúng quy tắc SGK Toán 5 KNTT. Tính bằng cách
+quy MỖI thừa số về số nguyên theo ĐÚNG width riêng của nó rồi nhân 2 số nguyên (tái dùng
+`decimalToNormalized()`/`normalizedToDecimal()` đã viết ở Đợt 2, nhưng dùng cho mục đích khác:
+Đợt 2 quy 2 số về 1 width CHUNG để cộng/trừ thẳng hàng; Đợt 3 giữ width RIÊNG từng thừa số rồi
+CỘNG 2 width lại làm width của tích) — tránh hoàn toàn sai số dấu phẩy động JS. Số tự nhiên biểu
+diễn qua `rightDec = ""` (decimals=0), `formatSoThapPhan()` tự hiểu là số nguyên không dấu phẩy.
+
+### 2. "Chia số thập phân cho số tự nhiên" (`so_thap_phan_chia`)
+Phiên bản **chia hết tuyệt đối** (không dư) — chưa làm "chia có dư"/"chia số thập phân cho số
+thập phân" (để dành đợt sau). Sinh NGƯỢC: chọn THƯƠNG "đẹp" trước rồi nhân lên ra SỐ BỊ CHIA, đảm
+bảo chia hết 100% không cần thử-sai — cùng nguyên tắc `generateNhanChiaBang()` (Lớp 3) đã dùng
+cho phép chia hết số tự nhiên trong bảng cửu chương.
+
+### 3. Preview web + Export Word — dùng CHUNG 1 component/1 hàm cho cả 2 dạng bài
+`SoThapPhanNhanChiaSection` (web) và `buildSoThapPhanNhanChiaParagraphs()` (Word) — vì "nhân" và
+"chia" có CÙNG hình dạng dữ liệu (`leftInt/leftDec/rightInt/rightDec/operator/answerInt/answerDec`)
+như "Cộng, trừ" ở Đợt 2, chỉ khác operator và cách sinh số. Tránh viết lặp lại logic hiển thị.
+
+**Đã kiểm thử**: `test/worksheetLop5Dot3.test.js` (8 test mới) — đáp án tính lại ĐỘC LẬP bằng phép
+nhân/chia Number thường (làm tròn theo đúng số chữ số thập phân kỳ vọng để né sai số dấu phẩy
+động), xác nhận: số chữ số thập phân của tích = tổng 2 thừa số; phép chia luôn chia hết tuyệt đối
+(kiểm bằng modulo trên số nguyên quy đổi); số chia luôn 2-9; không trùng lặp phép tính; dạng bài
+chỉ lộ đúng khối Lớp 5. Đã sanity-check end-to-end qua `generateWorksheet()` thật (không chỉ test
+generator riêng lẻ), xác nhận vài phép tính mẫu đúng toán học (VD "49,51 × 6,2 = 306,962",
+"118,50 ÷ 5 = 23,70"). `npm test`: 240/240 PASS (232 cũ + 8 mới). `npm run build`: sạch.
+
+### Còn lại cho Lớp 5
+Tỉ số phần trăm; hình tam giác/hình thang/hình tròn (chu vi/diện tích); thể tích + đơn vị đo thể
+tích (cm³/dm³); diện tích xung quanh/toàn phần hình hộp chữ nhật/lập phương/trụ; số đo thời gian;
+vận tốc-quãng đường-thời gian (toán chuyển động đều); "chia có dư"/"chia số thập phân cho số thập
+phân" (nâng cao hơn "chia hết tuyệt đối" đã làm ở Đợt 3, cân nhắc làm sau khi có phản hồi thực tế
+từ giáo viên về mức độ hiện tại).
 
 ## PHIÊN 13 — Backfill tài liệu Lớp 5 Đợt 1 + Lớp 5 Đợt 2 (Cộng, trừ số thập phân)
 
