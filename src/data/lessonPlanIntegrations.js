@@ -33,6 +33,46 @@ export const INTEGRATION_KEYS = {
   TICH_HOP_STEM: "tichHopSTEM",
 };
 
+/**
+ * buildStemGradeGuidance(grade)
+ * Chọn đúng "tinh thần" sản phẩm STEM theo khối lớp - phản hồi thực tế của Hoan: gộp chung 1 mức
+ * độ cho mọi khối lớp là SAI về tâm lý lứa tuổi. 2 khối rõ rệt trong PHẠM VI HIỆN TẠI của dự án
+ * (chỉ Mầm non -> Lớp 5, xem đầu lessonPlanTemplates.js):
+ *  - Mầm non/Lớp 1-3: thủ công đơn giản dạng 2D (kỹ năng vận động tinh còn hạn chế).
+ *  - Lớp 4-5: CẤM thủ công đơn giản, PHẢI là "dự án thu nhỏ" thử thách tư duy cao hơn.
+ * grade: number (1..5) | "MAM_NON" | undefined - undefined/không nhận diện được thì trả về
+ * hướng dẫn CHUNG (an toàn, không sai lệch cho khối lớp nào) thay vì throw lỗi.
+ */
+function buildStemGradeGuidance(grade) {
+  const isMamNonToL3 = grade === "MAM_NON" || (typeof grade === "number" && grade <= 3);
+  const isL4L5 = typeof grade === "number" && grade >= 4;
+
+  if (isMamNonToL3) {
+    return (
+      `  Mức độ PHÙ HỢP LỨA TUỔI (Mầm non - Lớp 3): sản phẩm THỦ CÔNG ĐƠN GIẢN dạng 2D (cắt, dán,\n` +
+      `  vẽ, tô màu, gấp giấy...) - ít bước, không cần vật liệu nhỏ khó thao tác, phù hợp kỹ năng\n` +
+      `  vận động tinh còn hạn chế ở lứa tuổi này.\n`
+    );
+  }
+  if (isL4L5) {
+    return (
+      `  ⚠️ Mức độ PHÙ HỢP LỨA TUỔI (Lớp 4-5): TUYỆT ĐỐI KHÔNG dùng sản phẩm thủ công đơn giản (cắt/\n` +
+      `  dán/vẽ 2D thông thường) - PHẢI thiết kế thành 1 "DỰ ÁN THU NHỎ" mang tính THỬ THÁCH TƯ DUY\n` +
+      `  cao hơn, ví dụ: (a) mô hình 3D CÓ CHUYỂN ĐỘNG được (ống khoá mật mã, máy bắn đá mini...),\n` +
+      `  (b) mô hình sa bàn quy hoạch có NGÂN SÁCH ẢO (học sinh phải tính toán/phân bổ ngân sách cho\n` +
+      `  các hạng mục), (c) trò chơi GIẢI MÃ (Escape Room) gắn với ĐÚNG kiến thức bài học. Sản phẩm\n` +
+      `  phải thể hiện rõ TƯ DUY VẬN DỤNG kiến thức, không chỉ là hoạt động thủ công trang trí đơn\n` +
+      `  thuần.\n`
+    );
+  }
+  // Fallback an toàn (không xác định được khối lớp) - nêu cả 2 tinh thần, để AI tự chọn hợp lý.
+  return (
+    `  Mức độ PHÙ HỢP LỨA TUỔI: Mầm non - Lớp 3 ưu tiên thủ công đơn giản dạng 2D (cắt, dán, vẽ, gấp\n` +
+    `  giấy); Lớp 4-5 PHẢI là "dự án thu nhỏ" thử thách tư duy cao hơn (mô hình 3D chuyển động, sa\n` +
+    `  bàn có ngân sách ảo, trò chơi giải mã...), KHÔNG dùng thủ công đơn giản.\n`
+  );
+}
+
 export const LESSON_PLAN_INTEGRATIONS = {
   [INTEGRATION_KEYS.TICH_HOP_NLS]: {
     key: INTEGRATION_KEYS.TICH_HOP_NLS,
@@ -297,15 +337,17 @@ export const LESSON_PLAN_INTEGRATIONS = {
     // Thời lượng: GIỮ NGUYÊN trần maxMinutes=12 của "van_dung" (không sửa lessonPlanTemplates.js/
     // computeMultiPeriodTimeline) - tại lớp chỉ giao nhiệm vụ + hướng dẫn nhanh, sản phẩm thật
     // hoàn thiện Ở NHÀ, đúng cách tích hợp NLS đã xử lý hoạt động cần thiết bị số.
-    buildPromptFragment: () =>
+    // ⚠️ PHÂN HOÁ THEO KHỐI LỚP (phản hồi thực tế của Hoan): "sản phẩm thực tế" KHÔNG được hiểu
+    // đồng nhất 1 mức độ cho mọi khối lớp - Mầm non/Lớp 1-3 và Lớp 4-5 cần 2 tinh thần khác hẳn
+    // nhau (xem groupByGradeForStem() bên dưới). Cần biết "grade" nên buildPromptFragment() nhận
+    // ctx={grade} - xem buildIntegrationsPromptBlock() (đã sửa để truyền ctx qua) và lời gọi tại
+    // buildLessonPlanPrompt() (lessonPlanPromptTemplates.js).
+    buildPromptFragment: (ctx = {}) =>
       `- Hoạt động "Vận dụng" PHẢI đổi hẳn bản chất: KHÔNG giao bài tập làm trên giấy như thông\n` +
       `  thường, mà giao 1 nhiệm vụ theo định hướng GIÁO DỤC STEM - yêu cầu học sinh dùng ĐÚNG kiến\n` +
-      `  thức vừa học trong bài này để Thiết kế, Vẽ, Lắp ráp, hoặc Chế tạo 1 SẢN PHẨM THỰC TẾ (VD:\n` +
-      `  làm poster, làm mô hình, vẽ sơ đồ, làm sổ tay...) - sản phẩm PHẢI thể hiện rõ kiến thức bài\n` +
-      `  học, không phải hoạt động thủ công chung chung không liên quan nội dung bài.\n` +
-      `  Gợi ý mức độ phù hợp lứa tuổi: Mầm non/Lớp 1-2 ưu tiên hình thức ĐƠN GIẢN (vẽ, tô màu, dán -\n` +
-      `  ít bước, không cần vật liệu nhỏ khó thao tác); Lớp 3-5 có thể phức tạp hơn (lắp ráp/chế tạo\n` +
-      `  mô hình từ bìa, que, dây, vật liệu tái chế dễ tìm, rẻ tiền, an toàn với trẻ).\n` +
+      `  thức vừa học trong bài này để tạo ra sản phẩm - sản phẩm PHẢI thể hiện rõ kiến thức bài\n` +
+      `  học, không phải hoạt động chung chung không liên quan nội dung bài.\n` +
+      `${buildStemGradeGuidance(ctx.grade)}\n` +
       `  ⚠️ VỀ THỜI LƯỢNG: tại lớp CHỈ đủ thời gian để nêu yêu cầu sản phẩm, hướng dẫn nhanh cách\n` +
       `  làm, chia nhóm/giao việc (vẫn trong khung thời lượng gợi ý đã nêu cho "Vận dụng", KHÔNG kéo\n` +
       `  dài thêm) - TUYỆT ĐỐI KHÔNG để học sinh làm sản phẩm hoàn chỉnh ngay tại lớp. Bước cuối của\n` +
@@ -333,12 +375,15 @@ export function getIntegration(key) {
   return LESSON_PLAN_INTEGRATIONS[key] || null;
 }
 
-/** Gộp các đoạn prompt của những tích hợp đang BẬT (selectedKeys: string[]). */
-export function buildIntegrationsPromptBlock(selectedKeys = []) {
+/** Gộp các đoạn prompt của những tích hợp đang BẬT (selectedKeys: string[]).
+ *  ctx (tuỳ chọn): { grade } - CHỈ 1 số ít tích hợp cần biết khối lớp để chọn đúng nội dung hướng
+ *  dẫn theo lứa tuổi (hiện tại: TICH_HOP_STEM - xem buildPromptFragment() của entry đó). Các
+ *  tích hợp khác bỏ qua tham số này (buildPromptFragment() của chúng không nhận tham số). */
+export function buildIntegrationsPromptBlock(selectedKeys = [], ctx = {}) {
   const fragments = selectedKeys
     .map((key) => getIntegration(key))
-    .filter((i) => i && i.isAiGenerated && i.buildPromptFragment())
-    .map((i) => i.buildPromptFragment());
+    .filter((i) => i && i.isAiGenerated && i.buildPromptFragment(ctx))
+    .map((i) => i.buildPromptFragment(ctx));
   if (fragments.length === 0) return "";
   return `\nTÍCH HỢP/NÂNG CAO ĐƯỢC GIÁO VIÊN YÊU CẦU THÊM (BẮT BUỘC tuân thủ đầy đủ):\n${fragments.join("\n")}\n`;
 }

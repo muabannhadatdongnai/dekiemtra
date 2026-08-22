@@ -251,7 +251,7 @@ ${multiPeriodGuidance.text}`;
     : `⚠️ Không có tài liệu SGK cụ thể được cung cấp cho lượt soạn này - hãy dựa vào "Nội dung cốt lõi"
 giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình phổ thông Việt Nam hiện hành.`;
 
-  const integrationsBlock = buildIntegrationsPromptBlock(integrations);
+  const integrationsBlock = buildIntegrationsPromptBlock(integrations, { grade });
   const styleBlock = buildLessonPlanStylePromptFragment(lessonPlanStyle);
   const diversityBlock = buildDiversityGuidance(existingOpeningIdeas);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
