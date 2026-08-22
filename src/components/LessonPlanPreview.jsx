@@ -354,9 +354,11 @@ function ChecklistNLPCBlock({ items }) {
   );
 }
 
-// Phụ lục "Bài tập phân hoá theo 3 mức độ" (Hỗ trợ / Đạt chuẩn / Nâng cao) - 3 cột đặt cạnh nhau
-// để giáo viên nhìn thấy ngay sự khác biệt độ khó giữa 3 nhóm học sinh trong cùng 1 lớp, dùng
-// để phát bài phù hợp cho từng nhóm ở tiết Luyện tập/Vận dụng hoặc làm bài tập về nhà phân hoá.
+// Phụ lục "Bài tập phân hoá theo 3 mức độ" (Hỗ trợ / Đạt chuẩn / Nâng cao) - XẾP DỌC, mỗi mức
+// chiếm TRỌN chiều rộng trang (KHÔNG dùng bảng/lưới 3 cột cạnh nhau) - trước đây dùng flex 3 cột
+// ngang, trên khổ A4 mỗi cột chỉ còn ~200px khiến chữ bị ép rất khó đọc (phản ánh thực tế của
+// giáo viên). Đúng QUY TẮC TRÌNH BÀY PHỤ LỤC đã chốt: liệt kê tuần tự theo tiêu đề "Mức 1 - Hỗ
+// trợ", xuống dòng ghi bài tập, rồi "Mức 2 - Đạt chuẩn"...
 function BaiTapPhanHoaBlock({ data }) {
   const groups = [
     { key: "hoTro", label: "Mức 1 — Hỗ trợ", color: "#0369A1", bg: "#EFF6FF", border: "#93C5FD" },
@@ -370,7 +372,7 @@ function BaiTapPhanHoaBlock({ data }) {
       <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 8px" }}>
         PHỤ LỤC: Bài tập phân hoá theo 3 mức độ
       </p>
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {groups.map((g) => {
           const items = data?.[g.key] || [];
           if (items.length === 0) return null;
@@ -378,8 +380,6 @@ function BaiTapPhanHoaBlock({ data }) {
             <div
               key={g.key}
               style={{
-                flex: "1 1 220px",
-                minWidth: 200,
                 border: `1.5px solid ${g.border}`,
                 background: g.bg,
                 borderRadius: 8,
@@ -389,7 +389,7 @@ function BaiTapPhanHoaBlock({ data }) {
               <p style={{ fontWeight: 700, color: g.color, fontSize: 13, margin: "0 0 6px" }}>{g.label}</p>
               <ol style={{ margin: 0, paddingLeft: 18 }}>
                 {items.map((it, i) => (
-                  <li key={i} style={{ fontSize: 12.5, marginBottom: 6, whiteSpace: "pre-line" }}>
+                  <li key={i} style={{ fontSize: 13, marginBottom: 6, whiteSpace: "pre-line" }}>
                     {it}
                   </li>
                 ))}
