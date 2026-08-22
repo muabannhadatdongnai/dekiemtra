@@ -1,9 +1,58 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
 > Trạng thái: **Lớp 5 (Toán) đã xong Đợt 1-4** (14 dạng bài) + **PHIÊN 16: đã sửa 3 lỗi sư phạm
-> phản hồi thực tế (Trạm 6/7/12)**. File này để mang sang chat mới không mất ngữ cảnh.
+> phản hồi thực tế (Trạm 6/7/12)** + **PHIÊN 17: đã sửa 3 lỗi phản hồi thực tế từ Lớp 4 (Bài
+> 6/8/9)**. File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 16) — Sửa 3 lỗi sư phạm phản hồi thực tế (Trạm 6, 7, 12)
+## ✅ MỚI NHẤT (Phiên 17) — Sửa 3 lỗi phản hồi thực tế sau khi Hoan test phiếu Lớp 4 (Bài 6, 8, 9)
+1. **Bài 9 "Góc và đơn vị đo góc" - bỏ hẳn số đo góc dạng chữ (VD "159°") khỏi bản Word** (cả
+   Giáo viên lẫn Học sinh). 2 lý do gộp lại cùng 1 lần sửa:
+   - **Sư phạm**: Lớp 4 chỉ dùng ê-ke để NHẬN BIẾT góc (nhọn/vuông/tù/bẹt) bằng mắt, KHÔNG dùng
+     thước đo góc để đọc ra số đo cụ thể (kiến thức cấp 2) - in số đo ra dù chỉ ở bản Giáo viên
+     vẫn dễ khiến giáo viên/phụ huynh dạy sai phương pháp.
+   - **Kỹ thuật**: loại bỏ hẳn ký tự "°" khỏi output - cách AN TOÀN NHẤT để tránh mọi rủi ro hiển
+     thị/ngắt chữ khi in ấn ở bất kỳ công cụ chuyển đổi nào phía người dùng, không cần biết chính
+     xác công cụ nào đang gây lỗi.
+   - `buildGocNhanBietParagraphs()` (`worksheetExportService.js`) giờ chỉ in `"1. Đây là góc
+     nhọn"` (bản Giáo viên) hoặc `"1. Đây là góc ___"` + 1 dòng ghi chú nhắc xem hình vẽ ở bản
+     web/PDF (bản Học sinh - vì Word không vẽ được SVG, trước đây "mượn" số đo làm gợi ý, giờ bỏ
+     gợi ý đó nên cần ghi chú thay thế, tránh giáo viên tưởng bản Word đủ dùng độc lập).
+   - Field `degrees` trong `generateGocNhanBiet()` (`worksheetSchemas.js`) giờ CHỈ dùng để vẽ SVG
+     ở web (`AngleFigure`) - đã ghi rõ trong comment, cấm dùng lại dạng chữ ở bất kỳ đâu khác.
+2. **Bài 6 "Rút gọn phân số" + Bài 8 "So sánh phân số" - lỗi "dính chữ" số thứ tự câu với phân số
+   khi in/xuất PDF** (VD "1. 8/10" hiển thị dính thành "1.8 8/10"): số thứ tự câu giờ tách RIÊNG
+   `<span>`/`TextRun` có margin/khoảng trắng tường minh (không còn dựa vào 1 ký tự khoảng trắng
+   "nằm trơ trọi" giữa các node JSX/text run) - sửa ở CẢ 2 nơi:
+   - Web: `PhanSoRutGonSection`/`PhanSoSoSanhSection` (`WorksheetPreview.jsx`).
+   - Word: `buildPhanSoRutGonParagraphs`/`buildPhanSoSoSanhParagraphs` (`worksheetExportService.js`)
+     - PHÁT HIỆN THÊM: 2 hàm này trước đây **hoàn toàn KHÔNG có số thứ tự câu** trong bản Word
+       (chỉ có ở bản web) - đã thêm số thứ tự vào Word cho khớp bản web, tránh giáo viên đối
+       chiếu 2 bản bị lệch.
+3. **Xác nhận qua điều tra code**: nút "In / Tải PDF" hiện tại của app CHỈ in nguyên trạng bản xem
+   trước trên web (`window.print()`, không có bước chuyển đổi PDF riêng nào khác, không dùng
+   LibreOffice/puppeteer/jsPDF - đã grep xác nhận KHÔNG có lib nào như vậy trong `package.json`).
+   Bản Word (.docx) là ĐẦU RA CUỐI CÙNG của quy trình app - nếu Hoan tạo "PDF" bằng cách mở file
+   Word rồi tự in/chuyển đổi sang PDF (Word "Save as PDF", LibreOffice, hay công cụ khác), bước đó
+   nằm NGOÀI phạm vi code của app, app không kiểm soát được. **CẦN HOAN XÁC NHẬN LẠI**: file PDF
+   Hoan test đến từ nút "In / Tải PDF" trong app, hay từ việc tự chuyển đổi file Word? Nếu vẫn còn
+   lỗi "dính chữ" ở nút "In / Tải PDF" của app sau khi kéo bản sửa này về test, cần Hoan gửi lại
+   ảnh chụp/PDF cụ thể để điều tra tiếp (khả năng cao là lỗi nằm ở bước chuyển đổi ngoài app).
+- Test mới: `test/worksheetPhien17BugFix.test.js` (5 test) - build .docx THẬT (không mock), giải
+  nén bằng JSZip soi thẳng `document.xml`, cùng tinh thần `exportService.docx.test.js`.
+- Sanity-check ĐỘC LẬP thêm (ngoài bộ test chính thức): dùng `mammoth` trích xuất text THẬT từ
+  .docx vừa tạo - xác nhận bằng mắt Bài 6/8/9 hiển thị đúng, không dính chữ, không còn "°".
+- `npm test`: 261/261 PASS (256 cũ + 5 mới). `npm run build`: sạch (exit 0).
+
+### ⚠️ Cần Hoan test thực tế (chưa test được trong sandbox)
+1. **Xác nhận lại cách tạo file PDF** đã mô tả ở mục 3 bên trên - quan trọng để biết lỗi "dính
+   chữ" đã thực sự hết hay chỉ hết ở phần code app kiểm soát được.
+2. In thử lại đúng Bài 9 (Góc) bằng nút "In / Tải PDF" của app - xác nhận hình vẽ góc (SVG) vẫn
+   hiển thị đúng như trước (phần này KHÔNG bị đụng vào trong lần sửa này, chỉ sửa bản Word).
+3. Mở thử bản Word Giáo viên/Học sinh mới cho Bài 9 - xem dòng ghi chú mới ("Em hãy xem hình vẽ...")
+   ở bản Học sinh có tự nhiên/dễ hiểu không, hay cần diễn đạt lại.
+4. Đối chiếu bản Word vs bản web cho Bài 6/8 - xác nhận số thứ tự câu giờ đã khớp giữa 2 bản.
+
+## ✅ (Phiên 16) — Sửa 3 lỗi sư phạm phản hồi thực tế (Trạm 6, 7, 12)
 Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 16". Tóm tắt:
 1. **Trạm 12 - hình trụ lộ ra đề Tiểu học**: `generateDienTichXqTp()` từng trộn cả "hình trụ" (dùng
    π) vào dạng bài "diện tích xung quanh/toàn phần" - SGK Toán 5 KHÔNG dạy công thức này cho hình

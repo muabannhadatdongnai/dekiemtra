@@ -291,18 +291,28 @@ function buildDoiDonViParagraphs(items, showAnswers) {
 }
 
 /**
- * ================== MỞ RỘNG LỚP 4, ĐỢT 1 ==================
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 1 (SỬA PHIÊN 17 - phản hồi thực tế) ==================
  * "Rút gọn phân số" - hiển thị dạng chữ "tử/mẫu" (cùng lý do như bản web, xem
  * PhanSoRutGonSection trong WorksheetPreview.jsx) - 2 cột mỗi dòng như DoiDonVi.
+ * THÊM số thứ tự câu ("1.") - trước đây KHÔNG có, khiến bản Word không khớp bản web/PDF (bản web
+ * có số thứ tự, dễ gây hiểu lầm khi giáo viên đối chiếu 2 bản). Số thứ tự tách RIÊNG 1 TextRun
+ * (không ghép chung chuỗi với phân số) để tránh mọi rủi ro công cụ in/chuyển đổi PDF gộp nhầm số
+ * thứ tự với chữ số đầu của phân số ngay sau nó.
  */
 function buildPhanSoRutGonParagraphs(items, showAnswers) {
-  return chunkArray(items, 2).map((row) => ({
+  return chunkArray(items, 2).map((row, rowIdx) => ({
     children: row.flatMap((it, idx) => {
-      const text = showAnswers
+      const globalIndex = rowIdx * 2 + idx + 1;
+      const answerText = showAnswers
         ? `${it.numerator}/${it.denominator} = ${it.answerNumerator}/${it.answerDenominator}`
         : `${it.numerator}/${it.denominator} = ${BLANK}`;
-      const run = new TextRun({ text, font: FONT, size: 24 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+      // Số thứ tự ("1.") là 1 TextRun TÁCH RIÊNG khỏi phân số (không ghép chung 1 chuỗi) - tránh
+      // rủi ro công cụ in/chuyển đổi PDF gộp nhầm số thứ tự với chữ số đầu của phân số liền sau.
+      const runs = [
+        new TextRun({ text: `${globalIndex}. `, font: FONT, size: 24, bold: true }),
+        new TextRun({ text: answerText, font: FONT, size: 24 }),
+      ];
+      return idx < row.length - 1 ? [...runs, new TextRun({ text: "      ", font: FONT, size: 24 })] : runs;
     }),
     spacing: { after: 100 },
   }));
@@ -324,15 +334,21 @@ function buildBieuThucChuParagraphs(items, showAnswers) {
 }
 
 /**
- * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 (SỬA PHIÊN 17 - phản hồi thực tế) ==================
  * "So sánh phân số" - in "n1/d1 ... n2/d2" với dấu so sánh (hoặc BLANK), 2 cột.
+ * THÊM số thứ tự câu + tách RIÊNG TextRun - cùng lý do đã sửa ở buildPhanSoRutGonParagraphs()
+ * bên trên (khớp bản web + tránh dính số thứ tự vào phân số khi in/xuất PDF).
  */
 function buildPhanSoSoSanhParagraphs(items, showAnswers) {
-  return chunkArray(items, 2).map((row) => ({
+  return chunkArray(items, 2).map((row, rowIdx) => ({
     children: row.flatMap((it, idx) => {
-      const text = `${it.n1}/${it.d1}   ${showAnswers ? it.answer : BLANK}   ${it.n2}/${it.d2}`;
-      const run = new TextRun({ text, font: FONT, size: 24 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+      const globalIndex = rowIdx * 2 + idx + 1;
+      const answerText = `${it.n1}/${it.d1}   ${showAnswers ? it.answer : BLANK}   ${it.n2}/${it.d2}`;
+      const runs = [
+        new TextRun({ text: `${globalIndex}. `, font: FONT, size: 24, bold: true }),
+        new TextRun({ text: answerText, font: FONT, size: 24 }),
+      ];
+      return idx < row.length - 1 ? [...runs, new TextRun({ text: "      ", font: FONT, size: 24 })] : runs;
     }),
     spacing: { after: 100 },
   }));
@@ -417,24 +433,48 @@ function buildSoThapPhanNhanChiaParagraphs(items, showAnswers) {
 }
 
 /**
- * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 (SỬA PHIÊN 17 - phản hồi thực tế) ==================
  * "Góc và đơn vị đo góc" - Word KHÔNG hỗ trợ vẽ SVG như bản web (AngleFigure trong
- * WorksheetPreview.jsx) - giống cách "Xem đồng hồ" đã xử lý trước đây (dùng text vì không cần độ
- * chi tiết đồ hoạ, xem NEXT_STEPS.md Lớp 3 Đợt 2), bản Word mô tả góc bằng SỐ ĐO trực tiếp thay
- * vì hình vẽ - đổi lại vẫn giữ đúng bản chất bài tập (nhận biết loại góc), chỉ khác kênh trình
- * bày (nhìn hình vs đọc số đo).
+ * WorksheetPreview.jsx), nhưng KHÔNG được thay bằng số đo góc bằng chữ (VD "159°") vì 2 lý do:
+ * 1. SAI PHƯƠNG PHÁP SƯ PHẠM: học sinh Lớp 4 chỉ dùng ê-ke để NHẬN BIẾT góc vuông/nhọn/tù bằng
+ *    mắt/dụng cụ đơn giản - các em KHÔNG dùng thước đo góc để đọc ra số đo cụ thể như 159°/43°
+ *    (kiến thức "đo góc bằng thước đo độ" thuộc chương trình cấp 2). In số đo cụ thể ra phiếu -
+ *    dù chỉ ở bản Giáo viên - vẫn có thể khiến giáo viên/phụ huynh vô tình dạy sai phương pháp.
+ * 2. Ký tự "°" từng gây lỗi hiển thị/ngắt chữ khi in ấn tuỳ theo công cụ chuyển đổi PDF của từng
+ *    máy giáo viên (không phải do file Word gốc sai, nhưng bỏ hẳn ký tự này là cách AN TOÀN NHẤT,
+ *    không phụ thuộc công cụ in ấn của người dùng).
+ * Giải pháp: bản Word chỉ nêu ĐÚNG SỐ THỨ TỰ góc (khớp đúng thứ tự hình vẽ trên bản học sinh khi
+ * giáo viên in cả 2 bản để đối chiếu) + tên loại góc - không còn số đo, không còn dấu "°".
+ *
+ * LƯU Ý QUAN TRỌNG cho bản Học sinh (showAnswers=false): vì Word không vẽ được hình góc, phiếu
+ * Word bản Học sinh CHỈ đủ chỗ để học sinh viết đáp án - các em vẫn cần nhìn HÌNH VẼ góc thật ở
+ * bản xem trước trên web/PDF (nút "In / Tải PDF") thì mới làm được bài, nên phần này thêm 1 dòng
+ * ghi chú nhắc rõ, tránh giáo viên tưởng nhầm bản Word đã đủ dùng độc lập.
  */
 function buildGocNhanBietParagraphs(items, showAnswers) {
-  return items.map((it, i) => ({
+  const rows = items.map((it, i) => ({
     children: [
       new TextRun({
-        text: `${i + 1}. Góc có số đo ${it.degrees}° là góc ${showAnswers ? it.answer : BLANK}`,
+        text: `${i + 1}. Đây là góc ${showAnswers ? it.answer : BLANK}`,
         font: FONT,
         size: 24,
       }),
     ],
     spacing: { after: 100 },
   }));
+  if (showAnswers) return rows;
+  const note = {
+    children: [
+      new TextRun({
+        text: "(Em hãy xem hình vẽ các góc ở bản xem trước trên máy/PDF, rồi điền đáp án vào từng dòng dưới đây theo đúng số thứ tự.)",
+        font: FONT,
+        size: 22,
+        italics: true,
+      }),
+    ],
+    spacing: { after: 120 },
+  };
+  return [note, ...rows];
 }
 
 /**

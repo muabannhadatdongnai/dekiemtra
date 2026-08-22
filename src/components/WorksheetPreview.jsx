@@ -646,16 +646,22 @@ function DoiDonViSection({ items, accent }) {
 }
 
 /**
- * ================== MỞ RỘNG LỚP 4, ĐỢT 1 ==================
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 1 (SỬA PHIÊN 17 - phản hồi thực tế) ==================
  * "Rút gọn phân số" - hiển thị dạng chữ "tử/mẫu" (xem giải thích trong generatePhanSoRutGon(),
  * worksheetSchemas.js) - CHỦ Ý chưa dựng layout phân số nằm ngang có gạch ngang ở đợt này.
+ * Số thứ tự câu ("1.") giờ nằm trong 1 <span> RIÊNG có margin-right cố định (thay vì dựa vào 1 ký
+ * tự khoảng trắng "nằm trơ trọi" giữa các node JSX) - tránh vài công cụ in/xuất PDF gộp nhầm số
+ * thứ tự với số đầu tiên của phân số ngay sau nó (VD "1." dính "8/10" thành "1.8 8/10").
  */
 function PhanSoRutGonSection({ items, accent }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {i + 1}. {it.numerator}/{it.denominator} = {blankBox(accent)}
+          <span style={{ marginRight: 8, fontWeight: 700, color: accent }}>{i + 1}.</span>
+          <span>
+            {it.numerator}/{it.denominator} = {blankBox(accent)}
+          </span>
         </div>
       ))}
     </div>
@@ -682,16 +688,20 @@ function BieuThucChuSection({ items, accent }) {
 }
 
 /**
- * ================== MỞ RỘNG LỚP 4, ĐỢT 2 ==================
+ * ================== MỞ RỘNG LỚP 4, ĐỢT 2 (SỬA PHIÊN 17 - phản hồi thực tế) ==================
  * "So sánh phân số" - hiển thị dạng chữ "tử/mẫu" (cùng cách "Rút gọn phân số" Đợt 1), 1 ô trống
- * để điền dấu >, <, =.
+ * để điền dấu >, <, =. Số thứ tự câu tách RIÊNG <span> - cùng lý do đã sửa ở PhanSoRutGonSection
+ * bên trên (tránh dính số thứ tự vào phân số khi in/xuất PDF).
  */
 function PhanSoSoSanhSection({ items, accent }) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {i + 1}. {it.n1}/{it.d1} {blankBox(accent, 28)} {it.n2}/{it.d2}
+          <span style={{ marginRight: 8, fontWeight: 700, color: accent }}>{i + 1}.</span>
+          <span>
+            {it.n1}/{it.d1} {blankBox(accent, 28)} {it.n2}/{it.d2}
+          </span>
         </div>
       ))}
     </div>

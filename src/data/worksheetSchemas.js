@@ -913,6 +913,10 @@ export function generatePhanSoSoSanh(count = 6) {
 // tay thật cần dụng cụ vật lý, không phù hợp với phiếu bài tập tạo tự động) - đúng mức độ "làm
 // quen" của Lớp 4, chưa sang tính toán góc phức tạp hơn (dành cho Lớp 5 nếu cần). Số đo random
 // nhưng LOẠI TRỪ các mốc dễ gây tranh cãi khi làm tròn hiển thị (VD né quá sát 90/180).
+// QUAN TRỌNG (sửa Phiên 17 - phản hồi thực tế): trường `degrees` trả về CHỈ được dùng để VẼ hình
+// (AngleFigure trong WorksheetPreview.jsx) - TUYỆT ĐỐI không in số đo này ra dạng chữ (VD "159°")
+// ở bất kỳ đâu (kể cả bản Giáo viên) vì học sinh Lớp 4 chưa học đọc số đo bằng thước đo góc, xem
+// buildGocNhanBietParagraphs() trong worksheetExportService.js.
 const ANGLE_TYPES = [
   { type: "nhọn", min: 10, max: 85 }, // 0 < góc nhọn < 90
   { type: "vuông", fixed: 90 },
