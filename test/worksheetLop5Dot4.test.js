@@ -83,6 +83,22 @@ test("generateTiSoPhanTram: cả 3 dạng con đều tính đúng công thức, 
   }
 });
 
+// [QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC - ĐA DẠNG HÓA TỈ SỐ PHẦN TRĂM] không được lặp lại cùng 1 tỉ
+// lệ % ở 2 câu liên tiếp (xem pickPercent() trong worksheetSchemas.js).
+test("generateTiSoPhanTram: không có 2 câu liên tiếp cùng lặp 1 tỉ lệ phần trăm", () => {
+  const getPercent = (it) => (it.subKind === "ti_so" ? it.answer : it.percent);
+  for (let i = 0; i < 100; i++) {
+    const items = generateTiSoPhanTram(9);
+    for (let j = 1; j < items.length; j++) {
+      assert.notEqual(
+        getPercent(items[j]),
+        getPercent(items[j - 1]),
+        `2 câu liên tiếp cùng lặp tỉ lệ %: ${JSON.stringify(items[j - 1])} / ${JSON.stringify(items[j])}`
+      );
+    }
+  }
+});
+
 test("generateTiSoPhanTram: xuất hiện cả 3 dạng con trong nhiều lần sinh", () => {
   const items = [];
   for (let i = 0; i < 30; i++) items.push(...generateTiSoPhanTram(9));
@@ -157,25 +173,20 @@ test("generateDoiDonViTheTich: quy đổi luôn đúng tỉ lệ 1000, chia hế
 });
 
 // ===== Diện tích xung quanh / toàn phần =====
-test("generateDienTichXqTp: đúng công thức cho cả 3 hình (HHCN/lập phương/hình trụ)", () => {
+// [QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC - GIỚI HẠN HÌNH HỌC KHÔNG GIAN] CHỈ 2 hình HHCN/lập
+// phương - CẤM TUYỆT ĐỐI hình trụ/hình cầu (không thuộc chương trình Toán 5, xem worksheetSchemas.js).
+test("generateDienTichXqTp: đúng công thức cho cả 2 hình (HHCN/lập phương), KHÔNG BAO GIỜ sinh hình trụ", () => {
   for (let i = 0; i < 100; i++) {
     const items = generateDienTichXqTp(9);
     for (const it of items) {
+      assert.ok(["hhcn", "lap_phuong"].includes(it.shape), `dạng bài lộ hình bị cấm (VD hình trụ): ${JSON.stringify(it)}`);
       if (it.shape === "hhcn") {
         const sxq = (it.a + it.b) * 2 * it.c;
         const expected = it.metric === "xq" ? sxq : sxq + 2 * it.a * it.b;
         assert.equal(it.answer, expected, `sai HHCN: ${JSON.stringify(it)}`);
-      } else if (it.shape === "lap_phuong") {
+      } else {
         const expected = it.metric === "xq" ? it.a * it.a * 4 : it.a * it.a * 6;
         assert.equal(it.answer, expected, `sai lập phương: ${JSON.stringify(it)}`);
-      } else {
-        assert.equal(it.shape, "hinh_tru");
-        const xqIntVal = 2 * it.r * it.h;
-        const tpIntVal = xqIntVal + 2 * it.r * it.r;
-        const intVal = it.metric === "xq" ? xqIntVal : tpIntVal;
-        const expectedCents = intVal * 314;
-        const actualCents = it.answerInt * 100 + Number((it.answerDec || "0").padEnd(2, "0"));
-        assert.equal(actualCents, expectedCents, `sai hình trụ: ${JSON.stringify(it)}`);
       }
     }
   }

@@ -1,8 +1,49 @@
 # NEXT_STEPS.md — Phiếu Bài Tập: Mở rộng Lớp 3-5 + Chế độ in Màu/Đen trắng
 
-> Trạng thái: **Lớp 5 (Toán) đã xong Đợt 1-4** (14 dạng bài). File này để mang sang chat mới không mất ngữ cảnh.
+> Trạng thái: **Lớp 5 (Toán) đã xong Đợt 1-4** (14 dạng bài) + **PHIÊN 16: đã sửa 3 lỗi sư phạm
+> phản hồi thực tế (Trạm 6/7/12)**. File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 15) — Lớp 5, Đợt 4: 10 dạng bài còn lại (hoàn tất Lớp 5)
+## ✅ MỚI NHẤT (Phiên 16) — Sửa 3 lỗi sư phạm phản hồi thực tế (Trạm 6, 7, 12)
+Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 16". Tóm tắt:
+1. **Trạm 12 - hình trụ lộ ra đề Tiểu học**: `generateDienTichXqTp()` từng trộn cả "hình trụ" (dùng
+   π) vào dạng bài "diện tích xung quanh/toàn phần" - SGK Toán 5 KHÔNG dạy công thức này cho hình
+   trụ (thuộc Toán 9 - THCS). Đã bỏ hẳn nhánh hình trụ, chỉ còn HHCN/lập phương (đồng bộ cả
+   `WorksheetPreview.jsx` + `worksheetExportService.js`).
+2. **Trạm 6 - "Đặt tính rồi tính" không đủ chỗ đặt tính hàng dọc**: thêm component `GridOLy` (khung
+   ô ly 5 dòng) thay cho dòng ngang "= ô trống" quá chật - áp dụng cho `PhepChiaCoDuSection`,
+   `SoThapPhanCongTruSection`, `SoThapPhanNhanChiaSection` (web). Bản Word bỏ dấu "=" hàng ngang ở
+   bản học sinh, để khoảng trắng viết tay thay vào đó.
+3. **Trạm 7 - lặp tỉ lệ % 2 câu liên tiếp**: `generateTiSoPhanTram()` giờ loại tỉ lệ % của câu
+   THÀNH CÔNG ngay trước khỏi lần bốc kế tiếp. Phát hiện + sửa 1 bug thật qua test (lần sửa đầu vẫn
+   fail vì cập nhật "lastPercent" cả với item bị huỷ do trùng dedupeKey - xem chi tiết trong
+   PROJECT_SUMMARY.md).
+4. **3 QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC** đã ghi thành comment tại đúng vị trí code liên quan
+   (worksheetSchemas.js) để không bị quên ở phiên sau - xem nguyên văn 3 quy tắc trong mục "Quy tắc
+   sư phạm bắt buộc" bên dưới.
+- `npm test`: 256/256 PASS (255 cũ + 1 mới cho quy tắc đa dạng hoá %, 1 test cũ viết lại theo quy
+  tắc "cấm hình trụ"). `npm run build`: sạch (exit 0). Sanity-check độc lập thêm: 500 lần
+  `generateDienTichXqTp()` không thấy hình trụ; 2000 lần `generateTiSoPhanTram()` - 0 vi phạm lặp %.
+
+### ⚠️ Cần Hoan test thực tế (chưa test được trong sandbox)
+1. In thử lại đúng Trạm 6 (Phép chia có dư) trên trình duyệt thật - xem khung ô ly `GridOLy` có đủ
+   rộng/cao để đặt tính chia dài thoải mái không, và có bị tràn khi in ở khổ giấy thực tế không.
+2. Xem lại Trạm 12 (Diện tích xung quanh/toàn phần) - xác nhận không còn câu nào về hình trụ nữa.
+3. Sinh thử nhiều phiếu "Tỉ số phần trăm" (Trạm 7) - xác nhận cảm giác đa dạng % rõ rệt hơn so với
+   trước, không còn 2 câu liên tiếp cùng % nữa.
+4. Bản Word xuất ra cho các dạng bài "Đặt tính rồi tính" (cộng/trừ/nhân/chia số thập phân, chia có
+   dư) - xem khoảng trắng viết tay mới (thay cho dấu "=" cũ) có đủ dùng khi in ra giấy không.
+
+### Quy tắc sư phạm bắt buộc (áp dụng cho MỌI dạng bài Toán Lớp 5 sau này)
+1. **Giới hạn hình học không gian**: bài tập tính Diện tích xung quanh, Diện tích toàn phần, hoặc
+   Thể tích CHỈ ĐƯỢC PHÉP dùng Hình Lập Phương và Hình Hộp Chữ Nhật. CẤM TUYỆT ĐỐI Hình Trụ, Hình
+   Cầu (không dùng số Pi cho các hình này).
+2. **Đa dạng hoá tỉ số phần trăm**: các câu hỏi phần trăm trong cùng 1 bài phải có số liệu đa dạng,
+   KHÔNG lặp lại cùng 1 tỉ lệ % ở 2 câu liên tiếp.
+3. **Từ khoá "đặt tính"**: khi đề bài yêu cầu "Đặt tính rồi tính", KHÔNG xuất dấu "=" theo hàng
+   ngang - dùng khung ô ly (`GridOLy`, web) hoặc khoảng trắng viết tay (Word) để học sinh tự đặt
+   phép tính hàng dọc.
+
+## ✅ (Phiên 15) — Lớp 5, Đợt 4: 10 dạng bài còn lại (hoàn tất Lớp 5)
 Xem đầy đủ chi tiết kỹ thuật trong `PROJECT_SUMMARY.md` mục "PHIÊN 15". Tóm tắt:
 1. 10 dạng bài mới: `ti_so_phan_tram` (tỉ số phần trăm, 3 dạng con), `hinh_tam_giac_hinh_thang`
    (diện tích tam giác/hình thang + chu vi tam giác), `hinh_tron` (chu vi/diện tích, π≈3,14),

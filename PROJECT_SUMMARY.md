@@ -1,5 +1,65 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 15: Lớp 5 Đợt 4 — 10 dạng bài còn
-# lại, hoàn tất toàn bộ Lớp 5)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 16: sửa 3 lỗi sư phạm phản hồi từ giáo
+# viên trên phiếu Lớp 5 Đợt 4 — hình trụ lộ ra Trạm 12, "đặt tính" chật chỗ ở Trạm 6, lặp tỉ lệ %
+# ở Trạm 7)
+
+## PHIÊN 16 — Sửa 3 lỗi sư phạm phản hồi thực tế (Trạm 6, 7, 12) + chốt 3 QUY TẮC SƯ PHẠM bắt buộc
+
+**Bối cảnh**: Hoan gửi phản hồi thực tế sau khi in phiếu Lớp 5 (đính kèm ảnh chụp Trạm 6 và Trạm
+12) + 1 nhận xét bằng lời về Trạm 7. Cả 3 đều là lỗi thật trong code Đợt 4 (PHIÊN 15), không phải
+lỗi hiển thị/in ấn đơn thuần. Hoan đặt ra 3 QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC — đã ghi trực tiếp
+thành comment tại đúng vị trí code liên quan để không bị quên/lặp lại ở phiên sau.
+
+### 1. Trạm 12 — Hình trụ lộ ra đề Tiểu học (Kiến thức Toán 5 CẤM dùng Pi cho hình không gian)
+`generateDienTichXqTp()` (Diện tích xung quanh/toàn phần) trước đây trộn NGẪU NHIÊN cả "hình trụ"
+(`pick(["hhcn", "lap_phuong", "hinh_tru"])`) — SGK Toán 5 hiện hành KHÔNG dạy công thức Sxq/Stp/thể
+tích hình trụ/hình cầu (kiến thức Toán lớp 9 - THCS). Đã sửa: bỏ hẳn nhánh `"hinh_tru"`, chỉ còn
+`pick(["hhcn", "lap_phuong"])`. Đồng bộ sửa cả `WorksheetPreview.jsx` (bỏ nhánh mô tả hình trụ
+trong `describe()` của `DienTichXqTpSection`) và `worksheetExportService.js`
+(`buildDienTichXqTpParagraphs`) — xoá code chết liên quan hình trụ ở cả 2 nơi. Đổi luôn mascot 🥫
+(lon nước — hình trụ) sang 🧊 trong catalog để tránh gợi ý sai hình.
+**QUY TẮC CHỐT**: CẤM TUYỆT ĐỐI hình trụ/hình cầu (không dùng Pi) ở BẤT KỲ dạng bài "diện tích xung
+quanh/diện tích toàn phần/thể tích" nào của Lớp 5 sau này — CHỈ hình lập phương + hình hộp chữ
+nhật. Pi chỉ được dùng ở đúng 1 dạng bài riêng "Chu vi, diện tích hình tròn" (`generateHinhTron()`
+— hình tròn PHẲNG, có trong SGK Toán 5, khác hẳn hình trụ/hình cầu là hình không gian).
+
+### 2. Trạm 6 — "Đặt tính rồi tính" không đủ chỗ đặt tính hàng dọc
+Các dạng bài yêu cầu "Đặt tính rồi tính" (cộng/trừ/nhân/chia số thập phân, chia số thập phân nâng
+cao, phép chia có dư) trước đây hiển thị 1 DÒNG NGANG DUY NHẤT kiểu `"2.396 : 3 = ___ (dư ___)"` —
+học sinh không có chỗ đặt phép tính hàng dọc (chia dài nhiều bước, nhân nhiều chữ số...) vào 1 ô
+trống ngắn cuối dòng. Đã sửa: thêm component dùng chung MỚI `GridOLy` trong `WorksheetPreview.jsx`
+— khung ô ly (lưới ô vuông nhỏ, mặc định 5 dòng) thay cho `blankBox()` 1 dòng ngang. Áp dụng cho
+`PhepChiaCoDuSection`, `SoThapPhanCongTruSection`, `SoThapPhanNhanChiaSection` (dùng chung cho nhân/
+chia/chia nâng cao) — mỗi câu giờ hiển thị "đề bài" (KHÔNG còn dấu "=") rồi khung ô ly bên dưới để
+nháp. Bản Word (`worksheetExportService.js`) không vẽ được lưới ô ly nên đổi tương ứng: bản học
+sinh bỏ dấu "=" hàng ngang + để khoảng trắng rộng hơn phía dưới đề bài viết tay; bản đáp án
+(showAnswers=true) vẫn giữ nguyên "= kết quả" đầy đủ (bản giáo viên đối chiếu nhanh, không cần chỗ
+đặt tính).
+**QUY TẮC CHỐT**: khi đề bài dùng "Đặt tính rồi tính", KHÔNG xuất dấu "=" theo hàng ngang — dùng
+khung ô ly (`GridOLy` ở web) hoặc khoảng trắng viết tay (ở Word) thay vào đó.
+
+### 3. Trạm 7 — Tỉ số phần trăm lặp cùng 1 tỉ lệ % ở 2 câu liên tiếp
+`generateTiSoPhanTram()` trước đây bốc `p = pick(PERCENTS)` hoàn toàn độc lập mỗi lần, không quan
+tâm câu trước đã dùng tỉ lệ % nào — có thể ra 2-3 câu liên tiếp cùng "50%" làm bài mất tính phân
+loại. Đã sửa: thêm `pickPercentCandidate()` loại bỏ `lastPercent` (tỉ lệ % của câu THÀNH CÔNG ngay
+trước) khỏi danh sách trước khi bốc. **Phát hiện + sửa 1 bug thật qua test** (test ban đầu vẫn FAIL
+sau lần sửa đầu): nếu cập nhật `lastPercent` NGAY khi vừa bốc `p` (kể cả khi item đó sau đó bị
+`continue` bỏ qua do trùng dedupeKey), item bị huỷ đó vô tình "dùng hộ" 1 tỉ lệ % rồi biến mất, khiến
+lần bốc kế tiếp lại được phép quay VỀ ĐÚNG tỉ lệ % của item thành công ngay trước — vẫn ra 2 item
+liền kề trong mảng kết quả cùng lặp tỉ lệ %. Sửa đúng: chỉ commit `lastPercent = p` SAU KHI item đã
+vượt qua kiểm tra `dedupeKey` và thực sự được `push`.
+**QUY TẮC CHỐT**: các câu hỏi phần trăm trong cùng 1 bài phải đa dạng tỉ lệ %, không lặp lại cùng 1
+tỉ lệ % ở 2 câu liên tiếp.
+
+### 4. Kiểm thử
+- Cập nhật `test/worksheetLop5Dot4.test.js`: đổi test `generateDienTichXqTp` để khẳng định KHÔNG
+  BAO GIỜ sinh hình trụ (thay vì test công thức hình trụ cũ); thêm test mới khẳng định
+  `generateTiSoPhanTram` không có 2 item liền kề nào cùng tỉ lệ % qua 100 lần sinh.
+- Sanity-check độc lập thêm (ngoài bộ test chính thức): 500 lần `generateDienTichXqTp()` không thấy
+  hình trụ lần nào; 2000 lần `generateTiSoPhanTram()` — 0 vi phạm lặp tỉ lệ % liền kề.
+- `npm test`: **256/256 PASS** (255 cũ + 1 mới, 1 test cũ được viết lại theo quy tắc mới).
+  `npm run build`: sạch (exit 0).
+
+---
 
 ## PHIÊN 15 — Lớp 5, Đợt 4: 10 dạng bài còn lại (hoàn tất Lớp 5)
 
