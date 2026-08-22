@@ -766,7 +766,7 @@ export const WORKSHEET_EXERCISE_CATALOG = [
       "Em hãy tính diện tích xung quanh hoặc diện tích toàn phần mỗi hình sau.",
       "Tính.",
     ],
-    mascotPool: ["📦", "🥫", "📐"],
+    mascotPool: ["📦", "🧊", "📐"],
     colorThemeTags: ["orange", "green", "blue"],
   },
   {

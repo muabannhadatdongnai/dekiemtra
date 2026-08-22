@@ -1168,6 +1168,18 @@ export function generateSoThapPhanChia(count = 6) {
  * "Tỉ số phần trăm" - 3 dạng con trộn ngẫu nhiên, đúng 3 dạng toán SGK Toán 5 KNTT dạy liên tiếp:
  * (1) tìm tỉ số % của 2 số, (2) tìm giá trị % của 1 số, (3) tìm 1 số biết giá trị % của nó.
  * Sinh NGƯỢC từ % "đẹp" (bội số của 5) để luôn ra số nguyên tuyệt đối, không cần làm tròn %.
+ *
+ * [QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC - ĐA DẠNG HÓA TỈ SỐ PHẦN TRĂM] `pickPercent()` bên dưới CỐ
+ * Ý loại bỏ tỉ lệ % vừa dùng ở câu ngay trước đó (bất kể dạng con nào) trước khi bốc ngẫu nhiên -
+ * đảm bảo không có 2 câu liên tiếp cùng lặp 1 tỉ lệ % (VD 2 câu "50%" liên tiếp) khiến bài toán mất
+ * tính tư duy phân loại. Đã sửa lỗi thực tế phát hiện qua phản hồi giáo viên (Trạm 7).
+ *
+ * LƯU Ý QUAN TRỌNG: `lastPercent` CHỈ được cập nhật SAU KHI item đã vượt qua kiểm tra trùng lặp
+ * (dedupeKey) và thực sự được `push` vào `items` - KHÔNG cập nhật ngay khi vừa bốc `p` (dù item đó
+ * có thể bị `continue` bỏ qua do trùng dedupeKey). Đã sửa 1 bug thật qua test: nếu cập nhật
+ * `lastPercent` ngay khi bốc số (kể cả với lần bốc bị huỷ), item bị huỷ đó "dùng hộ" 1 tỉ lệ % rồi
+ * bỏ đi, khiến lần bốc kế tiếp lại được phép quay về đúng tỉ lệ % của item THÀNH CÔNG ngay trước
+ * đó - vô tình vẫn ra 2 item liền kề trong mảng kết quả cùng lặp 1 tỉ lệ %.
  */
 export function generateTiSoPhanTram(count = 6) {
   const PERCENTS = [5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 80];
@@ -1178,33 +1190,42 @@ export function generateTiSoPhanTram(count = 6) {
   const NICE_MULTIPLES_OF_20 = [20, 40, 60, 80, 100, 120, 160, 200, 240, 300];
   const items = [];
   const used = new Set();
+  let lastPercent = null;
+  // Chỉ BỐC candidate ở đây - KHÔNG commit vào lastPercent (xem lưu ý ở JSDoc phía trên).
+  const pickPercentCandidate = () => {
+    const candidates = lastPercent === null ? PERCENTS : PERCENTS.filter((p) => p !== lastPercent);
+    return pick(candidates);
+  };
   let guard = 0;
   while (items.length < count && guard < count * 30) {
     guard++;
     const subKind = pick(["ti_so", "gia_tri", "tim_so"]);
     if (subKind === "ti_so") {
       const b = pick(NICE_MULTIPLES_OF_20);
-      const p = pick(PERCENTS);
+      const p = pickPercentCandidate();
       const a = (b * p) / 100;
       const dedupeKey = `ti_so_${a}_${b}`;
       if (used.has(dedupeKey)) continue;
       used.add(dedupeKey);
+      lastPercent = p;
       items.push({ subKind, a, b, answer: p });
     } else if (subKind === "gia_tri") {
       const n = pick(NICE_MULTIPLES_OF_20);
-      const p = pick(PERCENTS);
+      const p = pickPercentCandidate();
       const value = (n * p) / 100;
       const dedupeKey = `gia_tri_${p}_${n}`;
       if (used.has(dedupeKey)) continue;
       used.add(dedupeKey);
+      lastPercent = p;
       items.push({ subKind, percent: p, n, answer: value });
     } else {
       const n = pick(NICE_MULTIPLES_OF_20);
-      const p = pick(PERCENTS);
+      const p = pickPercentCandidate();
       const value = (n * p) / 100;
       const dedupeKey = `tim_so_${p}_${value}`;
       if (used.has(dedupeKey)) continue;
       used.add(dedupeKey);
+      lastPercent = p;
       items.push({ subKind, percent: p, value, answer: n });
     }
   }
@@ -1328,17 +1349,25 @@ export function generateDoiDonViTheTich(count = 5) {
 }
 
 /**
- * "Diện tích xung quanh, diện tích toàn phần" - trộn 3 hình (HHCN/lập phương/hình trụ), mỗi hình
- * random hỏi xq hoặc tp. Hình trụ dùng piTimesToDecimal() như "hình tròn" ở trên (Sxq = π×2×r×h,
- * Stp = Sxq + π×2×r²) - tính theo TỔNG số nguyên trước khi nhân π 1 LẦN DUY NHẤT để tránh cộng dồn
- * sai số làm tròn giữa 2 lần nhân π riêng lẻ.
+ * "Diện tích xung quanh, diện tích toàn phần" - CHỈ 2 hình (HHCN/lập phương), mỗi hình random hỏi
+ * xq hoặc tp.
+ *
+ * [QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC - GIỚI HẠN HÌNH HỌC KHÔNG GIAN] CẤM TUYỆT ĐỐI sinh Hình Trụ
+ * (hay Hình Cầu) ở dạng bài này hay bất kỳ dạng bài "diện tích xung quanh/diện tích toàn
+ * phần/thể tích" nào khác của Lớp 5 - chương trình SGK Toán 5 hiện hành (KNTT/CTST/Cánh Diều)
+ * KHÔNG dạy công thức Sxq/Stp/thể tích hình trụ, hình cầu (kiến thức này thuộc chương trình Toán
+ * lớp 9 - THCS). Chỉ dùng số Pi ở đúng dạng bài RIÊNG "Chu vi, diện tích hình tròn"
+ * (generateHinhTron() ở trên - hình tròn PHẲNG có trong SGK Toán 5, khác hẳn hình trụ/hình cầu là
+ * hình KHÔNG GIAN). Đã sửa lỗi thực tế phát hiện qua phản hồi giáo viên (Trạm 12): AI/generator
+ * từng trộn cả "hình trụ" vào đây, đưa nhầm kiến thức Toán THCS xuống đề Tiểu học. KHÔNG được thêm
+ * lại nhánh "hinh_tru" vào mảng `pick([...])` bên dưới trong bất kỳ lần sửa nào sau này.
  */
 export function generateDienTichXqTp(count = 6) {
   const items = [];
   let guard = 0;
   while (items.length < count && guard < count * 30) {
     guard++;
-    const shape = pick(["hhcn", "lap_phuong", "hinh_tru"]);
+    const shape = pick(["hhcn", "lap_phuong"]);
     const metric = Math.random() < 0.5 ? "xq" : "tp";
     if (shape === "hhcn") {
       const a = randInt(3, 15);
@@ -1347,19 +1376,11 @@ export function generateDienTichXqTp(count = 6) {
       const sxq = (a + b) * 2 * c;
       const answer = metric === "xq" ? sxq : sxq + 2 * a * b;
       items.push({ shape, a, b, c, metric, answer });
-    } else if (shape === "lap_phuong") {
+    } else {
       const a = randInt(3, 15);
       const sxq = a * a * 4;
       const answer = metric === "xq" ? sxq : a * a * 6;
       items.push({ shape, a, metric, answer });
-    } else {
-      const r = randInt(2, 10);
-      const h = randInt(3, 15);
-      const xqIntVal = 2 * r * h; // Sxq = π × (2 × r × h)
-      const tpIntVal = xqIntVal + 2 * r * r; // Stp = π × (2rh + 2r²) - nhân π 1 lần cho cả tổng
-      const intVal = metric === "xq" ? xqIntVal : tpIntVal;
-      const { intPart, decPart } = piTimesToDecimal(intVal);
-      items.push({ shape, r, h, metric, answerInt: intPart, answerDec: decPart });
     }
   }
   return items;

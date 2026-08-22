@@ -364,18 +364,29 @@ function buildSoThapPhanSoSanhParagraphs(items, showAnswers) {
  * answerInt/answerDec (đã tính sẵn bằng số nguyên quy đổi trong generateSoThapPhanCongTru(), xem
  * chú thích trong worksheetSchemas.js) để tránh sai số dấu phẩy động khi hiển thị.
  */
+// [QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC - TỪ KHOÁ ĐẶT TÍNH] Đề bài "Đặt tính rồi tính" KHÔNG được
+// hiện dấu "=" theo hàng ngang ở bản học sinh (showAnswers=false) - học sinh cần ĐẶT phép tính hàng
+// dọc, không phải điền 1 ô trống cuối dòng ngang (giống GridOLy ở bản web, xem WorksheetPreview.jsx
+// - Word không vẽ được lưới ô ly nên thay bằng khoảng trắng rộng hơn phía dưới đề bài để viết tay).
+// Bản đáp án (showAnswers=true) vẫn hiện đủ "= kết quả" vì đây là bản giáo viên đối chiếu nhanh,
+// không cần chỗ đặt tính.
 function buildSoThapPhanCongTruParagraphs(items, showAnswers) {
-  return chunkArray(items, 2).map((row) => ({
-    children: row.flatMap((it, idx) => {
-      const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length);
-      const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length);
-      const answer = formatSoThapPhan(Number(`${it.answerInt}.${it.answerDec}`), it.answerDec.length);
-      const text = `${left} ${it.operator} ${right} = ${showAnswers ? answer : BLANK}`;
-      const run = new TextRun({ text, font: FONT, size: 24 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
-    }),
-    spacing: { after: 100 },
-  }));
+  return chunkArray(items, 2).flatMap((row) => {
+    const problemRow = {
+      children: row.flatMap((it, idx) => {
+        const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length);
+        const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length);
+        const answer = formatSoThapPhan(Number(`${it.answerInt}.${it.answerDec}`), it.answerDec.length);
+        const text = showAnswers ? `${left} ${it.operator} ${right} = ${answer}` : `${left} ${it.operator} ${right}`;
+        const run = new TextRun({ text, font: FONT, size: 24 });
+        return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+      }),
+      spacing: { after: showAnswers ? 100 : 40 },
+    };
+    if (showAnswers) return [problemRow];
+    // Khoảng trắng để học sinh tự đặt tính hàng dọc bên dưới đề bài.
+    return [problemRow, { children: [new TextRun({ text: "", font: FONT, size: 24 })], spacing: { after: 500 } }];
+  });
 }
 
 /**
@@ -385,18 +396,24 @@ function buildSoThapPhanCongTruParagraphs(items, showAnswers) {
  * rightDec có thể rỗng khi toán hạng là số tự nhiên - formatSoThapPhan() tự hiểu decimals=0 là số
  * nguyên không dấu phẩy, xem numberFormatUtils.js).
  */
+// Cùng nguyên tắc "Đặt tính rồi tính" như buildSoThapPhanCongTruParagraphs() ở trên - không hiện
+// "=" hàng ngang ở bản học sinh, để khoảng trắng viết tay thay vào đó.
 function buildSoThapPhanNhanChiaParagraphs(items, showAnswers) {
-  return chunkArray(items, 2).map((row) => ({
-    children: row.flatMap((it, idx) => {
-      const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec || "0"}`), it.leftDec.length);
-      const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec || "0"}`), it.rightDec.length);
-      const answer = formatSoThapPhan(Number(`${it.answerInt}.${it.answerDec}`), it.answerDec.length);
-      const text = `${left} ${it.operator} ${right} = ${showAnswers ? answer : BLANK}`;
-      const run = new TextRun({ text, font: FONT, size: 24 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
-    }),
-    spacing: { after: 100 },
-  }));
+  return chunkArray(items, 2).flatMap((row) => {
+    const problemRow = {
+      children: row.flatMap((it, idx) => {
+        const left = formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec || "0"}`), it.leftDec.length);
+        const right = formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec || "0"}`), it.rightDec.length);
+        const answer = formatSoThapPhan(Number(`${it.answerInt}.${it.answerDec}`), it.answerDec.length);
+        const text = showAnswers ? `${left} ${it.operator} ${right} = ${answer}` : `${left} ${it.operator} ${right}`;
+        const run = new TextRun({ text, font: FONT, size: 24 });
+        return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+      }),
+      spacing: { after: showAnswers ? 100 : 40 },
+    };
+    if (showAnswers) return [problemRow];
+    return [problemRow, { children: [new TextRun({ text: "", font: FONT, size: 24 })], spacing: { after: 500 } }];
+  });
 }
 
 /**
@@ -531,18 +548,8 @@ function buildDienTichXqTpParagraphs(items, showAnswers) {
         answerText: it.answer,
       };
     }
-    if (it.shape === "lap_phuong") {
-      return { text: `Hình lập phương có cạnh ${it.a} cm. Tính ${metricText} hình đó.`, unit: "cm2", answerText: it.answer };
-    }
-    const answer = formatSoThapPhan(
-      Number(`${it.answerInt}.${it.answerDec || "0"}`),
-      it.answerDec ? it.answerDec.length : 0
-    );
-    return {
-      text: `Hình trụ có bán kính đáy ${it.r} cm và chiều cao ${it.h} cm. Tính ${metricText} hình đó (lấy π ≈ 3,14).`,
-      unit: "cm2",
-      answerText: answer,
-    };
+    // CHỈ 2 hình HHCN/lập phương (xem generateDienTichXqTp() - QUY TẮC SƯ PHẠM: cấm hình trụ).
+    return { text: `Hình lập phương có cạnh ${it.a} cm. Tính ${metricText} hình đó.`, unit: "cm2", answerText: it.answer };
   });
 }
 
@@ -598,18 +605,23 @@ function buildSoDoThoiGianParagraphs(items, showAnswers) {
   }));
 }
 
-/** "Phép chia có dư" - 2 ô trống (thương và số dư), 2 cột/dòng như buildDoiDonViParagraphs. */
+// "Phép chia có dư" - cùng nguyên tắc "Đặt tính rồi tính" như 2 hàm build ở trên (không hiện "="
+// hàng ngang ở bản học sinh, để khoảng trắng viết tay đặt phép chia dài).
 function buildPhepChiaCoDuParagraphs(items, showAnswers) {
-  return chunkArray(items, 2).map((row) => ({
-    children: row.flatMap((it, idx) => {
-      const text = showAnswers
-        ? `${formatSoTuNhien(it.dividend)} : ${it.divisor} = ${it.answerQuotient} (dư ${it.answerRemainder})`
-        : `${formatSoTuNhien(it.dividend)} : ${it.divisor} = ${BLANK} (dư ${BLANK})`;
-      const run = new TextRun({ text, font: FONT, size: 24 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
-    }),
-    spacing: { after: 100 },
-  }));
+  return chunkArray(items, 2).flatMap((row) => {
+    const problemRow = {
+      children: row.flatMap((it, idx) => {
+        const text = showAnswers
+          ? `${formatSoTuNhien(it.dividend)} : ${it.divisor} = ${it.answerQuotient} (dư ${it.answerRemainder})`
+          : `${formatSoTuNhien(it.dividend)} : ${it.divisor}`;
+        const run = new TextRun({ text, font: FONT, size: 24 });
+        return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+      }),
+      spacing: { after: showAnswers ? 100 : 40 },
+    };
+    if (showAnswers) return [problemRow];
+    return [problemRow, { children: [new TextRun({ text: "", font: FONT, size: 24 })], spacing: { after: 500 } }];
+  });
 }
 
 /** "Tiền Việt Nam" - liệt kê tờ tiền bằng chữ, tính tổng. */
