@@ -225,6 +225,34 @@ const blankBox = (accent = "#94A3B8", minWidth = 64) => (
   />
 );
 
+/**
+ * [QUY TẮC SƯ PHẠM TOÁN LỚP 5 BẮT BUỘC - TỪ KHOÁ ĐẶT TÍNH] Khung ô ly ("[GRID_5_DONG]") dùng thay
+ * cho `blankBox()` một hàng ngang bất cứ khi nào đề bài yêu cầu "Đặt tính rồi tính" - học sinh cần
+ * ĐẶT phép tính hàng dọc (chia dài, nhân nhiều chữ số, cộng/trừ thẳng cột dấu phẩy...) chứ không
+ * thể viết vừa vào 1 ô trống ngắn cuối dòng ngang. `rows` mặc định 5 dòng ô ly (đúng độ cao thường
+ * dùng để đặt tính 1 phép chia/nhân/cộng/trừ số thập phân của Lớp 5) - đủ chỗ nháp mà không chiếm
+ * quá nhiều diện tích trang in. Dùng CHUNG cho mọi dạng bài "đặt tính rồi tính" (cộng/trừ/nhân/chia
+ * số thập phân, phép chia có dư) - KHÔNG viết lại riêng từng dạng bài.
+ */
+function GridOLy({ accent = "#94A3B8", rows = 5, cellSize = 17, minWidth = 150 }) {
+  return (
+    <div
+      style={{
+        minWidth,
+        width: "100%",
+        height: rows * cellSize,
+        backgroundColor: "#fff",
+        backgroundImage:
+          `linear-gradient(to right, ${accent}55 1px, transparent 1px), ` +
+          `linear-gradient(to bottom, ${accent}55 1px, transparent 1px)`,
+        backgroundSize: `${cellSize}px ${cellSize}px`,
+        border: `1.5px solid ${accent}`,
+        borderRadius: 6,
+      }}
+    />
+  );
+}
+
 // MỞ RỘNG LỚP 3, ĐỢT 3: 3 cột -> 2 cột (giáo viên phản ánh 3 cột dồn quá chật, nhất là từ khi
 // Lớp 3 có phép tính số tròn nghìn/chục nghìn dài hơn hẳn Lớp 1-2) - 2 cột cho bài + ô đáp án
 // rộng rãi hơn, đỡ tràn khi số dài (63.880 + 20.000 = ...).
@@ -701,12 +729,14 @@ function SoThapPhanSoSanhSection({ items, accent }) {
  */
 function SoThapPhanCongTruSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "14px 20px", fontSize: 16 }}>
       {items.map((it, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length)} {it.operator}{" "}
-          {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length)} ={" "}
-          {blankBox(accent, 40)}
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div>
+            {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec}`), it.leftDec.length)} {it.operator}{" "}
+            {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec}`), it.rightDec.length)}
+          </div>
+          <GridOLy accent={accent} />
         </div>
       ))}
     </div>
@@ -723,12 +753,14 @@ function SoThapPhanCongTruSection({ items, accent }) {
  */
 function SoThapPhanNhanChiaSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "14px 20px", fontSize: 16 }}>
       {items.map((it, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec || "0"}`), it.leftDec.length)} {it.operator}{" "}
-          {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec || "0"}`), it.rightDec.length)} ={" "}
-          {blankBox(accent, 40)}
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div>
+            {i + 1}. {formatSoThapPhan(Number(`${it.leftInt}.${it.leftDec || "0"}`), it.leftDec.length)} {it.operator}{" "}
+            {formatSoThapPhan(Number(`${it.rightInt}.${it.rightDec || "0"}`), it.rightDec.length)}
+          </div>
+          <GridOLy accent={accent} />
         </div>
       ))}
     </div>
@@ -861,13 +893,8 @@ function DienTichXqTpSection({ items, accent }) {
             unit: "cm²",
           };
         }
-        if (it.shape === "lap_phuong") {
-          return { text: `Hình lập phương có cạnh ${it.a} cm. Tính ${metricText} hình đó.`, unit: "cm²" };
-        }
-        return {
-          text: `Hình trụ có bán kính đáy ${it.r} cm và chiều cao ${it.h} cm. Tính ${metricText} hình đó (lấy π ≈ 3,14).`,
-          unit: "cm²",
-        };
+        // CHỈ 2 hình HHCN/lập phương (xem generateDienTichXqTp() - QUY TẮC SƯ PHẠM: cấm hình trụ).
+        return { text: `Hình lập phương có cạnh ${it.a} cm. Tính ${metricText} hình đó.`, unit: "cm²" };
       }}
     />
   );
@@ -931,13 +958,20 @@ function SoDoThoiGianSection({ items, accent }) {
   );
 }
 
-/** "Phép chia có dư" - 2 ô trống (thương và số dư), xem generatePhepChiaCoDu(). */
+/**
+ * "Phép chia có dư" - xem generatePhepChiaCoDu(). Đề bài "Đặt tính rồi tính" nên hiển thị khung ô
+ * ly (GridOLy) để học sinh tự đặt phép chia dài hàng dọc, thay vì 1 dòng ngang "= ô trống (dư ô
+ * trống)" quá chật (KHÔNG đủ chỗ đặt tính - đã sửa lỗi thực tế phản hồi ở Trạm 6).
+ */
 function PhepChiaCoDuSection({ items, accent }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px 20px", fontSize: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "14px 20px", fontSize: 16 }}>
       {items.map((it, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-          {i + 1}. {formatSoTuNhien(it.dividend)} : {it.divisor} = {blankBox(accent, 40)} (dư {blankBox(accent, 36)})
+        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div>
+            {i + 1}. {formatSoTuNhien(it.dividend)} : {it.divisor}
+          </div>
+          <GridOLy accent={accent} />
         </div>
       ))}
     </div>
