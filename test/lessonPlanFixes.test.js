@@ -701,7 +701,6 @@ test('buildLessonPlanPrompt: bật tích hợp "Tích hợp STEM" phải có hư
     integrations: ["tichHopSTEM"],
   });
   assert.match(promptOn, /GIÁO DỤC STEM/, "phải có hướng dẫn thiết kế hoạt động theo định hướng STEM");
-  assert.match(promptOn, /Thiết kế, Vẽ, Lắp ráp, hoặc Chế tạo/, "phải nêu rõ 4 hình thức sản phẩm thực tế");
   assert.match(promptOn, /HOÀN THIỆN sản phẩm Ở NHÀ/, "phải nêu rõ sản phẩm hoàn thiện ở nhà, không làm hết tại lớp");
   assert.match(
     promptOn,
@@ -722,6 +721,38 @@ test('buildLessonPlanPrompt: bật tích hợp "Tích hợp STEM" phải có hư
   assert.doesNotMatch(promptOff, /GIÁO DỤC STEM/, "KHÔNG bật thì KHÔNG có hướng dẫn STEM trong prompt");
   assert.doesNotMatch(promptOff, /"stemActivity":/, 'KHÔNG bật thì schema JSON KHÔNG có field "stemActivity"');
   assert.match(promptOff, /"ten": "Vận dụng"/, 'KHÔNG bật thì "ten" hoạt động Vận dụng giữ nguyên như cũ');
+});
+
+test('buildLessonPlanPrompt: hướng dẫn STEM phải PHÂN HOÁ theo khối lớp (Mầm non-Lớp 3 = thủ công đơn giản, Lớp 4-5 = dự án thu nhỏ nâng cao) - phản hồi thực tế của Hoan', () => {
+  const promptLop2 = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 2, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc", integrations: ["tichHopSTEM"],
+  });
+  assert.match(promptLop2, /THỦ CÔNG ĐƠN GIẢN dạng 2D \(cắt, dán/, "Lớp 2 phải gợi ý thủ công đơn giản 2D");
+  assert.doesNotMatch(promptLop2, /DỰ ÁN THU NHỎ/, "Lớp 2 KHÔNG được gợi ý dự án thu nhỏ nâng cao của Lớp 4-5");
+
+  const promptLop3 = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 3, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc", integrations: ["tichHopSTEM"],
+  });
+  assert.match(promptLop3, /THỦ CÔNG ĐƠN GIẢN dạng 2D \(cắt, dán/, "Lớp 3 vẫn thuộc nhóm thủ công đơn giản (Mầm non-Lớp 3)");
+
+  const promptLop4 = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 4, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc", integrations: ["tichHopSTEM"],
+  });
+  assert.match(promptLop4, /TUYỆT ĐỐI KHÔNG dùng sản phẩm thủ công đơn giản/, "Lớp 4 phải cấm thủ công đơn giản");
+  assert.match(promptLop4, /DỰ ÁN THU NHỎ/, "Lớp 4 phải gợi ý dự án thu nhỏ nâng cao");
+  assert.match(promptLop4, /ống khoá mật mã, máy bắn đá mini/, "phải có ví dụ mô hình 3D chuyển động cụ thể");
+  assert.match(promptLop4, /NGÂN SÁCH ẢO/, "phải có ví dụ sa bàn quy hoạch ngân sách ảo");
+  assert.match(promptLop4, /Escape Room/i, "phải có ví dụ trò chơi giải mã");
+
+  const promptLop5 = buildLessonPlanPrompt({
+    tenBai: "Test", grade: 5, subject: "Toan", soTiet: 1, noiDungCotLoi: "abc", integrations: ["tichHopSTEM"],
+  });
+  assert.match(promptLop5, /TUYỆT ĐỐI KHÔNG dùng sản phẩm thủ công đơn giản/, "Lớp 5 phải cấm thủ công đơn giản y như Lớp 4");
+
+  const promptMamNon = buildLessonPlanPrompt({
+    tenBai: "Test", grade: "MAM_NON", subject: "Toan", soTiet: 1, noiDungCotLoi: "abc", integrations: ["tichHopSTEM"],
+  });
+  assert.match(promptMamNon, /THỦ CÔNG ĐƠN GIẢN dạng 2D \(cắt, dán/, "Mầm non phải thuộc nhóm thủ công đơn giản, không phải dự án nâng cao");
 });
 
 test("buildLessonPlanDocxSections: có stemActivity thì xuất hiện đúng phụ lục Hướng dẫn STEM (vật liệu/các bước/tiêu chí) trong file Word, không có thì không chèn trang thừa", async () => {

@@ -1,5 +1,51 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 17: implement "Tích hợp STEM" cho
-# hoạt động Vận dụng trong Soạn giáo án — ĐÃ XONG, 264/264 test PASS, build sạch)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 18: sửa layout "Bài tập phân hoá" từ
+# 3 cột ngang thành xếp dọc + phân hoá hướng dẫn STEM theo khối lớp — ĐÃ XONG, 265/265 test PASS)
+
+## PHIÊN 18 — Sửa layout "Bài tập phân hoá" (3 cột → xếp dọc) + phân hoá STEM theo khối lớp
+
+**Bối cảnh**: 2 phản hồi thực tế từ Hoan sau khi dùng thử PHIÊN 17.
+
+**1) Layout "Bài tập phân hoá theo 3 mức độ" bị ép 3 cột ngang, chữ khó đọc trên khổ A4.**
+- Nguyên nhân: `BaiTapPhanHoaBlock` (`LessonPlanPreview.jsx`) dùng `display: flex` + `flexWrap:
+  "wrap"` với mỗi khối `flex: "1 1 220px"` → trên khổ A4 (khi in/PDF) 3 khối Mức 1/2/3 nằm cạnh
+  nhau, mỗi cột chỉ còn ~200px khiến chữ bị ép rất khó đọc. Phần export Word (`buildBaiTapPhanHoaParagraphs`
+  trong `lessonPlanExportService.js`) vốn đã xếp dọc tuần tự từ trước (không phải bảng), KHÔNG bị
+  lỗi này - chỉ sửa bản preview web/PDF.
+- **Sửa**: đổi `BaiTapPhanHoaBlock` sang `flexDirection: "column"`, bỏ `flex`/`minWidth`/
+  `flexWrap` của từng khối - mỗi mức (`Mức 1 - Hỗ trợ`, `Mức 2 - Đạt chuẩn`, `Mức 3 - Nâng cao`)
+  giờ chiếm TRỌN chiều rộng, xếp lần lượt từ trên xuống, đúng QUY TẮC TRÌNH BÀY PHỤ LỤC Hoan đã
+  nêu: liệt kê theo chiều dọc với tiêu đề rõ ràng, không dùng bảng/lưới 3 cột.
+
+**2) Hướng dẫn STEM (PHIÊN 17) trước đây dùng 1 mức độ chung cho mọi khối lớp - SAI về tâm lý lứa
+tuổi.** Đã phân hoá lại theo đúng yêu cầu:
+- **Mầm non - Lớp 3**: thủ công đơn giản dạng 2D (cắt, dán, vẽ, tô màu, gấp giấy) - ít bước, không
+  cần vật liệu nhỏ khó thao tác.
+- **Lớp 4-5**: TUYỆT ĐỐI CẤM thủ công đơn giản - PHẢI là "dự án thu nhỏ" thử thách tư duy cao hơn:
+  (a) mô hình 3D có chuyển động (ống khoá mật mã, máy bắn đá mini), (b) mô hình sa bàn quy hoạch
+  có ngân sách ảo, (c) trò chơi giải mã (Escape Room) gắn kiến thức bài học.
+- **THCS/THPT**: Hoan có nêu nhưng dự án hiện CHỈ hỗ trợ Mầm non → Lớp 5 (xem phạm vi đã chốt ở
+  đầu `lessonPlanTemplates.js`) - CHƯA áp dụng, để dành khi mở rộng khối lớp.
+
+**Thay đổi kỹ thuật:**
+- `lessonPlanIntegrations.js`: thêm hàm `buildStemGradeGuidance(grade)` chọn đúng đoạn hướng dẫn
+  theo khối lớp (Mầm non/1-3 vs 4-5, có fallback an toàn nếu không xác định được `grade`).
+  `buildPromptFragment` của `TICH_HOP_STEM` giờ nhận `ctx = { grade }` thay vì không tham số.
+  `buildIntegrationsPromptBlock(selectedKeys, ctx)` thêm tham số `ctx` (mặc định `{}`), truyền
+  xuyên qua cho mọi tích hợp - các tích hợp khác không dùng `ctx` vẫn hoạt động bình thường (hàm
+  của chúng không khai báo tham số nên bỏ qua).
+- `lessonPlanPromptTemplates.js`: `buildLessonPlanPrompt()` gọi `buildIntegrationsPromptBlock(integrations,
+  { grade })` (trước đây không truyền `grade`).
+- `LessonPlanPreview.jsx`: `BaiTapPhanHoaBlock` đổi layout như trên.
+- Test: +1 test cho layout xếp dọc (gián tiếp qua snapshot cấu trúc không cần thiết vì đây là thay
+  đổi CSS/style, không có test riêng cho style flex - đã kiểm tra bằng mắt qua code review), +1
+  test lớn `buildLessonPlanPrompt: hướng dẫn STEM phải PHÂN HOÁ theo khối lớp` kiểm tra đủ 5 mốc
+  (Lớp 2, Lớp 3, Lớp 4, Lớp 5, Mầm non) đúng nhóm nội dung, có ví dụ cụ thể (ống khoá mật mã, ngân
+  sách ảo, Escape Room) và Lớp 2/3 không lẫn nội dung dành cho Lớp 4-5.
+
+**Kiểm thử**: `npm test` **265/265 PASS** (264 cũ + 1 mới). `npm run build`: sạch (exit 0). Diff
+zip gốc vs zip sửa: đúng 6 file code + `PROJECT_SUMMARY.md`, không lệch ngoài ý muốn.
+
+---
 
 ## PHIÊN 17 — Implement "Tích hợp STEM" cho hoạt động Vận dụng (Soạn giáo án)
 
