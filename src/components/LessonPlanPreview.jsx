@@ -142,6 +142,59 @@ function PhieuHocTapBlock({ phieu }) {
   );
 }
 
+// Phụ lục "STEM" - đúng pattern PhieuHocTapBlock ở trên, nhưng thêm cột "Vật liệu" (checklist chuẩn
+// bị) và "Tiêu chí đánh giá" bên cạnh danh sách các bước - giáo viên in/gửi phụ huynh dùng ngay để
+// hướng dẫn con hoàn thiện sản phẩm ở nhà (xem buildPromptFragment() của TICH_HOP_STEM trong
+// lessonPlanIntegrations.js).
+function StemActivityBlock({ data }) {
+  if (!data?.tenSanPham && !(data?.cacBuoc || []).length) return null;
+  const vatLieu = data?.vatLieu || [];
+  const cacBuoc = data?.cacBuoc || [];
+  const tieuChi = data?.tieuChiDanhGia || [];
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 2px" }}>
+        PHỤ LỤC: Hướng dẫn STEM{data?.tenSanPham ? ` — ${data.tenSanPham}` : ""}
+      </p>
+      <p style={{ fontSize: 12, color: "#64748b", textAlign: "center", margin: "0 0 8px" }}>
+        Học sinh hoàn thiện sản phẩm ở nhà - giáo viên có thể in/gửi phụ huynh mục này.
+      </p>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        {vatLieu.length > 0 && (
+          <div style={{ flex: "1 1 180px", minWidth: 160 }}>
+            <p style={{ fontWeight: 700, fontSize: 13, margin: "0 0 4px", color: "#0F766E" }}>Vật liệu cần chuẩn bị</p>
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
+              {vatLieu.map((v, i) => (
+                <li key={i} style={{ fontSize: 12.5, marginBottom: 2 }}>{v}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {cacBuoc.length > 0 && (
+          <div style={{ flex: "2 1 260px", minWidth: 220 }}>
+            <p style={{ fontWeight: 700, fontSize: 13, margin: "0 0 4px", color: "#0F766E" }}>Các bước thực hiện</p>
+            <ol style={{ margin: 0, paddingLeft: 18 }}>
+              {cacBuoc.map((b, i) => (
+                <li key={i} style={{ fontSize: 12.5, marginBottom: 4, whiteSpace: "pre-line" }}>{b}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+        {tieuChi.length > 0 && (
+          <div style={{ flex: "1 1 180px", minWidth: 160 }}>
+            <p style={{ fontWeight: 700, fontSize: 13, margin: "0 0 4px", color: "#0F766E" }}>Tiêu chí đánh giá</p>
+            <ul style={{ margin: 0, paddingLeft: 18 }}>
+              {tieuChi.map((t, i) => (
+                <li key={i} style={{ fontSize: 12.5, marginBottom: 2 }}>{t}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MindmapBlock({ mindmap }) {
   if (!mindmap?.chuDe) return null;
   return (
@@ -514,6 +567,7 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         <p style={{ fontSize: 13, color: "#94a3b8" }}>(Giáo viên tự ghi chú sau khi dạy thực tế)</p>
 
         <PhieuHocTapBlock phieu={lessonPlan.phieuHocTap} />
+        <StemActivityBlock data={lessonPlan.stemActivity} />
         <BaiTapPhanHoaBlock data={lessonPlan.baiTapPhanHoa} />
         <ChecklistNLPCBlock items={lessonPlan.checklistNLPC} />
         <LoiDanBlock items={lessonPlan.loiDan} />
