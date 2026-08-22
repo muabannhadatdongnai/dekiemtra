@@ -1,6 +1,74 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 16: sửa 3 lỗi sư phạm phản hồi từ giáo
-# viên trên phiếu Lớp 5 Đợt 4 — hình trụ lộ ra Trạm 12, "đặt tính" chật chỗ ở Trạm 6, lặp tỉ lệ %
-# ở Trạm 7)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 17: implement "Tích hợp STEM" cho
+# hoạt động Vận dụng trong Soạn giáo án — ĐÃ XONG, 264/264 test PASS, build sạch)
+
+## PHIÊN 17 — Implement "Tích hợp STEM" cho hoạt động Vận dụng (Soạn giáo án)
+
+**Bối cảnh**: Hoan muốn hoạt động "Vận dụng" trong giáo án (mục III, khung CV2345) có thể chuyển
+từ dạng bài tập giấy sang 1 hoạt động định hướng Giáo dục STEM (học sinh Thiết kế/Vẽ/Lắp ráp/Chế
+tạo 1 sản phẩm thực tế: poster, mô hình, sơ đồ, sổ tay...). Trước khi code, đã trao đổi để chốt
+thiết kế do có ảnh hưởng tới kiến trúc "tích hợp" (`lessonPlanIntegrations.js`) và trần thời lượng
+hoạt động Vận dụng (`STANDARD_ACTIVITIES.maxMinutes = 12`) đã có sẵn.
+
+**3 quyết định đã chốt với Hoan:**
+1. **Tuỳ chọn (checkbox), KHÔNG bắt buộc mọi giáo án** — thêm 1 entry mới `TICH_HOP_STEM` vào
+   `LESSON_PLAN_INTEGRATIONS` (`lessonPlanIntegrations.js`), hiển thị trong lưới "Tuỳ chọn nâng
+   cao" của `LessonPlanForm.jsx` giống các tích hợp hiện có (Phiếu học tập, Tích hợp NLS...).
+2. **Xử lý thời lượng: giao nhiệm vụ tại lớp + hoàn thiện/nộp ở nhà** — GIỮ NGUYÊN trần
+   `maxMinutes: 12` của hoạt động Vận dụng (không sửa `lessonPlanTemplates.js`/
+   `computeMultiPeriodTimeline`). Trong khung 12 phút tại lớp, AI chỉ cần: nêu yêu cầu sản phẩm +
+   hướng dẫn nhanh + chia nhóm/giao việc; phần "làm sản phẩm" thực tế diễn ra ở nhà, tương tự cách
+   tích hợp NLS đã xử lý hoạt động cần thiết bị số (đẩy sang làm ở nhà có phụ huynh hỗ trợ).
+3. **Có phụ lục JSON riêng** (không chỉ sửa chữ trong `tienTrinh`) — theo đúng mô hình "Phiếu học
+   tập"/"Bài tập phân hoá": AI trả về 1 trường JSON có cấu trúc (tên sản phẩm, vật liệu cần chuẩn
+   bị, các bước thực hiện, tiêu chí đánh giá/nghiệm thu ngắn gọn) để xuất thành 1 mục riêng, giáo
+   viên dùng in/gửi phụ huynh ngay, không phải tự soạn thêm.
+
+**Đã implement đúng 6 bước đã chốt:**
+1. `lessonPlanIntegrations.js`: thêm entry `INTEGRATION_KEYS.TICH_HOP_STEM` (`"tichHopSTEM"`) —
+   `jsonField: "stemActivity"`, `isAiGenerated: true`, `buildPromptFragment()` yêu cầu đổi bản
+   chất hoạt động Vận dụng thành làm sản phẩm thực tế (Thiết kế/Vẽ/Lắp ráp/Chế tạo), gợi ý mức độ
+   theo khối lớp (Mầm non/Lớp 1-2 đơn giản; Lớp 3-5 phức tạp hơn), ghi rõ tại lớp chỉ giao nhiệm vụ
+   + hướng dẫn, sản phẩm hoàn thiện Ở NHÀ, và đổi `ten` hoạt động. `schemaExample`:
+   `"stemActivity": { "tenSanPham": "...", "vatLieu": [...], "cacBuoc": [...], "tieuChiDanhGia": [...] }`.
+2. `lessonPlanTemplates.js`: mở rộng `getActivityLabels(lessonType, integrations = [])` — thêm
+   tham số thứ 2 (mặc định `[]`, KHÔNG phá vỡ các lời gọi cũ như `computeMultiPeriodTimeline`/
+   `computeActivityTimeline`) — đổi `label` của khối `van_dung` thành `"[Vận dụng - Tích hợp
+   STEM]"` khi `integrations` chứa `TICH_HOP_STEM`, theo đúng cơ chế đã có để đổi tên `kham_pha`
+   theo `lessonType`. Import `INTEGRATION_KEYS` từ `lessonPlanIntegrations.js` (không có circular
+   import - file kia không import ngược lại).
+3. `lessonPlanPromptTemplates.js`: `buildLessonPlanPrompt()` gọi `getActivityLabels(lessonType,
+   integrations)` (trước đây chỉ truyền `lessonType`) → `outputSchema`/`buildActivitySchemaBlock()`
+   tự động phản ánh đúng `ten` đã đổi. Đồng thời sửa `structureRule` (trước đây hardcode chữ "Vận
+   dụng") dùng biến `vanDungLabel` động, để quy tắc "PHẢI có đủ 4 hoạt động chuẩn..." không mâu
+   thuẫn với tên hoạt động đã đổi khi tích hợp bật.
+4. `LessonPlanPreview.jsx` (web) + `lessonPlanExportService.js` (Word): thêm `StemActivityBlock`/
+   `buildStemActivityParagraphs()` hiển thị phụ lục "Hướng dẫn STEM" (Vật liệu / Các bước thực
+   hiện / Tiêu chí đánh giá) đọc từ `stemActivity`, đúng pattern đã có của `phieuHocTap`/
+   `baiTapPhanHoa` (không hiện gì nếu không có dữ liệu, tránh chèn trang thừa khi xuất Word).
+5. `LessonPlanForm.jsx`: không cần sửa - `listIntegrations()` tự động hiển thị checkbox "Tích hợp
+   STEM" trong lưới "Tuỳ chọn nâng cao" có sẵn.
+6. Test mới trong `test/lessonPlanFixes.test.js` (+3 test, tổng 264):
+   - `getActivityLabels`: bật STEM đổi đúng `ten` Vận dụng, không bật/không truyền tham số giữ
+     nguyên hành vi cũ.
+   - `buildLessonPlanPrompt`: bật STEM có đủ hướng dẫn + `"ten": "[Vận dụng - Tích hợp STEM]"` +
+     field `"stemActivity"` trong ví dụ schema; không bật thì không có gì trong số đó.
+   - `buildLessonPlanDocxSections`: có `stemActivity` thì Word có đúng phụ lục (vật liệu/các bước/
+     tiêu chí), không có thì không chèn trang thừa.
+
+**Kiểm thử**: `npm test` **264/264 PASS** (261 cũ + 3 mới). `npm run build`: sạch (exit 0). Diff
+zip gốc vs zip sửa: đúng 6 file thay đổi (`lessonPlanIntegrations.js`, `lessonPlanTemplates.js`,
+`lessonPlanPromptTemplates.js`, `LessonPlanPreview.jsx`, `lessonPlanExportService.js`,
+`test/lessonPlanFixes.test.js`), không có thay đổi ngoài ý muốn.
+
+**Chưa làm** (ngoài phạm vi đã thống nhất, để dành khi Hoan cần):
+- Không mở rộng đổi tên `van_dung` trong `computeMultiPeriodTimeline`/`computeActivityTimeline`
+  (label hiển thị trong dòng "Gợi ý phân bổ theo tiết" ở preview/prompt vẫn là "Vận dụng" thường
+  kể cả khi bật STEM) - có chủ đích không đổi để giữ nguyên trần `maxMinutes=12` và không phải
+  truyền `integrations` xuyên suốt nhiều lời gọi UI không liên quan.
+- Chưa có ví dụ minh hoạ sản phẩm STEM theo từng môn cụ thể (hiện dựa hoàn toàn vào AI tự đề xuất
+  theo "Nội dung cốt lõi" + gợi ý mức độ theo khối lớp trong prompt).
+
+---
 
 ## PHIÊN 16 — Sửa 3 lỗi sư phạm phản hồi thực tế (Trạm 6, 7, 12) + chốt 3 QUY TẮC SƯ PHẠM bắt buộc
 

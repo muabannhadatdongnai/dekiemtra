@@ -667,3 +667,98 @@ test("buildLessonPlanDocxSections: có slideOutline thì xuất hiện đúng ph
   const xmlWithout = await zipWithout.file("word/document.xml").async("string");
   assert.ok(!xmlWithout.includes("DÀN Ý SLIDE"), "không bật thì không được có phụ lục dàn ý slide thừa");
 });
+
+/**
+ * Tích hợp "Tích hợp STEM" (PHIÊN 17) - xem lessonPlanIntegrations.js (INTEGRATION_KEYS.TICH_HOP_STEM)
+ * + getActivityLabels() (lessonPlanTemplates.js) + StemActivityBlock (LessonPlanPreview.jsx) +
+ * buildStemActivityParagraphs() (lessonPlanExportService.js).
+ */
+test('getActivityLabels: bật tích hợp STEM đổi "ten" hoạt động Vận dụng thành "[Vận dụng - Tích hợp STEM]", KHÔNG bật thì giữ nguyên', () => {
+  const withStem = getActivityLabels("bai_moi", ["tichHopSTEM"]);
+  assert.equal(
+    withStem.find((a) => a.key === "van_dung")?.label,
+    "[Vận dụng - Tích hợp STEM]"
+  );
+  // Các hoạt động khác KHÔNG bị đổi tên khi chỉ bật STEM.
+  assert.equal(withStem.find((a) => a.key === "khoi_dong")?.label, "Khởi động");
+
+  const withoutStem = getActivityLabels("bai_moi", []);
+  assert.equal(withoutStem.find((a) => a.key === "van_dung")?.label, "Vận dụng");
+
+  // Không truyền tham số thứ 2 (các nơi gọi cũ như computeMultiPeriodTimeline) vẫn hoạt động bình
+  // thường, không bị lỗi và không tự ý đổi tên.
+  const defaultCall = getActivityLabels("bai_moi");
+  assert.equal(defaultCall.find((a) => a.key === "van_dung")?.label, "Vận dụng");
+});
+
+test('buildLessonPlanPrompt: bật tích hợp "Tích hợp STEM" phải có hướng dẫn, đổi tên hoạt động Vận dụng trong ví dụ schema, và có field JSON "stemActivity"', () => {
+  const promptOn = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 5,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: ["tichHopSTEM"],
+  });
+  assert.match(promptOn, /GIÁO DỤC STEM/, "phải có hướng dẫn thiết kế hoạt động theo định hướng STEM");
+  assert.match(promptOn, /Thiết kế, Vẽ, Lắp ráp, hoặc Chế tạo/, "phải nêu rõ 4 hình thức sản phẩm thực tế");
+  assert.match(promptOn, /HOÀN THIỆN sản phẩm Ở NHÀ/, "phải nêu rõ sản phẩm hoàn thiện ở nhà, không làm hết tại lớp");
+  assert.match(
+    promptOn,
+    /"ten": "\[Vận dụng - Tích hợp STEM\]"/,
+    'ví dụ JSON schema chính phải đổi "ten" của hoạt động Vận dụng thành "[Vận dụng - Tích hợp STEM]"'
+  );
+  assert.match(promptOn, /"stemActivity":/, 'ví dụ JSON schema chính phải có field "stemActivity"');
+  assert.match(promptOn, /Khởi động,\s*\n?\s*.*Luyện tập, \[Vận dụng - Tích hợp STEM\]/, "quy tắc cấu trúc 4 hoạt động cũng phải phản ánh tên đã đổi");
+
+  const promptOff = buildLessonPlanPrompt({
+    tenBai: "Test",
+    grade: 5,
+    subject: "Toan",
+    soTiet: 1,
+    noiDungCotLoi: "abc",
+    integrations: [],
+  });
+  assert.doesNotMatch(promptOff, /GIÁO DỤC STEM/, "KHÔNG bật thì KHÔNG có hướng dẫn STEM trong prompt");
+  assert.doesNotMatch(promptOff, /"stemActivity":/, 'KHÔNG bật thì schema JSON KHÔNG có field "stemActivity"');
+  assert.match(promptOff, /"ten": "Vận dụng"/, 'KHÔNG bật thì "ten" hoạt động Vận dụng giữ nguyên như cũ');
+});
+
+test("buildLessonPlanDocxSections: có stemActivity thì xuất hiện đúng phụ lục Hướng dẫn STEM (vật liệu/các bước/tiêu chí) trong file Word, không có thì không chèn trang thừa", async () => {
+  const baseLessonPlan = {
+    tenBai: "Bài test STEM",
+    yeuCauCanDat: {},
+    doDungDayHoc: {},
+    hoatDong: [{ ten: "Khởi động", tienTrinh: [{ hoatDongGVHS: "A", sanPhamDuKien: "B" }] }],
+  };
+  const meta = { grade: 5, soTiet: 1, columnMode: "one_column" };
+
+  const withStem = {
+    ...baseLessonPlan,
+    stemActivity: {
+      tenSanPham: "Mô hình hình hộp chữ nhật",
+      vatLieu: ["Bìa cứng", "Kéo", "Băng dính"],
+      cacBuoc: ["Vẽ khai triển hình hộp lên bìa", "Cắt và gấp theo nét vẽ", "Dán lại thành hình hộp hoàn chỉnh"],
+      tieuChiDanhGia: ["Đúng hình dạng hình hộp chữ nhật", "Các mép dán chắc chắn"],
+    },
+  };
+  const childrenWith = buildLessonPlanDocxSections({ lessonPlan: withStem, timeline: [], meta });
+  const docWith = new Document({ sections: [{ children: childrenWith }] });
+  const bufWith = await Packer.toBuffer(docWith);
+  const zipWith = await JSZip.loadAsync(bufWith);
+  const xmlWith = await zipWith.file("word/document.xml").async("string");
+  assert.ok(xmlWith.includes("PHỤ LỤC: HƯỚNG DẪN STEM"), "phải có tiêu đề phụ lục Hướng dẫn STEM");
+  assert.ok(xmlWith.includes("Mô hình hình hộp chữ nhật"), "phải có tên sản phẩm trong tiêu đề phụ lục");
+  assert.ok(xmlWith.includes("Vật liệu cần chuẩn bị"), "phải có khối vật liệu");
+  assert.ok(xmlWith.includes("Bìa cứng"), "phải liệt kê đúng vật liệu");
+  assert.ok(xmlWith.includes("Các bước thực hiện"), "phải có khối các bước thực hiện");
+  assert.ok(xmlWith.includes("Vẽ khai triển hình hộp lên bìa"), "phải có đúng nội dung từng bước");
+  assert.ok(xmlWith.includes("Tiêu chí đánh giá"), "phải có khối tiêu chí đánh giá");
+
+  const childrenWithout = buildLessonPlanDocxSections({ lessonPlan: baseLessonPlan, timeline: [], meta });
+  const docWithout = new Document({ sections: [{ children: childrenWithout }] });
+  const bufWithout = await Packer.toBuffer(docWithout);
+  const zipWithout = await JSZip.loadAsync(bufWithout);
+  const xmlWithout = await zipWithout.file("word/document.xml").async("string");
+  assert.ok(!xmlWithout.includes("HƯỚNG DẪN STEM"), "không có stemActivity thì không được chèn phụ lục thừa");
+});
