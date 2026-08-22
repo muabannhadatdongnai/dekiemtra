@@ -221,6 +221,54 @@ function buildChecklistNLPCTable(items) {
   return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...bodyRows] });
 }
 
+// Phụ lục "Hướng dẫn STEM" - đúng pattern phần "Phiếu học tập" ngay phía trên (xem
+// buildLessonPlanDocxSections() bên dưới): tiêu đề PHỤ LỤC + tên sản phẩm, rồi lần lượt 3 khối
+// Vật liệu / Các bước thực hiện / Tiêu chí đánh giá - xem giải thích đầy đủ trong
+// lessonPlanIntegrations.js (INTEGRATION_KEYS.TICH_HOP_STEM) và StemActivityBlock
+// (LessonPlanPreview.jsx, bản web).
+function buildStemActivityParagraphs(data) {
+  const children = [];
+  const vatLieu = data?.vatLieu || [];
+  const cacBuoc = data?.cacBuoc || [];
+  const tieuChi = data?.tieuChiDanhGia || [];
+  if (vatLieu.length > 0) {
+    children.push(
+      new Paragraph({
+        children: [textRun("Vật liệu cần chuẩn bị", { bold: true, size: 22, color: "0F766E" })],
+        spacing: { before: 120, after: 60 },
+      })
+    );
+    children.push(...bulletList(vatLieu));
+  }
+  if (cacBuoc.length > 0) {
+    children.push(
+      new Paragraph({
+        children: [textRun("Các bước thực hiện", { bold: true, size: 22, color: "0F766E" })],
+        spacing: { before: 120, after: 60 },
+      })
+    );
+    cacBuoc.forEach((b, i) => {
+      children.push(
+        new Paragraph({
+          children: [textRun(`${i + 1}. `, { bold: true }), ...multilineTextRuns(b)],
+          spacing: { after: 60 },
+          indent: { left: 200 },
+        })
+      );
+    });
+  }
+  if (tieuChi.length > 0) {
+    children.push(
+      new Paragraph({
+        children: [textRun("Tiêu chí đánh giá", { bold: true, size: 22, color: "0F766E" })],
+        spacing: { before: 120, after: 60 },
+      })
+    );
+    children.push(...bulletList(tieuChi));
+  }
+  return children;
+}
+
 const PHAN_HOA_GROUPS = [
   { key: "hoTro", label: "Mức 1 — Hỗ trợ", color: "0369A1" },
   { key: "datChuan", label: "Mức 2 — Đạt chuẩn", color: "15803D" },
@@ -445,6 +493,32 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includ
       children.push(paragraph("...................................................................................."));
       children.push(paragraph("...................................................................................."));
     });
+  }
+
+  const hasStemActivity =
+    !!lessonPlan.stemActivity?.tenSanPham || (lessonPlan.stemActivity?.cacBuoc || []).length > 0;
+  if (hasStemActivity) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [
+          textRun(
+            `PHỤ LỤC: HƯỚNG DẪN STEM${lessonPlan.stemActivity.tenSanPham ? ` — ${lessonPlan.stemActivity.tenSanPham}` : ""}`,
+            { bold: true, size: 26 }
+          ),
+        ],
+        spacing: { before: 100, after: 60 },
+      })
+    );
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [textRun("Học sinh hoàn thiện sản phẩm ở nhà - giáo viên có thể in/gửi phụ huynh mục này.", { italics: true })],
+        spacing: { after: 100 },
+      })
+    );
+    children.push(...buildStemActivityParagraphs(lessonPlan.stemActivity));
   }
 
   const hasPhanHoa = PHAN_HOA_GROUPS.some((g) => (lessonPlan.baiTapPhanHoa?.[g.key] || []).length > 0);

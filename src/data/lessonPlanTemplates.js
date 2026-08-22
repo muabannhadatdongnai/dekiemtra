@@ -16,6 +16,8 @@
  * 1 cấp thư mục theo bộ sách, mọi chỗ khác không phải đổi.
  */
 
+import { INTEGRATION_KEYS } from "./lessonPlanIntegrations";
+
 export const LESSON_PLAN_GRADES = [
   { value: "MAM_NON", label: "Mầm non", isPreschool: true },
   { value: 1, label: "Lớp 1", isPreschool: false },
@@ -112,12 +114,20 @@ export function getLessonTypeMeta(lessonType) {
   return LESSON_TYPES.find((t) => t.value === lessonType) || LESSON_TYPES[0];
 }
 
-/** Trả về STANDARD_ACTIVITIES nhưng đã đổi tên hoạt động "kham_pha" theo "loại bài" đã chọn. */
-export function getActivityLabels(lessonType) {
+/**
+ * Trả về STANDARD_ACTIVITIES nhưng đã đổi tên hoạt động "kham_pha" theo "loại bài" đã chọn, và
+ * đổi tên hoạt động "van_dung" thành "[Vận dụng - Tích hợp STEM]" nếu tích hợp STEM đang được bật
+ * (integrations: string[] các INTEGRATION_KEYS đang chọn - mặc định [] để KHÔNG phá vỡ các nơi gọi
+ * hàm này mà không liên quan tới tích hợp, ví dụ computeMultiPeriodTimeline/computeActivityTimeline).
+ */
+export function getActivityLabels(lessonType, integrations = []) {
   const meta = getLessonTypeMeta(lessonType);
-  return STANDARD_ACTIVITIES.map((a) =>
-    a.key === "kham_pha" ? { ...a, label: meta.activityLabel } : a
-  );
+  const stemOn = integrations.includes(INTEGRATION_KEYS.TICH_HOP_STEM);
+  return STANDARD_ACTIVITIES.map((a) => {
+    if (a.key === "kham_pha") return { ...a, label: meta.activityLabel };
+    if (a.key === "van_dung" && stemOn) return { ...a, label: "[Vận dụng - Tích hợp STEM]" };
+    return a;
+  });
 }
 
 /** Số phút/tiết theo cấp học (tham khảo khung giờ phổ biến - giáo viên có thể tự đổi ở UI sau). */

@@ -203,8 +203,9 @@ export function buildLessonPlanPrompt({
   const circular = getCircularForGrade(grade);
   const subjectProfile = preschool ? null : getSubjectProfile(subject);
   const gradeLabel = preschool ? "Mầm non" : `Lớp ${grade}`;
-  const activities = getActivityLabels(lessonType);
+  const activities = getActivityLabels(lessonType, integrations);
   const secondActivityLabel = activities.find((a) => a.key === "kham_pha")?.label || "Khám phá";
+  const vanDungLabel = activities.find((a) => a.key === "van_dung")?.label || "Vận dụng";
   const multiPeriodGuidance = buildMultiPeriodGuidance(soTiet, grade, lessonType);
 
   const roleLine = preschool
@@ -226,8 +227,8 @@ export function buildLessonPlanPrompt({
   cấu trúc "hoatDong" như schema bên dưới (đặt tên hoạt động phù hợp Mầm non thay vì 4 tên chuẩn
   Tiểu học).`
     : `- Kế hoạch bài dạy PHẢI có đủ 4 hoạt động chuẩn theo Mục III của ${circular.label}: Khởi động,
-  ${secondActivityLabel}, Luyện tập, Vận dụng - đúng tên gọi, đúng thứ tự, không gộp hay bỏ bớt hoạt
-  động nào.
+  ${secondActivityLabel}, Luyện tập, ${vanDungLabel} - đúng tên gọi, đúng thứ tự, không gộp hay bỏ bớt
+  hoạt động nào.
 ${lessonTypeNote}
 - Mục "Yêu cầu cần đạt" PHẢI tách rõ 3 nhóm: Kiến thức, Năng lực (năng lực chung + năng lực đặc thù
   môn học), Phẩm chất - đúng định hướng phát triển năng lực-phẩm chất của chương trình GDPT 2018.`;

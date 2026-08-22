@@ -30,6 +30,7 @@ export const INTEGRATION_KEYS = {
   BAI_TAP_PHAN_HOA: "baiTapPhanHoa",
   LOI_DAN: "loiDan",
   SLIDE_OUTLINE: "slideOutline",
+  TICH_HOP_STEM: "tichHopSTEM",
 };
 
 export const LESSON_PLAN_INTEGRATIONS = {
@@ -282,6 +283,44 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  tử { "tieuDe": "...", "noiDung": ["...", "..."] } - "noiDung" là mảng CHUỖI, mỗi phần tử 1\n` +
       `  gạch đầu dòng (hệ thống sẽ tự hiển thị dấu gạch đầu dòng, KHÔNG tự thêm "-" vào đầu chuỗi).`,
     schemaExample: `"slideOutline": [ { "tieuDe": "...", "noiDung": ["...", "..."] } ]`,
+  },
+  [INTEGRATION_KEYS.TICH_HOP_STEM]: {
+    key: INTEGRATION_KEYS.TICH_HOP_STEM,
+    label: "Tích hợp STEM",
+    description: "Vận dụng làm sản phẩm thực tế thay bài tập giấy",
+    isAiGenerated: true,
+    jsonField: "stemActivity",
+    // ⚠️ Đổi hẳn BẢN CHẤT hoạt động "Vận dụng" có sẵn (không phải thêm hoạt động thứ 5) - xem
+    // getActivityLabels() trong lessonPlanTemplates.js: khi tích hợp này bật, "ten" của khối
+    // "van_dung" được đổi thành đúng nhãn "[Vận dụng - Tích hợp STEM]" ngay trong ví dụ JSON
+    // chính (buildActivitySchemaBlock), KHÔNG chỉ mô tả bằng lời ở đây.
+    // Thời lượng: GIỮ NGUYÊN trần maxMinutes=12 của "van_dung" (không sửa lessonPlanTemplates.js/
+    // computeMultiPeriodTimeline) - tại lớp chỉ giao nhiệm vụ + hướng dẫn nhanh, sản phẩm thật
+    // hoàn thiện Ở NHÀ, đúng cách tích hợp NLS đã xử lý hoạt động cần thiết bị số.
+    buildPromptFragment: () =>
+      `- Hoạt động "Vận dụng" PHẢI đổi hẳn bản chất: KHÔNG giao bài tập làm trên giấy như thông\n` +
+      `  thường, mà giao 1 nhiệm vụ theo định hướng GIÁO DỤC STEM - yêu cầu học sinh dùng ĐÚNG kiến\n` +
+      `  thức vừa học trong bài này để Thiết kế, Vẽ, Lắp ráp, hoặc Chế tạo 1 SẢN PHẨM THỰC TẾ (VD:\n` +
+      `  làm poster, làm mô hình, vẽ sơ đồ, làm sổ tay...) - sản phẩm PHẢI thể hiện rõ kiến thức bài\n` +
+      `  học, không phải hoạt động thủ công chung chung không liên quan nội dung bài.\n` +
+      `  Gợi ý mức độ phù hợp lứa tuổi: Mầm non/Lớp 1-2 ưu tiên hình thức ĐƠN GIẢN (vẽ, tô màu, dán -\n` +
+      `  ít bước, không cần vật liệu nhỏ khó thao tác); Lớp 3-5 có thể phức tạp hơn (lắp ráp/chế tạo\n` +
+      `  mô hình từ bìa, que, dây, vật liệu tái chế dễ tìm, rẻ tiền, an toàn với trẻ).\n` +
+      `  ⚠️ VỀ THỜI LƯỢNG: tại lớp CHỈ đủ thời gian để nêu yêu cầu sản phẩm, hướng dẫn nhanh cách\n` +
+      `  làm, chia nhóm/giao việc (vẫn trong khung thời lượng gợi ý đã nêu cho "Vận dụng", KHÔNG kéo\n` +
+      `  dài thêm) - TUYỆT ĐỐI KHÔNG để học sinh làm sản phẩm hoàn chỉnh ngay tại lớp. Bước cuối của\n` +
+      `  "tienTrinh" hoạt động này PHẢI ghi rõ: học sinh HOÀN THIỆN sản phẩm Ở NHÀ (có thể nhờ phụ\n` +
+      `  huynh hỗ trợ) và mang nộp/trình bày/trưng bày vào buổi học sau.\n` +
+      `  Đổi trường "ten" của hoạt động này thành đúng "[Vận dụng - Tích hợp STEM]" (đã thể hiện\n` +
+      `  trong ví dụ schema JSON bên dưới).\n` +
+      `  Trả về thêm nội dung CỤ THỂ trong trường JSON "stemActivity" (giáo viên in/gửi phụ huynh\n` +
+      `  hướng dẫn con làm NGAY, không phải tự soạn thêm): { "tenSanPham": "...", "vatLieu": ["...",\n` +
+      `  "..."], "cacBuoc": ["...", "..."], "tieuChiDanhGia": ["...", "..."] } - "vatLieu" là vật liệu\n` +
+      `  dễ tìm/rẻ tiền cần chuẩn bị; "cacBuoc" là các bước thực hiện NGẮN GỌN theo đúng thứ tự (không\n` +
+      `  tự đánh số trong chuỗi, hệ thống tự đánh số khi hiển thị); "tieuChiDanhGia" là 2-4 tiêu chí\n` +
+      `  đơn giản để giáo viên/học sinh tự đánh giá sản phẩm khi nộp.`,
+    schemaExample:
+      `"stemActivity": { "tenSanPham": "...", "vatLieu": ["...", "..."], "cacBuoc": ["...", "..."], "tieuChiDanhGia": ["...", "..."] }`,
   },
 };
 
