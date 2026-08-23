@@ -2,9 +2,56 @@
 
 > Trạng thái: **Lớp 5 (Toán) đã xong Đợt 1-4** (14 dạng bài) + **PHIÊN 16: đã sửa 3 lỗi sư phạm
 > phản hồi thực tế (Trạm 6/7/12)** + **PHIÊN 17: đã sửa 3 lỗi phản hồi thực tế từ Lớp 4 (Bài
-> 6/8/9)**. File này để mang sang chat mới không mất ngữ cảnh.
+> 6/8/9)** + **PHIÊN 19: đã sửa 2/3 lỗi bản Word Lớp 1 phản hồi qua ảnh chụp (Bài 7/10/11/12);
+> Bài 3 (icon màu khó phân biệt khi in đen trắng) CẦN HOAN CHỐT HƯỚNG trước khi code (xem mục
+> "CẦN QUYẾT ĐỊNH" bên dưới)**. File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 17) — Sửa 3 lỗi phản hồi thực tế sau khi Hoan test phiếu Lớp 4 (Bài 6, 8, 9)
+## ✅ MỚI NHẤT (Phiên 19) — Sửa lỗi bản Word Lớp 1 (phản hồi qua ảnh chụp trực tiếp từ file Word)
+Hoan gửi 2 ảnh chụp file Word thật (Bài 7, Bài 10/11/12) + 1 ảnh tham khảo (Bài 3, không phải từ
+app) chỉ ra 3 vấn đề. Đã sửa 2/3, còn 1 cần Hoan chốt hướng trước khi code.
+
+1. **Bài 7 "So sánh độ dài" (`do_dai_so_sanh`) - bản Word không có gì để "quan sát" ngoài 2 con
+   số** — SỬA: `buildDoDaiSoSanhParagraphs()` (`worksheetExportService.js`) giờ vẽ thêm 1 "thanh
+   đo" bằng ký tự khối Unicode "▬" lặp lại ĐÚNG bằng số cm (không dùng Table - tránh đúng loại lỗi
+   "nested table đè nền" đã cảnh báo ở đầu file) - học sinh giờ nhìn thấy 2 thanh dài/ngắn khác
+   nhau như thước thật, in trên 2 dòng riêng thẳng hàng bên trái, rồi mới đến dòng điền dấu >,<,=.
+2. **Bài 10 "Nhận diện hình" + Bài 11 "Đếm hình trong khay" + Bài 12 "Xem đồng hồ" - icon/glyph
+   quá nhỏ vì dồn quá nhiều trên 1 dòng, Word tự ngắt dòng không kiểm soát** — SỬA cả 3 hàm
+   (`buildNhanDienHinhParagraphs`, `buildDemHinhUngDungParagraphs`,
+   `buildXemDongHoGioDungParagraphs`): chủ động xuống dòng theo số lượng cố định/dòng (2 hình/dòng
+   cho Bài 10, 5 hình/dòng cho khay Bài 11, 2 đồng hồ/dòng cho Bài 12 - trước đây 4/dòng) THAY VÌ
+   để Word tự ngắt, đồng thời tăng cỡ chữ glyph/emoji (28-30 -> 40) để đủ lớn khi in.
+3. **Bài 3 (ảnh tham khảo Hoan gửi, không phải ảnh chụp từ app) - icon màu (🚀🦋🌻...) khó phân
+   biệt khi in đen trắng, đề xuất dùng "line art"** — ứng với dạng bài `dem_va_viet_so` ("Đếm và
+   viết số", dùng kho `ICONS` emoji màu trong `worksheetSchemas.js`). **CHƯA SỬA** - xem mục "CẦN
+   QUYẾT ĐỊNH" ngay bên dưới, cần Hoan chọn hướng trước khi code vì đây là quyết định về ASSET/
+   kiến trúc, không phải chỉnh câu lệnh/cỡ chữ đơn thuần như 2 mục trên.
+- Đã kiểm tra bằng script build thật 1 file `.docx` chứa cả 4 dạng bài (7/10/11/12), mở bằng
+  JSZip đọc `word/document.xml`, xác nhận đúng nội dung mong muốn (thanh "▬" tỉ lệ đúng cm, xuống
+  dòng đúng số lượng/dòng đã đặt) trước khi giao - không chỉ tin code đọc bằng mắt.
+- `npm test`: 265/265 PASS (không cần test mới - đây là thay đổi hiển thị Word thuần, không có
+  logic sinh số mới cần kiểm chứng toán học). `npm run build`: sạch.
+
+### ⚠️ CẦN QUYẾT ĐỊNH (trước khi làm Bài 3 - icon đen trắng)
+Icon hiện tại là ký tự emoji Unicode thuần (không phải ảnh) - máy in đen trắng sẽ tự chuyển emoji
+màu sang thang xám, nhiều icon (đặc biệt icon có chi tiết nhỏ/màu gradient) dễ bị mờ/khó phân biệt
+khi in ở cỡ nhỏ. Muốn có "line art" (nét vẽ đen trắng) THẬT thay vì emoji, cần 1 trong các hướng
+sau (mỗi hướng chi phí/công sức khác hẳn nhau, không nên tự chọn thay Hoan):
+- **(A) Icon SVG line-art tự vẽ** - tạo bộ ~16 icon outline đơn giản (khớp kho `ICONS` hiện tại:
+  táo, sao, ô tô, gà con, hoa hướng dương, bướm, cà rốt, cá, bóng bay, kẹo mút, tên lửa, rùa, gấu
+  bông, bánh quy, hoa đào, ong) rồi nhúng bằng `ImageRun` (Word) + `<img>`/SVG (web) thay hẳn
+  emoji - ĐẸP NHẤT, đồng bộ 2 bản, nhưng tốn 1 phiên riêng để vẽ + tích hợp cả 4 tầng.
+- **(B) Thêm `printMode: "color" | "bw"` như draft cũ (mục "Thiết kế chế độ in Màu/Đen trắng" bên
+  dưới)** - khi chọn "Đen trắng" thì ĐỔI hẳn sang bộ ký tự outline Unicode có sẵn (kiểu
+  `SHAPE_GLYPHS` đang dùng cho Bài 10/11: ☆ □ ○ ...) cho MỌI icon, chấp nhận diễn đạt kém sinh
+  động hơn emoji màu nhưng chắc chắn rõ nét ở mọi chế độ in - ÍT CÔNG SỨC HƠN (A) vì không cần vẽ
+  ảnh mới, nhưng KHÔNG áp dụng được cho icon không có glyph Unicode tương đương tốt (táo, gà con,
+  bóng bay... không có outline glyph chuẩn).
+- **(C) Tạm không sửa Bài 3** - giữ nguyên emoji màu, chỉ ghi chú trong app/tài liệu rằng bài này
+  nên in màu để rõ nhất - ÍT CÔNG SỨC NHẤT nhưng không giải quyết đúng phản hồi giáo viên.
+Hoan xác nhận hướng (A)/(B)/(C) - hoặc đề xuất khác - ở phiên tới rồi mới code tiếp.
+
+## (Phiên 17) — Sửa 3 lỗi phản hồi thực tế sau khi Hoan test phiếu Lớp 4 (Bài 6, 8, 9)
 1. **Bài 9 "Góc và đơn vị đo góc" - bỏ hẳn số đo góc dạng chữ (VD "159°") khỏi bản Word** (cả
    Giáo viên lẫn Học sinh). 2 lý do gộp lại cùng 1 lần sửa:
    - **Sư phạm**: Lớp 4 chỉ dùng ê-ke để NHẬN BIẾT góc (nhọn/vuông/tù/bẹt) bằng mắt, KHÔNG dùng

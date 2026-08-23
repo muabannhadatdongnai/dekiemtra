@@ -1,5 +1,45 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 18: sửa layout "Bài tập phân hoá" từ
-# 3 cột ngang thành xếp dọc + phân hoá hướng dẫn STEM theo khối lớp — ĐÃ XONG, 265/265 test PASS)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 19: sửa 2/3 lỗi bản Word Phiếu Bài Tập
+# Lớp 1 phản hồi qua ảnh chụp — Bài 3 (icon đen trắng) CẦN HOAN CHỐT HƯỚNG, xem NEXT_STEPS.md)
+
+## PHIÊN 19 — Sửa lỗi bản Word "Phiếu Bài Tập" Lớp 1 (Bài 7/10/11/12), phản hồi qua ảnh chụp
+
+**Bối cảnh**: Hoan gửi ảnh chụp trực tiếp từ file Word đã xuất (Bài 7, Bài 10-11-12) + 1 ảnh tham
+khảo minh hoạ mong muốn cho Bài 3 (không phải ảnh chụp từ app).
+
+**1) Bài 7 "So sánh độ dài" (`do_dai_so_sanh`) - bản Word chỉ có số, không có gì để "quan sát".**
+- Trước: `buildDoDaiSoSanhParagraphs()` in đúng 1 dòng `"tên: 17 cm  ○  tên: 15 cm"` - đúng số
+  liệu nhưng không có "thước" nào để nhìn, trái tinh thần bài "quan sát số đo".
+- Sau: vẽ thêm 1 "thanh đo" xấp xỉ tỉ lệ thật bằng ký tự khối Unicode `"▬"` lặp lại ĐÚNG bằng số
+  cm (1 ký tự ~ 1cm) - in trên 2 dòng riêng (mỗi băng giấy 1 dòng, thẳng hàng bên trái) rồi mới
+  đến dòng điền dấu so sánh. KHÔNG dùng `Table` của docx để vẽ thanh (dù có thể tạo thanh đẹp hơn
+  bằng cell width/shading) - giữ đúng nguyên tắc đã ghi ở đầu `worksheetExportService.js`: tránh
+  nested Table vì dễ bị nền trắng bảng con đè lên nền màu bảng cha (lỗi đã từng gặp, xem mục 5).
+
+**2) Bài 10/11/12 - icon/glyph quá nhỏ do Word tự ngắt dòng không kiểm soát.**
+- Trước: `buildNhanDienHinhParagraphs` in TẤT CẢ hình chung 1 Paragraph (Word tự ngắt dòng theo bề
+  rộng trang); `buildDemHinhUngDungParagraphs` in TOÀN BỘ khay hình (15-20+ glyph) chung 1
+  Paragraph tương tự; `buildXemDongHoGioDungParagraphs` cố định 4 đồng hồ/dòng
+  (`chunkArray(items, 4)`) - cả 3 đều khiến glyph/emoji bị nhỏ khi in A4.
+- Sau: cả 3 hàm chủ động xuống dòng theo số lượng CỐ ĐỊNH/dòng (không để Word tự ngắt) + tăng cỡ
+  chữ (28-30 → 40): Bài 10 = 2 hình/dòng, Bài 11 (khay) = 5 hình/dòng (hằng số `TRAY_ROW_SIZE`),
+  Bài 12 = 2 đồng hồ/dòng (giảm từ 4).
+- Đã kiểm chứng bằng script build `.docx` THẬT (không mock) cho cả 4 dạng bài cùng lúc, đọc lại
+  `word/document.xml` qua JSZip, xác nhận đúng số ký tự "▬"/cm và đúng số item/dòng trước khi
+  giao - không chỉ đọc code bằng mắt.
+- Không cần test tự động mới: thay đổi thuần về hiển thị/layout Word, không có logic sinh số/toán
+  học mới cần kiểm chứng bằng test (đã kiểm bằng script build thật ở trên).
+- `npm test`: 265/265 PASS (không đổi số test - không có logic mới cần unit test riêng).
+  `npm run build`: sạch.
+
+**3) Bài 3 (icon màu 🚀🦋🌻... khó phân biệt khi in đen trắng) - CHƯA SỬA, cần Hoan chốt hướng.**
+- Ứng với dạng bài `dem_va_viet_so` ("Đếm và viết số") - dùng kho `ICONS` (16 emoji màu) trong
+  `worksheetSchemas.js`, in trực tiếp bằng `buildDemVaVietSoParagraphs()` (không qua glyph outline
+  như Bài 10/11 vì các icon này không có Unicode outline glyph tương đương phù hợp - táo, gà con,
+  bóng bay... không giống hình/chữ cái đơn giản).
+- Đây là quyết định về ASSET/kiến trúc (cần vẽ icon SVG line-art mới, hoặc thêm hẳn `printMode`
+  "color"/"bw" đổi bộ icon, hoặc tạm giữ nguyên) - không phải chỉnh câu lệnh/cỡ chữ đơn thuần như
+  2 mục trên, nên KHÔNG tự chọn thay Hoan. Xem đầy đủ 3 phương án (A/B/C) trong `NEXT_STEPS.md`
+  mục "CẦN QUYẾT ĐỊNH" - Hoan chọn hướng rồi mới code ở phiên tới.
 
 ## PHIÊN 18 — Sửa layout "Bài tập phân hoá" (3 cột → xếp dọc) + phân hoá STEM theo khối lớp
 
