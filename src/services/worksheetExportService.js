@@ -191,21 +191,47 @@ function buildSapXepThuTuParagraphs(items, showAnswers) {
 
 /**
  * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Độ dài", Lớp 1) ==================
- * Word không vẽ được thanh màu tỉ lệ như bản web (ClockFace/DoDaiSoSanhSection dùng SVG) - giữ
- * đúng tinh thần bài tập bằng văn bản thuần: liệt kê rõ tên + số đo mỗi băng giấy, sau đó đến
- * chỗ trống/dấu so sánh đúng.
+ * Word không vẽ được thanh màu tỉ lệ như bản web (ClockFace/DoDaiSoSanhSection dùng SVG).
+ *
+ * ================== SỬA LỖI (phản hồi giáo viên, Phiên 19) ==================
+ * Bản CŨ chỉ in "tên: 17 cm  ○  tên: 15 cm" - THUẦN VĂN BẢN, không có "thước" nào để "quan sát"
+ * cả (đúng câu lệnh đầu bài "Quan sát số đo rồi so sánh" nhưng thực ra chẳng có gì để quan sát
+ * ngoài 2 con số) - giáo viên phản ánh "không thấy độ dài của thước". Sửa: vẽ 1 "thanh đo" xấp xỉ
+ * TỈ LỆ THẬT bằng ký tự khối Unicode "▬" lặp lại ĐÚNG bằng số cm (1 ký tự ~ 1cm, cùng cỡ chữ nên
+ * đều nhau) - không cần Table (tránh đúng loại lỗi "nested table đè nền" đã ghi ở đầu file) mà
+ * vẫn cho học sinh "nhìn" thấy thanh dài/ngắn khác nhau như thước thật, không chỉ đọc số suông.
+ * 2 thanh của mỗi câu in TRÊN 2 dòng riêng (thẳng hàng bên trái) để dễ so sánh trực quan, dòng thứ
+ * 3 mới là chỗ điền dấu >, <, =.
  */
 function buildDoDaiSoSanhParagraphs(items, showAnswers) {
-  return items.map((it) => ({
-    children: [
-      new TextRun({
-        text: `${it.nameA}: ${it.cmA} cm   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${it.nameB}: ${it.cmB} cm`,
-        font: FONT,
-        size: 24,
-      }),
-    ],
-    spacing: { after: 120 },
-  }));
+  const rulerBar = (cm) => "▬".repeat(cm);
+  return items.flatMap((it) => [
+    {
+      children: [
+        new TextRun({ text: `${it.nameA} (${it.cmA} cm)  `, font: FONT, size: 22 }),
+        new TextRun({ text: rulerBar(it.cmA), font: FONT, size: 22, color: "2F855A" }),
+      ],
+      spacing: { after: 40 },
+    },
+    {
+      children: [
+        new TextRun({ text: `${it.nameB} (${it.cmB} cm)  `, font: FONT, size: 22 }),
+        new TextRun({ text: rulerBar(it.cmB), font: FONT, size: 22, color: "C05621" }),
+      ],
+      spacing: { after: 80 },
+    },
+    {
+      children: [
+        new TextRun({
+          text: `${it.nameA}   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${it.nameB}`,
+          font: FONT,
+          size: 24,
+          bold: showAnswers,
+        }),
+      ],
+      spacing: { after: 200 },
+    },
+  ]);
 }
 
 /**
@@ -219,14 +245,20 @@ const CLOCK_EMOJI_BY_HOUR = {
   7: "🕖", 8: "🕗", 9: "🕘", 10: "🕙", 11: "🕚", 12: "🕛",
 };
 
+/**
+ * ================== SỬA LỖI (phản hồi giáo viên, Phiên 19) ==================
+ * Trước đây 4 đồng hồ/dòng (chunkArray(items, 4)) khiến emoji đồng hồ bị ép quá nhỏ khi in trên
+ * khổ A4 (chữ + emoji chia đều cho 4 cột trong bề rộng cố định của trang). Giảm còn 2/dòng và
+ * tăng cỡ chữ emoji (30 -> 40) để đồng hồ đủ lớn, dễ nhìn kim khi in ra giấy.
+ */
 function buildXemDongHoGioDungParagraphs(items, showAnswers) {
-  return chunkArray(items, 4).map((row) => ({
+  return chunkArray(items, 2).map((row) => ({
     children: row.flatMap((it, idx) => {
       const text = `${CLOCK_EMOJI_BY_HOUR[it.hour] || "🕐"}  ${showAnswers ? `${it.hour} giờ` : `${BLANK} giờ`}`;
-      const run = new TextRun({ text, font: FONT, size: 30 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "      ", font: FONT, size: 24 })] : [run];
+      const run = new TextRun({ text, font: FONT, size: 40 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "          ", font: FONT, size: 24 })] : [run];
     }),
-    spacing: { after: 140 },
+    spacing: { after: 200 },
   }));
 }
 
@@ -794,19 +826,22 @@ const SHAPE_GLYPHS = {
   "Hình thang": "⏢",
 };
 
+/**
+ * ================== SỬA LỖI (phản hồi giáo viên, Phiên 19) ==================
+ * Trước đây TẤT CẢ hình in chung 1 dòng (1 Paragraph, nối bằng khoảng trắng) - với 5 hình trở
+ * lên, dòng bị dồn hết vào 1 hàng ngang rồi tự ngắt xuống dòng theo bề rộng trang một cách
+ * KHÔNG kiểm soát, khiến glyph hình bị nhỏ/dồn sát nhau, khó tô màu theo từng ô riêng biệt.
+ * Sửa: xuống dòng CHỦ ĐỘNG 2 hình/dòng (thay vì để Word tự ngắt), tăng cỡ chữ glyph (28 -> 40)
+ * để mỗi hình đủ lớn, rõ ràng khi in.
+ */
 function buildNhanDienHinhParagraphs(shapes) {
-  return [
-    {
-      children: [
-        new TextRun({
-          text: shapes.map((s) => `${SHAPE_GLYPHS[s] || "○"} ${s}`).join("      "),
-          font: FONT,
-          size: 28,
-        }),
-      ],
-      spacing: { after: 100 },
-    },
-  ];
+  return chunkArray(shapes, 2).map((row) => ({
+    children: row.flatMap((s, idx) => {
+      const run = new TextRun({ text: `${SHAPE_GLYPHS[s] || "○"} ${s}`, font: FONT, size: 40 });
+      return idx < row.length - 1 ? [run, new TextRun({ text: "          ", font: FONT, size: 24 })] : [run];
+    }),
+    spacing: { after: 160 },
+  }));
 }
 
 /**
@@ -814,17 +849,27 @@ function buildNhanDienHinhParagraphs(shapes) {
  * "Khay hình" trộn lẫn in bằng glyph Unicode (tái dùng SHAPE_GLYPHS - Word không vẽ SVG được
  * như bản web), tiếp theo là các câu hỏi "Có bao nhiêu Hình X?" kèm chỗ trống hoặc đáp số.
  */
+/**
+ * ================== SỬA LỖI (phản hồi giáo viên, Phiên 19) ==================
+ * Trước đây TOÀN BỘ khay hình (có thể 15-20+ glyph) in chung 1 Paragraph nối bằng 2 khoảng
+ * trắng - Word tự ngắt dòng theo bề rộng trang, ra bao nhiêu hình/dòng là NGẪU NHIÊN (thường rất
+ * nhiều vì glyph nhỏ), khiến hình bị dồn sát nhau, khó đếm từng cái. Sửa: xuống dòng CHỦ ĐỘNG
+ * theo TRAY_ROW_SIZE hình/dòng (thay vì để Word tự ngắt) + tăng cỡ chữ glyph (30 -> 40) để mỗi
+ * hình đủ lớn, rõ ràng, dễ đếm khi in.
+ */
+const TRAY_ROW_SIZE = 5;
+
 function buildDemHinhUngDungParagraphs(data, showAnswers) {
-  const trayLine = {
+  const trayLines = chunkArray(data.trayIcons, TRAY_ROW_SIZE).map((row) => ({
     children: [
       new TextRun({
-        text: data.trayIcons.map((s) => SHAPE_GLYPHS[s] || "○").join("  "),
+        text: row.map((s) => SHAPE_GLYPHS[s] || "○").join("     "),
         font: FONT,
-        size: 30,
+        size: 40,
       }),
     ],
-    spacing: { after: 100 },
-  };
+    spacing: { after: 120 },
+  }));
   const questionLines = data.questions.map((q) => ({
     children: [
       new TextRun({
@@ -835,7 +880,7 @@ function buildDemHinhUngDungParagraphs(data, showAnswers) {
     ],
     spacing: { after: 80 },
   }));
-  return [trayLine, ...questionLines];
+  return [...trayLines, ...questionLines];
 }
 
 // GIAI ĐOẠN F2 (ý b) - đồng bộ với GIAI_TOAN_LINE_COUNT bên WorksheetPreview.jsx: trước đây chỉ
