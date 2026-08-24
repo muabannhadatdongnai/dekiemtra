@@ -1,6 +1,58 @@
 # AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 19: sửa 2/3 lỗi bản Word Phiếu Bài Tập
 # Lớp 1 phản hồi qua ảnh chụp — Bài 3 (icon đen trắng) CẦN HOAN CHỐT HƯỚNG, xem NEXT_STEPS.md)
 
+## PHIÊN 20 — Bài 3 "Đếm và viết số": icon line-art đen trắng (thay emoji màu), hướng (A) đã chọn
+
+**Bối cảnh**: Phiên 19 phát hiện Bài 3 (`dem_va_viet_so`) dùng icon emoji màu (🍎⭐🚗...) khó phân
+biệt khi máy in tự chuyển sang thang xám, nhưng chưa sửa vì cần Hoan chốt hướng trước (3 phương
+án A/B/C, xem NEXT_STEPS.md). Hoan chọn **hướng (A)**: vẽ bộ icon SVG line-art tự vẽ, thay hẳn
+emoji ở cả 2 tầng hiển thị.
+
+**Đã làm:**
+1. **Vẽ mới 16 icon line-art** (nét vẽ đen trắng, `stroke-width` đồng bộ) khớp 1-1 với 16 emoji
+   trong kho `ICONS` (`worksheetSchemas.js`): táo, sao, ô tô, gà con, hoa hướng dương, bướm, cà
+   rốt, cá, bóng bay, kẹo mút, tên lửa, rùa, gấu bông, bánh quy, hoa đào, ong. Nguồn vẽ DUY NHẤT:
+   `scripts/lineArtIconDefs.js`.
+2. **1 nguồn, 2 định dạng xuất** — tránh vẽ lại 2 lần cho web/Word:
+   - `src/data/lineArtIcons.js` — SVG markup (dùng cho web, component `LineArtIcon` mới trong
+     `WorksheetPreview.jsx`, render bằng `dangerouslySetInnerHTML` + `viewBox`).
+   - `src/data/lineArtIconPngs.js` — PNG base64 RENDER SẴN từ CÙNG SVG (dùng cho Word, `ImageRun`
+     trong `worksheetExportService.js`) - lý do dùng PNG thay vì SVG thẳng cho Word: docx/Word
+     không đảm bảo tương thích SVG ở mọi phiên bản, PNG là lựa chọn an toàn nhất.
+   - Script tạo lại (không chạy trong runtime app, không thêm dependency native vào bundle
+     production): `scripts/render-line-art-icons.js`, dùng `@resvg/resvg-js` (cài tạm bằng
+     `npm install --no-save`, KHÔNG có trong `package.json`).
+3. **Web** (`WorksheetPreview.jsx`): `DemVaVietSoSection` đổi từ in chuỗi emoji sang render mảng
+   `<LineArtIcon>` (có fallback về emoji gốc nếu 1 icon nào đó thiếu bản line-art - an toàn khi mở
+   rộng kho `ICONS` sau này quên vẽ icon mới).
+4. **Word** (`worksheetExportService.js`): `buildDemVaVietSoParagraphs()` đổi từ `TextRun` emoji
+   sang `ImageRun` (PNG 30x30), xuống dòng CHỦ ĐỘNG 6 icon/dòng (`DEM_ICON_ROW_SIZE`, cùng tinh
+   thần fix Bài 10/11 ở Phiên 19 - tránh để Word tự ngắt dòng ngẫu nhiên). Có helper
+   `base64ToUint8Array()` (dùng `atob()`, an toàn cho môi trường browser - file này chạy client-side).
+5. **KHÔNG thêm cờ `printMode` riêng** (khác draft cũ ở mục "Thiết kế chế độ in Màu/Đen trắng") -
+   icon line-art vốn đã trung tính màu sắc (chỉ có 1 màu đen), rõ nét ở MỌI chế độ in mà không cần
+   logic rẽ nhánh theo chế độ.
+- **Test mới**: `test/worksheetLineArtIcons.test.js` (3 test) - build .docx THẬT, giải nén JSZip
+  xác nhận: (1) đủ 16/16 icon có bản line-art cả web lẫn Word; (2) document.xml KHÔNG còn emoji
+  màu thô, có đủ số thẻ `<w:drawing>` = tổng số icon đếm được; (3) đáp số vẫn ẩn/hiện đúng theo
+  `showAnswers`. Phát hiện + xử lý qua test: docx dedupe ảnh TRÙNG BYTE thành 1 file `/media` dùng
+  chung (không phải bug - hành vi bình thường của thư viện `docx`, đã sửa lại assertion cho đúng).
+- Sanity-check độc lập thêm: build 1 file `.docx` demo thật, giải nén xem trực tiếp 1 ảnh PNG nhúng
+  bằng mắt - xác nhận đúng icon mong muốn (không lệch icon do nhầm base64 key).
+- `npm test`: 268/268 PASS (265 cũ + 3 mới). `npm run build`: sạch (exit 0), bundle trang chính
+  tăng ~45KB (480KB → 525KB) do nhúng 16 icon PNG base64 - chấp nhận được, không ảnh hưởng dependency
+  production (`@resvg/resvg-js` chỉ dùng lúc chạy script tạo icon, không nằm trong `package.json`).
+
+### ⚠️ Cần Hoan test thực tế (chưa test được trong sandbox)
+1. Mở thử bản Word Bài 3 bằng Microsoft Word thật (không chỉ soi XML) - xác nhận icon line-art
+   hiển thị đúng vị trí/kích thước, không bị lệch dòng khi in trên khổ giấy A4 thật.
+2. Xem bản web (`npm run dev`) - icon line-art có đủ rõ/đẹp ở các cỡ màn hình khác nhau không.
+3. In thử Bài 3 ở CẢ 2 chế độ (màu và đen trắng) - xác nhận icon rõ nét ở cả 2, đúng mục tiêu ban
+   đầu của việc sửa lỗi này.
+4. Nếu thấy 1 icon nào chưa đẹp/chưa giống hình thật (icon line-art là hình vẽ mới hoàn toàn, chưa
+   qua mắt giáo viên/học sinh thật) - phản hồi lại để chỉnh, sửa ở `scripts/lineArtIconDefs.js` rồi
+   chạy lại `node scripts/render-line-art-icons.js` (không sửa tay 2 file tự động sinh).
+
 ## PHIÊN 19 — Sửa lỗi bản Word "Phiếu Bài Tập" Lớp 1 (Bài 7/10/11/12), phản hồi qua ảnh chụp
 
 **Bối cảnh**: Hoan gửi ảnh chụp trực tiếp từ file Word đã xuất (Bài 7, Bài 10-11-12) + 1 ảnh tham

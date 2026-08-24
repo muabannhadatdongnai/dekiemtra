@@ -2,11 +2,51 @@
 
 > Trạng thái: **Lớp 5 (Toán) đã xong Đợt 1-4** (14 dạng bài) + **PHIÊN 16: đã sửa 3 lỗi sư phạm
 > phản hồi thực tế (Trạm 6/7/12)** + **PHIÊN 17: đã sửa 3 lỗi phản hồi thực tế từ Lớp 4 (Bài
-> 6/8/9)** + **PHIÊN 19: đã sửa 2/3 lỗi bản Word Lớp 1 phản hồi qua ảnh chụp (Bài 7/10/11/12);
-> Bài 3 (icon màu khó phân biệt khi in đen trắng) CẦN HOAN CHỐT HƯỚNG trước khi code (xem mục
-> "CẦN QUYẾT ĐỊNH" bên dưới)**. File này để mang sang chat mới không mất ngữ cảnh.
+> 6/8/9)** + **PHIÊN 19: đã sửa 2/3 lỗi bản Word Lớp 1 phản hồi qua ảnh chụp (Bài 7/10/11/12)** +
+> **PHIÊN 20: đã sửa nốt Bài 3 (icon line-art đen trắng, hướng (A) Hoan đã chọn) — Bài 3 XONG,
+> KHÔNG còn mục nào tồn đọng từ chuỗi phản hồi Word Lớp 1**. File này để mang sang chat mới không
+> mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 19) — Sửa lỗi bản Word Lớp 1 (phản hồi qua ảnh chụp trực tiếp từ file Word)
+## ✅ MỚI NHẤT (Phiên 20) — Bài 3 "Đếm và viết số": icon line-art đen trắng thay emoji màu
+Hoan chọn hướng **(A)** trong 3 phương án Phiên 19 đưa ra: vẽ bộ icon SVG line-art tự vẽ.
+
+1. Vẽ mới 16 icon line-art (nét đen trắng, khớp 1-1 kho `ICONS` cũ: táo, sao, ô tô, gà con, hoa
+   hướng dương, bướm, cà rốt, cá, bóng bay, kẹo mút, tên lửa, rùa, gấu bông, bánh quy, hoa đào,
+   ong). Nguồn vẽ DUY NHẤT: `scripts/lineArtIconDefs.js`.
+2. Sinh 2 định dạng từ CÙNG nguồn (tránh vẽ 2 lần, tránh lệch icon giữa web/Word):
+   - `src/data/lineArtIcons.js` (SVG, dùng cho web).
+   - `src/data/lineArtIconPngs.js` (PNG base64 render sẵn, dùng cho Word - docx không đảm bảo
+     tương thích SVG mọi phiên bản Word nên dùng PNG cho an toàn).
+   - Script tái tạo (không chạy trong runtime app, không thêm dependency native vào bundle
+     production): `scripts/render-line-art-icons.js`, cần cài tạm `@resvg/resvg-js` bằng
+     `npm install --no-save` (KHÔNG có trong `package.json`).
+3. Web: `WorksheetPreview.jsx` có component `LineArtIcon` mới (có fallback về emoji gốc nếu thiếu
+   bản line-art - an toàn khi mở rộng kho `ICONS` sau này).
+4. Word: `worksheetExportService.js` đổi `buildDemVaVietSoParagraphs()` từ `TextRun` emoji sang
+   `ImageRun` PNG, chủ động xuống dòng 6 icon/dòng (cùng tinh thần fix Bài 10/11 Phiên 19).
+5. **Không cần thêm cờ `printMode`** — icon line-art vốn đã đen trắng, rõ nét ở MỌI chế độ in nên
+   mục "(B) Thêm `printMode: color/bw`" ở draft cũ bên dưới coi như KHÔNG cần làm nữa cho vấn đề
+   icon Bài 3 (draft `printMode` vẫn còn giá trị nếu sau này Hoan muốn kiểm soát in màu/đen trắng
+   cho các phần khác của phiếu, nhưng không còn liên quan tới Bài 3).
+- Test mới: `test/worksheetLineArtIcons.test.js` (3 test, build `.docx` THẬT + giải nén JSZip xác
+  nhận đủ 16/16 icon, không còn emoji màu thô trong `document.xml`, đúng số thẻ `<w:drawing>`, đáp
+  số ẩn/hiện đúng). Đã sanity-check thêm bằng mắt: build 1 file docx demo, giải nén xem 1 icon
+  nhúng thật, đúng icon mong muốn (không lệch icon do nhầm base64 key).
+- `npm test`: **268/268 PASS** (265 cũ + 3 mới). `npm run build`: sạch, bundle trang chính tăng
+  ~45KB (do nhúng 16 icon PNG base64) - chấp nhận được.
+
+### ⚠️ Cần Hoan test thực tế (Phiên 20, sandbox không làm được)
+1. Mở bản Word Bài 3 bằng Microsoft Word thật - icon line-art đúng vị trí/kích thước, không lệch
+   dòng khi in A4 thật.
+2. Xem bản web (`npm run dev`) - icon line-art đủ rõ/đẹp ở nhiều cỡ màn hình.
+3. In thử Bài 3 ở CẢ 2 chế độ màu và đen trắng - xác nhận rõ nét ở cả 2 (đúng mục tiêu ban đầu).
+4. Icon line-art là hình vẽ MỚI hoàn toàn, chưa qua mắt giáo viên/học sinh thật - nếu thấy icon
+   nào chưa đẹp/chưa giống hình gốc, phản hồi lại để chỉnh (sửa ở `scripts/lineArtIconDefs.js` rồi
+   chạy lại `node scripts/render-line-art-icons.js`, KHÔNG sửa tay 2 file tự sinh
+   `lineArtIcons.js`/`lineArtIconPngs.js`).
+
+## (Phiên 19) — Sửa lỗi bản Word Lớp 1 (phản hồi qua ảnh chụp trực tiếp từ file Word)
+
 Hoan gửi 2 ảnh chụp file Word thật (Bài 7, Bài 10/11/12) + 1 ảnh tham khảo (Bài 3, không phải từ
 app) chỉ ra 3 vấn đề. Đã sửa 2/3, còn 1 cần Hoan chốt hướng trước khi code.
 
@@ -22,34 +62,13 @@ app) chỉ ra 3 vấn đề. Đã sửa 2/3, còn 1 cần Hoan chốt hướng t
    cho Bài 10, 5 hình/dòng cho khay Bài 11, 2 đồng hồ/dòng cho Bài 12 - trước đây 4/dòng) THAY VÌ
    để Word tự ngắt, đồng thời tăng cỡ chữ glyph/emoji (28-30 -> 40) để đủ lớn khi in.
 3. **Bài 3 (ảnh tham khảo Hoan gửi, không phải ảnh chụp từ app) - icon màu (🚀🦋🌻...) khó phân
-   biệt khi in đen trắng, đề xuất dùng "line art"** — ứng với dạng bài `dem_va_viet_so` ("Đếm và
-   viết số", dùng kho `ICONS` emoji màu trong `worksheetSchemas.js`). **CHƯA SỬA** - xem mục "CẦN
-   QUYẾT ĐỊNH" ngay bên dưới, cần Hoan chọn hướng trước khi code vì đây là quyết định về ASSET/
-   kiến trúc, không phải chỉnh câu lệnh/cỡ chữ đơn thuần như 2 mục trên.
+   biệt khi in đen trắng, đề xuất dùng "line art"** — ứng với dạng bài `dem_va_viet_so` (đã sửa ở
+   **Phiên 20**, hướng (A) - xem mục "MỚI NHẤT" ở đầu file).
 - Đã kiểm tra bằng script build thật 1 file `.docx` chứa cả 4 dạng bài (7/10/11/12), mở bằng
   JSZip đọc `word/document.xml`, xác nhận đúng nội dung mong muốn (thanh "▬" tỉ lệ đúng cm, xuống
   dòng đúng số lượng/dòng đã đặt) trước khi giao - không chỉ tin code đọc bằng mắt.
 - `npm test`: 265/265 PASS (không cần test mới - đây là thay đổi hiển thị Word thuần, không có
   logic sinh số mới cần kiểm chứng toán học). `npm run build`: sạch.
-
-### ⚠️ CẦN QUYẾT ĐỊNH (trước khi làm Bài 3 - icon đen trắng)
-Icon hiện tại là ký tự emoji Unicode thuần (không phải ảnh) - máy in đen trắng sẽ tự chuyển emoji
-màu sang thang xám, nhiều icon (đặc biệt icon có chi tiết nhỏ/màu gradient) dễ bị mờ/khó phân biệt
-khi in ở cỡ nhỏ. Muốn có "line art" (nét vẽ đen trắng) THẬT thay vì emoji, cần 1 trong các hướng
-sau (mỗi hướng chi phí/công sức khác hẳn nhau, không nên tự chọn thay Hoan):
-- **(A) Icon SVG line-art tự vẽ** - tạo bộ ~16 icon outline đơn giản (khớp kho `ICONS` hiện tại:
-  táo, sao, ô tô, gà con, hoa hướng dương, bướm, cà rốt, cá, bóng bay, kẹo mút, tên lửa, rùa, gấu
-  bông, bánh quy, hoa đào, ong) rồi nhúng bằng `ImageRun` (Word) + `<img>`/SVG (web) thay hẳn
-  emoji - ĐẸP NHẤT, đồng bộ 2 bản, nhưng tốn 1 phiên riêng để vẽ + tích hợp cả 4 tầng.
-- **(B) Thêm `printMode: "color" | "bw"` như draft cũ (mục "Thiết kế chế độ in Màu/Đen trắng" bên
-  dưới)** - khi chọn "Đen trắng" thì ĐỔI hẳn sang bộ ký tự outline Unicode có sẵn (kiểu
-  `SHAPE_GLYPHS` đang dùng cho Bài 10/11: ☆ □ ○ ...) cho MỌI icon, chấp nhận diễn đạt kém sinh
-  động hơn emoji màu nhưng chắc chắn rõ nét ở mọi chế độ in - ÍT CÔNG SỨC HƠN (A) vì không cần vẽ
-  ảnh mới, nhưng KHÔNG áp dụng được cho icon không có glyph Unicode tương đương tốt (táo, gà con,
-  bóng bay... không có outline glyph chuẩn).
-- **(C) Tạm không sửa Bài 3** - giữ nguyên emoji màu, chỉ ghi chú trong app/tài liệu rằng bài này
-  nên in màu để rõ nhất - ÍT CÔNG SỨC NHẤT nhưng không giải quyết đúng phản hồi giáo viên.
-Hoan xác nhận hướng (A)/(B)/(C) - hoặc đề xuất khác - ở phiên tới rồi mới code tiếp.
 
 ## (Phiên 17) — Sửa 3 lỗi phản hồi thực tế sau khi Hoan test phiếu Lớp 4 (Bài 6, 8, 9)
 1. **Bài 9 "Góc và đơn vị đo góc" - bỏ hẳn số đo góc dạng chữ (VD "159°") khỏi bản Word** (cả
