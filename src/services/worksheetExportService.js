@@ -19,6 +19,13 @@ import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
 // MỞ RỘNG LỚP 3, ĐỢT 3: format số kiểu Việt Nam DÙNG CHUNG với WorksheetPreview.jsx (web) - xem
 // numberFormatUtils.js.
 import { formatSoTuNhien, formatSoTrongChuoi, formatSoThapPhan } from "./numberFormatUtils";
+// ================== SỬA LỖI "Bài 3 icon màu khó phân biệt khi in đen trắng" (phản hồi giáo viên
+// qua ảnh tham khảo, xem NEXT_STEPS.md) ==================
+// Icon emoji màu (🍎🦋🚀...) dùng cho "Đếm và viết số" giờ ĐỔI HẲN sang icon line-art (nét vẽ đen
+// trắng, PNG render sẵn từ SVG dùng chung với bản web - xem src/data/lineArtIcons.js +
+// lineArtIconPngs.js + scripts/render-line-art-icons.js) - rõ nét ở MỌI chế độ in (màu lẫn đen
+// trắng), không cần thêm cờ printMode riêng vì icon line-art vốn đã trung tính màu sắc.
+import { LINE_ART_ICON_PNG_BASE64 } from "@/data/lineArtIconPngs";
 
 /**
  * worksheetExportService.js
@@ -111,14 +118,39 @@ function buildTinhNhamParagraphs(items, showAnswers) {
   }));
 }
 
+// data:base64 -> Uint8Array, KHÔNG dùng Buffer (file này chạy ở browser) - cùng kiểu chuyển đổi
+// với dataUrlToUint8Array() bên dưới (dùng cho QR), chỉ khác đầu vào là base64 thuần (không có
+// tiền tố "data:...;base64,").
+function base64ToUint8Array(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+const DEM_ICON_ROW_SIZE = 6; // icon/dòng - xuống dòng CHỦ ĐỘNG, tránh để Word tự ngắt dòng ngẫu
+// nhiên như lỗi đã sửa ở Bài 10/11 (Phiên 19).
+
 function buildDemVaVietSoParagraphs(items, showAnswers) {
-  return items.map((it) => ({
-    children: [
-      new TextRun({ text: Array(it.count).fill(it.icon).join("  ") + "   ", size: 26 }),
-      new TextRun({ text: `→  Số: ${showAnswers ? it.answer : BLANK}`, font: FONT, size: 24 }),
-    ],
-    spacing: { after: 120 },
-  }));
+  return items.flatMap((it) => {
+    const base64 = LINE_ART_ICON_PNG_BASE64[it.icon];
+    const iconRows = chunkArray(Array(it.count).fill(0), DEM_ICON_ROW_SIZE).map((row) => ({
+      children: row.flatMap((_, idx) => {
+        const run = base64
+          ? new ImageRun({ type: "png", data: base64ToUint8Array(base64), transformation: { width: 30, height: 30 } })
+          : new TextRun({ text: it.icon, size: 30 }); // dự phòng nếu icon chưa có bản line-art
+        return idx < row.length - 1 ? [run, new TextRun({ text: "   " })] : [run];
+      }),
+      spacing: { after: 40 },
+    }));
+    return [
+      ...iconRows,
+      {
+        children: [new TextRun({ text: `→  Số: ${showAnswers ? it.answer : BLANK}`, font: FONT, size: 24 })],
+        spacing: { after: 160 },
+      },
+    ];
+  });
 }
 
 function buildSoSanhParagraphs(items, showAnswers) {
