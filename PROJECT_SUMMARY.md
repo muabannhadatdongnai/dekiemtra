@@ -1,7 +1,49 @@
 # AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 19: sửa 2/3 lỗi bản Word Phiếu Bài Tập
 # Lớp 1 phản hồi qua ảnh chụp — Bài 3 (icon đen trắng) CẦN HOAN CHỐT HƯỚNG, xem NEXT_STEPS.md)
 
-## PHIÊN 20 — Bài 3 "Đếm và viết số": icon line-art đen trắng (thay emoji màu), hướng (A) đã chọn
+## PHIÊN 21 — Rà soát chủ động toàn bộ codebase (Hoan yêu cầu "xem còn gì chưa làm") + phát hiện
+## + sửa 1 lỗi thật trong tính điểm ma trận đề (chưa từng được báo qua phản hồi giáo viên)
+
+**Phạm vi rà soát** (không chỉ riêng module Phiếu Bài Tập như các phiên trước):
+1. Audit lại TOÀN BỘ 38 hàm `generate*()` trong `worksheetSchemas.js` theo đúng nguyên tắc
+   "dedupe bằng `used` Set" đã chốt ở Phiên 19 — kết quả: các hàm KHÔNG dùng `used` Set đều đã
+   được kiểm tra thủ công và xác nhận KHÔNG có rủi ro trùng lặp thực tế (phạm vi số đủ rộng, hoặc
+   dùng cơ chế shuffle-slice/Set khác đã đảm bảo tính duy nhất theo cách phù hợp với từng dạng bài)
+   - KHÔNG có bug mới nào ở nhóm này.
+2. `npm audit`: 4 lỗ hổng mức HIGH — 3 lỗi thuộc `next@14.2.35` (có bản vá qua nâng cấp lên
+   `next@16.3.2`, nhưng đây là BREAKING CHANGE, CHƯA làm vì cần Hoan xác nhận trước khi nâng major
+   version Next.js) + 1 lỗi ở `xlsx` (Prototype Pollution/ReDoS, dùng thật ở tính năng xuất/nhập
+   Excel hàng loạt Nhận xét học bạ - `reportCommentExportService.js`/`reportCommentBulkParser.js`
+   - KHÔNG có bản vá từ nhà phát hành `xlsx`, cần theo dõi tiếp, chưa có hướng xử lý ngay).
+3. Không có secret/API key hardcode trong code - toàn bộ đọc qua `process.env.*` đúng chuẩn.
+4. **PHÁT HIỆN 1 LỖI THẬT qua fuzz-test chủ động** (không phải do giáo viên phản hồi) ở
+   `scoringUtils.js` (`computeScores()` - dùng cho tính năng "Ma trận đề kiểm tra", tự động gán
+   điểm từng câu theo mức độ NHẬN BIẾT/THÔNG HIỂU/VẬN DỤNG/VẬN DỤNG CAO sao cho tổng = 10):
+   - **Lỗi**: phần dư do làm tròn 0.25đ (drift) trước đây bị dồn HẾT vào câu CUỐI CÙNG bất kể câu
+     đó vốn đáng bao nhiêu điểm - với đề nhiều câu (VD 12 câu), câu cuối có thể chỉ đáng 0.5đ, drift
+     âm dồn vào kéo điểm xuống **0 hoặc ÂM (VD "-0.25 điểm")** - vô lý trên 1 đề kiểm tra thật.
+   - **Đã xác nhận bằng fuzz-test**: chạy 20.000 tổ hợp ngẫu nhiên (1-15 câu, mức độ ngẫu nhiên) -
+     **1.042/20.000 lần** (~5.2%) ra ít nhất 1 câu có điểm <= 0.
+   - **SỬA**: đổi cơ chế rải drift - (1) áp SÀN tối thiểu 0.25đ cho MỌI câu ngay từ đầu (không câu
+     nào được 0đ); (2) drift còn lại được rải theo TỪNG NẤC 0.25đ vào câu đang có điểm CAO NHẤT
+     tại mỗi vòng (chọn lại sau mỗi lần rải), bỏ qua câu đã chạm sàn - vừa đảm bảo tổng luôn CHÍNH
+     XÁC = 10, vừa không câu nào bị âm/0 điểm.
+   - **Test mới**: `test/worksheetScoringUtils.test.js` (6 test, gồm fuzz 3000+3000+1000 tổ hợp) -
+     xác nhận: không câu nào <= 0, tổng luôn chính xác 10, mọi điểm là bội số 0.25, thứ tự điểm
+     tăng theo độ khó, và test lại ĐÚNG case đã gây lỗi cụ thể tìm được (12 câu như trên).
+- `npm test`: **274/274 PASS** (268 cũ + 6 mới). `npm run build`: sạch.
+
+### ⚠️ Cần Hoan xác nhận
+1. **Nâng cấp Next.js 14.2.35 -> 16.3.2** để vá 3/4 lỗ hổng bảo mật mức HIGH - là breaking change
+   (Next 15/16 đổi 1 số API async params/searchParams, có thể cần sửa vài route) - CHƯA làm, cần
+   Hoan xác nhận có muốn nâng cấp ở phiên riêng không (rủi ro thấp cho app nội bộ ít người dùng,
+   nhưng nên cân nhắc nếu public-facing).
+2. Lỗ hổng `xlsx` (Prototype Pollution/ReDoS) hiện KHÔNG có bản vá từ nhà phát hành - rủi ro thấp
+   vì app chỉ dùng để giáo viên tự nhập/xuất file Excel nhận xét học bạ của chính họ (không xử lý
+   file từ nguồn không tin cậy), nhưng nên tránh mở tính năng này cho người dùng ẩn danh/công khai
+   tải file Excel bất kỳ lên trong tương lai.
+
+
 
 **Bối cảnh**: Phiên 19 phát hiện Bài 3 (`dem_va_viet_so`) dùng icon emoji màu (🍎⭐🚗...) khó phân
 biệt khi máy in tự chuyển sang thang xám, nhưng chưa sửa vì cần Hoan chốt hướng trước (3 phương

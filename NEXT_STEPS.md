@@ -4,10 +4,27 @@
 > phản hồi thực tế (Trạm 6/7/12)** + **PHIÊN 17: đã sửa 3 lỗi phản hồi thực tế từ Lớp 4 (Bài
 > 6/8/9)** + **PHIÊN 19: đã sửa 2/3 lỗi bản Word Lớp 1 phản hồi qua ảnh chụp (Bài 7/10/11/12)** +
 > **PHIÊN 20: đã sửa nốt Bài 3 (icon line-art đen trắng, hướng (A) Hoan đã chọn) — Bài 3 XONG,
-> KHÔNG còn mục nào tồn đọng từ chuỗi phản hồi Word Lớp 1**. File này để mang sang chat mới không
-> mất ngữ cảnh.
+> KHÔNG còn mục nào tồn đọng từ chuỗi phản hồi Word Lớp 1** + **PHIÊN 21: rà soát chủ động TOÀN
+> BỘ codebase (không riêng Phiếu Bài Tập) - phát hiện + sửa 1 lỗi thật (điểm câu hỏi có thể ra
+> ÂM ở tính năng Ma trận đề với đề nhiều câu) - CẦN Hoan xác nhận việc nâng cấp Next.js để vá
+> 3 lỗ hổng bảo mật mức HIGH (xem mục "CẦN XÁC NHẬN" ở đầu mục Phiên 21)**. File này để mang
+> sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 20) — Bài 3 "Đếm và viết số": icon line-art đen trắng thay emoji màu
+## ✅ MỚI NHẤT (Phiên 21) — Rà soát chủ động toàn bộ codebase + sửa lỗi tính điểm Ma trận đề
+Hoan hỏi "còn gì chưa làm/cần bổ sung" - đã rà soát TOÀN BỘ dự án (không chỉ riêng module Phiếu Bài
+Tập đã quen thuộc), gồm: audit dedupe 38 hàm sinh đề, `npm audit` bảo mật dependency, kiểm tra
+secret/API key hardcode, và fuzz-test các hàm logic thuần chưa có test.
+
+**Phát hiện quan trọng nhất - lỗi THẬT trong `computeScores()` (`scoringUtils.js`, dùng cho tính
+năng "Ma trận đề kiểm tra"):** với đề nhiều câu (VD 12 câu), phần dư làm tròn 0.25đ trước đây dồn
+hết vào câu CUỐI CÙNG, có thể kéo điểm câu đó xuống **0 hoặc ÂM** ("-0.25 điểm") - fuzz-test 20.000
+tổ hợp cho thấy xảy ra ~5.2% trường hợp. ĐÃ SỬA: áp sàn 0.25đ cho mọi câu + rải drift theo nấc
+0.25đ vào câu điểm cao nhất mỗi vòng (không dồn 1 chỗ). Test mới `worksheetScoringUtils.test.js`
+(6 test, fuzz hàng nghìn tổ hợp) xác nhận hết lỗi. `npm test`: **274/274 PASS**. Chi tiết đầy đủ +
+2 việc cần Hoan xác nhận (nâng cấp Next.js vá bảo mật, theo dõi lỗ hổng `xlsx` chưa có bản vá) xem
+`PROJECT_SUMMARY.md` mục "PHIÊN 21".
+
+## (Phiên 20) — Bài 3 "Đếm và viết số": icon line-art đen trắng (thay emoji màu), hướng (A) đã chọn
 Hoan chọn hướng **(A)** trong 3 phương án Phiên 19 đưa ra: vẽ bộ icon SVG line-art tự vẽ.
 
 1. Vẽ mới 16 icon line-art (nét đen trắng, khớp 1-1 kho `ICONS` cũ: táo, sao, ô tô, gà con, hoa
