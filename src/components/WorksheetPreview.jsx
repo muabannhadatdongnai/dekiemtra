@@ -8,6 +8,10 @@ import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
 // MỞ RỘNG LỚP 3, ĐỢT 3: format số kiểu Việt Nam (dấu chấm phân cách hàng nghìn) DÙNG CHUNG với
 // worksheetExportService.js - xem numberFormatUtils.js.
 import { formatSoTuNhien, formatSoTrongChuoi, formatSoThapPhan } from "@/services/numberFormatUtils";
+// ================== SỬA LỖI "Bài 3 icon màu khó phân biệt khi in đen trắng" ==================
+// Icon emoji màu -> icon line-art (nét vẽ đen trắng), dùng chung 1 bộ SVG với bản Word (xem
+// lineArtIconPngs.js + scripts/render-line-art-icons.js) - xem chi tiết ở LineArtIcon bên dưới.
+import { getLineArtIcon } from "@/data/lineArtIcons";
 
 /**
  * WorksheetPreview.jsx
@@ -268,6 +272,30 @@ function TinhNhamSection({ items, accent }) {
   );
 }
 
+/**
+ * Icon LINE-ART (nét vẽ đen trắng) - THAY cho emoji màu (🍎🦋🚀...) vốn khó phân biệt khi máy in
+ * tự chuyển emoji màu sang thang xám (phản hồi giáo viên qua ảnh tham khảo, xem NEXT_STEPS.md
+ * mục "Bài 3"). Vẫn tra cứu bằng chính emoji làm key (không đổi cấu trúc dữ liệu generator) - xem
+ * kho đầy đủ + cách tạo lại ở src/data/lineArtIcons.js.
+ * Có fallback về emoji gốc nếu 1 icon nào đó chưa có bản line-art tương ứng (an toàn khi mở rộng
+ * kho ICONS sau này mà quên vẽ icon mới).
+ */
+function LineArtIcon({ emoji, size = 26 }) {
+  const def = getLineArtIcon(emoji);
+  if (!def) return <span style={{ fontSize: size }}>{emoji}</span>;
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      style={{ display: "inline-block", flexShrink: 0 }}
+      role="img"
+      aria-label={def.name}
+      dangerouslySetInnerHTML={{ __html: def.svgInner }}
+    />
+  );
+}
+
 function DemVaVietSoSection({ items, accent }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: 10 }}>
@@ -280,9 +308,14 @@ function DemVaVietSoSection({ items, accent }) {
             border: `1.5px dashed ${accent}`,
             borderRadius: 12,
             padding: "8px 12px",
+            maxWidth: 220,
           }}
         >
-          <div style={{ fontSize: 20, letterSpacing: 3 }}>{Array(it.count).fill(it.icon).join(" ")}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 4 }}>
+            {Array.from({ length: it.count }).map((_, idx) => (
+              <LineArtIcon key={idx} emoji={it.icon} size={26} />
+            ))}
+          </div>
           <div style={{ marginTop: 6 }}>{blankBox(accent)}</div>
         </div>
       ))}
