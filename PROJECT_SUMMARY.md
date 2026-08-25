@@ -1,5 +1,58 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 19: sửa 2/3 lỗi bản Word Phiếu Bài Tập
-# Lớp 1 phản hồi qua ảnh chụp — Bài 3 (icon đen trắng) CẦN HOAN CHỐT HƯỚNG, xem NEXT_STEPS.md)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 22: thêm tab "Hướng dẫn sử dụng")
+
+## PHIÊN 22 — Thêm tab MỚI "📚 Hướng dẫn sử dụng" (7 tab, không phải 6)
+
+**Bối cảnh**: Hoan yêu cầu thêm 1 tab hướng dẫn sử dụng, mô tả các chức năng/cách dùng bộ công cụ
+trong source code, viết sao cho DỄ CHỈNH SỬA khi sau này nâng cấp thêm tính năng.
+
+**Thiết kế đã chọn**: tách RIÊNG dữ liệu (nội dung chữ) khỏi giao diện (cách hiển thị) - đúng
+nguyên tắc "1 nguồn dữ liệu duy nhất" đã dùng ở nhiều nơi khác trong dự án (VD `LESSON_PLAN_INTEGRATIONS`).
+
+1. **`src/data/helpGuideContent.js` (MỚI)** — file dữ liệu THUẦN (không JSX), chứa toàn bộ nội
+   dung hướng dẫn dưới dạng mảng `GUIDE_SECTIONS`. Mỗi phần tử là 1 "module" (khớp đúng 1 tab thật
+   trong `MODES`, + 2 mục không phải tab thật: "Tổng quan" ở đầu và "Hạ tầng dùng chung" ở cuối),
+   gồm: `description` (mô tả chung), `steps` (các bước thao tác theo đúng thứ tự trên UI),
+   `features` (danh sách tính năng cụ thể, có `name`+`detail`), `notes` (lưu ý/giới hạn giáo viên
+   cần biết), và `devNotes` (RIÊNG cho lập trình viên/AI phiên sau - trỏ đúng tên file/hàm liên
+   quan, kèm hướng dẫn "muốn thêm 1 X mới thì sửa ở đâu"). Nội dung được viết dựa trên đối chiếu
+   THẬT với code + toàn bộ lịch sử trong `PROJECT_SUMMARY.md`/`NEXT_STEPS.md` (không suy đoán).
+2. **`src/components/HelpGuideView.jsx` (MỚI)** — component CHỈ LO RENDER (accordion mở/đóng từng
+   mục, ô tìm nhanh lọc theo từ khoá, checkbox "Hiện ghi chú kỹ thuật" để bật/tắt phần `devNotes`
+   dành cho dev - mặc định TẮT, giáo viên bình thường không bị rối bởi tên file/hàm code). KHÔNG
+   chứa bất kỳ nội dung chữ nào cứng trong JSX - toàn bộ đọc từ `helpGuideContent.js`.
+3. **`src/app/page.js`**: thêm `MODES.HELP = "help"` (mục 7, sau `REPORT_COMMENT`) + 1 nút tab
+   "📚 Hướng dẫn sử dụng". Tab này **KHÁC BẢN CHẤT** 6 tab cũ: không gọi AI, không có Form nhập
+   liệu, không tham gia in ấn (không dùng `id="print-area"`) — nên được render **TOÀN CHIỀU RỘNG**
+   (tách khỏi khối `<div className="grid ...">` 2 cột trái-phải của 6 tab kia), qua 1 nhánh
+   `mode === MODES.HELP ? <HelpGuideView /> : ( ...grid 2 cột cũ... )` bọc ngoài toàn bộ khối grid.
+
+**Vì sao dễ chỉnh sửa sau này**: mọi thay đổi nội dung hướng dẫn (thêm tính năng mới, sửa mô tả,
+thêm lưu ý...) chỉ cần sửa ĐÚNG 1 file `helpGuideContent.js` (dữ liệu thuần, có comment hướng dẫn
+quy ước ngay đầu file) — không phải đụng vào JSX của `HelpGuideView.jsx`. File dữ liệu cũng tự làm
+mẫu cho việc "thêm 1 tab chức năng mới" (xem mục cuối `GUIDE_SECTIONS`, id `"shared"`, phần
+`devNotes.pointers` có hướng dẫn từng bước cụ thể tham chiếu chính tab Hướng dẫn này làm ví dụ).
+
+**Phát hiện phụ khi rà soát để viết tài liệu (không sửa, chỉ ghi nhận)**: có sẵn 1 bộ tính năng
+"Tạo tranh tô màu" hoàn chỉnh trong code (`src/components/ColoringPageForm.jsx` + `ColoringPagePreview.jsx`
++ `ColoringExportActions.jsx` + route `/api/generate-coloring-page`) nhưng **KHÔNG được gắn vào
+`MODES`/nút tab nào trong `page.js`** — không rõ đây là tính năng đang xây dở hay đã cố ý tạm ẩn.
+KHÔNG đụng vào (ngoài phạm vi yêu cầu lần này) — nếu Hoan muốn bật tính năng này thành 1 tab thứ 8,
+báo lại để làm riêng theo đúng khuôn "cách thêm 1 tab mới" đã ghi trong `helpGuideContent.js`.
+
+### Đã tự verify thật
+- `npm install` (221 packages) + `npm test`: **274/274 PASS** (không đổi số test — tab mới không
+  cần test tự động vì không có logic sinh số/gọi AI, chỉ hiển thị nội dung tĩnh).
+- `npm run build`: sạch, exit 0. Bundle trang chính tăng nhẹ 526kB → 540kB (nội dung text mới).
+- Đã tự đọc lại cấu trúc JSX (nhánh `mode === MODES.HELP ? ... : ( grid cũ )`) qua build sạch +
+  test suite pass để xác nhận không phá vỡ cú pháp/logic của 6 tab cũ.
+
+### ⚠️ Cần Hoan tự xem lại (chưa xem được trên trình duyệt thật)
+1. Giao diện tab mới trên trình duyệt thật (accordion mở/đóng, ô tìm nhanh, checkbox "Hiện ghi chú
+   kỹ thuật") — sandbox không có trình duyệt để tự bấm thử.
+2. Đọc lại nội dung mô tả từng tab xem có đúng/đủ theo cách Hoan hiểu không — nếu thấy thiếu hoặc
+   sai chỗ nào, chỉ cần báo lại tên tính năng, sẽ sửa đúng 1 chỗ trong `helpGuideContent.js`.
+
+---
 
 ## PHIÊN 21 — Rà soát chủ động toàn bộ codebase (Hoan yêu cầu "xem còn gì chưa làm") + phát hiện
 ## + sửa 1 lỗi thật trong tính điểm ma trận đề (chưa từng được báo qua phản hồi giáo viên)
