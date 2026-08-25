@@ -21,6 +21,7 @@ import ReportCommentExportActions from "@/components/ReportCommentExportActions"
 import OutlineForm from "@/components/OutlineForm";
 import OutlinePreview from "@/components/OutlinePreview";
 import OutlineExportActions from "@/components/OutlineExportActions";
+import HelpGuideView from "@/components/HelpGuideView";
 import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession, DISABLE_LOGIN, TEST_SESSION as TEST_USER } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
@@ -28,16 +29,22 @@ import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
 import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
 import { EMPTY_OUTLINE_RESULT } from "@/data/outlineResult";
 
-// A2/A3/Giai đoạn 2/Bước 2 (Nhóm B): 6 chế độ làm việc - "lessonPlan" (Soạn giáo án, Mầm non -
-// Lớp 5), "worksheet" (Phiếu bài tập, Mầm non - Lớp 2), "vietnameseExam" (Đề Tiếng Việt Tiểu học,
-// Lớp 1-5), "outline" (Đề cương Ôn tập, MỚI - xem NEXT_STEPS.md Bước 2/Nhóm B), "exam" (Đề kiểm
-// tra, Lớp 1-12), và "reportComment" (Nhận xét học bạ, Lớp 1-12). Thứ tự 6 tab (nút bấm bên dưới)
-// đã chốt đúng thứ tự khai báo ở đây. Chỉ 1 trong 6 được mount tại 1 thời điểm vì CẢ 6 chế độ đều
-// dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount nhiều hơn 1 cùng lúc sẽ
-// vi phạm id trùng lặp và có thể in nhầm nội dung. "reportComment" xuất Word/Excel là chính (danh
-// sách nhiều học sinh dạng thẻ, sửa trực tiếp trên màn hình), NHƯNG từ Bước 1 Việc #8 cũng có thêm
-// "Tải PDF (bản phụ huynh)" - xem ReportCommentPdfView.jsx (khung in riêng, ẩn màn hình, chỉ hiện
-// khi in) - vẫn theo đúng khuôn 1-mode-tại-1-thời-điểm ở trên.
+// A2/A3/Giai đoạn 2/Bước 2 (Nhóm B): 6 chế độ làm việc "tạo nội dung" - "lessonPlan" (Soạn giáo
+// án, Mầm non - Lớp 5), "worksheet" (Phiếu bài tập, Mầm non - Lớp 2), "vietnameseExam" (Đề Tiếng
+// Việt Tiểu học, Lớp 1-5), "outline" (Đề cương Ôn tập, xem NEXT_STEPS.md Bước 2/Nhóm B), "exam"
+// (Đề kiểm tra, Lớp 1-12), và "reportComment" (Nhận xét học bạ, Lớp 1-12). Thứ tự 6 tab đầu (nút
+// bấm bên dưới) đã chốt đúng thứ tự khai báo ở đây. Chỉ 1 trong 6 được mount tại 1 thời điểm vì CẢ
+// 6 chế độ đều dùng chung id="print-area" (CSS in ấn @media print chọn theo id) - mount nhiều hơn
+// 1 cùng lúc sẽ vi phạm id trùng lặp và có thể in nhầm nội dung. "reportComment" xuất Word/Excel
+// là chính (danh sách nhiều học sinh dạng thẻ, sửa trực tiếp trên màn hình), NHƯNG từ Bước 1 Việc
+// #8 cũng có thêm "Tải PDF (bản phụ huynh)" - xem ReportCommentPdfView.jsx (khung in riêng, ẩn màn
+// hình, chỉ hiện khi in) - vẫn theo đúng khuôn 1-mode-tại-1-thời-điểm ở trên.
+//
+// "help" (Hướng dẫn sử dụng, MỚI): KHÁC BẢN CHẤT với 6 mode trên - không gọi AI, không có Form
+// nhập liệu, không tham gia in ấn (không dùng id="print-area"), chỉ hiển thị nội dung tài liệu
+// tĩnh lấy từ src/data/helpGuideContent.js (xem HelpGuideView.jsx). Vì vậy render TOÀN CHIỀU RỘNG
+// thay vì đặt trong layout 2 cột <aside>/<section> như 6 mode kia - xem nhánh điều kiện ở phần
+// render bên dưới (đặt ngoài <div className="grid ...">, không phải 1 nhánh trong ternary cũ).
 const MODES = {
   LESSON_PLAN: "lessonPlan",
   WORKSHEET: "worksheet",
@@ -45,6 +52,7 @@ const MODES = {
   OUTLINE: "outline",
   EXAM: "exam",
   REPORT_COMMENT: "reportComment",
+  HELP: "help",
 };
 
 // Tính năng "Nhận xét học bạ" (xem tom-tat-tinh-nang-nhan-xet-hoc-ba.md): mỗi lượt tạo trả về
@@ -225,9 +233,24 @@ export default function HomePage() {
           >
             🗒️ Nhận xét học bạ
           </button>
+          <button
+            type="button"
+            onClick={() => setMode(MODES.HELP)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.HELP
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            📚 Hướng dẫn sử dụng
+          </button>
         </div>
 
-        {/* Split-screen: Trái 40% (Bảng điều khiển) - Phải 60% (Xem trước A4) */}
+        {/* Tab "Hướng dẫn sử dụng": KHÔNG dùng layout 2 cột (không có Form/AI/in ấn) - render
+            toàn chiều rộng, tách hẳn khỏi khối grid bên dưới của 6 mode tạo nội dung. */}
+        {mode === MODES.HELP ? (
+          <HelpGuideView />
+        ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_3fr]">
           <aside className="no-print h-fit rounded-xl border border-slate-200 bg-white p-5">
             {mode === MODES.EXAM && <ExamMatrixForm onGenerated={handleGenerated} />}
@@ -353,6 +376,7 @@ export default function HomePage() {
             </section>
           )}
         </div>
+        )}
       </main>
     </div>
   );
