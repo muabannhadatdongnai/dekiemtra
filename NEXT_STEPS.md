@@ -12,10 +12,46 @@
 > tế, ảnh PDF vẫn ổn) - nguyên nhân GỐC là ký tự Unicode hình khối (┆▬▭▪■⬭⬠⬡⏢) ép font Times New
 > Roman, font này thiếu glyph nên Word hiện TRỐNG (PDF không lỗi vì trình duyệt tự fallback
 > font). Đã rà soát rộng ra 2 chỗ khác dùng CÙNG pattern rủi ro (biểu đồ cột "Thu thập số liệu",
-> "Nhận diện hình") và sửa cả 3 bằng ẢNH PNG (ImageRun) thay ký tự - XONG, 279/279 test PASS**.
+> "Nhận diện hình") và sửa cả 3 bằng ẢNH PNG (ImageRun) thay ký tự - XONG, 279/279 test PASS** +
+> **PHIÊN 25: tính năng MỚI "gợi ý Bài theo Sách giáo viên" ở LessonPlanForm.jsx (soạn giáo
+> án) - gõ/chọn "Tên bài soạn" tự gợi ý theo phụ lục JSON đọc từ kho GitHub kiến thức, kèm nút
+> tự điền "Nội dung cốt lõi" - CẦN dangkhoa tự tạo file phụ lục thật cho từng Chương (xem mục
+> Phiên 25 để biết cấu trúc + file ví dụ), tính năng KHÔNG hoạt động cho tới khi có file đó**.
 > File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 24) — Sửa lỗi ký tự Unicode hiện trống trong Word (Bài 7 + biểu đồ cột + Nhận diện hình)
+## ✅ MỚI NHẤT (Phiên 25) — Gợi ý "Bài" theo Sách giáo viên khi soạn giáo án
+dangkhoa muốn: khi giáo viên chọn Lớp 5, gõ "Bài 1" vào ô Tên bài soạn, app gợi ý tên bài + tự
+điền "Nội dung cốt lõi" theo Sách giáo viên. Đã trao đổi hướng triển khai (lưu ở kho GitHub kiến
+thức đang có sẵn, thay vì tạo nguồn dữ liệu song song trong code) và làm luôn pilot Toán Lớp 5.
+
+**Kiến trúc:** tái dùng ĐÚNG pattern của `listChapters`/`/api/chapters` đã có sẵn (không phát
+minh cơ chế mới) nhưng xuống granularity mức **Bài** thay vì **Chương**:
+- `src/services/githubService.js`: thêm `fetchLessonIndex({grade, subject, volume, chapter})` -
+  đọc file JSON `sach_giao_khoa/lop_{lớp}/{môn}_t{tập}/chuong_{n}_bai.json` (CẠNH file
+  `chuong_{n}.md` đã có), trả về mảng `{soBai, tenBai, noiDungCotLoi}` đã chuẩn hoá (trim, lọc bỏ
+  mục thiếu tenBai). File chưa tồn tại hoặc lỗi mạng → trả về `[]` (KHÔNG throw) - đây là tính
+  năng gợi ý PHỤ TRỢ, thiếu dữ liệu không được cản trở soạn giáo án bằng cách gõ tay như trước.
+- `src/app/api/lessons/route.js` (MỚI): route `GET /api/lessons?grade=&subject=&volume=&chapter=`,
+  cùng mức `requireAuth` với `/api/chapters`.
+- `src/services/apiClient.js`: thêm `fetchLessonsRequest(...)`.
+- `src/components/LessonPlanForm.jsx`: khi chọn Chương, tự tải phụ lục bài qua `useEffect` mới;
+  ô "Tên bài soạn" gắn `<datalist>` gợi ý dạng "Bài 1 - Ôn tập các số đến 100 000"; khi tenBai
+  khớp đúng 1 gợi ý VÀ nội dung cốt lõi gợi ý khác nội dung đang gõ, hiện nút "Dùng nội dung cốt
+  lõi gợi ý..." - bấm mới điền, KHÔNG tự động ghi đè để tránh mất nội dung giáo viên đã tự gõ.
+
+**⚠️ QUAN TRỌNG - dangkhoa CẦN LÀM để tính năng chạy thật:** tạo file `chuong_{n}_bai.json` cho
+từng Chương trong kho GitHub kiến thức (biến `GITHUB_KNOWLEDGE_REPO`). Xem cấu trúc + ví dụ mẫu
+tại `docs/vi-du-phu-luc-bai-hoc.example.js` (file tham khảo, KHÔNG được app đọc trực tiếp). Nội
+dung cốt lõi trong ví dụ chỉ minh hoạ cấu trúc, cần thay bằng nội dung thật từ Sách giáo viên
+trước khi dùng cho giáo viên thật. Có thể làm dần theo Chương, không cần làm hết ngay.
+
+**Test mới** `test/githubServiceLessonIndex.test.js` (5 test, mock `global.fetch`, set
+`process.env.GITHUB_KNOWLEDGE_REPO` TRƯỚC khi import động module vì `REPO` đọc 1 lần lúc load
+module): xác nhận chuẩn hoá đúng dữ liệu, lọc mục thiếu tenBai, trả `[]` khi 404/lỗi mạng/chưa
+cấu hình REPO/Sách nâng cao (không chia theo bài, không gọi fetch). `npm test`: **284/284 PASS**
+(279 cũ + 5 mới). `npm run build`: sạch, route `/api/lessons` lên đúng danh sách route động.
+
+
 dangkhoa báo Bài 7 "so sánh độ dài" không nhìn ra thanh đo (line-art) trong file Word dù bản PDF
 vẫn ổn - gửi kèm ảnh chụp + file Word thực tế `BÀI-TẬP-TOÁN-HocSinh.docx`.
 
