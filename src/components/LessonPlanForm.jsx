@@ -12,12 +12,14 @@ import {
   getCircularForGrade,
 } from "@/data/lessonPlanTemplates";
 import { listIntegrations } from "@/data/lessonPlanIntegrations";
+import { ADVANCED_BOOK_MARKER } from "@/data/constants";
 import { listLessonPlanStyles, LESSON_PLAN_STYLE_IDS, CUSTOM_STYLE_MAX_LENGTH } from "@/data/lessonPlanStyles";
 import { buildLessonPlanBlueprint } from "@/data/lessonPlanBlueprint";
 import { buildLessonPlanResult } from "@/data/lessonPlanResult";
 import { getEffectiveSession } from "@/services/authService";
 import {
   fetchChaptersRequest,
+  fetchLessonsRequest,
   generateLessonPlanRequest,
   analyzeLessonPlanSampleRequest,
   getLessonPlanPreferenceRequest,
@@ -80,6 +82,13 @@ export default function LessonPlanForm({ onGenerated }) {
   const [loadingChapters, setLoadingChapters] = useState(false);
   const [chaptersError, setChaptersError] = useState("");
 
+  // Phụ lục "Bài" trong Chương đã chọn (số bài + tên bài + nội dung cốt lõi theo Sách giáo viên)
+  // - dùng để gợi ý tự động khi gõ "Tên bài soạn". Rỗng nếu Chương chưa có phụ lục (chưa tạo
+  // file chuong_{n}_bai.json trong kho GitHub kiến thức) - KHÔNG phải lỗi, chỉ đơn giản là chưa
+  // có gợi ý, giáo viên vẫn gõ tay bình thường như trước.
+  const [availableLessons, setAvailableLessons] = useState([]);
+  const [loadingLessons, setLoadingLessons] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -115,6 +124,32 @@ export default function LessonPlanForm({ onGenerated }) {
       cancelled = true;
     };
   }, [grade, subject, volume, preschool]);
+
+  // Tải phụ lục "Bài" trong Chương vừa chọn để gợi ý Tên bài soạn + Nội dung cốt lõi. Chỉ chạy
+  // khi đã chọn 1 Chương cụ thể (không áp dụng cho "Sách nâng cao" - không chia theo bài).
+  useEffect(() => {
+    if (preschool || !chapterId || chapterId === ADVANCED_BOOK_MARKER) {
+      setAvailableLessons([]);
+      return;
+    }
+    let cancelled = false;
+    async function loadLessons() {
+      setLoadingLessons(true);
+      try {
+        const data = await fetchLessonsRequest({ grade, subject, volume, chapter: chapterId });
+        if (!cancelled) setAvailableLessons(data.lessons || []);
+      } catch {
+        // Im lặng bỏ qua - đây là gợi ý phụ trợ, không cản trở soạn giáo án nếu tải lỗi.
+        if (!cancelled) setAvailableLessons([]);
+      } finally {
+        if (!cancelled) setLoadingLessons(false);
+      }
+    }
+    loadLessons();
+    return () => {
+      cancelled = true;
+    };
+  }, [grade, subject, volume, chapterId, preschool]);
 
   // Tải "Phong cách soạn giáo án" đã lưu (nếu có) ngay khi mở form - cùng tinh thần tải
   // favoriteLayoutId bên WorksheetForm.jsx: không chặn giáo viên thao tác gì, chỉ để sẵn lựa chọn
@@ -254,6 +289,16 @@ export default function LessonPlanForm({ onGenerated }) {
     }
   }
 
+  // Nhãn hiển thị cho từng gợi ý bài - "Bài 1 - Ôn tập các số đến 100 000" (có số bài) hoặc chỉ
+  // tên bài nếu phụ lục không kèm số bài.
+  function lessonLabel(l) {
+    return l.soBai != null ? `Bài ${l.soBai} - ${l.tenBai}` : l.tenBai;
+  }
+
+  // Khớp gợi ý đang chọn với ô Tên bài soạn hiện tại - để hiện nút "Dùng nội dung cốt lõi gợi ý"
+  // khi giáo viên đã gõ/chọn đúng 1 bài có trong phụ lục.
+  const matchedLesson = availableLessons.find((l) => lessonLabel(l) === tenBai.trim());
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Field label="Tên bài soạn" required>
@@ -262,7 +307,26 @@ export default function LessonPlanForm({ onGenerated }) {
           onChange={(e) => setTenBai(e.target.value)}
           placeholder="VD: Bài 15 - Sự nở vì nhiệt của chất rắn"
           className={inputClass}
+          list="ten-bai-goi-y"
+          autoComplete="off"
         />
+        {availableLessons.length > 0 && (
+          <datalist id="ten-bai-goi-y">
+            {availableLessons.map((l) => (
+              <option key={lessonLabel(l)} value={lessonLabel(l)} />
+            ))}
+          </datalist>
+        )}
+        {loadingLessons && <p className="mt-1 text-xs text-slate-400">Đang tải gợi ý bài học...</p>}
+        {matchedLesson?.noiDungCotLoi && matchedLesson.noiDungCotLoi !== noiDungCotLoi && (
+          <button
+            type="button"
+            onClick={() => setNoiDungCotLoi(matchedLesson.noiDungCotLoi)}
+            className="mt-1 text-xs font-medium text-blue-600 hover:underline"
+          >
+            Dùng nội dung cốt lõi gợi ý (theo Sách giáo viên) cho bài này →
+          </button>
+        )}
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
