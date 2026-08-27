@@ -48,6 +48,19 @@ export async function fetchChaptersRequest({ grade, subject, volume }) {
 }
 
 /**
+ * Gợi ý "Bài" (tên bài + nội dung cốt lõi theo Sách giáo viên) trong 1 Chương - dùng để đổ vào
+ * ô gợi ý "Tên bài soạn" ở LessonPlanForm.jsx. Trả về { lessons: [] } nếu chương chưa có phụ lục
+ * (không phải lỗi - xem ghi chú trong githubService.js:fetchLessonIndex).
+ */
+export async function fetchLessonsRequest({ grade, subject, volume, chapter }) {
+  const res = await fetch(
+    `/api/lessons?grade=${grade}&subject=${subject}&volume=${volume}&chapter=${encodeURIComponent(chapter)}`,
+    { headers: authHeaders() }
+  );
+  return handleResponse(res);
+}
+
+/**
  * @param blueprint - xem cấu trúc "examBlueprint" trong src/data/examBlueprint.js
  */
 export async function generateExamRequest(blueprint) {

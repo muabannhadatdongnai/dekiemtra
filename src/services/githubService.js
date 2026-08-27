@@ -170,6 +170,57 @@ export async function listChapters({ grade, subject, volume }) {
 }
 
 /**
+ * Đường dẫn file phụ lục bài học (JSON) của 1 chương - liệt kê từng "Bài" trong chương đó kèm
+ * "nội dung cốt lõi" (tóm tắt mục tiêu bài học, trích/diễn giải từ Sách giáo viên) để gợi ý cho
+ * giáo viên khi soạn giáo án, KHÔNG bắt buộc phải có - nếu chưa tạo file này, tính năng gợi ý bài
+ * chỉ đơn giản là không hiện gợi ý gì (ô "Tên bài soạn" vẫn gõ tay bình thường như trước).
+ */
+function buildLessonIndexPath({ grade, subject, volume, chapter }) {
+  const subjectSlug = slugSubject(subject);
+  return `sach_giao_khoa/lop_${grade}/${subjectSlug}_t${volume}/chuong_${chapter}_bai.json`;
+}
+
+/**
+ * Tải phụ lục bài học (mảng { soBai, tenBai, noiDungCotLoi }) của 1 chương, dùng để gợi ý khi
+ * giáo viên chọn Lớp + Môn + Chương rồi gõ "Bài ..." trong LessonPlanForm.jsx.
+ *
+ * Ví dụ nội dung file (đặt tại sach_giao_khoa/lop_5/toan_t1/chuong_1_bai.json):
+ * [
+ *   { "soBai": 1, "tenBai": "Ôn tập các số đến 100 000", "noiDungCotLoi": "Ôn đọc, viết, so sánh và
+ *     sắp xếp các số trong phạm vi 100 000; nhận biết hàng và giá trị theo hàng." },
+ *   { "soBai": 2, "tenBai": "Ôn tập phép cộng, phép trừ", "noiDungCotLoi": "Củng cố kỹ thuật tính
+ *     cộng/trừ (có nhớ) trong phạm vi các số đã học; giải toán có lời văn liên quan." }
+ * ]
+ *
+ * Không có file (chương chưa nhập phụ lục) hoặc lỗi mạng -> trả về [] (im lặng, KHÔNG throw) vì
+ * đây là tính năng gợi ý phụ trợ, không phải luồng chính - thiếu phụ lục không được cản trở giáo
+ * viên soạn giáo án bình thường bằng cách gõ tay Tên bài soạn.
+ */
+export async function fetchLessonIndex({ grade, subject, volume, chapter }) {
+  if (!REPO || !chapter || chapter === ADVANCED_BOOK_MARKER) return [];
+
+  const path = buildLessonIndexPath({ grade, subject, volume, chapter });
+  const url = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
+
+  try {
+    const res = await fetch(url, { headers: buildRawHeaders(), cache: "no-store" });
+    if (!res.ok) return [];
+    const lessons = await res.json();
+    if (!Array.isArray(lessons)) return [];
+    return lessons
+      .filter((l) => l && typeof l.tenBai === "string" && l.tenBai.trim())
+      .map((l) => ({
+        soBai: l.soBai ?? null,
+        tenBai: l.tenBai.trim(),
+        noiDungCotLoi: typeof l.noiDungCotLoi === "string" ? l.noiDungCotLoi.trim() : "",
+      }));
+  } catch {
+    return [];
+  }
+}
+
+
+/**
  * Ghép nhiều chương (và/hoặc sách nâng cao) lại thành 1 nguồn tài liệu tổng hợp cho đề
  * kiểm tra bao quát nhiều chủ đề (ví dụ đề kiểm tra giữa kỳ / cuối kỳ chọn nhiều chương cùng lúc).
  * (Giữ lại để tương thích ngược - không dùng trong luồng Ma trận theo Chương mới.)
