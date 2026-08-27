@@ -1,4 +1,89 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 22: thêm tab "Hướng dẫn sử dụng")
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 23: sửa 4 phản hồi giáo viên ở Phiếu bài tập - line-art độ dài, icon Word to hơn, sơ đồ tách-gộp cân đối, chế độ in đen trắng)
+
+## PHIÊN 23 — 4 sửa đổi ở Phiếu bài tập theo phản hồi thực tế của giáo viên (kèm ảnh chụp)
+
+**Bối cảnh**: Hoan gửi 3 ảnh chụp phiếu bài tập thật + 4 yêu cầu cụ thể:
+1. Bài "So sánh độ dài" (Bài 7 trong ảnh): đổi sang kiểu line-art, đa dạng vật minh hoạ (con
+   đường, cây thước, cái cây, người cao người thấp) thay vì chỉ có "băng giấy".
+2. Bài 11/12 (đếm hình, xem đồng hồ): icon mascot trong file Word quá nhỏ, khó nhìn bằng mắt thường.
+3. Mục tiêu sử dụng: giáo viên in phiếu qua **dịch vụ photocopy** - cần tối ưu TẤT CẢ phiếu bài
+   tập để in đen trắng tốt (không chỉ đẹp trên màn hình).
+4. Bài "Tách - gộp số" (Bài 2 trong ảnh): 4 sơ đồ xếp lệch 3+1 thay vì 2 hàng x 2 cột cân đối.
+
+### 1. Line-art đa dạng cho "So sánh độ dài" (`do_dai_so_sanh`, Lớp 1)
+- **`src/data/worksheetSchemas.js`**: thay `LENGTH_BAND_NAMES` (chỉ có "băng giấy") bằng
+  `LENGTH_VISUAL_KINDS` — 8 kiểu minh hoạ: băng giấy, sợi dây, bút chì, que tính, cây thước, con
+  đường (`orientation: "horizontal"` - so **độ dài**) và cây, người (`orientation: "vertical"` -
+  so **chiều cao**). `generateDoDaiSoSanh()` random ĐỘC LẬP 1 kiểu/câu, trả thêm field `kind`,
+  `orientation`, `unitLabel` ("dài"/"cao").
+- **`src/components/WorksheetPreview.jsx`**: thêm `LengthFigure` — vẽ SVG **line-art thuần** (chỉ
+  viền `stroke`, `fill="none"`, KHÔNG tô đặc) theo đúng `kind` (rope=đường lượn sóng, pencil=hình
+  bút chì có đầu vát, ruler=có vạch chia, road=viền + vạch giữa đứt nét, tree=tán lá + thân cây,
+  person=hình que). `DoDaiSoSanhSection` viết lại: vật `vertical` đặt CẠNH NHAU chung 1 đường đáy
+  (so chiều cao trực quan), vật `horizontal` vẫn xếp chồng 2 dòng như cũ.
+- **`src/services/worksheetExportService.js`**: `buildDoDaiSoSanhParagraphs` bỏ hẳn màu xanh lá/
+  cam cũ (giờ 1 màu xám đậm duy nhất, B&W-friendly), thêm `LENGTH_KIND_GLYPHS` (ký tự đại diện
+  từng kiểu vì Word không vẽ được SVG), đổi "dài"/"cao" theo `it.unitLabel`.
+
+### 2. Icon mascot Bài 11/12 trong Word quá nhỏ
+- **`src/services/worksheetExportService.js`**: `mascotRun` (icon 🐿️/🦉... cạnh số thứ tự bài) —
+  `size: 30` (15pt) → **`size: 40`** (20pt), ĐÚNG mức đã từng sửa cho icon đồng hồ trong cùng file
+  vì lý do y hệt (icon cùng cỡ chữ tiêu đề thì bị "chìm", không nổi bật).
+
+### 3. "🖨️ Tối ưu in đen trắng" (MỚI - toàn bộ Phiếu bài tập)
+- **Thiết kế**: 1 công tắc HIỂN THỊ/XUẤT FILE thuần tuý (`bwMode`), KHÔNG phải tuỳ chọn lúc TẠO
+  phiếu — giáo viên bật/tắt bất kỳ lúc nào ở khu vực nút tải, không cần tạo lại phiếu.
+- **`src/data/worksheetLayoutTemplates.js`**: thêm `BW_PALETTE` (nền trắng tinh, viền/chữ đen
+  tuyệt đối) + tham số `bwMode` cho `getSectionVisualTheme()` — đây là nguồn palette DUY NHẤT dùng
+  chung cho cả web và Word, nên sửa 1 chỗ là cả 2 nơi đều đổi theo. **CHỦ Ý KHÔNG dùng CSS
+  `filter: grayscale()`** vì màu pastel chuyển xám vẫn là 1 mảng xám nhạt — dễ mất nét/rỗ đốm khi
+  photocopy hàng loạt (đặc biệt máy đời cũ); nền trắng + viền đen tuyệt đối mới in rõ, đúng mục
+  tiêu "tối ưu cho photocopy".
+- **`src/components/WorksheetPreview.jsx`**: nhận prop `bwMode`, thêm `FRAME_STYLES_BW` (khung
+  ngoài đổi màu, giữ nguyên kiểu nét), `effectivePalette` thay `layout.palette`. `ThuThapSoLieuSection`
+  (biểu đồ cột) đổi cột tô đặc sang **vân sọc chéo đen/trắng** khi bwMode (đọc được vẫn so sánh
+  được độ dài cột, giảm ~50% lượng mực, không bị "cán phẳng" như khối tô đặc khi photocopy).
+- **`src/app/globals.css`**: thêm `.worksheet-bw` đè các phần tử màu hard-code trong CSS (title-
+  badge, rainbow bar, info-pill) — những chỗ theme JS không với tới được.
+- **`src/services/worksheetExportService.js`**: thread `bwMode` xuyên suốt
+  `buildWorksheetDocxBlob`/`buildSectionParagraphs`/`getTheme` → `exportWorksheetToWord`/
+  `exportWorksheetBothVersions` đều nhận thêm tham số `bwMode`.
+- **`src/components/WorksheetExportActions.jsx`**: thêm checkbox "🖨️ Tối ưu in đen trắng".
+- **`src/app/page.js`**: state `worksheetBwMode` (lift lên vì cần dùng ở cả `WorksheetPreview` lẫn
+  `WorksheetExportActions`), truyền `bwMode`/`onToggleBwMode` xuống 2 nơi.
+- **Phạm vi hiện tại**: MỚI áp dụng cho tab Phiếu bài tập (đúng phạm vi Hoan yêu cầu qua ảnh chụp).
+  Các tab khác (Giáo án, Đề kiểm tra...) CHƯA có công tắc này — nếu Hoan muốn mở rộng, báo lại.
+
+### 4. Sơ đồ "Tách - gộp" (Bài 2) xếp lệch 3+1 → 2 hàng x 2 cột cân đối
+- **`src/components/WorksheetPreview.jsx`**: `TachGopSection` đổi từ `flexWrap: "wrap"` (số ô/
+  hàng phụ thuộc bề rộng khung chứa còn dư, dễ ra 3+1 lệch) sang **CSS Grid cố định 2 cột**
+  (`gridTemplateColumns: "repeat(2, 132px)"`) — LUÔN chia đúng 2 sơ đồ/hàng bất kể bề rộng, ra
+  đúng 2x2 cân đối với 4 sơ đồ mặc định.
+
+### Đã tự verify thật
+- Viết 3 script "smoke test" tạm thời (đã xoá sau khi chạy) gọi trực tiếp
+  `generateDoDaiSoSanh`/`generateTachGop` + `buildWorksheetDocxBlob` (cả `bwMode: true/false`) để
+  xác nhận không lỗi cú pháp/runtime — cả 2 chế độ xuất file Word thành công, dữ liệu random đúng
+  đủ cả 8 kiểu minh hoạ độ dài và cả 2 orientation (ngang/đứng).
+- `npm test`: **274/274 PASS** (không có test cũ nào phụ thuộc cấu trúc dữ liệu đã đổi của
+  `generateDoDaiSoSanh`/`LENGTH_BAND_NAMES`, xác nhận qua grep trước khi sửa).
+- `npm run build`: sạch, exit 0.
+- Đã cập nhật `src/data/helpGuideContent.js` (tab Hướng dẫn sử dụng, thêm ở PHIÊN 22) theo đúng
+  quy ước "mỗi khi thêm tính năng, cập nhật luôn tài liệu hướng dẫn" — thêm 2 feature mới + 3
+  devNotes pointer mới vào mục "Phiếu bài tập".
+
+### ⚠️ Cần Hoan tự xem lại (chưa xem được trên trình duyệt thật)
+1. Hình line-art mới (đặc biệt "road"/"tree"/"person" - lần đầu thêm, cần xem thật trên trình
+   duyệt để chỉnh tỉ lệ nếu cần) và bản Word tương ứng (ký tự đại diện LENGTH_KIND_GLYPHS).
+2. Giao diện checkbox "Tối ưu in đen trắng" + thử in thật (PDF hoặc giấy) để đánh giá đúng mục
+   tiêu "không mất nét khi photocopy" - sandbox không in được ra giấy thật để tự kiểm chứng khâu
+   cuối này.
+3. Cỡ icon mascot Word 40 (20pt) đã đủ to chưa, hay cần to hơn nữa - dễ chỉnh (1 số) nếu chưa vừa ý.
+4. Sơ đồ Tách-gộp 2x2 mới - nếu giáo viên đổi số lượng thành số LẺ (VD 5), hàng cuối sẽ chỉ còn 1
+   ô (không tự động căn giữa) - chấp nhận được vì defaultCount mặc định luôn là số chẵn (4), nhưng
+   cần Hoan xác nhận có cho giáo viên tự đổi số lẻ ở dạng bài này không.
+
+---
 
 ## PHIÊN 22 — Thêm tab MỚI "📚 Hướng dẫn sử dụng" (7 tab, không phải 6)
 
