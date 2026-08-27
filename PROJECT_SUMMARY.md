@@ -1,6 +1,79 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 23: sửa 4 phản hồi giáo viên ở Phiếu bài tập - line-art độ dài, icon Word to hơn, sơ đồ tách-gộp cân đối, chế độ in đen trắng)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 24: sửa lỗi ký tự Unicode hiện trống trong Word ở Bài 7 + biểu đồ cột + Nhận diện hình - thay bằng ảnh PNG)
 
-## PHIÊN 23 — 4 sửa đổi ở Phiếu bài tập theo phản hồi thực tế của giáo viên (kèm ảnh chụp)
+## PHIÊN 24 — Sửa lỗi ký tự Unicode (line-art Bài 7, biểu đồ cột, Nhận diện hình) hiện TRỐNG trong Word
+
+**Bối cảnh**: dangkhoa gửi ảnh chụp + file Word thật (`BÀI-TẬP-TOÁN-HocSinh.docx`) báo Bài 7 "So
+sánh độ dài" không nhìn ra các thanh line-art trong Word, dù bản PDF vẫn ổn. Đây CHÍNH XÁC là rủi
+ro đã ghi ở mục "⚠️ Cần Hoan tự xem lại" #1 cuối PHIÊN 23 (line-art mới + `LENGTH_KIND_GLYPHS`
+chưa được xem thật trên Word).
+
+**Chẩn đoán (mở trực tiếp file Word dangkhoa gửi để xác nhận, không đoán):** `LENGTH_KIND_GLYPHS`
+(Phiên 23 thêm) dùng ký tự Unicode hình khối (`┆ ▬ ▭ ▪`) LẶP LẠI, ép font **Times New Roman**
+(hằng số `FONT` toàn file). Font này KHÔNG có glyph cho các ký tự đó → Word hiện TRỐNG. Bản PDF
+không lỗi vì PDF xuất qua trình duyệt (Chrome) - trình duyệt tự động fallback sang font hệ thống
+khác có glyph khi Times New Roman thiếu; Word mở trực tiếp thì không có cơ chế fallback đáng tin
+cậy tương tự.
+
+**Rà soát chủ động** (theo đúng nguyên tắc "generator bugs tend to cluster" đã rút ra từ các phiên
+trước) phát hiện thêm 2 chỗ dùng ĐÚNG pattern rủi ro "glyph hiếm ép font cứng" này:
+- Biểu đồ cột "Thu thập số liệu": `"■".repeat(d.value)`.
+- "Nhận diện hình": `SHAPE_GLYPHS` — trong đó `⬭ ⬠ ⬡ ⏢` (ê-líp, ngũ giác, lục giác, hình thang)
+  là glyph đặc biệt hiếm, rủi ro cao nhất trong cả 3 chỗ.
+
+**Giải pháp: chuyển cả 3 sang ẢNH PNG (`ImageRun`)**, dùng lại đúng pipeline SVG→PNG đã chứng minh
+hoạt động tốt ở Bài 3 (Phiên 20) — ảnh không phụ thuộc font máy người dùng nên Word/PDF/Web luôn
+hiển thị giống hệt nhau, dứt điểm cả LỚP lỗi chứ không chỉ 1 điểm lỗi:
+- **`scripts/shapeIconDefs.js`** (MỚI): nguồn vẽ SVG 11 icon hình học (tròn, vuông, tam giác, chữ
+  nhật, ngôi sao, trái tim, thoi, ê-líp, ngũ giác, lục giác, thang), cùng phong cách stroke đen
+  `#1a1a1a` với `lineArtIconDefs.js` (Bài 3) để nhất quán hình ảnh toàn bộ phiếu.
+- **`scripts/render-word-assets.js`** (MỚI, script 1 lần, không chạy trong runtime): rasterize
+  SVG→PNG bằng `@resvg/resvg-js`, sinh ra:
+  - `src/data/shapeIconPngs.js` — 11 icon PNG cố định kích thước (dùng cho "Nhận diện hình" +
+    "Đếm hình ứng dụng").
+  - `src/data/barTilePng.js` — **1 ảnh thanh xám đặc DUY NHẤT**. Điểm khác biệt quan trọng so với
+    icon Bài 3: đây KHÔNG phải bộ ảnh cố định theo giá trị, mà 1 ảnh gốc được KÉO GIÃN
+    `transformation.width` lúc nhúng `ImageRun` để biểu diễn độ dài (Bài 7, 1-20cm) hoặc số lượng
+    (biểu đồ cột, 3-15) bất kỳ — tránh phải tiền-render hàng chục ảnh cho từng giá trị có thể có.
+- **`src/services/worksheetExportService.js`**:
+  - `LENGTH_KIND_GLYPHS` + `.repeat(cm)` → hàm mới `lengthBarImageRun(cm)` (Bài 7).
+  - `"■".repeat(d.value)` → `lengthBarImageRun(d.value)` (biểu đồ cột, dùng CHUNG hàm với Bài 7 vì
+    cùng bản chất "thanh dài tỉ lệ theo số").
+  - `SHAPE_GLYPHS` → hàm mới `shapeIconImageRun(shapeName, sizePx)` (Nhận diện hình + Khay hình).
+- **`src/data/worksheetSchemas.js`**: export thêm `SHAPES` (trước đây `const` nội bộ không export)
+  để test xác nhận được đủ 11/11 icon có ảnh tương ứng, tránh lệch âm thầm nếu sau này thêm hình
+  mới mà quên vẽ icon Word.
+
+**Đánh đổi có chủ ý:** trước đây mỗi "kind" ở Bài 7 (băng giấy/dây/bút chì/que tính/thước/đường/
+cây/người) dùng ký tự KHÁC NHAU để có chút khác biệt trực quan trong Word. Giải pháp ảnh mới dùng
+CHUNG 1 thanh xám cho MỌI kind — ưu tiên "chắc chắn không lỗi font" hơn "đa dạng hoạ tiết theo
+kind trong Word" (bản web `LengthFigure` vẫn giữ nguyên đủ 8 kiểu SVG khác nhau, KHÔNG bị ảnh
+hưởng — chỉ riêng bản Word đơn giản hoá). Nếu dangkhoa muốn khôi phục khác biệt trực quan ở Word,
+cần thêm 2-3 tile PNG hoạ tiết (đặc/sọc/chấm) + map kind→tile trong `lengthBarImageRun()`.
+
+### Đã tự verify thật (không chỉ đọc code)
+- Mở trực tiếp file `BÀI-TẬP-TOÁN-HocSinh.docx` dangkhoa gửi bằng `python-docx` để xác nhận ĐÚNG
+  nguyên nhân trước khi sửa (không đoán) — thấy rõ run text chứa `┆`, `▭` với `font.name` rỗng/kế
+  thừa `Times New Roman` từ style.
+- Test mới `test/worksheetWordAssetsPhien24.test.js` (5 test, build `.docx` THẬT bằng `docx` +
+  giải nén `JSZip` soi thẳng `document.xml`, đúng tinh thần `worksheetLineArtIcons.test.js`):
+  xác nhận KHÔNG còn ký tự Unicode thô (`┆▬▭▪■⬭⬠⬡⏢`) trong `document.xml`, đúng số thẻ
+  `<w:drawing>` (bằng số thanh/icon kỳ vọng), ảnh PNG trong `word/media` giải mã hợp lệ (magic
+  byte PNG đúng).
+- `npm test`: **279/279 PASS** (274 cũ + 5 mới), chạy lại 5 lần liên tiếp không flaky.
+- `npm run build`: sạch, exit 0, không lỗi import alias `@/data/...` cho 2 file mới.
+
+### ⚠️ Cần dangkhoa tự xem lại
+1. Độ rộng thanh Bài 7 (`CM_TO_PX = 16`, thanh 20cm ≈ 320px) — chưa xem thật trên Word/trình in để
+   xác nhận thanh dài nhất vẫn nằm gọn trong bề rộng trang A4 (trừ lề), có thể cần chỉnh hằng số
+   này nếu bị tràn hoặc quá nhỏ khi in.
+2. Việc bỏ khác biệt trực quan theo `kind` trong Word (xem "Đánh đổi có chủ ý" ở trên) — nếu quan
+   trọng với giáo viên, báo lại để làm thêm hoạ tiết.
+3. Icon 11 hình học mới vẽ tay lần đầu (chưa có trong bất kỳ phản hồi giáo viên nào trước đây) —
+   cần xem thật để xác nhận rõ nét, dễ nhận diện ở cỡ nhỏ khi in.
+
+---
+
+
 
 **Bối cảnh**: Hoan gửi 3 ảnh chụp phiếu bài tập thật + 4 yêu cầu cụ thể:
 1. Bài "So sánh độ dài" (Bài 7 trong ảnh): đổi sang kiểu line-art, đa dạng vật minh hoạ (con

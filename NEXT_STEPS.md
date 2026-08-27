@@ -7,10 +7,59 @@
 > KHÔNG còn mục nào tồn đọng từ chuỗi phản hồi Word Lớp 1** + **PHIÊN 21: rà soát chủ động TOÀN
 > BỘ codebase (không riêng Phiếu Bài Tập) - phát hiện + sửa 1 lỗi thật (điểm câu hỏi có thể ra
 > ÂM ở tính năng Ma trận đề với đề nhiều câu) - CẦN Hoan xác nhận việc nâng cấp Next.js để vá
-> 3 lỗ hổng bảo mật mức HIGH (xem mục "CẦN XÁC NHẬN" ở đầu mục Phiên 21)**. File này để mang
-> sang chat mới không mất ngữ cảnh.
+> 3 lỗ hổng bảo mật mức HIGH (xem mục "CẦN XÁC NHẬN" ở đầu mục Phiên 21)** + **PHIÊN 24: sửa lỗi
+> Bài 7 "so sánh độ dài" không hiện thanh đo trong Word (dangkhoa phát hiện qua file Word thực
+> tế, ảnh PDF vẫn ổn) - nguyên nhân GỐC là ký tự Unicode hình khối (┆▬▭▪■⬭⬠⬡⏢) ép font Times New
+> Roman, font này thiếu glyph nên Word hiện TRỐNG (PDF không lỗi vì trình duyệt tự fallback
+> font). Đã rà soát rộng ra 2 chỗ khác dùng CÙNG pattern rủi ro (biểu đồ cột "Thu thập số liệu",
+> "Nhận diện hình") và sửa cả 3 bằng ẢNH PNG (ImageRun) thay ký tự - XONG, 279/279 test PASS**.
+> File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 21) — Rà soát chủ động toàn bộ codebase + sửa lỗi tính điểm Ma trận đề
+## ✅ MỚI NHẤT (Phiên 24) — Sửa lỗi ký tự Unicode hiện trống trong Word (Bài 7 + biểu đồ cột + Nhận diện hình)
+dangkhoa báo Bài 7 "so sánh độ dài" không nhìn ra thanh đo (line-art) trong file Word dù bản PDF
+vẫn ổn - gửi kèm ảnh chụp + file Word thực tế `BÀI-TẬP-TOÁN-HocSinh.docx`.
+
+**Nguyên nhân gốc:** Bài 7 vẽ thanh đo bằng cách LẶP LẠI ký tự Unicode hình khối (`┆▬▭▪`,
+`LENGTH_KIND_GLYPHS` trong `worksheetExportService.js`) và ép font **Times New Roman**. Font này
+KHÔNG có glyph cho các ký tự đó → Word hiện trống. Bản PDF (xuất qua trình duyệt/Chrome) không bị
+vì trình duyệt tự động fallback sang font hệ thống khác có glyph khi Times New Roman thiếu - Word
+mở trực tiếp thì không fallback đáng tin cậy như vậy.
+
+**Rà soát chủ động** phát hiện thêm 2 chỗ dùng ĐÚNG pattern rủi ro này (glyph hiếm ép font):
+biểu đồ cột "Thu thập số liệu" (`"■".repeat()`) và "Nhận diện hình" (`SHAPE_GLYPHS`: `⬭ ⬠ ⬡ ⏢`
+là các glyph đặc biệt hiếm, rủi ro cao nhất).
+
+**Đã sửa cả 3 bằng ẢNH PNG (ImageRun), CÙNG cơ chế SVG→PNG đã dùng thành công cho Bài 3 (Phiên 20)**
+- không phụ thuộc font máy người dùng, đảm bảo Word/PDF/Web hiển thị giống hệt nhau:
+1. `scripts/shapeIconDefs.js` (MỚI) - nguồn vẽ SVG cho 11 icon hình học (tròn, vuông, tam giác,
+   chữ nhật, ngôi sao, trái tim, thoi, ê-líp, ngũ giác, lục giác, thang), cùng phong cách stroke
+   đen `#1a1a1a` với `lineArtIconDefs.js` (Bài 3).
+2. `scripts/render-word-assets.js` (MỚI) - script rasterize 1 lần, sinh:
+   - `src/data/shapeIconPngs.js` - 11 icon PNG cố định (dùng cho "Nhận diện hình").
+   - `src/data/barTilePng.js` - **1 ảnh thanh xám đặc DUY NHẤT**, KÉO GIÃN
+     `transformation.width` lúc nhúng `ImageRun` để biểu diễn độ dài (Bài 7) hoặc số lượng
+     (biểu đồ cột) bất kỳ - không cần vẽ lại ảnh cho từng giá trị.
+3. `src/services/worksheetExportService.js`:
+   - Thay `LENGTH_KIND_GLYPHS` + `.repeat(cm)` → `lengthBarImageRun(cm)` (Bài 7).
+   - Thay `"■".repeat(d.value)` → `lengthBarImageRun(d.value)` (biểu đồ cột).
+   - Thay `SHAPE_GLYPHS` → `shapeIconImageRun(shapeName, sizePx)` (Nhận diện hình + Khay hình
+     "Đếm hình ứng dụng").
+4. `src/data/worksheetSchemas.js`: export thêm `SHAPES` (trước đây chỉ dùng nội bộ) để test có
+   thể xác nhận đủ 11/11 icon.
+
+**Test mới** `test/worksheetWordAssetsPhien24.test.js` (5 test, build .docx THẬT bằng JSZip soi
+`document.xml`, cùng tinh thần `worksheetLineArtIcons.test.js`): xác nhận KHÔNG còn ký tự Unicode
+thô nào trong `document.xml`, đúng số thẻ `<w:drawing>`, ảnh PNG hợp lệ trong `word/media`.
+`npm test`: **279/279 PASS** (274 cũ + 5 mới). `npm run build`: sạch, không lỗi.
+
+**Việc còn tồn đọng (không phải lỗi, chỉ là quyết định thiết kế bỏ ngỏ):** trước đây các "kind"
+khác nhau (band/rope/pencil/stick/ruler/road/tree/person) dùng ký tự KHÁC NHAU để có chút khác
+biệt trực quan giữa các loại vật ở Bài 7. Giải pháp ảnh mới dùng CHUNG 1 thanh xám cho mọi kind
+(đơn giản, chắc chắn không lỗi font) - đã BỎ sự khác biệt trực quan theo kind. Nếu dangkhoa muốn
+khôi phục (VD: vài hoạ tiết PNG khác nhau: đặc/sọc/chấm), cần thêm 2-3 tile PNG nữa, gắn map
+kind→tile trong `lengthBarImageRun()` - portable nhưng thêm việc, để dành nếu có phản hồi thật cần.
+
+
 Hoan hỏi "còn gì chưa làm/cần bổ sung" - đã rà soát TOÀN BỘ dự án (không chỉ riêng module Phiếu Bài
 Tập đã quen thuộc), gồm: audit dedupe 38 hàm sinh đề, `npm audit` bảo mật dependency, kiểm tra
 secret/API key hardcode, và fuzz-test các hàm logic thuần chưa có test.
