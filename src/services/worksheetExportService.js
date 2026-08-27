@@ -26,6 +26,15 @@ import { formatSoTuNhien, formatSoTrongChuoi, formatSoThapPhan } from "./numberF
 // lineArtIconPngs.js + scripts/render-line-art-icons.js) - rõ nét ở MỌI chế độ in (màu lẫn đen
 // trắng), không cần thêm cờ printMode riêng vì icon line-art vốn đã trung tính màu sắc.
 import { LINE_ART_ICON_PNG_BASE64 } from "@/data/lineArtIconPngs";
+// ================== SỬA LỖI "ký tự Unicode hình khối hiện TRỐNG trong Word" (phản hồi giáo viên
+// qua ảnh + file Word thực tế, Phiên 24) ==================
+// Bài 7 ("so sánh độ dài"), biểu đồ cột ("Thu thập số liệu") và "Nhận diện hình" trước đây dùng ký
+// tự Unicode (┆▬▭▪■⬭⬠⬡⏢...) ép font Times New Roman - PDF vẫn ổn (trình duyệt tự fallback font)
+// nhưng Word thì KHÔNG (font đó không có glyph -> hiện trống). Đổi hẳn sang ẢNH PNG (cùng cơ chế
+// SVG->PNG line-art đã dùng cho Bài 3, xem scripts/render-word-assets.js) - không phụ thuộc font
+// máy người dùng, đảm bảo Word/PDF/Web hiển thị giống hệt nhau.
+import { SHAPE_ICON_PNG_BASE64 } from "@/data/shapeIconPngs";
+import { BAR_TILE_PNG_BASE64 } from "@/data/barTilePng";
 
 /**
  * worksheetExportService.js
@@ -249,33 +258,35 @@ function buildSapXepThuTuParagraphs(items, showAnswers) {
  * 2 thanh của mỗi câu in TRÊN 2 dòng riêng (thẳng hàng bên trái) để dễ so sánh trực quan, dòng thứ
  * 3 mới là chỗ điền dấu >, <, =.
  */
-const LENGTH_KIND_GLYPHS = {
-  band: "▬",
-  rope: "~",
-  pencil: "▭",
-  stick: "▪",
-  ruler: "┆",
-  road: "-",
-  tree: "|",
-  person: "|",
-};
+// Chiều rộng (px, ở size ImageRun) ứng với 1cm - đủ lớn để phân biệt rõ 2 thanh chênh vài cm,
+// đủ nhỏ để thanh dài nhất (~20cm) vẫn nằm gọn trong bề rộng trang A4.
+const CM_TO_PX = 16;
+const BAR_HEIGHT_PX = 16;
+
+// Thanh xám đặc co giãn theo cm (ẢNH, không phải ký tự Unicode - xem ghi chú import ở đầu file).
+function lengthBarImageRun(cm) {
+  return new ImageRun({
+    type: "png",
+    data: base64ToUint8Array(BAR_TILE_PNG_BASE64),
+    transformation: { width: Math.max(cm * CM_TO_PX, CM_TO_PX), height: BAR_HEIGHT_PX },
+  });
+}
 
 function buildDoDaiSoSanhParagraphs(items, showAnswers) {
-  const rulerBar = (cm, kind) => (LENGTH_KIND_GLYPHS[kind] || "▬").repeat(cm);
   return items.flatMap((it) => {
     const unit = it.unitLabel === "cao" ? "cao" : "dài";
     return [
       {
         children: [
           new TextRun({ text: `${it.nameA} (${unit} ${it.cmA} cm)  `, font: FONT, size: 22 }),
-          new TextRun({ text: rulerBar(it.cmA, it.kind), font: FONT, size: 22, color: "1F2937" }),
+          lengthBarImageRun(it.cmA),
         ],
         spacing: { after: 40 },
       },
       {
         children: [
           new TextRun({ text: `${it.nameB} (${unit} ${it.cmB} cm)  `, font: FONT, size: 22 }),
-          new TextRun({ text: rulerBar(it.cmB, it.kind), font: FONT, size: 22, color: "1F2937" }),
+          lengthBarImageRun(it.cmB),
         ],
         spacing: { after: 80 },
       },
@@ -807,7 +818,7 @@ function buildThuThapSoLieuParagraphs(surveyTitle, data, questions, showAnswers)
   const dataParas = data.map((d) => ({
     children: [
       new TextRun({ text: `${d.label}: `, font: FONT, size: 24 }),
-      new TextRun({ text: "■".repeat(d.value), font: FONT, size: 24 }),
+      lengthBarImageRun(d.value),
       new TextRun({ text: `  (${d.value})`, font: FONT, size: 24 }),
     ],
     spacing: { after: 60 },
@@ -872,19 +883,16 @@ function buildNoiPhepTinhParagraphs(data, showAnswers) {
 // hình dáng cho bé tô màu, chứ không chỉ có chữ - khớp tên với SHAPES trong worksheetSchemas.js.
 // GIAI ĐOẠN 9: mở rộng theo đúng kho SHAPES mới (14 hình) trong worksheetSchemas.js - hình nào
 // chưa map (không nên xảy ra) sẽ fallback về "○" như cũ.
-const SHAPE_GLYPHS = {
-  "Hình tròn": "○",
-  "Hình vuông": "□",
-  "Hình tam giác": "△",
-  "Hình chữ nhật": "▭",
-  "Hình ngôi sao": "☆",
-  "Hình trái tim": "♡",
-  "Hình thoi": "◇",
-  "Hình ê-líp": "⬭",
-  "Hình ngũ giác": "⬠",
-  "Hình lục giác": "⬡",
-  "Hình thang": "⏢",
-};
+// Ảnh line-art (PNG, xem SHAPE_ICON_PNG_BASE64 + ghi chú import ở đầu file) thay cho SHAPE_GLYPHS
+// ký tự Unicode cũ - vài glyph hiếm (⬭ ⬠ ⬡ ⏢) từng hiện TRỐNG trong Word do thiếu glyph font.
+function shapeIconImageRun(shapeName, sizePx) {
+  const base64 = SHAPE_ICON_PNG_BASE64[shapeName] || SHAPE_ICON_PNG_BASE64["Hình tròn"];
+  return new ImageRun({
+    type: "png",
+    data: base64ToUint8Array(base64),
+    transformation: { width: sizePx, height: sizePx },
+  });
+}
 
 /**
  * ================== SỬA LỖI (phản hồi giáo viên, Phiên 19) ==================
@@ -897,8 +905,8 @@ const SHAPE_GLYPHS = {
 function buildNhanDienHinhParagraphs(shapes) {
   return chunkArray(shapes, 2).map((row) => ({
     children: row.flatMap((s, idx) => {
-      const run = new TextRun({ text: `${SHAPE_GLYPHS[s] || "○"} ${s}`, font: FONT, size: 40 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "          ", font: FONT, size: 24 })] : [run];
+      const runs = [shapeIconImageRun(s, 36), new TextRun({ text: ` ${s}`, font: FONT, size: 24 })];
+      return idx < row.length - 1 ? [...runs, new TextRun({ text: "          ", font: FONT, size: 24 })] : runs;
     }),
     spacing: { after: 160 },
   }));
@@ -921,13 +929,10 @@ const TRAY_ROW_SIZE = 5;
 
 function buildDemHinhUngDungParagraphs(data, showAnswers) {
   const trayLines = chunkArray(data.trayIcons, TRAY_ROW_SIZE).map((row) => ({
-    children: [
-      new TextRun({
-        text: row.map((s) => SHAPE_GLYPHS[s] || "○").join("     "),
-        font: FONT,
-        size: 40,
-      }),
-    ],
+    children: row.flatMap((s, idx) => {
+      const run = shapeIconImageRun(s, 36);
+      return idx < row.length - 1 ? [run, new TextRun({ text: "     ", font: FONT, size: 24 })] : [run];
+    }),
     spacing: { after: 120 },
   }));
   const questionLines = data.questions.map((q) => ({

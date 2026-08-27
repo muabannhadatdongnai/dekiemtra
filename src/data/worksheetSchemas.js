@@ -78,7 +78,7 @@ const ICONS = [
 // GIAI ĐOẠN F2: bỏ "Hình bán nguyệt"/"Hình mũi tên"/"Hình đám mây" khỏi kho - giáo viên phản ánh
 // đây là những hình "ngớ ngẩn", không phù hợp với bối cảnh nhận diện hình học cơ bản (mũi tên
 // không phải hình học, bán nguyệt/đám mây dễ gây nhầm lẫn cho học sinh nhỏ tuổi). Còn lại 11 hình.
-const SHAPES = [
+export const SHAPES = [
   "Hình tròn",
   "Hình vuông",
   "Hình tam giác",
