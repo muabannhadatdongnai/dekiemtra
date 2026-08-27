@@ -230,9 +230,29 @@ export const GUIDE_SECTIONS = [
       "Chọn từng dạng bài muốn đưa vào phiếu + số lượng câu mỗi dạng, HOẶC bấm nhanh 1 \"Gói chủ đề\" (VD \"📏 Độ dài\", \"⏰ Thời gian\") để tự động chọn cả nhóm dạng bài liên quan.",
       "(Tuỳ chọn) Tải lên 1 phiếu bài tập mẫu - hệ thống tự đọc và ÁP DỤNG NGAY cấu trúc (số câu mỗi dạng) theo mẫu, có banner xác nhận + nút đổi lại cấu hình mặc định nếu không ưng.",
       "(Tuỳ chọn) Chọn bố cục hiển thị (1 cột / 2 cột) và bảng màu.",
+      "(Tuỳ chọn) Bật \"🖨️ Tối ưu in đen trắng\" ở khu vực nút tải nếu mang phiếu đi in dịch vụ photocopy hàng loạt.",
       "Bấm \"Tạo phiếu bài tập\", xem trước, tải Word (có sẵn bản Giáo viên + bản Học sinh) hoặc \"In / Tải PDF\".",
     ],
     features: [
+      {
+        name: "🖨️ \"Tối ưu in đen trắng\" - tiết kiệm mực khi in dịch vụ photocopy",
+        detail:
+          "Bật checkbox ở khu vực nút tải (cạnh \"Tải Word\"/\"In - Tải PDF\") để chuyển TOÀN BỘ " +
+          "phiếu (mọi khối bài tập, khung ngoài, huy hiệu số thứ tự) sang nền trắng - viền/chữ đen, " +
+          "bỏ hẳn các mảng màu tô đặc (đổi thành vân sọc chéo cho biểu đồ cột) - giúp bản in không " +
+          "bị mất nét/rỗ đốm khi photocopy hàng loạt, đồng thời tiết kiệm mực hơn hẳn so với in " +
+          "màu/xám. Áp dụng ĐỒNG THỜI cho cả bản xem trước, \"In / Tải PDF\", và \"Tải Word\" (bật 1 " +
+          "lần, không cần bật riêng từng kiểu xuất) - có thể bật/tắt qua lại để so sánh, không cần " +
+          "tạo lại phiếu.",
+      },
+      {
+        name: "Line-art đa dạng cho bài \"So sánh độ dài\" (Lớp 1)",
+        detail:
+          "Không còn chỉ 1 kiểu \"thanh màu tô đặc\" - mỗi câu ngẫu nhiên 1 trong 8 kiểu minh hoạ " +
+          "vẽ dạng NÉT VIỀN (không tô đặc): băng giấy, sợi dây, bút chì, que tính, cây thước, con " +
+          "đường (nằm ngang - so độ dài) hoặc cây, người (đứng - so chiều cao), đặt cạnh nhau theo " +
+          "chung 1 đường đáy để dễ so sánh trực quan.",
+      },
       {
         name: "Phủ chương trình Toán Lớp 3-5 (SGK Kết nối tri thức)",
         detail:
@@ -282,13 +302,15 @@ export const GUIDE_SECTIONS = [
       "Toàn bộ nội dung trong phiếu (trừ ô trống) đều là để in ra giấy cho học sinh viết/tô bằng bút - đây không phải bài tập tương tác bấm-chọn-trên-máy, cả 17 dạng bài đều hoạt động theo đúng nguyên tắc này.",
       "Nếu mở file PDF bằng phần mềm đọc PDF có \"chế độ tối/Night mode\" (VD Foxit), nền có thể hiển thị SAI thành màu đen dù file gốc là nền sáng - đây là do phần mềm đọc PDF đổi màu hiển thị, không phải lỗi của file. Nên kiểm tra lại bằng cách tắt chế độ tối đó hoặc mở bằng trình duyệt.",
       "Khi in/lưu PDF từ trình duyệt, nên chọn mục \"Margins/Lề\" = \"None/Không có\" trong hộp thoại in để không bị cộng dồn lề (CSS phiếu đã tự có lề an toàn 20mm/18mm, không cần trình duyệt thêm lề riêng nữa).",
-      "Chưa có chế độ in Đen trắng riêng (bỏ nền màu, giữ khung viền đậm) - đang để dành làm sau, xem NEXT_STEPS.md.",
+      "\"Tối ưu in đen trắng\" (Phiên 23) hiện chỉ áp dụng cho tab Phiếu bài tập - các tab khác (Soạn giáo án, Đề kiểm tra...) chưa có công tắc này, vẫn giữ nguyên màu sắc mặc định khi in.",
     ],
     devNotes: {
       summary:
         "File chính: src/data/worksheetSchemas.js (~38 hàm generate*() sinh số liệu), src/data/worksheetExerciseCatalog.js (catalog + minGrade/maxGrade), src/data/worksheetTopicPackages.js (gói chủ đề), src/services/worksheetGenerator.js (orchestrator, DEFAULT_SECTION_ORDER), src/components/WorksheetPreview.jsx (1 Section component/dạng bài), src/services/worksheetExportService.js (1 hàm build*Paragraphs/dạng bài cho Word).",
       pointers: [
         "Muốn thêm 1 DẠNG BÀI mới: nối đủ 4 tầng - (1) worksheetSchemas.js: hàm generateXxx(count), (2) worksheetExerciseCatalog.js: đăng ký entry (minGrade/maxGrade/skillGroup/defaultCount/mascot), (3) worksheetGenerator.js: thêm case trong buildSimpleSection() + vị trí trong DEFAULT_SECTION_ORDER, (4) WorksheetPreview.jsx (component *Section) + worksheetExportService.js (hàm build*Paragraphs). Xem PROJECT_SUMMARY.md các mục \"PHIÊN 13-21\" để có ví dụ đầy đủ từng bước.",
+        "Cơ chế \"Tối ưu in đen trắng\" (Phiên 23): 1 tham số `bwMode` (boolean) chảy xuyên suốt - state gốc `worksheetBwMode` ở page.js → WorksheetPreview.jsx (prop `bwMode`, tự chọn BW_PALETTE/FRAME_STYLES_BW thay cho layout.palette/FRAME_STYLES) VÀ WorksheetExportActions.jsx (checkbox + truyền vào exportWorksheetBothVersions) → worksheetExportService.js (buildWorksheetDocxBlob/buildSectionParagraphs/getTheme đều nhận thêm bwMode) → getSectionVisualTheme() trong worksheetLayoutTemplates.js (nguồn palette DUY NHẤT cho cả web+Word, trả BW_PALETTE khi bwMode=true bất kể layout gốc). Muốn 1 Section MỚI cũng tối ưu B&W: nếu Section đó tô ĐẶC 1 vùng lớn bằng `background: accent` (không phải viền), đổi sang line-art (viền, không fill - xem LengthFigure) hoặc vân sọc chéo khi bwMode (xem ThuThapSoLieuSection làm mẫu) thay vì để nguyên khối tô đặc màu đen.",
+        "Bài \"So sánh độ dài\" (do_dai_so_sanh) sau Phiên 23: xem LENGTH_VISUAL_KINDS trong worksheetSchemas.js (8 kiểu minh hoạ, mỗi kiểu có `orientation` ngang/đứng) + LengthFigure trong WorksheetPreview.jsx (vẽ SVG line-art theo từng `kind`) + LENGTH_KIND_GLYPHS trong worksheetExportService.js (ký tự đại diện từng kiểu khi xuất Word, do Word không vẽ được SVG). Muốn thêm 1 kiểu minh hoạ mới: thêm 1 entry vào LENGTH_VISUAL_KINDS + 1 case mới trong LengthFigure (switch theo `kind`) + 1 glyph mới trong LENGTH_KIND_GLYPHS - không cần sửa gì khác vì generateDoDaiSoSanh() đã tự random qua toàn bộ LENGTH_VISUAL_KINDS.",
         "Nguyên tắc chống sai số dấu phẩy động khi có số thập phân: LUÔN quy đổi qua số nguyên (nhân 10^width) trước khi cộng/trừ/nhân/chia rồi mới quy đổi ngược - xem numberFormatUtils.js (formatSoTuNhien/formatSoThapPhan) và các hàm generateSoThapPhan*() làm mẫu.",
         "3 QUY TẮC SƯ PHẠM TOÁN LỚP 5 bắt buộc (đã ghi trong code, xem NEXT_STEPS.md mục \"Quy tắc sư phạm bắt buộc\"): cấm hình trụ/hình cầu ở bài diện tích-thể tích, không lặp % 2 câu liên tiếp, không dùng dấu \"=\" hàng ngang cho \"Đặt tính rồi tính\".",
       ],

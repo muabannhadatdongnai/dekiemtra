@@ -39,6 +39,23 @@ export const COLOR_PALETTES = {
   red: { border: "#E88585", bg: "#FFEFEF", badge: "#D9534F", badgeDark: "#B03B38", title: "#7A2624" },
 };
 
+/**
+ * ================== "TỐI ƯU IN ĐEN TRẮNG" (theo yêu cầu giáo viên dùng in dịch vụ photocopy) ==================
+ * 1 bảng màu ĐẶC BIỆT dùng khi giáo viên bật "In đen trắng": nền LUÔN trắng tinh, viền/badge/tiêu
+ * đề LUÔN đen/xám đậm - CHỦ Ý không dùng "filter: grayscale()" phủ lên màu gốc, vì các màu nền
+ * pastel (VD "#EAF4FF") khi chuyển xám vẫn còn là 1 mảng MÀU XÁM NHẠT - loại mực/tông màu này rất
+ * dễ MẤT HẲN hoặc rỗ đốm khi photocopy hàng loạt (đặc biệt máy photocopy đời cũ chỉ có 2 mức
+ * đen/trắng, không tái tạo tốt vùng xám) - nền trắng + viền đen tuyệt đối mới in rõ nét, ít tốn
+ * mực, giữ đúng mục tiêu "tối ưu cho photocopy" chứ không chỉ "tối ưu cho xem trên màn hình".
+ */
+export const BW_PALETTE = {
+  border: "#1F2937",
+  bg: "#FFFFFF",
+  badge: "#1F2937",
+  badgeDark: "#000000",
+  title: "#111827",
+};
+
 // Nhiều bộ icon góc trang trí thay vì 1 bộ cố định - xoay vòng theo layout được chọn.
 export const CORNER_DECOR_SETS = [
   ["☀️", "🌈", "✏️", "⭐"],
@@ -164,7 +181,17 @@ export function listLayouts() {
  * layout trong WORKSHEET_LAYOUT_TEMPLATES). Mascot lấy từ chính section (đã random ở G0),
  * KHÔNG còn gắn cứng 1 mascot/1 màu duy nhất vĩnh viễn theo section.type như bản cũ.
  */
-export function getSectionVisualTheme(layout, section, index) {
+/**
+ * `bwMode` (mặc định false, KHÔNG đổi hành vi cũ nếu không truyền) - khi true, BỎ QUA hẳn
+ * colorPaletteIds của layout, luôn trả về BW_PALETTE (đen/trắng) bất kể layout/index nào - đảm
+ * bảo TOÀN BỘ khối bài tập trong phiếu đồng nhất 1 kiểu đen/trắng, không xoay vòng nhiều bảng màu
+ * xám khác nhau (xoay vòng vốn chỉ có ý nghĩa khi các màu KHÁC NHAU để phân biệt khối, ở chế độ
+ * đen/trắng mọi khối đã phân biệt bằng số thứ tự + khung viền riêng, không cần thêm màu).
+ */
+export function getSectionVisualTheme(layout, section, index, bwMode = false) {
+  if (bwMode) {
+    return { ...BW_PALETTE, mascot: section?.mascot || "⭐" };
+  }
   const paletteIds = layout?.colorPaletteIds?.length ? layout.colorPaletteIds : Object.keys(COLOR_PALETTES);
   const paletteId = paletteIds[index % paletteIds.length];
   const palette = COLOR_PALETTES[paletteId] || COLOR_PALETTES.blue;

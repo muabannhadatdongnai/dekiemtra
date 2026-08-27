@@ -76,8 +76,8 @@ const FRAME_BORDER_STYLE = {
   adventure_border: BorderStyle.DASHED,
 };
 
-function getTheme(layout, section, index) {
-  const t = getSectionVisualTheme(layout, section, index);
+function getTheme(layout, section, index, bwMode) {
+  const t = getSectionVisualTheme(layout, section, index, bwMode);
   // docx cần mã hex KHÔNG có dấu "#"
   return {
     border: t.border.replace("#", ""),
@@ -229,41 +229,69 @@ function buildSapXepThuTuParagraphs(items, showAnswers) {
  * Bản CŨ chỉ in "tên: 17 cm  ○  tên: 15 cm" - THUẦN VĂN BẢN, không có "thước" nào để "quan sát"
  * cả (đúng câu lệnh đầu bài "Quan sát số đo rồi so sánh" nhưng thực ra chẳng có gì để quan sát
  * ngoài 2 con số) - giáo viên phản ánh "không thấy độ dài của thước". Sửa: vẽ 1 "thanh đo" xấp xỉ
- * TỈ LỆ THẬT bằng ký tự khối Unicode "▬" lặp lại ĐÚNG bằng số cm (1 ký tự ~ 1cm, cùng cỡ chữ nên
- * đều nhau) - không cần Table (tránh đúng loại lỗi "nested table đè nền" đã ghi ở đầu file) mà
- * vẫn cho học sinh "nhìn" thấy thanh dài/ngắn khác nhau như thước thật, không chỉ đọc số suông.
+ * TỈ LỆ THẬT bằng ký tự khối Unicode lặp lại ĐÚNG bằng số cm (1 ký tự ~ 1cm, cùng cỡ chữ nên đều
+ * nhau) - không cần Table (tránh đúng loại lỗi "nested table đè nền" đã ghi ở đầu file) mà vẫn
+ * cho học sinh "nhìn" thấy thanh dài/ngắn khác nhau như thước thật, không chỉ đọc số suông.
+ *
+ * ================== SỬA THEO PHẢN HỒI GIÁO VIÊN (Phiên 23) ==================
+ * (1) Bỏ hẳn màu xanh lá/cam của 2 thanh - đổi thành 1 màu xám đậm DUY NHẤT (B&W-friendly, khớp
+ * đúng tinh thần "line-art" của bản web - xem LengthFigure trong WorksheetPreview.jsx) - phân
+ * biệt A/B đã có sẵn qua nhãn tên, không cần thêm màu.
+ * (2) Word KHÔNG thể vẽ hình cây/người dạng đứng như bản web (không có canvas/SVG, chỉ có Table/
+ * Textbox phức tạp - rủi ro vỡ layout đã từng gặp ở nhiều chỗ khác trong file này) - với
+ * `it.orientation === "vertical"` (cây/người), vẫn dùng ĐÚNG cơ chế "thanh ký tự lặp" này nhưng
+ * đổi chữ "dài" thành "cao" cho đúng ngữ nghĩa (`it.unitLabel`, xem generateDoDaiSoSanh() trong
+ * worksheetSchemas.js) - CHẤP NHẬN đánh đổi này ở bản Word, bản web vẫn có hình vẽ line-art đầy
+ * đủ cho giáo viên trình chiếu/xem trước.
+ * (3) Đổi ký tự lặp theo TỪNG `kind` (LENGTH_KIND_GLYPHS) để bản Word cũng có chút khác biệt trực
+ * quan giữa băng giấy/sợi dây/con đường... dù không vẽ được hình thật.
+ *
  * 2 thanh của mỗi câu in TRÊN 2 dòng riêng (thẳng hàng bên trái) để dễ so sánh trực quan, dòng thứ
  * 3 mới là chỗ điền dấu >, <, =.
  */
+const LENGTH_KIND_GLYPHS = {
+  band: "▬",
+  rope: "~",
+  pencil: "▭",
+  stick: "▪",
+  ruler: "┆",
+  road: "-",
+  tree: "|",
+  person: "|",
+};
+
 function buildDoDaiSoSanhParagraphs(items, showAnswers) {
-  const rulerBar = (cm) => "▬".repeat(cm);
-  return items.flatMap((it) => [
-    {
-      children: [
-        new TextRun({ text: `${it.nameA} (${it.cmA} cm)  `, font: FONT, size: 22 }),
-        new TextRun({ text: rulerBar(it.cmA), font: FONT, size: 22, color: "2F855A" }),
-      ],
-      spacing: { after: 40 },
-    },
-    {
-      children: [
-        new TextRun({ text: `${it.nameB} (${it.cmB} cm)  `, font: FONT, size: 22 }),
-        new TextRun({ text: rulerBar(it.cmB), font: FONT, size: 22, color: "C05621" }),
-      ],
-      spacing: { after: 80 },
-    },
-    {
-      children: [
-        new TextRun({
-          text: `${it.nameA}   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${it.nameB}`,
-          font: FONT,
-          size: 24,
-          bold: showAnswers,
-        }),
-      ],
-      spacing: { after: 200 },
-    },
-  ]);
+  const rulerBar = (cm, kind) => (LENGTH_KIND_GLYPHS[kind] || "▬").repeat(cm);
+  return items.flatMap((it) => {
+    const unit = it.unitLabel === "cao" ? "cao" : "dài";
+    return [
+      {
+        children: [
+          new TextRun({ text: `${it.nameA} (${unit} ${it.cmA} cm)  `, font: FONT, size: 22 }),
+          new TextRun({ text: rulerBar(it.cmA, it.kind), font: FONT, size: 22, color: "1F2937" }),
+        ],
+        spacing: { after: 40 },
+      },
+      {
+        children: [
+          new TextRun({ text: `${it.nameB} (${unit} ${it.cmB} cm)  `, font: FONT, size: 22 }),
+          new TextRun({ text: rulerBar(it.cmB, it.kind), font: FONT, size: 22, color: "1F2937" }),
+        ],
+        spacing: { after: 80 },
+      },
+      {
+        children: [
+          new TextRun({
+            text: `${it.nameA}   ${showAnswers ? it.answer : BLANK_CIRCLE}   ${it.nameB}`,
+            font: FONT,
+            size: 24,
+            bold: showAnswers,
+          }),
+        ],
+        spacing: { after: 200 },
+      },
+    ];
+  });
 }
 
 /**
@@ -1136,8 +1164,8 @@ function hexNoHash(hex) {
   return (hex || "").replace(/^#/, "");
 }
 
-function buildSectionParagraphs(section, index, showAnswers, layout) {
-  const colors = getTheme(layout, section, index);
+function buildSectionParagraphs(section, index, showAnswers, layout, bwMode) {
+  const colors = getTheme(layout, section, index, bwMode);
   const badge = CIRCLED_DIGITS[index] ?? `(${index + 1})`;
 
   // ================== GIAI ĐOẠN 9, PHÁT HIỆN MỚI (sửa "icon nhỏ") ==================
@@ -1159,7 +1187,14 @@ function buildSectionParagraphs(section, index, showAnswers, layout) {
   // glyph màu cho emoji, để Word tự chọn font thay thế theo đúng hành vi mặc định (giống các chỗ
   // khác trong file này đã in emoji thuần không gán font, VD buildDemVaVietSoParagraphs) thay vì
   // ép chung 1 rFonts với chữ số/badge - tránh lệch baseline giữa glyph màu và chữ thường.
-  const mascotRun = new TextRun({ text: `  ${colors.mascot}  `, size: 30 });
+  //
+  // ================== SỬA THEO PHẢN HỒI GIÁO VIÊN (Phiên 23, "icon Bài 11/12 quá nhỏ") ==================
+  // size cũ = 30 (15pt) - CÙNG MỨC với badge chữ số bên cạnh nên khi mở bằng mắt thường (không
+  // zoom), mascot bị "chìm" lẫn vào dòng tiêu đề, không nổi bật như ý định ban đầu của comment ở
+  // trên. Cùng 1 lý do y hệt đã từng sửa cho emoji đồng hồ trong file này (30 -> 40, xem
+  // buildXemDongHoGioDungParagraphs) - áp dụng lại: tăng lên 40 (20pt) để mascot thực sự nổi bật,
+  // dễ nhìn ngay cả khi in/photocopy giấy thật (không chỉ xem trên màn hình).
+  const mascotRun = new TextRun({ text: `  ${colors.mascot}  `, size: 40 });
 
   const headerOptions = {
     children: [
@@ -1275,11 +1310,11 @@ async function buildAnswerQrParagraphs(answerKeyText) {
  * exportService.js. Export (dù bình thường chỉ dùng nội bộ) để có thể tự verify bằng script gọi
  * hàm trực tiếp + giải nén .docx thật soi XML - cùng tinh thần buildLessonPlanDocxSections() bên
  * module giáo án (xem PROJECT_SUMMARY.md, giai đoạn 8). */
-export async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = false }) {
+export async function buildWorksheetDocxBlob({ worksheet, meta = {}, showAnswers = false, bwMode = false }) {
   const layout = worksheet?.layout || getDefaultLayout();
   const headerParagraphs = buildHeaderParagraphs(meta.title);
   const sectionParagraphs = (worksheet?.sections || []).flatMap((section, i) =>
-    buildSectionParagraphs(section, i, showAnswers, layout)
+    buildSectionParagraphs(section, i, showAnswers, layout, bwMode)
   );
   const qrParagraphs = showAnswers ? await buildAnswerQrParagraphs(worksheet?.answerKeyText) : [];
   const footerParagraphs = buildFooterParagraphs();
@@ -1323,8 +1358,8 @@ function slugifyTitle(title) {
 }
 
 /** Xuất 1 file .docx duy nhất - bản "sạch" cho học sinh (mặc định, dùng khi bấm nút xuất Word thường). */
-export async function exportWorksheetToWord({ worksheet, meta }) {
-  const blob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: false });
+export async function exportWorksheetToWord({ worksheet, meta, bwMode = false }) {
+  const blob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: false, bwMode });
   saveAs(blob, `${slugifyTitle(meta?.title)}.docx`);
 }
 
@@ -1335,13 +1370,15 @@ export async function exportWorksheetToWord({ worksheet, meta }) {
  *   - Bản giáo viên: điền sẵn đáp án (riêng "giải toán có lời văn" chỉ có đáp số nếu giáo
  *     viên đã bật "Kèm đáp số" lúc tạo phiếu - nếu không, dòng đáp số được bỏ qua thay vì
  *     hiện "undefined").
+ * `bwMode`: xem BW_PALETTE trong worksheetLayoutTemplates.js - áp dụng ĐỒNG NHẤT cho cả 2 file
+ * (giáo viên bật 1 lần, cả 2 bản tải về đều tối ưu in đen trắng, không cần bật riêng từng bản).
  */
-export async function exportWorksheetBothVersions({ worksheet, meta }) {
+export async function exportWorksheetBothVersions({ worksheet, meta, bwMode = false }) {
   const fileBase = slugifyTitle(meta?.title);
 
-  const studentBlob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: false });
+  const studentBlob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: false, bwMode });
   saveAs(studentBlob, `${fileBase}-HocSinh.docx`);
 
-  const teacherBlob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: true });
+  const teacherBlob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: true, bwMode });
   saveAs(teacherBlob, `${fileBase}-GiaoVien.docx`);
 }

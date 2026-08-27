@@ -459,29 +459,43 @@ export const AVAILABLE_ICONS = ICONS;
 
 // ===== Chủ đề "Độ dài" =====
 
-/** Tên gọi các "băng giấy"/đoạn thẳng minh hoạ cho bài so sánh độ dài - dùng chữ cái để không
- * lẫn với số đo (khác hẳn phong cách "Băng A/Băng B" khô khan, gần với cách gọi trong SGK thật:
- * "băng giấy màu xanh/băng giấy màu đỏ" v.v.) */
-const LENGTH_BAND_NAMES = [
-  ["băng giấy xanh", "băng giấy đỏ"],
-  ["băng giấy vàng", "băng giấy tím"],
-  ["sợi dây xanh", "sợi dây cam"],
-  ["cây bút chì xanh", "cây bút chì đỏ"],
-  ["que tính xanh", "que tính vàng"],
+/**
+ * ================== SỬA THEO PHẢN HỒI GIÁO VIÊN (Phiên 23) ==================
+ * Trước đây CHỈ có 1 kiểu minh hoạ ("băng giấy"/"sợi dây"/"bút chì"/"que tính" - đều là 1 THANH
+ * MÀU nằm ngang, tô đặc) khiến mọi câu trong 1 phiếu trông "na ná nhau" và không tối ưu in đen
+ * trắng (tô đặc = tốn mực, dễ mất nét khi photocopy). Giờ đây định nghĩa NHIỀU "kiểu minh hoạ"
+ * (LENGTH_VISUAL_KINDS) - mỗi kiểu có tên gọi RIÊNG + hướng bố trí RIÊNG (`orientation`:
+ * "horizontal" cho vật nằm ngang như băng giấy/sợi dây/bút chì/que tính/thước/con đường, hoặc
+ * "vertical" cho vật đứng như cây/người - đúng yêu cầu "ngẫu nhiên như con đường, cây thước, cái
+ * cây, người cao người thấp"). Component vẽ hình (WorksheetPreview.jsx/LengthFigure) đọc đúng
+ * `kind` này để chọn hình vẽ LINE-ART (chỉ viền nét, không tô đặc) tương ứng - xem chi tiết ở đó.
+ */
+export const LENGTH_VISUAL_KINDS = [
+  { id: "band", orientation: "horizontal", label: "dài", names: [["băng giấy xanh", "băng giấy đỏ"], ["băng giấy vàng", "băng giấy tím"]] },
+  { id: "rope", orientation: "horizontal", label: "dài", names: [["sợi dây xanh", "sợi dây cam"]] },
+  { id: "pencil", orientation: "horizontal", label: "dài", names: [["cây bút chì xanh", "cây bút chì đỏ"]] },
+  { id: "stick", orientation: "horizontal", label: "dài", names: [["que tính xanh", "que tính vàng"]] },
+  { id: "ruler", orientation: "horizontal", label: "dài", names: [["cây thước A", "cây thước B"]] },
+  { id: "road", orientation: "horizontal", label: "dài", names: [["con đường đến nhà bạn An", "con đường đến nhà bạn Bình"]] },
+  { id: "tree", orientation: "vertical", label: "cao", names: [["cây bàng", "cây phượng"], ["cây xoài", "cây bưởi"]] },
+  { id: "person", orientation: "vertical", label: "cao", names: [["bạn Hùng", "bạn Lan"], ["bạn Mai", "bạn Tuấn"]] },
 ];
 
-/** So sánh độ dài 2 "băng giấy" (có ghi sẵn số đo cm) - điền dấu >, <, =. Phạm vi 3-20cm khớp
- * đúng phạm vi số Lớp 1 đã học (WORKSHEET_GRADES.LOP_1.maxNumber = 20). */
+/** So sánh độ dài (hoặc chiều cao, tuỳ `kind`) 2 vật - điền dấu >, <, =. Phạm vi 3-20cm khớp
+ * đúng phạm vi số Lớp 1 đã học (WORKSHEET_GRADES.LOP_1.maxNumber = 20). Mỗi câu random ĐỘC LẬP 1
+ * `kind` trong LENGTH_VISUAL_KINDS - để 1 phiếu có NHIỀU kiểu minh hoạ khác nhau thay vì lặp đúng
+ * 1 kiểu suốt cả bài. */
 export function generateDoDaiSoSanh(count = 4) {
   const items = [];
   for (let i = 0; i < count; i++) {
-    const [nameA, nameB] = pick(LENGTH_BAND_NAMES);
+    const kind = pick(LENGTH_VISUAL_KINDS);
+    const [nameA, nameB] = pick(kind.names);
     const cmA = randInt(3, 20);
     // Khoảng 20% số câu ra kết quả BẰNG NHAU (cmB = cmA) - còn lại random độc lập, để không lúc
     // nào cũng có dấu > hoặc < (đa dạng cả 3 loại dấu như bài "so_sanh" gốc).
     const cmB = Math.random() < 0.2 ? cmA : randInt(3, 20);
     const answer = cmA === cmB ? "=" : cmA > cmB ? ">" : "<";
-    items.push({ nameA, cmA, nameB, cmB, answer });
+    items.push({ kind: kind.id, orientation: kind.orientation, unitLabel: kind.label, nameA, cmA, nameB, cmB, answer });
   }
   return items;
 }
