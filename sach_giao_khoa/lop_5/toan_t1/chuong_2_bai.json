@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 10,
+    "tenBai": "Khái niệm số thập phân",
+    "noiDungCotLoi": "Hình thành khái niệm số thập phân từ phân số thập phân (bài 4). Nhận biết cấu tạo số thập phân gồm phần nguyên và phần thập phân, cách đọc và viết số thập phân."
+  },
+  {
+    "soBai": 11,
+    "tenBai": "So sánh các số thập phân",
+    "noiDungCotLoi": "Hình thành quy tắc so sánh hai số thập phân (so sánh phần nguyên trước, rồi đến từng hàng của phần thập phân). Vận dụng sắp xếp một dãy số thập phân theo thứ tự."
+  },
+  {
+    "soBai": 12,
+    "tenBai": "Viết số đo đại lượng dưới dạng số thập phân",
+    "noiDungCotLoi": "Biết chuyển đổi số đo độ dài, khối lượng giữa các đơn vị đo (VD m và cm, kg và g) sang dạng số thập phân. Vận dụng vào các bài toán đo lường thực tế."
+  },
+  {
+    "soBai": 13,
+    "tenBai": "Làm tròn số thập phân",
+    "noiDungCotLoi": "Hình thành quy tắc làm tròn số thập phân đến một hàng cho trước (hàng chục, đơn vị, phần mười...). Vận dụng làm tròn để ước lượng kết quả trong thực tế."
+  },
+  {
+    "soBai": 14,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống hoá và luyện tập tổng hợp các nội dung của Chủ đề 2 (khái niệm, so sánh, chuyển đổi đơn vị, làm tròn số thập phân) qua các bài toán kết hợp."
+  }
+]

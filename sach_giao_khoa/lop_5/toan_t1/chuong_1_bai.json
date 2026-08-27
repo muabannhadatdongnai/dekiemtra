@@ -1,0 +1,47 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Ôn tập số tự nhiên",
+    "noiDungCotLoi": "Ôn tập đọc, viết, so sánh và sắp xếp thứ tự các số tự nhiên đã học ở Lớp 4 (đến lớp triệu). Củng cố cấu tạo thập phân của số tự nhiên (hàng, lớp, giá trị theo vị trí)."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Ôn tập các phép tính với số tự nhiên",
+    "noiDungCotLoi": "Ôn tập kỹ thuật cộng, trừ, nhân, chia số tự nhiên (kể cả chia có dư) và tính chất của các phép tính (giao hoán, kết hợp, phân phối). Vận dụng vào tính giá trị biểu thức và giải toán có lời văn."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Ôn tập phân số",
+    "noiDungCotLoi": "Ôn tập khái niệm phân số, phân số bằng nhau, rút gọn phân số và quy đồng mẫu số. Ôn so sánh hai phân số (cùng mẫu số và khác mẫu số)."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Phân số thập phân",
+    "noiDungCotLoi": "Nhận biết phân số thập phân (mẫu số là 10, 100, 1000,...). Biết cách chuyển một phân số thành phân số thập phân khi có thể, làm cơ sở cho khái niệm số thập phân ở Chương 2."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Ôn tập các phép tính với phân số",
+    "noiDungCotLoi": "Ôn tập cộng, trừ, nhân, chia phân số cùng mẫu số đã học. Củng cố quy tắc thực hiện phép tính và vận dụng giải toán có lời văn với phân số."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Cộng, trừ hai phân số khác mẫu số",
+    "noiDungCotLoi": "Hình thành quy tắc cộng, trừ hai phân số khác mẫu số bằng cách quy đồng mẫu số trước khi tính. Luyện tập trình bày các bước tính đúng thứ tự."
+  },
+  {
+    "soBai": 7,
+    "tenBai": "Hỗn số",
+    "noiDungCotLoi": "Nhận biết hỗn số (gồm phần nguyên và phần phân số), đọc viết hỗn số. Biết chuyển hỗn số thành phân số và ngược lại để phục vụ tính toán."
+  },
+  {
+    "soBai": 8,
+    "tenBai": "Ôn tập hình học và đo lường",
+    "noiDungCotLoi": "Ôn tập nhận diện các hình đã học (hình vuông, chữ nhật, tam giác...) và các đơn vị đo độ dài, khối lượng, thời gian đã học ở các lớp dưới. Chuẩn bị nền tảng đo lường cho các bài về diện tích ở Chương 3."
+  },
+  {
+    "soBai": 9,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống hoá và luyện tập tổng hợp các nội dung của Chủ đề 1 (số tự nhiên, phân số, hình học và đo lường) qua các bài toán kết hợp nhiều dạng kiến thức."
+  }
+]
