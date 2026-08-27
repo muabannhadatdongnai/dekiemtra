@@ -285,6 +285,34 @@ body {
   }
 }
 
+/* =====================================================================
+   "TỐI ƯU IN ĐEN TRẮNG" - áp dụng khi WorksheetPreview.jsx nhận bwMode=true
+   (checkbox "🖨️ Tối ưu in đen trắng" ở WorksheetExportActions.jsx). CHỈ đè các phần TỬ CSS CỐ
+   ĐỊNH mà getSectionVisualTheme()/BW_PALETTE (JS) không với tới được (worksheet-title-badge,
+   worksheet-rainbow, worksheet-info-pill dùng màu hard-code trong file CSS này, không đọc theme
+   JS) - các phần đã đọc theme qua props (khung từng khối bài tập, khung ngoài worksheet-inner...)
+   đã tự đổi màu đúng ở tầng JS (xem BW_PALETTE/FRAME_STYLES_BW trong WorksheetPreview.jsx).
+   ===================================================================== */
+.worksheet-bw .worksheet-title-badge {
+  background: #ffffff;
+  border: 3px solid #1f2937;
+  box-shadow: none;
+  color: #111827;
+}
+.worksheet-bw .worksheet-rainbow {
+  background: #1f2937;
+  height: 3px;
+}
+.worksheet-bw .worksheet-info-pill {
+  background: #ffffff;
+  border: 1.5px solid #1f2937;
+  color: #111827;
+}
+.worksheet-bw .worksheet-outer {
+  background: #ffffff;
+  box-shadow: 0 0 0 2px #e5e7eb;
+}
+
 /* ===== Ngắt trang cho phần Rubric (chỉ khi in/PDF) ===== */
 @media print {
   .page-break-before {

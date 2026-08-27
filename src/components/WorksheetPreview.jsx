@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getSectionVisualTheme, getDefaultLayout } from "@/data/worksheetLayoutTemplates";
+import { getSectionVisualTheme, getDefaultLayout, BW_PALETTE } from "@/data/worksheetLayoutTemplates";
 // MỞ RỘNG LỚP 3, ĐỢT 2: nhãn 3 mức "Chắc chắn/Có thể/Không thể" dùng chung với generator
 // (worksheetSchemas.js) - tránh khai lại danh sách nhãn 2 nơi có thể lệch nhau.
 import { PROBABILITY_LEVEL_LABELS } from "@/data/worksheetSchemas";
@@ -28,8 +28,8 @@ import { getLineArtIcon } from "@/data/lineArtIcons";
  * NGUỒN DUY NHẤT dùng chung với worksheetExportService.js, không còn định nghĩa riêng 2 nơi).
  */
 
-function getTheme(layout, section, index) {
-  return getSectionVisualTheme(layout, section, index);
+function getTheme(layout, section, index, bwMode) {
+  return getSectionVisualTheme(layout, section, index, bwMode);
 }
 
 // ===== Kiểu khung ngoài (frameStyle) - áp dụng lên .worksheet-inner =====
@@ -42,6 +42,22 @@ const FRAME_STYLES = {
     backgroundImage: "repeating-linear-gradient(#fffefb 0 27px, #eadfc7 27px 28px)",
   },
   adventure_border: { border: "4px dashed #ffcf7a", borderRadius: 28 },
+};
+
+// ================== "TỐI ƯU IN ĐEN TRẮNG" ==================
+// Bản khung ngoài đen/trắng thay thế FRAME_STYLES gốc khi bwMode bật - GIỮ NGUYÊN kiểu nét (chấm/
+// liền/gạch ngang) của từng frameStyle (để vẫn phân biệt được layout nào đang dùng) nhưng đổi hẳn
+// màu sắc về đen/trắng + bỏ nền màu (notebook_lines vốn có sọc nền màu kem/nâu nhạt - đổi thành
+// sọc xám rất nhạt, đủ để nhận biết "giấy kẻ ngang" mà không tốn nhiều mực khi photocopy).
+const FRAME_STYLES_BW = {
+  dotted_border_thick_card: { border: "3px dashed #1F2937", borderRadius: 24 },
+  soft_rounded_border: { border: "3px solid #1F2937", borderRadius: 34 },
+  notebook_lines: {
+    border: "2px solid #1F2937",
+    borderRadius: 12,
+    backgroundImage: "repeating-linear-gradient(#ffffff 0 27px, #e5e7eb 27px 28px)",
+  },
+  adventure_border: { border: "4px dashed #1F2937", borderRadius: 28 },
 };
 
 function ExerciseBox({ index, type, title, mascot, accent, badge, badgeDark, titleColor, bg, cardStyle, children }) {
@@ -423,9 +439,26 @@ function TachGopDiagram({ item, accent }) {
   );
 }
 
+/**
+ * ================== SỬA THEO PHẢN HỒI GIÁO VIÊN (Phiên 23, "Bài số 2: sắp xếp 2 hàng cho cân đối") ==================
+ * Bản CŨ dùng `flexWrap: "wrap"` - số sơ đồ xuống hàng phụ thuộc bề rộng khung chứa còn dư bao
+ * nhiêu, nên với 4 sơ đồ dễ ra 3 cái ở hàng 1 + 1 cái lẻ loi ở hàng 2 (đúng như ảnh giáo viên gửi)
+ * - không "cân đối". Đổi sang CSS Grid CỐ ĐỊNH 2 CỘT (`repeat(2, ...)`) - LUÔN chia đúng 2 sơ đồ/
+ * hàng bất kể bề rộng khung chứa, ra đúng bố cục 2 hàng x 2 cột cân đối với số lượng mặc định là
+ * 4 (nếu giáo viên đổi thành số lẻ, hàng cuối chỉ còn 1 ô - chấp nhận được, ít gặp vì defaultCount
+ * của dạng bài này luôn là số chẵn theo catalog).
+ */
 function TachGopSection({ items, accent }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 20, justifyContent: "flex-start" }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 132px)",
+        columnGap: 48,
+        rowGap: 24,
+        justifyContent: "center",
+      }}
+    >
       {items.map((it, i) => (
         <TachGopDiagram key={i} item={it} accent={accent} />
       ))}
@@ -490,54 +523,181 @@ function NoiPhepTinhSection({ data, accent }) {
 }
 
 /**
- * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Độ dài", Lớp 1) ==================
- * So sánh độ dài 2 "băng giấy" đã ghi sẵn số đo (cm) - vẽ 1 thanh màu có ĐỘ RỘNG tỉ lệ thô với
- * số cm (chỉ mang tính minh hoạ trực quan, KHÔNG cần đúng tỉ lệ vật lý tuyệt đối vì đây là bài
- * tập đọc-so sánh số đo đã cho sẵn, không phải bài tự đo bằng thước thật trên giấy in - tránh
- * rủi ro sai lệch khi in/PDF không giữ đúng tỉ lệ mm mong muốn) + nhãn số đo bên cạnh.
+ * ================== GIAI ĐOẠN 9, BƯỚC 2 + SỬA THEO PHẢN HỒI GIÁO VIÊN (Phiên 23) ==================
+ * Vẽ "vật minh hoạ" cho bài so sánh độ dài bằng SVG LINE-ART THUẦN (chỉ viền nét `stroke`,
+ * fill="none" - KHÔNG tô đặc như bản cũ dùng 1 thanh màu filled) - vừa đúng yêu cầu "thiết kế
+ * kiểu line-art", vừa tự nhiên tối ưu in đen trắng (không có khối mực đặc nào cần lo).
+ * `kind` quyết định hình vẽ (băng giấy/sợi dây/bút chì/que tính/thước/con đường/cây/người) - xem
+ * LENGTH_VISUAL_KINDS trong worksheetSchemas.js. `size` = độ dài (hoặc chiều cao, tuỳ hướng) đã
+ * quy đổi ra px theo tỉ lệ thô (không cần khớp tỉ lệ vật lý tuyệt đối - lý do đã ghi ở
+ * DoDaiSoSanhSection bên dưới).
  */
-function DoDaiSoSanhSection({ items, accent }) {
+function LengthFigure({ kind, size, stroke }) {
+  const sw = 2;
+  switch (kind) {
+    case "rope": {
+      // Đường "sợi dây" lượn sóng nhẹ - ghép nhiều đường cong bậc 2 (Q) liên tiếp.
+      const amp = 5;
+      const segments = Math.max(4, Math.round(size / 14));
+      const step = size / segments;
+      let d = "M 0 16";
+      for (let i = 1; i <= segments; i++) {
+        const x = i * step;
+        const ctrlY = i % 2 === 0 ? 16 - amp : 16 + amp;
+        d += ` Q ${x - step / 2} ${ctrlY}, ${x} 16`;
+      }
+      return (
+        <svg width={size} height={32} style={{ flexShrink: 0 }}>
+          <path d={d} stroke={stroke} strokeWidth={sw} fill="none" strokeLinecap="round" />
+        </svg>
+      );
+    }
+    case "pencil": {
+      const tip = 14;
+      const bodyW = Math.max(size - tip, 4);
+      return (
+        <svg width={size} height={20} style={{ flexShrink: 0 }}>
+          <rect x={0} y={4} width={bodyW} height={12} stroke={stroke} strokeWidth={sw} fill="none" />
+          <line x1={bodyW - 6} y1={4} x2={bodyW - 6} y2={16} stroke={stroke} strokeWidth={1} />
+          <polygon points={`${bodyW},4 ${size},10 ${bodyW},16`} stroke={stroke} strokeWidth={sw} fill="none" strokeLinejoin="round" />
+        </svg>
+      );
+    }
+    case "stick":
+      return (
+        <svg width={size} height={14} style={{ flexShrink: 0 }}>
+          <rect x={1} y={3} width={size - 2} height={8} rx={4} stroke={stroke} strokeWidth={sw} fill="none" />
+        </svg>
+      );
+    case "ruler": {
+      const tickGap = 8;
+      const ticks = [];
+      for (let x = tickGap; x < size; x += tickGap) {
+        const tall = Math.round(x / tickGap) % 5 === 0;
+        ticks.push(<line key={x} x1={x} y1={4} x2={x} y2={tall ? 15 : 9} stroke={stroke} strokeWidth={1.1} />);
+      }
+      return (
+        <svg width={size} height={20} style={{ flexShrink: 0 }}>
+          <rect x={0} y={4} width={size} height={13} stroke={stroke} strokeWidth={sw} fill="none" />
+          {ticks}
+        </svg>
+      );
+    }
+    case "road":
+      return (
+        <svg width={size} height={20} style={{ flexShrink: 0 }}>
+          <rect x={0} y={2} width={size} height={16} stroke={stroke} strokeWidth={sw} fill="none" />
+          <line x1={4} y1={10} x2={size - 4} y2={10} stroke={stroke} strokeWidth={1.2} strokeDasharray="6 5" />
+        </svg>
+      );
+    case "tree": {
+      const trunkW = 8;
+      const trunkH = Math.min(18, size * 0.28);
+      const canopyH = size - trunkH;
+      const w = Math.max(size * 0.6, 32);
+      return (
+        <svg width={w} height={size} style={{ flexShrink: 0 }}>
+          <polygon points={`${w / 2},2 2,${canopyH} ${w - 2},${canopyH}`} stroke={stroke} strokeWidth={sw} fill="none" strokeLinejoin="round" />
+          <rect x={w / 2 - trunkW / 2} y={canopyH} width={trunkW} height={trunkH} stroke={stroke} strokeWidth={sw} fill="none" />
+        </svg>
+      );
+    }
+    case "person": {
+      const headR = Math.min(9, size * 0.14);
+      const bodyTop = headR * 2 + 2;
+      const bodyH = (size - bodyTop) * 0.55;
+      const legH = size - bodyTop - bodyH;
+      const cx = 18;
+      return (
+        <svg width={36} height={size} style={{ flexShrink: 0 }}>
+          <circle cx={cx} cy={headR + 1} r={headR} stroke={stroke} strokeWidth={sw} fill="none" />
+          <line x1={cx} y1={bodyTop} x2={cx} y2={bodyTop + bodyH} stroke={stroke} strokeWidth={sw} />
+          <line x1={cx - 10} y1={bodyTop + 6} x2={cx + 10} y2={bodyTop + 6} stroke={stroke} strokeWidth={sw} />
+          <line x1={cx} y1={bodyTop + bodyH} x2={cx - 9} y2={bodyTop + bodyH + legH} stroke={stroke} strokeWidth={sw} />
+          <line x1={cx} y1={bodyTop + bodyH} x2={cx + 9} y2={bodyTop + bodyH + legH} stroke={stroke} strokeWidth={sw} />
+        </svg>
+      );
+    }
+    case "band":
+    default:
+      return (
+        <svg width={size} height={20} style={{ flexShrink: 0 }}>
+          <rect x={1} y={2} width={size - 2} height={16} rx={6} stroke={stroke} strokeWidth={sw} fill="none" />
+        </svg>
+      );
+  }
+}
+
+/**
+ * So sánh độ dài (hoặc chiều cao) 2 vật - hình vẽ chọn theo `it.kind`/`it.orientation` (random ở
+ * tầng dữ liệu, xem generateDoDaiSoSanh() trong worksheetSchemas.js) nên 1 phiếu có thể có nhiều
+ * kiểu minh hoạ khác nhau (băng giấy, sợi dây, cây, người...) thay vì lặp lại 1 kiểu duy nhất.
+ * Vật "orientation: vertical" (cây/người) đặt CẠNH NHAU, chung 1 đường đáy (alignItems:
+ * "flex-end") để so sánh trực quan giống hệt cách so 2 cột chiều cao; vật "horizontal" (băng
+ * giấy/sợi dây/bút chì/que tính/thước/con đường) vẫn xếp CHỒNG 2 dòng như bản cũ. `size` chỉ
+ * mang tính minh hoạ tỉ lệ thô (không cần đúng tỉ lệ vật lý tuyệt đối vì đây là bài tập đọc-so
+ * sánh số đo đã cho sẵn, không phải bài tự đo bằng thước thật trên giấy in - tránh rủi ro sai
+ * lệch khi in/PDF không giữ đúng tỉ lệ mm mong muốn).
+ */
+function DoDaiSoSanhSection({ items, accent, bwMode }) {
   const maxCm = 20; // đúng phạm vi randInt(3,20) trong generateDoDaiSoSanh()
-  const barWidth = (cm) => 40 + (cm / maxCm) * 90; // px, chỉ mang tính minh hoạ tỉ lệ thô
-  const bar = (label, cm) => (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div
-        style={{
-          width: barWidth(cm),
-          height: 14,
-          borderRadius: 7,
-          background: accent,
-          opacity: 0.75,
-          flexShrink: 0,
-        }}
-      />
-      <span style={{ whiteSpace: "nowrap" }}>
-        {label}: <strong>{cm} cm</strong>
-      </span>
-    </div>
-  );
+  const stroke = bwMode ? "#1F2937" : accent;
+  const sizeFor = (cm) => 40 + (cm / maxCm) * 90; // px
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 13 }}>
-      {items.map((it, i) => (
-        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          {bar(it.nameA, it.cmA)}
-          {bar(it.nameB, it.cmB)}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
-            <span>{it.nameA}</span>
-            <span
-              style={{
-                display: "inline-block",
-                width: 24,
-                height: 24,
-                border: `1.5px solid ${accent}`,
-                borderRadius: "50%",
-                background: "#fff",
-              }}
-            />
-            <span>{it.nameB}</span>
+    <div style={{ display: "flex", flexDirection: "column", gap: 18, fontSize: 13 }}>
+      {items.map((it, i) => {
+        const isVertical = it.orientation === "vertical";
+        return (
+          <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {isVertical ? (
+              <div style={{ display: "flex", alignItems: "flex-end", gap: 28 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <LengthFigure kind={it.kind} size={sizeFor(it.cmA)} stroke={stroke} />
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {it.nameA}: <strong>{it.cmA} cm</strong>
+                  </span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <LengthFigure kind={it.kind} size={sizeFor(it.cmB)} stroke={stroke} />
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {it.nameB}: <strong>{it.cmB} cm</strong>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <LengthFigure kind={it.kind} size={sizeFor(it.cmA)} stroke={stroke} />
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {it.nameA}: <strong>{it.cmA} cm</strong>
+                  </span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <LengthFigure kind={it.kind} size={sizeFor(it.cmB)} stroke={stroke} />
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    {it.nameB}: <strong>{it.cmB} cm</strong>
+                  </span>
+                </div>
+              </>
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+              <span>{it.nameA}</span>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 24,
+                  height: 24,
+                  border: `1.5px solid ${stroke}`,
+                  borderRadius: "50%",
+                  background: "#fff",
+                }}
+              />
+              <span>{it.nameB}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -1142,8 +1302,20 @@ function KhaNangXayRaSection({ items, accent }) {
  * Dùng thanh ngang (không phải cột dọc) vì dễ canh chỉnh chiều rộng bằng % trong flexbox hơn
  * chiều cao, và vẫn đọc trực quan không kém biểu đồ cột dọc thường thấy trong SGK.
  */
-function ThuThapSoLieuSection({ surveyTitle, data, questions, accent }) {
+function ThuThapSoLieuSection({ surveyTitle, data, questions, accent, bwMode }) {
   const maxValue = Math.max(...data.map((d) => d.value), 1);
+  // ================== "TỐI ƯU IN ĐEN TRẮNG" ==================
+  // Cột tô ĐẶC 1 màu (kể cả đổi màu đó thành đen ở BW_PALETTE) vẫn là 1 KHỐI MỰC LỚN, tốn mực và
+  // dễ bị photocopy đời cũ "cán phẳng" thành 1 vệt đen mờ không đều. Thay bằng VÂN SỌC CHÉO
+  // (repeating-linear-gradient đen/trắng xen kẽ) - vẫn đọc được độ dài cột để so sánh trực quan,
+  // nhưng lượng mực thực tế in ra chỉ còn ~50%, và các đường sọc rõ nét khi photocopy hơn hẳn 1
+  // vùng tô đặc lớn.
+  const barFill = bwMode
+    ? {
+        background: "repeating-linear-gradient(45deg, #1F2937, #1F2937 3px, #ffffff 3px, #ffffff 7px)",
+        border: "1.5px solid #1F2937",
+      }
+    : { background: accent, opacity: 0.75 };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 15 }}>
       <div style={{ fontWeight: 600 }}>{surveyTitle}</div>
@@ -1153,8 +1325,7 @@ function ThuThapSoLieuSection({ surveyTitle, data, questions, accent }) {
             <div style={{ width: 90, flexShrink: 0, textAlign: "right" }}>{d.label}</div>
             <div
               style={{
-                background: accent,
-                opacity: 0.75,
+                ...barFill,
                 height: 20,
                 borderRadius: 4,
                 width: `${(d.value / maxValue) * 70}%`,
@@ -1556,8 +1727,8 @@ function DatCauTheoMauSection({ items, accent }) {
 
 /** Render 1 ExerciseBox hoàn chỉnh theo section.type - tách riêng thành component để dùng
  * chung được ở cả nhánh 1 cột và 2 cột (GIAI ĐOẠN 9), tránh lặp lại y hệt 1 khối JSX dài 2 lần. */
-function RenderedExerciseBox({ section, index, layout }) {
-  const t = getTheme(layout, section, index);
+function RenderedExerciseBox({ section, index, layout, bwMode }) {
+  const t = getTheme(layout, section, index, bwMode);
   return (
     <ExerciseBox
       index={index}
@@ -1578,7 +1749,7 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "day_so" && <DaySoSection items={section.items} accent={t.border} />}
       {section.type === "sap_xep_thu_tu" && <SapXepThuTuSection items={section.items} accent={t.border} />}
       {section.type === "noi_phep_tinh" && <NoiPhepTinhSection data={section.data} accent={t.border} />}
-      {section.type === "do_dai_so_sanh" && <DoDaiSoSanhSection items={section.items} accent={t.border} />}
+      {section.type === "do_dai_so_sanh" && <DoDaiSoSanhSection items={section.items} accent={t.border} bwMode={bwMode} />}
       {section.type === "do_dai_sap_xep" && <SapXepThuTuSection items={section.items} accent={t.border} />}
       {section.type === "xem_dong_ho_gio_dung" && <XemDongHoGioDungSection items={section.items} accent={t.border} />}
       {section.type === "xem_dong_ho_gio_phut" && <XemDongHoGioPhutSection items={section.items} accent={t.border} />}
@@ -1611,7 +1782,7 @@ function RenderedExerciseBox({ section, index, layout }) {
       {section.type === "tien_viet_nam" && <TienVietNamSection items={section.items} accent={t.border} />}
       {section.type === "kha_nang_xay_ra" && <KhaNangXayRaSection items={section.items} accent={t.border} />}
       {section.type === "thu_thap_so_lieu" && (
-        <ThuThapSoLieuSection surveyTitle={section.surveyTitle} data={section.data} questions={section.questions} accent={t.border} />
+        <ThuThapSoLieuSection surveyTitle={section.surveyTitle} data={section.data} questions={section.questions} accent={t.border} bwMode={bwMode} />
       )}
       {section.type === "cac_ngay_trong_tuan" && <CacNgayTrongTuanSection items={section.items} accent={t.border} />}
       {section.type === "nhan_dien_hinh" && <NhanDienHinhSection shapes={section.shapes} accent={t.border} />}
@@ -1625,7 +1796,7 @@ function RenderedExerciseBox({ section, index, layout }) {
   );
 }
 
-export default function WorksheetPreview({ worksheet, meta }) {
+export default function WorksheetPreview({ worksheet, meta, bwMode = false }) {
   if (!worksheet?.sections?.length) {
     return (
       <div className="flex h-full min-h-[400px] items-center justify-center rounded-lg border border-dashed border-slate-300 text-sm text-slate-400">
@@ -1637,14 +1808,21 @@ export default function WorksheetPreview({ worksheet, meta }) {
   // Phiếu tạo trước Giai đoạn 0 sẽ không có field "layout" -> dùng layout mặc định để vẫn
   // hiển thị đúng, không vỡ giao diện với dữ liệu cũ.
   const layout = worksheet.layout || getDefaultLayout();
-  const frame = FRAME_STYLES[layout.frameStyle] || FRAME_STYLES.dotted_border_thick_card;
+  // "Tối ưu in đen trắng" là 1 CÔNG TẮC HIỂN THỊ (bwMode), KHÔNG đụng vào worksheet.layout đã lưu
+  // (giáo viên bật/tắt thoải mái để so sánh mà không cần tạo lại phiếu) - `effectivePalette` thay
+  // thế layout.palette (màu tổng thể tiêu đề/chân trang) đúng ĐÚNG những chỗ trước đây đọc trực
+  // tiếp layout.palette; theme TỪNG khối bài tập vẫn qua getTheme(...,bwMode) như thường.
+  const effectivePalette = bwMode ? BW_PALETTE : layout.palette;
+  const frame = bwMode
+    ? FRAME_STYLES_BW[layout.frameStyle] || FRAME_STYLES_BW.dotted_border_thick_card
+    : FRAME_STYLES[layout.frameStyle] || FRAME_STYLES.dotted_border_thick_card;
   const corners = layout.cornerDecor?.length === 4 ? layout.cornerDecor : ["☀️", "🌈", "✏️", "⭐"];
   const isRibbonHeader = layout.headerStyle === "ribbon_corner";
   const isUnderlineHeader = layout.headerStyle === "simple_underline";
 
   return (
     <div id="print-area">
-      <div className="a4-page worksheet-page">
+      <div className={`a4-page worksheet-page${bwMode ? " worksheet-bw" : ""}`}>
         {/* Khung thẻ trắng dày (mat) bao ngoài */}
         <div className="worksheet-outer">
           {/* Viền trang trí bên trong (kiểu viền thay đổi theo layout.frameStyle) + 4 góc */}
@@ -1660,8 +1838,8 @@ export default function WorksheetPreview({ worksheet, meta }) {
                   style={{
                     fontSize: 26,
                     fontWeight: 800,
-                    color: layout.palette.title,
-                    borderBottom: `3px solid ${layout.palette.border}`,
+                    color: effectivePalette.title,
+                    borderBottom: `3px solid ${effectivePalette.border}`,
                     paddingBottom: 4,
                   }}
                 >
@@ -1672,7 +1850,7 @@ export default function WorksheetPreview({ worksheet, meta }) {
                   className="worksheet-title-badge"
                   style={
                     isRibbonHeader
-                      ? { borderRadius: "6px 20px 6px 20px", background: `linear-gradient(180deg, ${layout.palette.bg}, ${layout.palette.border}55)`, color: layout.palette.title }
+                      ? { borderRadius: "6px 20px 6px 20px", background: `linear-gradient(180deg, ${effectivePalette.bg}, ${effectivePalette.border}55)`, color: effectivePalette.title }
                       : undefined
                   }
                 >
@@ -1702,13 +1880,13 @@ export default function WorksheetPreview({ worksheet, meta }) {
              */}
             <div>
               {worksheet.sections.map((section, i) => (
-                <RenderedExerciseBox key={i} section={section} index={i} layout={layout} />
+                <RenderedExerciseBox key={i} section={section} index={i} layout={layout} bwMode={bwMode} />
               ))}
             </div>
 
-            {worksheet.answerKeyText && <AnswerQrCode text={worksheet.answerKeyText} accent={layout.palette.border} />}
+            {worksheet.answerKeyText && <AnswerQrCode text={worksheet.answerKeyText} accent={effectivePalette.border} />}
 
-            <WorksheetFooter palette={layout.palette} />
+            <WorksheetFooter palette={effectivePalette} />
           </div>
         </div>
       </div>

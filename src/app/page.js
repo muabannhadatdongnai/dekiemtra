@@ -91,6 +91,10 @@ export default function HomePage() {
   // người dùng (trước đó lỡ để mặc định là MODES.EXAM dù tab EXAM không còn ở vị trí đầu).
   const [mode, setMode] = useState(MODES.LESSON_PLAN);
   const [worksheetResult, setWorksheetResult] = useState(null); // { worksheet, meta } | null
+  // "Tối ưu in đen trắng" (Phiên 23) - công tắc HIỂN THỊ/XUẤT FILE thuần tuý, KHÔNG thuộc dữ liệu
+  // worksheetResult (không cần tạo lại phiếu khi bật/tắt) - dùng chung cho cả WorksheetPreview
+  // (web + "In/Tải PDF") và WorksheetExportActions (nút "Tải Word"), xem comment chi tiết ở 2 file đó.
+  const [worksheetBwMode, setWorksheetBwMode] = useState(false);
   const [lessonPlanResult, setLessonPlanResult] = useState(EMPTY_LESSON_PLAN_RESULT);
   const [vietnameseExamResult, setVietnameseExamResult] = useState(EMPTY_VIETNAMESE_EXAM_RESULT);
   const [reportCommentResult, setReportCommentResult] = useState(EMPTY_REPORT_COMMENT_RESULT);
@@ -299,9 +303,14 @@ export default function HomePage() {
             </section>
           ) : mode === MODES.WORKSHEET ? (
             <section className="space-y-4">
-              <WorksheetExportActions worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
+              <WorksheetExportActions
+                worksheet={worksheetResult?.worksheet}
+                meta={worksheetResult?.meta}
+                bwMode={worksheetBwMode}
+                onToggleBwMode={setWorksheetBwMode}
+              />
               <div className="overflow-auto rounded-xl bg-slate-100 p-4">
-                <WorksheetPreview worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} />
+                <WorksheetPreview worksheet={worksheetResult?.worksheet} meta={worksheetResult?.meta} bwMode={worksheetBwMode} />
               </div>
             </section>
           ) : mode === MODES.LESSON_PLAN ? (
