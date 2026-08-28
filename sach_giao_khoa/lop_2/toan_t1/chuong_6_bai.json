@@ -1,0 +1,22 @@
+[
+  {
+    "soBai": 29,
+    "tenBai": "Ngày - giờ, giờ - phút",
+    "noiDungCotLoi": "Nhận biết một ngày có 24 giờ, một giờ có 60 phút; cách gọi giờ theo buổi (sáng, trưa, chiều, tối, đêm). Đọc chính xác giờ trên đồng hồ khi kim phút chỉ vào số 3 (15 phút) hoặc số 6 (30 phút/rưỡi)."
+  },
+  {
+    "soBai": 30,
+    "tenBai": "Ngày - tháng",
+    "noiDungCotLoi": "Nhận biết và đọc chính xác số ngày trong tháng, ngày cụ thể trong tháng qua xem tờ lịch tháng trực quan. Vận dụng tờ lịch để trả lời câu hỏi tình huống thực tiễn (ngày sinh nhật, ngày lễ...)."
+  },
+  {
+    "soBai": 31,
+    "tenBai": "Thực hành và trải nghiệm xem đồng hồ, xem lịch",
+    "noiDungCotLoi": "Thực hành đọc giờ thành thạo khi kim dài chỉ số 12, 3, 6; đọc số ngày, ngày trong tháng qua lịch tháng thực tế. Biết lập và sắp xếp thời gian biểu học tập, sinh hoạt cá nhân hợp lý."
+  },
+  {
+    "soBai": 32,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống hoá, củng cố kiến thức về ngày-tháng, ngày-giờ, giờ-phút; thực hiện thành thạo đọc giờ đồng hồ và xem lịch tháng. Ứng dụng giải bài toán thực tiễn tổng hợp liên quan đến đại lượng thời gian."
+  }
+]

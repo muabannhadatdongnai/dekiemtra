@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Ôn tập các số đến 100",
+    "noiDungCotLoi": "Nhận biết cấu tạo thập phân của số có hai chữ số (VD 42 = 40 + 2); đọc, viết, so sánh, sắp xếp thứ tự các số trong phạm vi 100. Nhận biết số chục, số đơn vị; biết ước lượng số đồ vật theo nhóm 1 chục rồi đếm lại kiểm tra."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Tia số. Số liền trước, số liền sau",
+    "noiDungCotLoi": "Nhận biết hình ảnh trực quan của tia số, biết viết số thích hợp vào các vạch trên tia số. Hiểu khái niệm số liền trước (kém 1 đơn vị), số liền sau (hơn 1 đơn vị) và dùng tia số để so sánh, xác định thứ tự số."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Các thành phần của phép cộng, phép trừ",
+    "noiDungCotLoi": "Gọi đúng tên các thành phần và kết quả phép cộng (số hạng, tổng) và phép trừ (số bị trừ, số trừ, hiệu). Biết tính tổng khi biết các số hạng; tính hiệu khi biết số bị trừ và số trừ."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Hơn, kém nhau bao nhiêu",
+    "noiDungCotLoi": "Nhận biết dạng bài toán so sánh hơn, kém nhau bao nhiêu qua tranh vẽ hoặc đề bài. Biết giải và trình bày bài giải đầy đủ (tóm tắt, câu lời giải, phép tính trừ, đáp số) cho bài toán một bước tính."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Ôn tập phép cộng, phép trừ (không nhớ) trong phạm vi 100",
+    "noiDungCotLoi": "Thực hiện thành thạo phép cộng, trừ không nhớ trong phạm vi 100 theo quy trình đặt tính rồi tính (tính từ phải sang trái). Tính nhẩm nhanh với số tròn chục; giải bài toán thực tế một bước tính liên quan."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Củng cố thứ tự số, so sánh số, số liền trước/liền sau trên tia số; củng cố đọc tên thành phần phép tính (số hạng, tổng, số bị trừ, số trừ, hiệu). Luyện đặt tính, tính cộng trừ không nhớ trong phạm vi 100 và giải toán thực tế tổng hợp."
+  }
+]

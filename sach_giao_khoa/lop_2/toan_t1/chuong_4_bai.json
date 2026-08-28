@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 19,
+    "tenBai": "Phép cộng (có nhớ) số có hai chữ số với số có một chữ số",
+    "noiDungCotLoi": "Thực hiện phép cộng có nhớ số có hai chữ số với số có một chữ số. Nắm quy trình đặt tính cột dọc, tính từ phải sang trái, nhớ 1 chục vào số chục của số hạng thứ nhất; giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 20,
+    "tenBai": "Phép cộng (có nhớ) số có hai chữ số với số có hai chữ số",
+    "noiDungCotLoi": "Thực hiện phép cộng có nhớ số có hai chữ số với số có hai chữ số theo quy trình đặt tính dọc, tính từ phải sang trái, nhớ 1 chục vào hàng chục. Giải quyết bài toán thực tế liên quan đến phép cộng trong phạm vi đã học."
+  },
+  {
+    "soBai": 21,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Củng cố, rèn luyện thành thạo phép cộng có nhớ số có hai chữ số với số có một hoặc hai chữ số. Ứng dụng giải các bài toán thực tế đa dạng liên quan."
+  },
+  {
+    "soBai": 22,
+    "tenBai": "Phép trừ (có nhớ) số có hai chữ số cho số có một chữ số",
+    "noiDungCotLoi": "Thực hiện phép trừ có nhớ số có hai chữ số cho số có một chữ số; tính giá trị biểu thức có hai dấu phép tính cộng, trừ. Nhận biết ý nghĩa thực tiễn phép trừ qua tranh ảnh; giải bài toán về bớt, nhiều hơn/ít hơn một số đơn vị."
+  },
+  {
+    "soBai": 23,
+    "tenBai": "Phép trừ (có nhớ) số có hai chữ số cho số có hai chữ số",
+    "noiDungCotLoi": "Thực hiện phép trừ có nhớ số có hai chữ số cho số có hai chữ số; tính chính xác giá trị biểu thức có hai dấu phép tính. Hiểu ý nghĩa thực tiễn phép trừ có nhớ; giải bài toán thực tế một bước tính trong phạm vi 100."
+  },
+  {
+    "soBai": 24,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống hoá, củng cố kĩ năng phép trừ có nhớ số có hai chữ số cho số có một hoặc hai chữ số. Rèn tính toán biểu thức hai dấu phép tính; củng cố giải bài toán thực tế về bớt, nhiều hơn, ít hơn một số đơn vị."
+  }
+]

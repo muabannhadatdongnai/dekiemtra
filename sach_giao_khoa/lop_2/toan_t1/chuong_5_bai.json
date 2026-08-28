@@ -1,0 +1,22 @@
+[
+  {
+    "soBai": 25,
+    "tenBai": "Điểm, đoạn thẳng, đường thẳng, đường cong, ba điểm thẳng hàng",
+    "noiDungCotLoi": "Nhận biết điểm, đoạn thẳng, đường thẳng, đường cong, ba điểm thẳng hàng qua hình ảnh trực quan; đọc, viết tên các đối tượng bằng chữ cái in hoa (A, B, C...). Giải quyết vấn đề thực tiễn đơn giản liên quan."
+  },
+  {
+    "soBai": 26,
+    "tenBai": "Đường gấp khúc. Hình tứ giác",
+    "noiDungCotLoi": "Nhận biết đường gấp khúc, biết tính độ dài đường gấp khúc khi biết độ dài các đoạn thẳng thành phần. Nhận dạng hình tứ giác qua hình vẽ, vật thật; giải bài toán thực tế đơn giản liên quan."
+  },
+  {
+    "soBai": 27,
+    "tenBai": "Thực hành gấp, cắt, ghép, xếp hình. Vẽ đoạn thẳng",
+    "noiDungCotLoi": "Củng cố nhận dạng các hình phẳng đã học; thực hiện gấp, cắt, ghép, xếp để tạo hình mới bằng đồ dùng học tập. Thực hiện vẽ đoạn thẳng có độ dài cho trước bằng thước kẻ và bút chì."
+  },
+  {
+    "soBai": 28,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống hoá, củng cố nhận biết điểm, đoạn thẳng, đường thẳng, đường cong, đường gấp khúc, ba điểm thẳng hàng và hình tứ giác. Luyện tính độ dài đường gấp khúc; giải bài tập thực tiễn liên quan đến ba điểm thẳng hàng, vẽ hình."
+  }
+]
