@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 30,
+    "tenBai": "Ôn tập số thập phân",
+    "noiDungCotLoi": "Ôn đọc, viết, so sánh số thập phân; xác định số lớn nhất/bé nhất trong nhóm không quá 4 số và sắp xếp thứ tự. Ôn chuyển đổi đơn vị đo liên quan đến số thập phân, xác định hàng và phần nguyên/phần thập phân, làm tròn số; giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 31,
+    "tenBai": "Ôn tập các phép tính với số thập phân",
+    "noiDungCotLoi": "Ôn thực hiện các phép tính cộng, trừ, nhân, chia với số thập phân và tính nhẩm trong các trường hợp cơ bản. Áp dụng vào giải bài toán thực tế."
+  },
+  {
+    "soBai": 32,
+    "tenBai": "Ôn tập một số hình phẳng",
+    "noiDungCotLoi": "Nhận dạng các hình phẳng cơ bản (hình thang, hình tròn, hình tam giác, hình bình hành, hình thoi); xác định đáy và đường cao của hình tam giác, hình thang; vẽ đường tròn với tâm, bán kính cho trước. Vận dụng công thức tính diện tích tam giác, hình thang, hình tròn."
+  },
+  {
+    "soBai": 33,
+    "tenBai": "Ôn tập diện tích, chu vi một số hình phẳng",
+    "noiDungCotLoi": "Tính diện tích hình tam giác, hình thang; tính chu vi và diện tích hình tròn. Giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 34,
+    "tenBai": "Ôn tập đo lường",
+    "noiDungCotLoi": "Chuyển đổi các đơn vị đo độ dài, khối lượng, thời gian, diện tích đã học; thực hiện phép tính với số đo các đại lượng. Giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 35,
+    "tenBai": "Ôn tập chung",
+    "noiDungCotLoi": "Hệ thống kiến thức Học kì 1: phân số thập phân, hỗn số, số thập phân (đọc, viết, thứ tự, so sánh); phép cộng/trừ phân số khác mẫu và các phép tính với số thập phân; chu vi, diện tích tam giác/hình thang/hình tròn; đơn vị đo km², ha."
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 25,
+    "tenBai": "Hình tam giác. Diện tích hình tam giác",
+    "noiDungCotLoi": "Nhận biết các loại hình tam giác (nhọn, vuông, tù, đều); vẽ được đường cao của hình tam giác. Tính được diện tích hình tam giác."
+  },
+  {
+    "soBai": 26,
+    "tenBai": "Hình thang. Diện tích hình thang",
+    "noiDungCotLoi": "Nhận biết hình thang; vẽ được hình thang, hình bình hành, hình thoi trên lưới ô vuông. Tính được diện tích hình thang."
+  },
+  {
+    "soBai": 27,
+    "tenBai": "Đường tròn. Chu vi và diện tích hình tròn",
+    "noiDungCotLoi": "Nhận biết khái niệm đường tròn, hình tròn và các yếu tố tâm, bán kính, đường kính; vẽ đường tròn với tâm và bán kính cho trước. Tính chu vi, diện tích hình tròn và giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 28,
+    "tenBai": "Thực hành và trải nghiệm đo, vẽ, lắp ghép, tạo hình",
+    "noiDungCotLoi": "Giải quyết một số vấn đề thực hành về đo, vẽ, lắp ghép, tạo hình gắn với các hình phẳng và hình khối đã học."
+  },
+  {
+    "soBai": 29,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Tính diện tích hình tam giác, hình thang, hình tròn; tính chu vi hình tròn. Vẽ đường cao của hình tam giác, hình thang trên giấy kẻ ô vuông và vẽ đường tròn khi biết tâm, bán kính."
+  }
+]

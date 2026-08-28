@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 19,
+    "tenBai": "Phép cộng số thập phân",
+    "noiDungCotLoi": "Thực hiện phép cộng hai số thập phân; nhận biết và vận dụng tính chất giao hoán, kết hợp của phép cộng trong tính toán. Giải bài toán thực tế liên quan đến phép cộng số thập phân."
+  },
+  {
+    "soBai": 20,
+    "tenBai": "Phép trừ số thập phân",
+    "noiDungCotLoi": "Hiểu và thực hiện thuật toán phép trừ số thập phân. Giải quyết bài toán thực tế liên quan đến phép trừ số thập phân."
+  },
+  {
+    "soBai": 21,
+    "tenBai": "Phép nhân số thập phân",
+    "noiDungCotLoi": "Thực hiện phép nhân số thập phân (nhân với số tự nhiên, nhân với số thập phân); vận dụng tính chất giao hoán, kết hợp, phân phối của phép nhân đối với phép cộng. Giải bài toán thực tế liên quan đến phép nhân số thập phân."
+  },
+  {
+    "soBai": 22,
+    "tenBai": "Phép chia số thập phân",
+    "noiDungCotLoi": "Thực hiện phép chia số thập phân (chia số thập phân cho số tự nhiên, chia số tự nhiên cho số tự nhiên thương là số thập phân, chia số tự nhiên cho số thập phân, chia số thập phân cho số thập phân). Giải bài toán thực tế liên quan đến phép chia số thập phân."
+  },
+  {
+    "soBai": 23,
+    "tenBai": "Nhân, chia số thập phân với 10; 100; 1000;... hoặc với 0,1; 0,01; 0,001;...",
+    "noiDungCotLoi": "Thực hiện phép nhân, chia nhẩm một số thập phân với 10; 100; 1000;... hoặc với 0,1; 0,01; 0,001;... Giải bài toán thực tế liên quan đến nhân, chia nhẩm số thập phân với các số trên."
+  },
+  {
+    "soBai": 24,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Thực hiện các phép tính cộng, trừ, nhân, chia với số thập phân; vận dụng mối quan hệ giữa các phép tính và tính chất giao hoán, kết hợp, phân phối để tính toán thuận tiện. Giải bài toán, tình huống thực tiễn liên quan đến các phép tính với số thập phân."
+  }
+]
