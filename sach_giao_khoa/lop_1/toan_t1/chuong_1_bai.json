@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Các số 0, 1, 2, 3, 4, 5",
+    "noiDungCotLoi": "Đếm, đọc, viết được các số từ 0 đến 5. Sắp xếp được thứ tự các số từ 0 đến 5."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Các số 6, 7, 8, 9, 10",
+    "noiDungCotLoi": "Đếm, đọc, viết được các số trong phạm vi 10. Sắp xếp được các số trong phạm vi 10 theo thứ tự từ bé đến lớn và từ lớn đến bé."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Nhiều hơn, ít hơn, bằng nhau",
+    "noiDungCotLoi": "Hình thành biểu tượng ban đầu về nhiều hơn, ít hơn, bằng nhau. So sánh được số lượng của hai nhóm đồ vật qua các từ \"nhiều hơn, ít hơn, bằng nhau\"."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "So sánh số",
+    "noiDungCotLoi": "Nhận biết và sử dụng được các dấu >, <, = khi so sánh hai số. Biết cách so sánh, xếp thứ tự các số trong phạm vi 10 (nhóm không quá 4 số)."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Mấy và mấy",
+    "noiDungCotLoi": "Nhận biết mối liên hệ giữa các số trong phạm vi 10, làm cơ sở cho phép cộng ở các bài sau."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Đếm, đọc, viết, so sánh và sắp xếp thứ tự các số trong phạm vi 10. Gộp và tách được số trong phạm vi 10."
+  }
+]

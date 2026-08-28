@@ -1,0 +1,22 @@
+[
+  {
+    "soBai": 10,
+    "tenBai": "Phép cộng trong phạm vi 10",
+    "noiDungCotLoi": "Nhận biết ý nghĩa phép cộng là \"gộp lại\"/\"thêm vào\"; tìm kết quả bằng cách đếm tất cả hoặc đếm thêm và thực hiện thành thạo phép cộng trong phạm vi 10. Nhận biết cộng với số 0, tính giá trị biểu thức có hai dấu cộng (trái sang phải) và bước đầu nhận biết tính chất giao hoán (a+b=b+a). Viết được phép cộng phù hợp với tranh vẽ, tình huống thực tế."
+  },
+  {
+    "soBai": 11,
+    "tenBai": "Phép trừ trong phạm vi 10",
+    "noiDungCotLoi": "Nhận biết ý nghĩa thực tế của phép trừ và thực hiện thành thạo phép trừ trong phạm vi 10. Tính giá trị biểu thức có hai dấu trừ; giải bài toán thực tế đơn giản liên quan đến phép trừ."
+  },
+  {
+    "soBai": 12,
+    "tenBai": "Bảng cộng, bảng trừ trong phạm vi 10",
+    "noiDungCotLoi": "Hình thành bảng cộng và bảng trừ trong phạm vi 10 làm cơ sở ghi nhớ, tính nhẩm nhanh. Hiểu mối quan hệ ngược giữa phép cộng và phép trừ."
+  },
+  {
+    "soBai": 13,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Củng cố ý nghĩa thực tế của phép cộng, phép trừ trong cuộc sống; luyện tính nhẩm cộng, trừ trong phạm vi 10 nhanh, chính xác. Xác định phép tính phù hợp cho từng tình huống thực tiễn qua hình ảnh."
+  }
+]
