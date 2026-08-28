@@ -1,3 +1,19 @@
+# Chủ đề 4: LÀM QUEN VỚI MỘT SỐ HÌNH KHỐI
+
+## Bài 14: KHỐI LẬP PHƯƠNG, KHỐI HỘP CHỮ NHẬT
+
+### Khám phá
+a) Khối lập phương
+b) Khối hộp chữ nhật
+
+### Hoạt động
+**1. Những hình nào là khối lập phương?**
+(A, B, C, D)
+**2. Những hình nào là khối hộp chữ nhật?**
+(A, B, C, D)
+
+---
+
 # Chủ đề 4: LÀM QUEN VỚI MỘT SỐ HÌNH KHỐI (tiếp theo)
 
 ## Bài 14: KHỐI LẬP PHƯƠNG, KHỐI HỘP CHỮ NHẬT (tiếp theo)

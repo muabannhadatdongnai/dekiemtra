@@ -1,3 +1,25 @@
+# Chủ đề 2: LÀM QUEN VỚI MỘT SỐ HÌNH PHẲNG
+
+## Bài 7: HÌNH VUÔNG, HÌNH TRÒN, HÌNH TAM GIÁC, HÌNH CHỮ NHẬT
+
+### Khám phá
+* Hình vuông
+* Hình tròn
+* Hình tam giác
+* Hình chữ nhật
+
+### Hoạt động
+
+**1. Mỗi đồ vật có dạng hình gì?**
+
+**2. Quan sát hình:**
+a) Những hình nào là hình tròn?
+b) Những hình nào là hình tam giác?
+c) Những hình nào là hình vuông?
+d) Những hình nào là hình chữ nhật?
+
+---
+
 ## Bài 8: THỰC HÀNH LẮP GHÉP, XẾP HÌNH
 
 ### Khám phá
@@ -69,40 +91,3 @@ Bạn Mai ghép thành hình sau:
 Hỏi bạn Mai đã dùng bao nhiêu miếng bìa hình tam giác để ghép được hình trên?
 
 ---
-
-# Chủ đề 3: PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 10
-
-## Bài 10: PHÉP CỘNG TRONG PHẠM VI 10
-
-### Khám phá
-a) **Gộp lại thì bằng mấy?**
-Gộp $3$ quả bóng và $2$ quả bóng được mấy quả bóng?
-b) 
-$3 + 2 = 5$
-Ba cộng hai bằng năm.
-
-Dấu cộng: $+$
-
-### Hoạt động
-
-**1. Số ?**
-$1 + 3 = 4$
-Một cộng ba bằng bốn.
-a) $1 + 1 = ?$
-b) $2 + 1 = ?$
-c) $3 + 1 = ?$
-d) $1 + 4 = ?$
-
-**2. Số ?**
-a) $2 + ? = ?$
-b) $4 + ? = ?$
-
-**3. Số ?**
-a) $2 + 3 = ?$
-$1 + 2 = ?$
-$2 + 2 = ?$
-
-b)
-$1 + 1 = ?$
-$3 + 1 = ?$
-$2 + 1 = ?$

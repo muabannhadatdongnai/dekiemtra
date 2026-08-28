@@ -1,4 +1,43 @@
+
+# Chủ đề 3: PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 10
+
+## Bài 10: PHÉP CỘNG TRONG PHẠM VI 10
+
+### Khám phá
+a) **Gộp lại thì bằng mấy?**
+Gộp $3$ quả bóng và $2$ quả bóng được mấy quả bóng?
+b) 
+$3 + 2 = 5$
+Ba cộng hai bằng năm.
+
+Dấu cộng: $+$
+
+### Hoạt động
+
+**1. Số ?**
+$1 + 3 = 4$
+Một cộng ba bằng bốn.
+a) $1 + 1 = ?$
+b) $2 + 1 = ?$
+c) $3 + 1 = ?$
+d) $1 + 4 = ?$
+
+**2. Số ?**
+a) $2 + ? = ?$
+b) $4 + ? = ?$
+
+**3. Số ?**
+a) $2 + 3 = ?$
+$1 + 2 = ?$
+$2 + 2 = ?$
+
+b)
+$1 + 1 = ?$
+$3 + 1 = ?$
+$2 + 1 = ?$
 # Chủ đề 3: PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 10 (tiếp theo)
+
+---
 
 ## Bài 10: PHÉP CỘNG TRONG PHẠM VI 10 (tiếp theo)
 
@@ -541,17 +580,3 @@ c) $7 \ ? \ 2+6$
 * $8 - ? = ?$
 
 ---
-
-# Chủ đề 4: LÀM QUEN VỚI MỘT SỐ HÌNH KHỐI
-
-## Bài 14: KHỐI LẬP PHƯƠNG, KHỐI HỘP CHỮ NHẬT
-
-### Khám phá
-a) Khối lập phương
-b) Khối hộp chữ nhật
-
-### Hoạt động
-**1. Những hình nào là khối lập phương?**
-(A, B, C, D)
-**2. Những hình nào là khối hộp chữ nhật?**
-(A, B, C, D)

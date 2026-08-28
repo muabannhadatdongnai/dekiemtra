@@ -337,23 +337,3 @@ C. Số ô tô nhiều hơn số máy bay.
 **4. Số ?**
 
 ---
-
-# Chủ đề 2: LÀM QUEN VỚI MỘT SỐ HÌNH PHẲNG
-
-## Bài 7: HÌNH VUÔNG, HÌNH TRÒN, HÌNH TAM GIÁC, HÌNH CHỮ NHẬT
-
-### Khám phá
-* Hình vuông
-* Hình tròn
-* Hình tam giác
-* Hình chữ nhật
-
-### Hoạt động
-
-**1. Mỗi đồ vật có dạng hình gì?**
-
-**2. Quan sát hình:**
-a) Những hình nào là hình tròn?
-b) Những hình nào là hình tam giác?
-c) Những hình nào là hình vuông?
-d) Những hình nào là hình chữ nhật?
