@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 36,
+    "tenBai": "Nhân số có ba chữ số với số có một chữ số",
+    "noiDungCotLoi": "Thực hiện thành thạo phép nhân số có ba chữ số với số có một chữ số (không nhớ và có nhớ không quá một lần). Thực hành nhân nhẩm số tròn trăm; giải bài toán thực tế một bước tính liên quan."
+  },
+  {
+    "soBai": 37,
+    "tenBai": "Chia số có ba chữ số cho số có một chữ số",
+    "noiDungCotLoi": "Thực hiện thành thạo phép chia số có ba chữ số cho số có một chữ số (chia hết và chia có dư), kể cả trường hợp có chữ số 0 ở thương. Thực hành chia nhẩm số tròn trăm; giải bài toán thực tế một bước tính."
+  },
+  {
+    "soBai": 38,
+    "tenBai": "Biểu thức số. Tính giá trị của biểu thức số",
+    "noiDungCotLoi": "Nhận biết biểu thức số (có/không có dấu ngoặc); nắm quy tắc tính giá trị: cộng trừ hoặc nhân chia thì tính trái sang phải, có cả nhân/chia và cộng/trừ thì nhân chia trước, có ngoặc thì tính trong ngoặc trước. Bước đầu làm quen tính chất kết hợp của phép cộng; giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 39,
+    "tenBai": "So sánh số lớn gấp mấy lần số bé",
+    "noiDungCotLoi": "Nhận biết dạng toán so sánh số lớn gấp mấy lần số bé qua tranh vẽ, sơ đồ đoạn thẳng; nắm quy tắc lấy số lớn chia số bé. Phân biệt với dạng \"nhiều hơn một số đơn vị\" (phép trừ); giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 40,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, củng cố nhân, chia số có ba chữ số với/cho số có một chữ số; tính giá trị biểu thức số theo đúng thứ tự ưu tiên. Củng cố giải toán gấp lên/giảm đi một số lần, so sánh số lớn gấp mấy lần số bé; bước đầu làm quen tính chất kết hợp của phép nhân."
+  }
+]

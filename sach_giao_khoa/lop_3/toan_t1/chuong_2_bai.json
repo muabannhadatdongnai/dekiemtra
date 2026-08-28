@@ -1,0 +1,37 @@
+[
+  {
+    "soBai": 9,
+    "tenBai": "Bảng nhân 6, bảng chia 6",
+    "noiDungCotLoi": "Xây dựng và hoàn thành bảng nhân 6, bảng chia 6; thực hiện thành thạo tính nhẩm dựa trên bảng. Vận dụng giải bài tập và bài toán thực tế liên quan đến bảng nhân/chia 6."
+  },
+  {
+    "soBai": 10,
+    "tenBai": "Bảng nhân 7, bảng chia 7",
+    "noiDungCotLoi": "Xây dựng và hoàn thành bảng nhân 7, bảng chia 7; thực hành tính nhẩm nhanh trong phạm vi bảng 7. Vận dụng giải bài tập, trò chơi và bài toán thực tế có lời văn liên quan."
+  },
+  {
+    "soBai": 11,
+    "tenBai": "Bảng nhân 8, bảng chia 8",
+    "noiDungCotLoi": "Xây dựng và hoàn thành bảng nhân 8, bảng chia 8; thực hành tính nhẩm và so sánh giá trị biểu thức liên quan đến số 8. Vận dụng giải bài tập rèn luyện và tình huống toán thực tiễn."
+  },
+  {
+    "soBai": 12,
+    "tenBai": "Bảng nhân 9, bảng chia 9",
+    "noiDungCotLoi": "Xây dựng và hoàn thành bảng nhân 9, bảng chia 9; vận dụng thành thạo tính nhẩm nhanh, dùng bảng để tra cứu tính toán. Vận dụng giải bài toán thực tế liên quan đến bảng nhân/chia 9."
+  },
+  {
+    "soBai": 13,
+    "tenBai": "Tìm thành phần trong phép nhân, phép chia",
+    "noiDungCotLoi": "Nắm quy tắc tìm thừa số chưa biết (lấy tích chia cho thừa số đã biết); tìm số bị chia (thương nhân số chia), tìm số chia (số bị chia chia cho thương). Vận dụng giải bài tập tìm ẩn số và bài toán thực tiễn."
+  },
+  {
+    "soBai": 14,
+    "tenBai": "Một phần mấy",
+    "noiDungCotLoi": "Nhận biết biểu tượng trực quan 1/2 đến 1/9 của một hình phẳng qua quan sát hình chia thành các phần đều nhau. Xác định giá trị 1/2 đến 1/9 của một nhóm đồ vật qua thao tác chia nhóm thành các phần bằng nhau."
+  },
+  {
+    "soBai": 15,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, củng cố tính nhẩm nhân, chia trong các bảng từ 2 đến 9; củng cố tìm thành phần chưa biết trong phép nhân, phép chia. Rèn xác định \"một phần mấy\" của hình hoặc nhóm đối tượng; giải bài toán thực tế liên quan."
+  }
+]

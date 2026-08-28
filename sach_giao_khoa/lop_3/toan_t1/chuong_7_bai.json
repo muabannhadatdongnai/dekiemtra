@@ -1,0 +1,22 @@
+[
+  {
+    "soBai": 41,
+    "tenBai": "Ôn tập phép nhân, phép chia trong phạm vi 100, 1000",
+    "noiDungCotLoi": "Ôn thực hiện thành thạo nhân, chia số có hai, ba chữ số với/cho số có một chữ số; rèn nhân nhẩm, chia nhẩm. Củng cố tìm thành phần chưa biết trong phép nhân, chia; xác định 1/3, 1/5 của một nhóm đồ vật; giải bài toán thực tế."
+  },
+  {
+    "soBai": 42,
+    "tenBai": "Ôn tập biểu thức số",
+    "noiDungCotLoi": "Ôn tính chính xác giá trị biểu thức số chứa hai dấu phép tính (có/không có dấu ngoặc); rèn so sánh giá trị biểu thức với một số hoặc với biểu thức khác. Vận dụng giải bài toán thực tế hai bước tính trong phạm vi 1000."
+  },
+  {
+    "soBai": 43,
+    "tenBai": "Ôn tập hình học và đo lường",
+    "noiDungCotLoi": "Ôn nhận biết góc vuông/không vuông, trung điểm đoạn thẳng, khối lập phương/hộp chữ nhật/trụ/cầu (đỉnh, cạnh), tâm/bán kính/đường kính hình tròn; vẽ tam giác, chữ nhật, vuông trên lưới ô vuông. Ôn ước lượng, tính toán số đo mm, ml, g, °C và độ dài đường gấp khúc; giải toán thực tế hai bước tính."
+  },
+  {
+    "soBai": 44,
+    "tenBai": "Ôn tập chung",
+    "noiDungCotLoi": "Hệ thống, đánh giá tổng hợp nội dung trọng tâm Học kì I: đặt tính nhân/chia số có hai, ba chữ số với/cho số có một chữ số; thứ tự ưu tiên tính giá trị biểu thức; nhận diện hình phẳng (trung điểm, góc vuông, bán kính, đường kính) và độ dài đường gấp khúc; giải toán thực tế hai bước tính kết hợp nhiều dạng dữ liệu."
+  }
+]

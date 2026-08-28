@@ -1,0 +1,42 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Ôn tập các số đến 1000",
+    "noiDungCotLoi": "Ôn đọc, viết, so sánh, xếp thứ tự các số trong phạm vi 1000; củng cố cấu tạo thập phân, viết số thành tổng trăm, chục, đơn vị (VD 385=300+80+5). Bổ sung nhận biết ba số tự nhiên liên tiếp dựa trên tia số, số liền trước, số liền sau."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Ôn tập phép cộng, phép trừ trong phạm vi 1000",
+    "noiDungCotLoi": "Ôn đặt tính rồi tính và tính nhẩm phép cộng, trừ trong phạm vi 1000 (có nhớ và không nhớ). Bổ sung dạng 100 trừ đi một số hoặc phép cộng có tổng bằng 100; giải bài toán thực tế một bước tính."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Tìm thành phần trong phép cộng, phép trừ",
+    "noiDungCotLoi": "Nắm quy tắc tìm số hạng chưa biết (tổng trừ số hạng đã biết), tìm số bị trừ (hiệu cộng số trừ), tìm số trừ (số bị trừ trừ hiệu). Vận dụng giải bài toán tìm x và bài toán có lời văn."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Ôn tập bảng nhân 2; 5, bảng chia 2; 5",
+    "noiDungCotLoi": "Củng cố, học thuộc bảng nhân 2, nhân 5, chia 2, chia 5; rèn tính nhẩm nhanh, chính xác và so sánh giá trị biểu thức. Giải bài toán thực tế một bước tính liên quan đến các bảng đã học."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Bảng nhân 3, bảng chia 3",
+    "noiDungCotLoi": "Xây dựng, đọc, viết, ghi nhớ thành thạo Bảng nhân 3 và Bảng chia 3; thực hành tính nhẩm nhanh các phép tính liên quan đến số 3. Vận dụng giải bài toán thực tế có lời văn."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Bảng nhân 4, bảng chia 4",
+    "noiDungCotLoi": "Xây dựng, đọc, viết, ghi nhớ thành thạo Bảng nhân 4 và Bảng chia 4; thực hành tính nhẩm nhanh, chính xác với số 4. Vận dụng bảng nhân/chia 4 giải bài toán thực tế."
+  },
+  {
+    "soBai": 7,
+    "tenBai": "Ôn tập hình học và đo lường",
+    "noiDungCotLoi": "Ôn nhận dạng khối lập phương, khối hộp chữ nhật, khối trụ, khối cầu; ba điểm thẳng hàng, hình tứ giác, độ dài đường gấp khúc. Ôn đọc giờ, xem lịch tháng, xem cân đồng hồ, cộng trừ số đo khối lượng (kg) và dung tích (lít)."
+  },
+  {
+    "soBai": 8,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Ôn tổng hợp so sánh số trong phạm vi 1000, viết số thành tổng trăm/chục/đơn vị. Thực hiện thành thạo cộng, trừ trong phạm vi 1000, tính biểu thức; củng cố nhân chia bảng 2, 5 và nhân/chia với 0, 1; giải toán thực tế đa bước tính."
+  }
+]

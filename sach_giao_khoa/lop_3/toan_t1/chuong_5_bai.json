@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 30,
+    "tenBai": "Mi-li-mét",
+    "noiDungCotLoi": "Nhận biết đơn vị đo độ dài mi-li-mét (mm); nắm quan hệ 1cm=10mm, 1m=1000mm. Sử dụng thước có vạch mm để đo độ dài vật nhỏ; thực hiện cộng, trừ với số đo mm và giải bài toán thực tế."
+  },
+  {
+    "soBai": 31,
+    "tenBai": "Gam",
+    "noiDungCotLoi": "Nhận biết đơn vị đo khối lượng gam (g); nắm quan hệ 1kg=1000g. Thực hành cân, đọc số đo gam bằng cân đĩa/cân đồng hồ; thực hiện các phép tính với số đo gam và giải bài toán thực tế."
+  },
+  {
+    "soBai": 32,
+    "tenBai": "Mi-li-lít",
+    "noiDungCotLoi": "Nhận biết đơn vị đo dung tích mi-li-lít (ml); nắm quan hệ 1l=1000ml. Thực hành đong đo chất lỏng bằng dụng cụ có vạch ml; thực hiện các phép tính với số đo ml và giải bài toán thực tế."
+  },
+  {
+    "soBai": 33,
+    "tenBai": "Nhiệt độ. Đơn vị đo nhiệt độ",
+    "noiDungCotLoi": "Cảm nhận nóng hơn, lạnh hơn để hình thành biểu tượng nhiệt độ; nhận biết đơn vị đo độ C (°C). Bước đầu biết sử dụng nhiệt kế treo tường (đo không khí) và nhiệt kế y tế (đo thân nhiệt)."
+  },
+  {
+    "soBai": 34,
+    "tenBai": "Thực hành và trải nghiệm với các đơn vị mi-li-mét, gam, mi-li-lít, độ C",
+    "noiDungCotLoi": "Thực hành ước lượng và đo đạc thực tế các đại lượng độ dài, khối lượng, dung tích, nhiệt độ trong lớp học. Nâng cao kĩ năng dùng công cụ đo (thước, cân, ca chia vạch, nhiệt kế); giải bài toán thực tiễn tổng hợp."
+  },
+  {
+    "soBai": 35,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, củng cố đọc, viết và tính toán trên các số đo mm, g, ml, °C (kể cả phép tính có nhớ phức tạp). Luyện ước lượng, sử dụng công cụ đo; giải bài toán thực tế một hoặc hai bước tính liên quan."
+  }
+]

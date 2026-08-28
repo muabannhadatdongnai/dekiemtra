@@ -1,0 +1,37 @@
+[
+  {
+    "soBai": 23,
+    "tenBai": "Nhân số có hai chữ số với số có một chữ số",
+    "noiDungCotLoi": "Thực hiện thành thạo phép nhân số có hai chữ số với số có một chữ số (không nhớ và có nhớ), đặt tính dọc, nhân từ phải sang trái. Rèn nhân nhẩm với số tròn chục; giải bài toán thực tế một bước tính."
+  },
+  {
+    "soBai": 24,
+    "tenBai": "Gấp một số lên một số lần",
+    "noiDungCotLoi": "Nhận biết khái niệm gấp một số lên một số lần; nắm quy tắc lấy số đó nhân với số lần. Phân biệt \"nhiều hơn một số đơn vị\" (phép cộng) với \"gấp lên một số lần\" (phép nhân); giải bài toán thực tế liên quan."
+  },
+  {
+    "soBai": 25,
+    "tenBai": "Phép chia hết, phép chia có dư",
+    "noiDungCotLoi": "Phân biệt phép chia hết (số dư bằng 0) và phép chia có dư (số dư khác 0); nắm quy tắc số dư luôn bé hơn số chia. Rèn đặt tính, đọc/viết kết quả phép chia có dư; giải bài toán thực tế liên quan (xếp bàn ghế, xếp phòng...)."
+  },
+  {
+    "soBai": 26,
+    "tenBai": "Chia số có hai chữ số cho số có một chữ số",
+    "noiDungCotLoi": "Thực hiện thành thạo phép chia số có hai chữ số cho số có một chữ số (chia hết và chia có dư), chia từ trái sang phải (bắt đầu từ hàng chục). Tìm thành phần chưa biết liên quan; giải bài toán thực tế một bước tính."
+  },
+  {
+    "soBai": 27,
+    "tenBai": "Giảm một số đi một số lần",
+    "noiDungCotLoi": "Nhận biết khái niệm giảm một số đi một số lần; nắm quy tắc lấy số đó chia cho số lần. Phân biệt \"giảm đi một số lần\" (phép chia) với \"bớt đi một số đơn vị\" (phép trừ); nhận ra mối quan hệ ngược với \"gấp lên một số lần\"."
+  },
+  {
+    "soBai": 28,
+    "tenBai": "Bài toán giải bằng hai phép tính",
+    "noiDungCotLoi": "Nhận biết cấu trúc bài toán giải bằng hai bước tính; nắm quy trình 3 bước: tìm hiểu đề (cho biết gì, hỏi gì), lập kế hoạch chọn phép tính, trình bày lời giải và kiểm tra đáp số."
+  },
+  {
+    "soBai": 29,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, củng cố nhân, chia số có hai chữ số với/cho số có một chữ số trong phạm vi 100; củng cố gấp lên, giảm đi một số lần. Giải thành thạo bài toán thực tế (một hoặc hai bước tính) liên quan đến nhân, chia."
+  }
+]

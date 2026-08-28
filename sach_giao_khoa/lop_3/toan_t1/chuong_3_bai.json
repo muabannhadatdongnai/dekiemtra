@@ -1,0 +1,37 @@
+[
+  {
+    "soBai": 16,
+    "tenBai": "Điểm ở giữa, trung điểm của đoạn thẳng",
+    "noiDungCotLoi": "Nhận biết khái niệm điểm ở giữa hai điểm cho trước và trung điểm của đoạn thẳng qua mô hình trực quan; xác định ba điểm thẳng hàng. Thực hành xác định trung điểm bằng thước kẻ vạch hoặc trên lưới ô vuông."
+  },
+  {
+    "soBai": 17,
+    "tenBai": "Hình tròn. Tâm, bán kính, đường kính của hình tròn",
+    "noiDungCotLoi": "Nhận biết các yếu tố cấu thành hình tròn: tâm, bán kính, đường kính; hiểu đường kính dài gấp 2 lần bán kính. Biết dùng compa để vẽ đường tròn với tâm và bán kính cho trước."
+  },
+  {
+    "soBai": 18,
+    "tenBai": "Góc, góc vuông, góc không vuông",
+    "noiDungCotLoi": "Nhận biết khái niệm góc (gồm đỉnh và hai cạnh); nhận dạng, phân biệt góc vuông và góc không vuông. Biết dùng ê ke để kiểm tra một góc có phải góc vuông hay không."
+  },
+  {
+    "soBai": 19,
+    "tenBai": "Hình tam giác, hình tứ giác. Hình chữ nhật, hình vuông",
+    "noiDungCotLoi": "Nhận biết đỉnh, cạnh, góc của hình tam giác, tứ giác, hình chữ nhật, hình vuông. Nắm tính chất: hình chữ nhật có 4 góc vuông, 2 cặp cạnh đối bằng nhau; hình vuông có 4 góc vuông và 4 cạnh bằng nhau."
+  },
+  {
+    "soBai": 20,
+    "tenBai": "Thực hành vẽ góc vuông, vẽ đường tròn, hình vuông, hình chữ nhật và vẽ trang trí",
+    "noiDungCotLoi": "Thực hành vẽ góc vuông bằng thước và ê ke; vẽ đường tròn bằng compa. Vẽ hình vuông, hình chữ nhật trên lưới ô vuông; thực hành lắp ghép, phối màu tạo tranh trang trí hình học."
+  },
+  {
+    "soBai": 21,
+    "tenBai": "Khối lập phương, khối hộp chữ nhật",
+    "noiDungCotLoi": "Nhận biết trực quan, phân tích cấu trúc khối lập phương và khối hộp chữ nhật (đỉnh, mặt, cạnh). Biết đếm và xác định cả hai khối đều có 8 đỉnh, 6 mặt, 12 cạnh."
+  },
+  {
+    "soBai": 22,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, củng cố toàn bộ kiến thức hình phẳng, hình khối: ba điểm thẳng hàng, trung điểm, tâm/bán kính/đường kính hình tròn, góc vuông/không vuông, đỉnh/cạnh/mặt hình khối. Thực hành vẽ hình, sử dụng ê ke, compa giải bài toán đo đạc thực tế."
+  }
+]
