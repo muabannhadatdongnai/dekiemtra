@@ -134,12 +134,41 @@ export const LESSON_PLAN_INTEGRATIONS = {
     description: "Thông tư 08/2024",
     isAiGenerated: true,
     jsonField: "tichHopGDQPAN",
-    buildPromptFragment: () =>
-      `- Thêm mục "Tích hợp Giáo dục Quốc phòng và An ninh" (theo Thông tư 08/2024/TT-BGDĐT): lồng ghép\n` +
-      `  NGẮN GỌN 1 nội dung phù hợp với bài học (tinh thần yêu nước, ý thức bảo vệ Tổ quốc, kỷ luật, an\n` +
-      `  toàn cộng đồng...), KHÔNG biến bài học thành 1 tiết Giáo dục Quốc phòng riêng biệt.\n` +
-      `  Trả về trong trường JSON "tichHopGDQPAN".`,
-    schemaExample: `"tichHopGDQPAN": "..."`,
+    // ⚠️ ĐIỀU CHỈNH sau phản hồi giáo viên: trước đây LUÔN ép AI nhét nội dung GDQP&AN vào MỌI bài
+    // học dù không liên quan (VD bài học bảng chữ cái Lớp 1-3) -> gượng ép, thiếu tự nhiên. Giờ cho
+    // AI 1 "cửa mở": chỉ giữ đúng GDQP&AN khi bài học THỰC SỰ có liên kết logic, còn lại tự chuyển
+    // sang 1 trong 3 hướng thay thế gần gũi hơn với bài học cơ bản (Đạo đức/Kỹ năng sống/Quyền trẻ
+    // em). Nội dung vẫn trả về CHUNG 1 trường "tichHopGDQPAN" như cũ (không đổi hình dạng dữ liệu,
+    // tránh phải sửa các nơi khác) - nhưng thêm 1 trường phụ "tichHopGDQPANNhan" để AI tự khai báo
+    // ĐÃ CHỌN hướng nào, dùng để đổi nhãn hiển thị đúng ở LessonPlanPreview.jsx/lessonPlanExportService.js
+    // (KHÔNG hardcode cứng nhãn "Tích hợp GDQP&AN:" nữa vì có thể sai khi nội dung thực tế là Đạo đức...).
+    buildPromptFragment: (ctx = {}) => {
+      const { grade } = ctx;
+      const isLop1To3 = typeof grade === "number" && grade <= 3;
+      const gradeNote = isLop1To3
+        ? `  ⚠️ Đây là bài học Lớp ${grade} - các bài học ở mức cơ bản (học chữ/vần/bảng chữ cái, phép\n` +
+          `  tính đơn giản, kỹ năng nền tảng...) hầu như KHÔNG có liên kết logic với GDQP&AN - hãy ưu\n` +
+          `  tiên chọn 1 trong 3 hướng thay thế bên dưới cho các bài học dạng này.\n`
+        : "";
+      return (
+        `- Thêm mục tích hợp liên môn ngắn gọn cuối bài, CHỌN 1 TRONG 2 TRƯỜNG HỢP sau tuỳ nội dung bài học:\n` +
+        `  (1) Nếu bài học THỰC SỰ có sự liên kết logic với Giáo dục Quốc phòng và An ninh (VD: bài học\n` +
+        `  về biển đảo, về truyền thống dân tộc, về kỷ luật, về an toàn cộng đồng...): lồng ghép NGẮN\n` +
+        `  GỌN nội dung "Tích hợp Giáo dục Quốc phòng và An ninh" (theo Thông tư 08/2024/TT-BGDĐT),\n` +
+        `  KHÔNG biến bài học thành 1 tiết Giáo dục Quốc phòng riêng biệt.\n` +
+        `  (2) Nếu bài học QUÁ CƠ BẢN hoặc KHÔNG có liên kết logic rõ ràng với GDQP&AN (VD: học bảng\n` +
+        `  chữ cái, học vần, phép tính cơ bản...): TUYỆT ĐỐI KHÔNG ép buộc nhét GDQP&AN vào - thay vào\n` +
+        `  đó hãy chọn 1 hướng PHÙ HỢP hơn trong 3 hướng: Giáo dục Đạo đức, Giáo dục Kỹ năng sống, hoặc\n` +
+        `  Giáo dục Quyền Trẻ em, rồi lồng ghép NGẮN GỌN nội dung theo đúng hướng đã chọn.\n` +
+        gradeNote +
+        `  Trả về trong trường JSON "tichHopGDQPAN" (nội dung tích hợp, viết như trước, không cần tự\n` +
+        `  ghi tên hướng vào đầu câu) VÀ trường "tichHopGDQPANNhan" (nhãn hiển thị đúng theo hướng đã\n` +
+        `  chọn - CHỈ được chọn 1 trong 4 giá trị chính xác sau: "Tích hợp Giáo dục Quốc phòng và An\n` +
+        `  ninh", "Tích hợp Giáo dục Đạo đức", "Tích hợp Giáo dục Kỹ năng sống", "Tích hợp Giáo dục\n` +
+        `  Quyền Trẻ em").`
+      );
+    },
+    schemaExample: `"tichHopGDQPAN": "...", "tichHopGDQPANNhan": "Tích hợp Giáo dục Quốc phòng và An ninh"`,
   },
   [INTEGRATION_KEYS.TICH_HOP_HSKT]: {
     key: INTEGRATION_KEYS.TICH_HOP_HSKT,

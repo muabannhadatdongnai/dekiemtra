@@ -360,6 +360,25 @@ function buildSlideOutlineParagraphs(slides) {
   return children;
 }
 
+// Phụ lục "Gợi ý thiết kế Học liệu" - tự động xuất hiện ở giáo án Lớp 1-3 (xem
+// buildVisualHocLieuGuidance() trong lessonPlanPromptTemplates.js). Cùng pattern các phụ lục khác
+// (Slide Outline...): KHÔNG có cờ ẩn/hiện riêng, luôn xuất hiện trong Word một khi AI trả về đủ dữ
+// liệu (không đụng khung mục I-IV chuẩn CV2345 nên không có rủi ro "sai form" khi BGH duyệt).
+function buildHocLieuHinhAnhParagraphs(goiY) {
+  const children = [];
+  (goiY || []).forEach((tuKhoa, i) => {
+    if (!tuKhoa) return;
+    children.push(
+      new Paragraph({
+        children: [textRun(`${i + 1}. "${tuKhoa}"`, { italics: true })],
+        spacing: { after: 60 },
+        indent: { left: 200 },
+      })
+    );
+  });
+  return children;
+}
+
 function buildActivitySection(activity, columnMode, minutes, startTiet) {
   const titleSuffix = minutes ? ` (~${minutes} phút)` : "";
   const children = [
@@ -442,7 +461,12 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includ
   ];
 
   if (lessonPlan.tichHopNLS) children.push(paragraph(`Tích hợp Năng lực số: ${lessonPlan.tichHopNLS}`));
-  if (lessonPlan.tichHopGDQPAN) children.push(paragraph(`Tích hợp GDQP&AN: ${lessonPlan.tichHopGDQPAN}`));
+  // Nhãn ĐỘNG theo hướng AI thực tế đã chọn (xem lessonPlanIntegrations.js) - có thể là GDQP&AN,
+  // Đạo đức, Kỹ năng sống, hoặc Quyền Trẻ em tuỳ nội dung bài học có liên kết logic hay không.
+  if (lessonPlan.tichHopGDQPAN)
+    children.push(
+      paragraph(`${lessonPlan.tichHopGDQPANNhan || "Tích hợp GDQP&AN"}: ${lessonPlan.tichHopGDQPAN}`)
+    );
   if (lessonPlan.tichHopHSKT) children.push(paragraph(`Điều chỉnh cho học sinh khuyết tật hoà nhập: ${lessonPlan.tichHopHSKT}`));
 
   if (lessonPlan.cungCoQuestions?.length) {
@@ -625,6 +649,30 @@ export function buildLessonPlanDocxSections({ lessonPlan, timeline, meta, includ
       })
     );
     children.push(...buildSlideOutlineParagraphs(lessonPlan.slideOutline));
+  }
+
+  if (lessonPlan.goiYHocLieuHinhAnh?.length) {
+    children.push(
+      new Paragraph({
+        pageBreakBefore: true,
+        alignment: AlignmentType.CENTER,
+        children: [textRun("PHỤ LỤC: GỢI Ý THIẾT KẾ HỌC LIỆU (TỪ KHOÁ TẠO ẢNH AI)", { bold: true, size: 26 })],
+        spacing: { before: 100, after: 40 },
+      })
+    );
+    children.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          textRun(
+            "(Copy từ khoá bên dưới, dán vào Canva/ChatGPT/Gemini... để tự tạo Flashcard minh hoạ cho bài học)",
+            { italics: true, size: 20, color: "64748B" }
+          ),
+        ],
+        spacing: { after: 120 },
+      })
+    );
+    children.push(...buildHocLieuHinhAnhParagraphs(lessonPlan.goiYHocLieuHinhAnh));
   }
 
   return children;

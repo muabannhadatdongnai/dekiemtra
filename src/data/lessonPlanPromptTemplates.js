@@ -183,6 +183,34 @@ trong nội dung giáo án): ${seed}
 `;
 }
 
+/**
+ * buildVisualHocLieuGuidance(grade)
+ * "Gợi ý thiết kế Học liệu" - GIAI ĐOẠN MỚI, theo phản hồi giáo viên: Lớp 1-3 học chủ yếu bằng
+ * hình ảnh (Flashcard, tranh minh hoạ...) nhưng giáo viên không phải lúc nào cũng rành cách tự
+ * nghĩ từ khoá để nhờ công cụ tạo ảnh AI (Canva/ChatGPT/Gemini...) vẽ giúp. Tự động sinh 3 từ khoá
+ * (prompt) tiếng Việt mô tả hình ảnh phù hợp NỘI DUNG BÀI HỌC, để giáo viên copy-dán thẳng vào
+ * công cụ tạo ảnh AI, KHÔNG cần soạn từ khoá từ đầu.
+ * CHỈ áp dụng Lớp 1-3 (đúng phạm vi giáo viên yêu cầu) - Lớp 4-5 và Mầm non KHÔNG tự động thêm
+ * mục này (Mầm non đã có sẵn nhiều hoạt động trực quan khác; Lớp 4-5 giảm dần phụ thuộc hình ảnh).
+ * Đây là mục TỰ ĐỘNG (không qua cơ chế "tích hợp" tuỳ chọn ở lessonPlanIntegrations.js) vì giáo
+ * viên yêu cầu luôn có sẵn cho đúng 3 khối lớp này, không cần bật cờ riêng.
+ */
+function buildVisualHocLieuGuidance(grade) {
+  const isLop1To3 = typeof grade === "number" && grade <= 3;
+  if (!isLop1To3) return "";
+  return `
+GỢI Ý THIẾT KẾ HỌC LIỆU (BẮT BUỘC với Lớp 1-3 - học sinh lứa tuổi này học chủ yếu bằng hình ảnh):
+- Tự sinh ra ĐÚNG 3 từ khoá (prompt) bằng TIẾNG VIỆT, mỗi từ khoá mô tả 1 hình ảnh/flashcard MINH
+  HOẠ trực tiếp cho nội dung bài học này, để giáo viên copy-dán ngay vào công cụ tạo ảnh AI (Canva,
+  ChatGPT, Gemini...) tự tạo hình minh hoạ, KHÔNG cần tự nghĩ từ khoá.
+- Mỗi từ khoá là 1 CÂU MÔ TẢ NGẮN GỌN, cụ thể, dễ hình dung (phong cách hoạt hình/flashcard dễ
+  thương, phù hợp trẻ em - ví dụ: "Một quả táo hoạt hình dễ thương có chữ 'a'", "Một học sinh vui
+  vẻ đang chào cô giáo"), bám sát ĐÚNG nội dung/từ khoá/khái niệm chính của bài học, KHÔNG chung
+  chung. KHÔNG kèm hướng dẫn kỹ thuật (không ghi tỉ lệ khung hình, độ phân giải...).
+  Trả về trong trường JSON "goiYHocLieuHinhAnh": mảng ĐÚNG 3 chuỗi.
+`;
+}
+
 export function buildLessonPlanPrompt({
   tenBai,
   grade,
@@ -255,6 +283,7 @@ giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình ph
   const styleBlock = buildLessonPlanStylePromptFragment(lessonPlanStyle);
   const diversityBlock = buildDiversityGuidance(existingOpeningIdeas);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
+  const visualHocLieuBlock = buildVisualHocLieuGuidance(grade);
 
   // ⚠️ Trước đây các field do tích hợp thêm vào (VD "mindmap") CHỈ được mô tả bằng lời trong
   // integrationsBlock, KHÔNG xuất hiện trong ví dụ JSON chính bên dưới - khiến AI hay quên trả
@@ -262,6 +291,13 @@ giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình ph
   // đây, để ví dụ JSON luôn phản ánh ĐẦY ĐỦ hình dạng dữ liệu mong muốn (xem
   // collectIntegrationSchemaExamples() trong lessonPlanIntegrations.js).
   const integrationSchemaLines = collectIntegrationSchemaExamples(integrations);
+  // "Gợi ý thiết kế Học liệu" (xem buildVisualHocLieuGuidance()) là mục TỰ ĐỘNG theo khối lớp,
+  // KHÔNG qua registry lessonPlanIntegrations.js - nên nối trực tiếp vào đây thay vì
+  // collectIntegrationSchemaExamples(), giữ đúng lý do đã giải thích ở comment phía trên: ví dụ
+  // JSON cụ thể luôn "neo" hành vi AI tốt hơn chỉ mô tả bằng lời trong visualHocLieuBlock.
+  if (visualHocLieuBlock) {
+    integrationSchemaLines.push(`"goiYHocLieuHinhAnh": ["...", "...", "..."]`);
+  }
   const integrationSchemaBlock = integrationSchemaLines.length
     ? `,\n  ${integrationSchemaLines.join(",\n  ")}`
     : "";
@@ -303,7 +339,7 @@ ${stepClarityRule}
 ${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
 
 ${sourceBlock}
-${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}
+${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}${visualHocLieuBlock}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema và các trường tích
 hợp đã liệt kê ở trên nếu có):
 ${outputSchema}
