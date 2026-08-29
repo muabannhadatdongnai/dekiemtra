@@ -1,985 +1,461 @@
-**100**
-
-2. Sắp xếp các từ ngữ sau thành câu.
-a. đồ chơi/ là/ của/ lê-gô/ nhiều/ bạn nhỏ/ yêu thích
-b. bạn/ rất/ được/ nhận/ nhiều/ quà/ các/ vui/ khi
-c. đồ chơi/ cần/ cẩn thận/ giữ gìn/ chúng ta
-
-3. Viết 2 – 3 câu nói về một đồ chơi em thích.
-M: Em rất thích đồ chơi xếp hình. Bộ xếp hình của em gồm các khối gỗ nhỏ có nhiều màu sắc. Khi chơi, em giống như một bác thợ xây đang xây những ngôi nhà đẹp.
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc một câu chuyện về đồ chơi. Khi đọc, chú ý những thông tin sau:
-- Tên câu chuyện
-- Tên đồ chơi
-- Đặc điểm của đồ chơi
-- Sự việc liên quan đến đồ chơi
-2. Đọc cho các bạn nghe đoạn em thích nhất trong câu chuyện.
-
-**101**
-
-**Tuần 13**
-
-**Bài 23: RỒNG RẮN LÊN MÂY**
-
-## ĐỌC
-1. Kể tên các trò chơi em biết.
-2. Nêu tên trò chơi trong bức tranh dưới đây. Em biết gì về trò chơi đó?
-
-**RỒNG RẮN LÊN MÂY**
-
-Rồng rắn lên mây là một trò chơi vui nhộn. Trò chơi này cần ít nhất năm người. Chỗ chơi phải rộng rãi, bằng phẳng.
-Khi chơi, một người đóng vai “thầy thuốc”, đứng đối diện với những người làm "rồng rắn". Những người làm "rồng rắn" túm đuôi áo nhau, người đứng đầu túm vào người phía trước. Người đứng đầu nối với người thứ hai, người thứ hai nối với người thứ ba,... cứ thế đến người cuối cùng. "Rồng rắn" lượn vòng vèo và hát bài đồng dao:
-– Rồng rắn lên mây
-Có cây xúc xắc
-Có nhà hiển vinh...
-
-**102**
-
-Khi bài đồng dao kết thúc, “rồng rắn” dừng lại trước mặt “thầy thuốc" và người đi đầu sẽ hỏi xem “thầy thuốc" có nhà không. Nếu “thầy thuốc” trả lời “Có." thì “thầy thuốc” và “rồng rắn" sẽ bắt đầu hỏi đáp. Hỏi đáp xong, "thầy thuốc" sẽ tìm cách bắt cho được người cuối cùng. Nếu người cuối cùng bị bắt, trò chơi sẽ kết thúc. Nếu "rồng rắn" đi mà bị đứt khúc, trò chơi cũng kết thúc. Rồng rắn lên mây là một trò chơi vui vẻ, giúp các em được vui chơi, vận động sau những giờ học căng thẳng.
-*(Theo 100 trò chơi dân gian cho thiếu nhi)*
-
-**Từ ngữ**
-- **Hiển vinh:** có địa vị, được kính trọng.
-
-**?**
-1. Những người chơi làm rồng rắn bằng cách nào?
-2. Khi bài đồng dao kết thúc, “rồng rắn” và “thầy thuốc” làm gì?
-3. Trò chơi kết thúc khi nào?
-a. Khi người đi đầu bị “thầy thuốc” bắt
-b. Khi “thầy thuốc” bắt được người cuối cùng
-c. Khi “rồng rắn” bị đứt khúc
-4. Nếu được tham gia trò chơi Rồng rắn lên mây, em thích đóng vai nào? Vì sao?
-
-1. Tìm từ ngữ trong bài mô tả cách di chuyển của “rồng rắn”.
-2. Đóng vai các bạn đang chơi rồng rắn lên mây để nói lời hỏi đáp.
-
-## VIẾT
-1. Viết chữ hoa: M
-2. Viết ứng dụng: Mây trắng như bông trên bâu trời.
-
-**103**
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Búp bê biết khóc**
-*(Theo Nguyễn Tê-chi)*
-(1) Sinh nhật năm nay, bé nhận được những món quà gì? Bé thích món quà nào nhất?
-(2) Búp bê mới đã phàn nàn những gì?
-(3) Búp bê vải nức nở kể về chuyện gì?
-(4) Điều gì xảy ra ở cuối câu chuyện?
-
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể cho người thân nghe câu chuyện Búp bê biết khóc.
-
-**104**
-
-**Bài 24: NẶN ĐỒ CHƠI**
-
-## ĐỌC
-Em đã bao giờ nặn đồ chơi chưa? Em thích nặn đồ chơi gì?
-
-**NẶN ĐỒ CHƠI**
-
-Bên thềm gió mát
-Bé nặn đồ chơi
-Mèo nằm vẫy đuôi
-Tròn xoe đôi mắt.
-
-Đây là quả thị
-Đây là quả dưa
-Quả này phần mẹ
-Quả này phần cha.
-
-**105**
-
-Đây là thằng chuột
-Tặng riêng chú mèo
-Mèo ta thích chí
-Vểnh râu meo meo...
-*(Nguyễn Ngọc Ký)*
-
-**?**
-1. Bạn nhỏ nặn đồ chơi ở đâu?
-2. Bạn nhỏ đã nặn được những gì?
-3. Bạn nhỏ nặn quả thị, quả dưa để làm gì?
-4. Đọc những dòng thơ kể về chú mèo.
-* Học thuộc lòng bài thơ.
-
-1. Từ ngữ nào dưới đây chỉ đặc điểm?
-thềm, tròn xoe, bé, vẫy, nhỏ, thích chí
-2. Tìm từ ngữ chỉ đặc điểm của mỗi loại quả trong tranh:
-- cà chua (đỏ, tròn,...)
-- chuối (vàng, dài, cong,...)
-- bưởi (xanh, tròn, to,...)
-
-## VIẾT
-1. Nghe – viết: Nặn đồ chơi (từ đầu đến phần cha).
-2. Viết tên các đồ chơi trong hình có chứa chữ d hoặc gi.
-
-**106**
-
-3. Chọn a hoặc b.
-a. Chọn s hoặc x thay cho ô vuông.
-Cây []anh []anh thì lá cũng []anh
-Chim đậu trên cành chim hót líu lo.
-*(Đồng dao)*
-Củ []u hào []ao mà []ắc []i
-Quả chuối []i []ao mà dẹt đứt.
-*(Theo Lê Khắc Hoan)*
-
-b. Tìm từ có tiếng chứa uôn hoặc uông thay cho ô vuông.
-- Vua gọi là trẫm, [] gọi là khanh.
-- Trời [] chiều, nắng vàng nhạt dần.
-- Người buồn cảnh có vui đâu bao giờ. (Theo Nguyễn Du)
-
-## LUYỆN TẬP
-1. Nói tên các đồ chơi dưới đây:
-(Lê-gô, Khối ru-bích, Búp bê, Gấu bông, Quả bóng)
-2. Sắp xếp các từ ngữ vào nhóm thích hợp:
-đỏ tươi, quay, trong suốt, lăn, lắc, tròn xoe, ráp, xinh xắn
-a. Chỉ đặc điểm của đồ chơi
-b. Chỉ hoạt động khi chơi đồ chơi
-
-3. Chọn dấu phẩy hoặc dấu chấm thay cho ô vuông.
-Chiếc xe ô tô đồ chơi của Bắc rất đẹp [] Hai cái đèn phía trước giống như hai con mắt đang mở to [] Trên mui xe có gắn một anh lính đứng rất trang nghiêm [] Mở hộp ra [] bấm nút [] thế là xe chạy.
-
-**107**
-
-1. Kể tên một số đồ chơi của em hoặc của bạn em.
-2. Viết 3 – 4 câu tả một đồ chơi của em.
-G: **Tả một đồ chơi**
-(1) Em định tả đồ chơi nào?
-(2) Đồ chơi đó có đặc điểm gì nổi bật? (về hình dáng, màu sắc, cách chơi,...)
-(3) Tình cảm của em với đồ chơi đó như thế nào?
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc một bài thơ hoặc một câu chuyện về đồ chơi.
-2. Ghi chép các thông tin về đồ chơi trong bài thơ hoặc câu chuyện em đã đọc vào phiếu đọc sách theo mẫu:
-**PHIẾU ĐỌC SÁCH**
-Ngày: (...)
-Tên bài: (...)
-Tên tác giả: (...)
-Tên đồ chơi: (...)
-Đặc điểm của đồ chơi: (...)
-
-3. Nói với các bạn về đồ chơi em muốn có.
-
-**108**
-
-**MÁI ẤM GIA ĐÌNH**
-
-**109**
-
-# Tuần 14
-
-**Bài 25: SỰ TÍCH HOA TỈ MUỘI**
-
-## ĐỌC
-Quan sát tranh và đoán xem hai chị em đang làm gì.
-
-**SỰ TÍCH HOA TỈ MUỘI**
-
-Ngày xưa, có hai chị em Nết và Na mồ côi cha mẹ, sống trong ngôi nhà nhỏ bên sườn núi. Nết thương Na, cái gì cũng nhường em. Đêm đông gió rét, Nết ôm em vào lòng. Thấy em trằn trọc, Nết hỏi:
-- Em khó ngủ à?
-Na thì thầm:
-- Không ạ. Em đang nghĩ... Không biết cái cây trước nhà ra hoa thì sẽ thế nào nhỉ? Đêm nào em cũng ngửi thấy mùi hương thơm ngát.
-
-**110**
-
-Cả hai chị em cùng mong chờ cây ra hoa. Mùa xuân đến, những nụ hoa bắt đầu hé nở. Đêm trước ngày hoa nở, một cơn mưa to ập đến. Nết và Na sợ cây hoa bị gãy.
-Sáng ra, hai chị em chạy vội ra xem. Kỳ lạ thay, cây hoa chẳng làm sao cả. Những cành hoa bé ôm sát vào cành hoa lớn, như che chở, bảo vệ cho nhau. Cũng từ đó, cây luôn ra những khóm hoa có bông lớn ôm ấp những bông bé. Hai chị em Nết và Na vô cùng yêu thích loài hoa đó. Người dân trong bản gọi là hoa tỉ muội.
-*(Theo Nguyễn Văn Khoa)*
-
-**Từ ngữ**
-- **Trằn trọc:** trỏ mình luôn, không sao ngủ được.
-- **Tỉ muội:** chị em gái (tỉ là chị, muội là em).
-
-**?**
-1. Chi tiết nào cho thấy Nết rất thương em?
-2. Điều gì xảy ra với cây hoa vào đêm trước ngày hoa nở?
-3. Sáng ra, cây hoa trước nhà có gì kỳ lạ?
-a. Cây hoa đã gãy rập do mưa to.
-b. Cây hoa đã tàn phai do gió rét.
-c. Cây hoa ra những khóm hoa bé ôm sát vào cành lớn.
-4. Theo em, vì sao dân bản đặt tên hoa là hoa tỉ muội?
-
-1. Trong bài đọc, những từ ngữ nào chỉ người?
-2. Tìm từ ngữ trong bài đọc để ghép thành cặp từ chỉ người trong gia đình.
-M: chị - em
-
-**111**
-
-## VIẾT
-1. Viết chữ hoa: N
-2. Viết ứng dụng: Nước chảy đá mòn.
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Hai anh em** (Theo Lâm Thanh)
-(1) Hai anh em chia lúa thế nào? Người em đã nghĩ gì và làm gì?
-(2) Người anh đã nghĩ gì và làm gì?
-(3) Mỗi sáng ra thăm lúa, hai anh em thấy có gì lạ?
-(4) Đêm đó, hai anh em đã chứng kiến điều gì?
-
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể cho người thân nghe câu chuyện Hai anh em.
-
-**112**
-
-**Bài 26: EM MANG VỀ YÊU THƯƠNG**
-
-## ĐỌC
-1. Kể tên những em bé mà em biết.
-2. Đoán xem bạn nhỏ trong bức tranh đang nghĩ gì.
-
-**EM MANG VỀ YÊU THƯƠNG**
-
-Mẹ, mẹ ơi em bé
-Từ đâu đến nhà ta
-Nụ cười như tia nắng
-Bàn tay như nụ hoa?
-Bước chân đi lẫm chẫm
-Tiếng bi bô gọi bà.
-
-Hay bé từ vì sao
-Theo tia chớp xuống đất?
-Hay bé khao khát hát
-Bé từ dòng suối lên?
-Hay bé từ biển lên
-Bé ngáp thành bọt trắng?
-
-**113**
-
-Bé từ quả nhãn mộng
-Chắc vì yêu lũ chim
-Từ cây bầu, cây bí
-Chắc vì yêu chú sâu...
-Cũng chẳng là từ đâu
-Bé đến đây từ mẹ.
-*(Lê Tất Điều)*
-
-**Từ ngữ**
-- **Lẫm chẫm:** dáng đi chưa vững của trẻ mới tập đi.
-- **Bi bô:** tiếng của trẻ con đang tập nói, nghe chưa rõ.
-
-**?**
-1. Bạn nhỏ đã hỏi mẹ điều gì?
-2. Trong khổ thơ đầu, bạn nhỏ tả em bé đáng yêu như thế nào?
-3. Bạn nhỏ đoán em bé từ đâu đến?
-a. Từ vì sao
-b. Từ dòng suối
-c. Từ biển
-d. Từ đám mây
-e. Từ quả nhãn mộng
-g. Từ cây bầu, cây bí
-4. Cuối cùng, bạn nhỏ đã tự tìm được câu trả lời như thế nào?
-* Học thuộc lòng 3 khổ thơ em thích.
-
-1. Tìm các từ ngữ chỉ sự vật trong bài thơ.
-M: mẹ, em bé
-2. Tìm trong bài thơ các từ ngữ tả em bé.
-M: lẫm chẫm
-
-**114**
-
-## VIẾT
-1. Nghe – viết:
-**Em mang về yêu thương**
-Mẹ, mẹ ơi em bé
-Từ đâu đến nhà ta
-Nụ cười như tia nắng
-Bàn tay như nụ hoa?
-Bước chân đi lẫm chẫm
-Tiếng bi bô gọi bà.
-
-2. Chọn iên hoặc yên, uyên thay cho ô vuông.
-- Mẹ mới mua cho Bống một chiếc nơ t[] màu hồng.
-- Bà kể cho em nghe câu chuyện Sự tích nàng t[] ốc.
-- Loài chim k[] bay đi tìm bạn.
-
-3. Chọn a hoặc b.
-a. Tìm những từ ngữ có tiếng bắt đầu bằng r, d hoặc gi có nghĩa như sau:
-- Làm cho sạch bằng nước
-- Có cử chỉ, lời nói âu yếm
-b. Chọn ai hoặc ay thay cho ô vuông.
-Hàng n[] em thức dậy
-Làm việc n[] việc kia
-Đôi t[] em luôn động
-C[] cối mọc mầm vươn.
-
-## LUYỆN TẬP
-1. Chọn từ ngữ thích hợp để gọi tên các thành viên trong gia đình ở hình dưới đây:
-(ông, bà, bố, mẹ, anh, em, chị)
-
-**115**
-
-2. Tìm từ ngữ chỉ đặc điểm của các thành viên trong gia đình.
-(khoẻ mạnh, hiền từ, tóc bạc, mạnh mẽ, xinh xắn, nhăn nheo, đáng yêu, giỏi giang)
-Ông: 
-Bà: hiền từ,...
-Bố:
-Mẹ:
-Anh, chị, em:
-
-3. Dựa vào những từ ngữ chỉ đặc điểm ở bài tập 2, nói 1 – 2 câu về một thành viên trong gia đình em.
-
-1. Kể về một việc người thân đã làm cho em.
-2. Viết 3 – 4 câu kể về một việc người thân đã làm cho em.
-G:
-- Người thân đó của em là ai?
-- Người thân đó đã làm việc gì cho em?
-- Em có suy nghĩ, cảm xúc gì khi người thân làm việc đó cho em?
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc một câu chuyện về tình cảm anh chị em trong gia đình. Chia sẻ với bạn các thông tin sau:
-- Tên câu chuyện
-- Tên các nhân vật
-- Tình cảm của các nhân vật dành cho nhau
-2. Nói về điều em thích nhất trong câu chuyện.
-
-**116**
-
-# Tuần 15
-
-**Bài 27: MẸ**
-
-## ĐỌC
-Nói về những việc mẹ đã làm để chăm sóc em.
-
-**MẸ**
-
-Lặng rồi cả tiếng con ve
-Con ve cũng mệt vì hè nắng oi.
-Nhà em vẫn tiếng ạ ơi
-Kẽo cà tiếng võng mẹ ngồi mẹ ru.
-
-Lời ru có gió mùa thu
-Bàn tay mẹ quạt mẹ đưa gió về.
-Những ngôi sao thức ngoài kia
-Chẳng bằng mẹ đã thức vì chúng con.
-
-Đêm nay con ngủ giấc tròn
-Mẹ là ngọn gió của con suốt đời.
-*(Trần Quốc Minh)*
-
-**117**
-
-**Từ ngữ**
-- **Nắng oi:** nắng nóng, khó chịu.
-- **Giấc tròn:** giấc ngủ ngon, ngủ say.
-
-**?**
-1. Đọc hai dòng thơ đầu, em hình dung được cảnh mùa hè nóng bức như thế nào?
-2. Những chi tiết nào cho biết người mẹ rất vất vả vì con?
-a. Mẹ thức rất khuya để quạt cho con ngủ.
-b. Mẹ ngồi ru con ngủ.
-c. Tiếng kẽo cà kẽo kẹt của chiếc võng mẹ ngồi.
-3. Bóng mát mùa thu được ví với gì?
-4. Đọc hai dòng thơ cuối, em thấy tình cảm của người mẹ dành cho con lớn lao như thế nào?
-* Học thuộc lòng 6 dòng thơ cuối.
-
-1. Câu thơ nào cho thấy sự vất vả của người mẹ?
-2. Từ ngữ nào nói lên tình cảm của người con đối với mẹ?
-a. ạ ơi
-b. ngọn gió suốt đời
-c. kẽo cà kẽo kẹt
-
-**118**
-
-## VIẾT
-1. Viết chữ hoa: O
-2. Viết ứng dụng: Ông bà như cây cao bóng cả.
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Sự tích cây vú sữa** (Theo Truyện cổ tích Việt Nam)
-(1) Khi cậu bé vùng vằng bỏ đi, người mẹ đã làm gì?
-(2) Khi cậu bé quay về, chuyện gì đã xảy ra?
-(3) Kể lại sự việc kì lạ ở cây xanh.
-(4) Cây xanh đã nói gì với cậu bé?
-
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể cho người thân nghe câu chuyện Sự tích cây vú sữa.
-
-**119**
-
-**Bài 28: TRÒ CHƠI CỦA BỐ**
-
-## ĐỌC
-1. Em và bố thường cùng nhau làm gì?
-2. Đoán xem hai bố con trong bức tranh đang làm gì.
-
-**TRÒ CHƠI CỦA BỐ**
-
-Khi Hường còn bé, bố thường chơi với Hường. Bố làm cái đàn ghi ta để Hường gảy phừng phưng. Có lúc bố làm cái ghế để Hường ngồi lên. Lại có lúc bố làm con ngựa để Hường cưỡi. Thật là vui!
-Bây giờ Hường đã lớn, bố không làm ngựa, làm ghế nữa. Bố cùng Hường chơi đánh cờ, thi nhảy dây... Hường thấy những trò chơi ấy rất thú vị.
-Hôm nay đi làm về, bố tặng Hường một cuốn sách cờ vua. Bố bảo để hai bố con cùng đọc và học cách chơi. Hường rất thích. Hường mong bố có nhiều thời gian rảnh rỗi để chơi với Hường.
-*(Theo Hà Thủy Trường)*
-
-**120**
-
-**Từ ngữ**
-- **Gảy phừng phưng:** đánh đàn, gảy đàn phát ra tiếng vang.
-- **Rảnh rỗi:** có thời gian không phải làm việc gì.
-
-**?**
-1. Lúc Hường còn bé, bố đã làm những trò chơi gì cho Hường?
-2. Bây giờ, bố cùng Hường chơi những trò chơi gì?
-3. Bố tặng Hường cuốn sách cờ vua để làm gì?
-4. Hường mong ước điều gì? Vì sao?
-
-1. Tìm từ ngữ chỉ hoạt động của bố và Hường trong bài đọc.
-2. Từ ngữ nào chỉ cảm xúc của Hường khi chơi cùng bố?
-thích thú, vui sướng, tự hào, hào hứng
-
-## VIẾT
-1. Nghe – viết:
-**Trò chơi của bố**
-Bố làm cái đàn ghi ta để Hường gảy phừng phưng. Có lúc bố làm con ngựa để Hường cưỡi. Bây giờ Hường đã lớn, bố cùng Hường chơi đánh cờ, thi nhảy dây...
-
-2. Tìm tên các tỉnh, thành phố được nhắc đến trong đoạn thơ sau:
-Em đi em nhớ núi rừng
-Nhớ về miền ngược, nhớ sang miền xuôi
-Nhớ **Lào Cai**, nhớ **Sơn La**
-Nhớ miền **Thanh Hoá**, nhớ qua **Hoà Bình**.
-
-**121**
-
-3. Chọn a hoặc b.
-a. Chọn l hoặc n thay cho ô vuông.
-[]àm việc nhọc nhằn, người nông dân mới []àm ra được những hạt lúa chín vàng.
-
-b. Chọn ao hoặc au thay cho ô vuông.
-Chị trăng bơi giữa b[] trời thẳm
-[] chị khoác trên mình chiếc áo
-Màu vàng lấp lánh tựa s[] băng.
-*(Theo Nguyệt Hạ)*
-
-## LUYỆN TẬP
-1. Xếp các từ ngữ sau vào 2 nhóm.
-chăm sóc, yêu thương, quan tâm, vâng lời, hiếu thảo, kính trọng, chăm ngoan
-a. Từ ngữ chỉ tình cảm, sự chăm sóc của người lớn đối với trẻ em
-b. Từ ngữ chỉ tình cảm, sự quan tâm của trẻ em đối với người lớn
-
-2. Chọn từ ngữ thích hợp thay cho ô vuông. (hiếu thảo, chăm ngoan, nhường nhịn, chăm sóc)
-Cha mẹ luôn [] con cái. Cả nhà rất vui vì hai anh em luôn [] nhau. Khi lớn lên, em hứa sẽ [] để đền đáp công ơn của cha mẹ.
-
-3. Điền dấu chấm, dấu chấm hỏi, dấu chấm than vào ô vuông.
-Hai chị em đang chơi cờ caro. Chị nói:
-- Chị thắng rồi []
-- Em chưa thua đâu []
-- Thôi, chị nhường em đi lại nhé []
-- Vâng ạ []
-
-**122**
-
-1. Quan sát tranh và nói về những việc làm thể hiện tình cảm của các cháu đối với ông bà.
-2. Viết 3 – 4 câu thể hiện tình cảm của em đối với người thân.
-G:
-- Người thân mà em muốn kể là ai?
-- Em có tình cảm thế nào với người thân đó?
-- Em đã thể hiện tình cảm đó như thế nào? (bằng lời nói, bằng việc làm,...)
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc một câu chuyện về tình cảm gia đình.
-2. Chia sẻ với bạn về câu chuyện em đã đọc.
-G:
-- Tên câu chuyện
-- Tên các nhân vật
-- Tình cảm của các nhân vật dành cho nhau
-
-**123**
-
-# Tuần 16
-
-**Bài 29: CÁNH CỬA NHỚ BÀ**
-
-## ĐỌC
-Nói với bạn về những người thân trong gia đình em.
-
-**CÁNH CỬA NHỚ BÀ**
-
-Ngày cháu còn thấp bé
-Cửa để ngỏ hai cánh
-Bà hay dắt tay cháu
-Cùng đẩy cánh cửa vào.
-Bà thường đẩy ở trên
-Cháu đẩy nấp phần dưới
-Cánh cửa thì dễ đẩy
-Nhưng bản lề hay kêu.
-
-**124**
-
-Tiếng kêu của cánh cửa
-Là tiếng bà húng hắng
-Nắng chiều và gió lộng
-Đều vào cùng hai bà cháu.
-
-Cháu lớn lên từng ngày
-Cánh cửa cũng lớn theo
-Khi vắng bóng người bà
-Cánh cửa buồn biết bao.
-*(Theo Đoàn Thị Lam Luyến)*
-
-**Từ ngữ**
-- **Bản lề:** bộ phận nối cánh cửa với khung cửa.
-- **Húng hắng:** tiếng ho nhỏ, ngắt quãng.
-- **Gió lộng:** gió thổi mạnh.
-
-**?**
-1. Khi cháu còn nhỏ, bà và cháu thường cùng nhau làm gì?
-2. Tiếng kêu của cánh cửa được so sánh với tiếng gì?
-3. Khi vắng bà, bạn nhỏ cảm thấy thế nào?
-4. Đọc những câu thơ cho thấy cánh cửa dường như cũng nhớ bà.
-* Học thuộc lòng 3 khổ thơ đầu.
-
-1. Những từ ngữ nào cho thấy cánh cửa cũng giống như người?
-nói, kêu, hát, húng hắng, buồn, vui
-2. Ghép từ ngữ ở cột A với từ ngữ ở cột B để tạo câu:
-A
-Cánh cửa
-Hai bà cháu
-Cháu
-B
-cùng đẩy cửa.
-nhớ bà.
-lớn lên từng ngày.
-
-**125**
-
-## VIẾT
-1. Viết chữ hoa: Ô, Ơ
-2. Viết ứng dụng: Ông hiền, bà từ, cháu thảo ngoan.
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Bà cháu**
-(Theo Trần Hoài Dương)
-(1) Trước khi gặp cô tiên, ba bà cháu sống với nhau thế nào?
-(2) Cô tiên cho hai anh em vật gì và dặn thế nào?
-(3) Sau khi bà mất, hai anh em sống ra sao?
-(4) Hai anh em xin cô tiên điều gì?
-
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể cho người thân nghe câu chuyện Bà cháu.
-
-**126**
-
-**Bài 30: THƯƠNG ÔNG**
-
-## ĐỌC
-1. Kể lại một kỉ niệm của em với ông bà.
-2. Đoán xem bạn nhỏ đang làm gì cho ông.
-
-**THƯƠNG ÔNG**
-
-Ông bị đau chân
-Nó sưng nó tấy
-Đi phải chống gậy
-Khập khiễng khập khà
-Bước lên thềm nhà
-Nhấc chân quá khó
-Thấy ông nhăn nhó
-Việt chơi ngoài sân
-Lon ton lại gần
-Âu yếm nhanh nhảu:
-
-"Ông vịn vai cháu
-Cháu đỡ ông lên!"
-Ông bước lên thềm
-Trong lòng vui sướng
-Quẳng gậy cúi xuống
-Quên cả đớn đau
-Ôm cháu xoa đầu
-"Hoan hô thằng bé
-Bé thế mà khoẻ
-Vì nó thương ông.".
-*(Tú Mỡ)*
-
-**127**
-
-**Từ ngữ**
-- **Sưng tấy:** sưng to và đau nhức.
-- **Khập khiễng khập khà:** dáng đi không đều do chân bị đau.
-- **Lon ton:** dáng đi ngắn, nhanh của trẻ em.
-- **Âu yếm:** bộc lộ tình thương yêu bằng cử chỉ, lời nói.
-- **Nhanh nhảu:** có cử chỉ, lời nói rất nhanh.
-- **Vịn:** nắm lấy để làm điểm tựa.
-
-**?**
-1. Ông của Việt bị làm sao?
-2. Thấy ông như vậy, Việt đã làm gì?
-3. Tìm những câu thơ cho thấy ông rất vui khi Việt giúp ông.
-4. Đọc lại bài thơ và cho biết: Vì sao ông có thể quẳng gậy, cúi xuống ôm cháu?
-a. Vì ông đã khỏi đau chân.
-b. Vì ông rất vui và xúc động.
-c. Vì chiếc gậy bị hỏng.
-* Học thuộc lòng 10 dòng thơ cuối.
-
-1. Những từ ngữ nào dưới đây chỉ dáng vẻ của người?
-khập khiễng khập khà, sưng tấy, nhăn nhó, lon ton, nhanh nhảu, vui sướng
-2. Đặt một câu với từ ngữ chỉ dáng vẻ của một người trong bài thơ.
-
-## VIẾT
-1. Nghe – viết:
-**Thương ông**
-Ông bị đau chân, đi lại rất khó khăn. Nhưng Việt lại gần, âu yếm nói ông vịn vai cháu để cháu đỡ ông lên. Ông ôm cháu vào lòng, xoa đầu cháu và khen cháu khoẻ vì cháu thương ông.
-
-**128**
-
-2. Chọn ch hoặc tr thay cho ô vuông.
-Trong rừng có hai loài []im ở cùng nhau. []im gõ kiến chăm []ỉ mổ vỏ cây tìm sâu. Còn []im []ào mào thì luôn miệng hát ca.
-
-3. Chọn a hoặc b.
-a. Chọn ac hoặc at thay cho ô vuông.
-- Mùa hè, ánh nắng thường gắt.
-- Trăng s[] vằng vặc trên bầu trời.
-- Nước mắt rơi lã ch[].
-b. Điền những từ ngữ chứa uôn hoặc uông có nghĩa như sau:
-- Nơi nước chảy xuống
-- Nơi có dòng nước mát lành
-
-## LUYỆN TẬP
-1. Những từ ngữ nào trong các câu dưới đây chỉ hoạt động?
-a. Mẹ đi chợ mua cho bé cuốn truyện.
-b. Bà kể cho cháu nghe câu chuyện Sự tích cây vú sữa.
-c. Ông dạy cháu cách trồng cây.
-d. Chị hát cho em nghe.
-
-2. Chọn từ ngữ thích hợp thay cho ô vuông. (thổi, chăm sóc, nhặt, nói)
-a. Buổi sáng, mẹ [] quần áo cho cả nhà.
-b. Em bé [] giúp mẹ rau.
-c. Bà [] chuyện cổ tích cho các cháu nghe.
-d. Ông [] cho cháu chiếc sáo diều.
-
-3. Dựa vào tranh, đặt câu nêu hoạt động.
-M: Mẹ đang chải tóc cho em bé.
-
-**129**
-
-1. Viết 3 – 4 câu kể về một việc em đã làm cùng người thân.
-G:
-- Người thân mà em muốn kể là ai?
-- Em đã cùng người thân làm việc gì?
-- Em cảm thấy thế nào khi làm việc cùng người thân?
-
-2. Đọc lại đoạn văn vừa viết. Tìm những từ ngữ chỉ hoạt động, từ ngữ chỉ tình cảm của em đối với người thân trong đoạn văn.
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc một câu chuyện về tình cảm gia đình.
-2. Ghi lại các thông tin của câu chuyện đó vào phiếu đọc sách.
-- Ngày đọc
-- Tên câu chuyện
-- Tên tác giả
-- Tên nhân vật em yêu thích nhất
-- Tình cảm của các nhân vật dành cho nhau
-3. Kể lại câu chuyện cho người thân nghe.
-
-**130**
-
-# Tuần 17
-
-**Bài 31: ÁNH SÁNG CỦA YÊU THƯƠNG**
-
-## ĐỌC
-Quan sát tranh và nói về việc làm của các nhân vật trong tranh.
-
-**ÁNH SÁNG CỦA YÊU THƯƠNG**
-
-Hôm ấy, bà của Ê-đi-sơn ốm nặng. Bác sĩ bảo bà cần phải mổ gấp. Nhưng đêm đã khuya, phòng của bà lại quá tối, không thể mổ được. Ê-đi-sơn lo lắng chạy đi chạy lại quanh giường bà. Chợt chú bé nhìn thấy ánh sáng từ ngọn đèn hắt lại mặt gương trên tủ.
-Ê-đi-sơn liền nghĩ ra một cách. Chú chạy sang nhà hàng xóm, mượn về một tấm gương to. Chú đặt tấm gương trước ngọn đèn. Ánh sáng từ ngọn đèn chiếu vào tấm gương, phản xạ lại, làm căn phòng sáng rực lên. Nhờ đó, bác sĩ đã mổ cho bà thành công.
-Sau này, Ê-đi-sơn đã chế ra chiếc đèn điện chiếu sáng thay cho ngọn đèn dầu mờ ảo.
-*(Theo Truyện kể về các nhà bác học)*
-
-**131**
-
-**Từ ngữ**
-- **Ê-đi-sơn (1847 – 1931):** nhà bác học nổi tiếng người Mỹ.
-- **Phản xạ lại:** hắt lại, chiếu lại.
-
-**?**
-1. Khi bà bị ốm, vì sao bác sĩ không thể mổ cho bà?
-a. Vì đêm đã quá khuya.
-b. Vì phòng của bà quá tối.
-c. Vì Ê-đi-sơn lo lắng.
-2. Nhìn thấy ánh sáng đèn hắt lại mặt gương, Ê-đi-sơn đã làm gì?
-3. Em có suy nghĩ gì về Ê-đi-sơn?
-4. Đóng vai bác sĩ để nói lời cảm ơn Ê-đi-sơn.
-
-1. Tìm từ ngữ trong bài đọc phù hợp với nội dung sau:
-a. Nhà bác học nổi tiếng người Mỹ
-b. Tên loại đèn dùng điện để thắp sáng
-c. Tên một vật dùng để soi
-2. Đặt câu với từ ngữ vừa tìm được.
-M: Ê-đi-sơn là nhà bác học nổi tiếng.
-
-## VIẾT
-1. Viết chữ hoa: P
-2. Viết ứng dụng: Phải biết yêu thương, đùm bọc lẫn nhau.
-
-**132**
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Ánh sáng của yêu thương**
-(1) Ê-đi-sơn lo lắng khi bác sĩ nói: "Bà cháu cần phải mổ gấp.".
-(2) Ê-đi-sơn đã nghĩ ra một cách: đặt tấm gương trước ngọn đèn để làm căn phòng sáng rực lên.
-(3) Bác sĩ đã mổ cho bà thành công.
-(4) Sau này, Ê-đi-sơn đã chế ra chiếc đèn điện chiếu sáng thay cho ngọn đèn dầu mờ ảo.
-
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể lại nội dung câu chuyện bằng lòi của Ê-đi-sơn.
-
-**133**
-
-**Bài 32: CHƠI CHONG CHÓNG**
-
-## ĐỌC
-Nói tên các đồ chơi trong tranh. Đồ chơi nào có thể tự chuyển động?
-
-**CHƠI CHONG CHÓNG**
-
-Trời nắng gắt. Gió hiu hiu thổi. Vài chiếc lá vàng rụng lả tả.
-Ba bố con chú bé Nam đang chơi chong chóng trên sân. Chong chóng của anh Tít màu đỏ. Chong chóng của Nam màu xanh.
-- Chong chóng của con quay tít này! - Anh Tít nói.
-- Của con cũng quay tít. – Nam nói lớn.
-- Bố ơi, của con có kêu lạch cạch này! - Nam reo lên.
-- Đâu, của anh mới kêu lạch cạch! - Anh Tít tranh với Nam.
-Chong chóng của cả hai anh em đều quay tít và kêu lạch cạch. Hai anh em chạy quanh sân, cười vang rộn rã. Nhìn hai anh em Nam chơi đùa, bố mỉm cười nói:
-- Chong chóng bay cao rồi kìa!
-*(Theo Hoàng Yến)*
-
-**134**
-
-**?**
-1. Bài đọc nhắc đến món đồ chơi nào?
-2. Trong bài đọc, ai làm chong chóng cho hai anh em Nam?
-3. Chong chóng của hai anh em có màu gì?
-4. Âm thanh của chong chóng khi quay được miêu tả như thế nào?
-5. Em thấy trò chơi chong chóng có thú vị không? Vì sao?
-
-1. Tìm từ ngữ chỉ màu sắc của những chiếc chong chóng.
-2. Tìm những từ ngữ chỉ âm thanh trong bài.
-3. Đặt một câu với từ ngữ chỉ âm thanh vừa tìm được.
-
-## VIẾT
-1. Nghe – viết: Chơi chong chóng
-Hai anh em Tít và Nam đang chơi chong chóng trên sân. Của Tít màu đỏ. Của Nam màu xanh. Chong chóng quay tít. Những chiếc chong chóng kêu lạch cạch, lạch cạch. Hai anh em chạy quanh sân, cười vang rộn rã.
-
-2. Chọn iu hoặc ưu thay cho ô vuông.
-- Mẹ dẫn bé đi ch[] vườn bách thảo.
-- Đôi chim chuyền cành hót l[] lo.
-- Đã quá mười giờ trưa mà trời vẫn còn [] mờ.
-
-3. Chọn a hoặc b.
-a. Chọn at hoặc ặc thay cho ô vuông.
-- Mẹ đã nh[] mớ rau sạch sẽ.
-- Sáng nay, ông nội đã nh[] lại chiếc đồng hồ bị hỏng.
-- Bà khuyên cháu ăn uống cẩn thận để tránh mắc bệnh.
-
-**135**
-
-b. Chọn ât hoặc ấc thay cho ô vuông.
-Trăng khuyết nh[] như lưỡi liềm.
-Bác nông dân đang c[] lúa.
-Chú bộ đội gi[] cờ chiến thắng.
-
-## LUYỆN TẬP
-1. Chọn từ ngữ thích hợp thay cho ô vuông.
-(kính trọng, tự hào, chăm sóc, yêu thương)
-Gia đình luôn là nơi [] và chở che cho chúng ta. Mọi người trong gia đình luôn [] lẫn nhau. Ông bà [] các cháu. Các cháu [] ông bà.
-
-2. Đặt một câu với một trong các từ ngữ vừa chọn.
-M: Gia đình luôn là nơi chở che cho chúng ta.
-
-3. Chọn dấu phẩy hoặc dấu chấm thay cho ô vuông.
-Hôm nay là sinh nhật của ông nội [] Cả nhà cùng nhau chuẩn bị mâm cơm thật thịnh soạn [] Mẹ làm các món ăn ngon [] còn bố thì mua một cái bánh kem thật to [] Ông rất vui và xúc động [] Ông ôm chầm lấy cả nhà và nói lời cảm ơn []
-
-**136**
-
-1. Quan sát tin nhắn dưới đây và trả lời câu hỏi.
-Gửi Trâm,
-Hôm nay, bà bị ốm. Cả nhà mình đã đưa bà vào bệnh viện. Trâm tan học về nhà sớm nhé! Nhớ khóa cửa cẩn thận.
-Mẹ
-a. Người viết tin nhắn là ai?
-b. Người nhận tin nhắn là ai?
-c. Nội dung tin nhắn là gì?
-
-2. Đóng vai người thân viết một tin nhắn cho một người thân khác.
-G:
-- Em nhắn tin cho ai?
-- Nội dung nhắn tin là gì?
-- Lời dặn dò, chào hỏi cuối tin nhắn là gì?
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc các bài viết về tình cảm của người thân trong gia đình.
-2. Trao đổi với các bạn về bài đã đọc dựa vào gợi ý sau:
-- Tên bài đọc là gì?
-- Nội dung của bài đọc là gì?
-- Điều em cảm thấy thích nhất trong bài đọc là gì?
-
-**137**
-
-# Tuần 18
-
-**ÔN TẬP VÀ ĐÁNH GIÁ CUỐI HỌC KÌ 1**
-
-## Tiết 1 - 2
-1. Mỗi câu dưới đây có trong bài đọc nào?
-a. Từ những mảnh ghép nhỏ bé, chúng tớ kết hợp với nhau để tạo ra cả một thế giới kì diệu.
-b. Không biết bao giờ con chim xanh ấy quay trở lại?
-c. Nhưng thấy gấu con có vẻ chậm chạp và đá bóng không tốt nên chưa đội nào muốn nhận cậu.
-d. Nắng ghé vào cửa lớp
-Xem chúng em học bài.
-e. Cháu lớn lên từng ngày
-Cánh cửa cũng lớn theo
-Khi vắng bóng người bà
-Cánh cửa buồn biết bao.
-
-2. Chọn đọc một bài và trả lời câu hỏi.
-- **TỚ LÀ LÊ-GÔ:** Đồ chơi lê-gô đem lại lợi ích gì?
-- **CÂY XẤU HỔ:** Cây xấu hổ mong con chim xanh để làm gì?
-- **CẦU THỦ DỰ BỊ:** Sau khi gấu luyện tập chăm chỉ, điều gì đã xảy ra?
-- **CÔ GIÁO LỚP EM:** Bạn nhỏ thấy tình cảm của cô giáo dành cho các bạn như thế nào?
-- **CÁNH CỬA NHỚ BÀ:** Bạn nhỏ thấy buồn khi nào?
-
-3. Nghe – viết: Cầu thủ dự bị (từ đầu đến muốn nhận cậu).
-
-**138**
-
-4. Sắp xếp các từ ngữ dưới đây thành câu:
-a. thích / chơi / các / rồng rắn lên mây / trò chơi / bạn / rất
-b. một / bóng / quả / sân / mua / bố / mới
-
-5. Chọn a hoặc b.
-a. Tìm những từ ngữ có tiếng bắt đầu bằng ch hoặc tr có nghĩa như sau:
-- Nơi các em đến học hằng ngày
-- Người dạy học sinh
-- Vật dùng để che đầu
-b. Tìm những từ ngữ chứa uôn hoặc uông có nghĩa như sau:
-- Đổ nước từ trên cao xuống
-- Món ăn được làm từ thịt lợn băm nhỏ, nặn thành viên
-
-## Tiết 3 - 4
-6. Mỗi câu sau thuộc kiểu câu nào?
-a. Bạn thân của sóc là kiến.
-b. Kiến chuyển đến một khu rừng khác.
-c. Tớ nhớ cậu!
-d. Kiến và sóc là bạn thân.
-
-7. Chọn dấu chấm hoặc dấu chấm hỏi thay cho ô vuông.
-Nam: - Tú ơi, tớ có thể mượn cậu cái bút này được không []
-Tú: - Tớ đang dùng [] Lát nữa tớ đưa cậu nhé []
-Nam: - Tớ cảm ơn cậu []
-
-8. Nói tiếp để hoàn thành các câu sau:
-a. Mẹ đi chợ về, em nói: (...)
-b. Em muốn xin bố mẹ đi chơi cùng bạn, em nói: (...)
-
-**139**
-
-## Tiết 5 - 6
-9. Chọn từ trong ngoặc đơn thay cho ô vuông.
-(thương, dỗ dành, giúp đỡ, mến)
-Em là người rất hiền lành. Em luôn [] mọi người. Anh trai rất [] em. Mỗi khi em khóc, anh thường [] em.
-
-10. Chọn 1 trong 2 đề sau:
-a. Viết 3 – 4 câu giới thiệu một đồ chơi của em.
-b. Viết 3 – 4 câu kể về một người bạn mà em yêu quý.
-
-## Tiết 7 - 8
-11. Đọc bài sau và trả lời câu hỏi:
-
-**CHIẾC BÀN MỚI CỦA THỎ**
-
-Mấy ngày nay, thỏ cứ nhấp nhổm. Thế nào hôm nay chiếc bàn học mới của thỏ cũng được đưa đến. Đó là một chiếc bàn học thật đẹp. Mặt bàn làm bằng gỗ thông nhẵn bóng, thơm phưng phức. Trên mặt bàn có một giá sách nhỏ xinh gồm hai tầng, có thể để được bao nhiêu sách vở. Chỗ ngồi học còn có một chiếc ngăn kéo nhỏ. Chiếc ghế cũng vừa vặn, không quá cao, không quá thấp. Thỏ ngồi vào, cái ghế liền phát ra tiếng cọt kẹt thật vui tai.
-Thỏ tự nhủ từ nay sẽ chăm chỉ học hành hơn nữa để xứng đáng với chiếc bàn mới này.
-*(Theo Ngọc Minh)*
-
-**140**
-
-Trả lời câu hỏi:
-a. Vì sao thỏ cứ nhấp nhổm?
-- Vì chiếc bàn mới không vừa.
-- Vì thỏ mong đợi chiếc bàn mới.
-- Vì chiếc ghế bị hỏng.
-b. Bàn học mới của thỏ có đặc điểm gì?
-- Mặt bàn làm bằng gỗ lim.
-- Mặt bàn nhẵn bóng, thơm phưng phức.
-- Mặt bàn làm bằng gỗ cao su.
-c. Thỏ hứa sẽ làm gì để xứng đáng với chiếc bàn mới?
-- Sẽ chăm chỉ tập vẽ.
-- Sẽ chăm chỉ học đàn.
-- Sẽ chăm chỉ học hành.
-d. Tìm trong bài đọc:
-- 2 từ ngữ chỉ sự vật
-- 2 từ ngữ chỉ đặc điểm
-
-12. Chọn 1 trong 2 đề sau:
-a. Viết 3 – 4 câu kể về một đồ dùng học tập của em.
-b. Viết 3 – 4 câu kể về một người thân trong gia đình em.
-
-**141**
-
-# BẢNG TỪ NGỮ
-
-**Từ ngữ / Giải nghĩa / Trang**
-
-- **Bản lề:** bộ phận nối cánh cửa với khung cửa. / 124
-- **Bi bô:** tiếng của trẻ con đang tập nói, nghe chưa rõ. / 113
-- **Cỏ dại:** cỏ mọc tự nhiên. / 66
-- **Cặm cụi:** chăm chú, tập trung vào việc đang làm. / 83
-- **Dự bị:** chưa phải là thành viên chính thức, nhưng có thể thay thế hoặc bổ sung khi cần. / 35
-- **Ê-đi-sơn (1847 – 1931):** nhà bác học nổi tiếng người Mỹ. / 131
-- **Gảy phừng phưng:** đánh đàn, gảy đàn phát ra tiếng vang. / 120
-- **Gió lộng:** gió thổi mạnh. / 124
-- **Giấc tròn:** giấc ngủ ngon, ngủ say. / 117
-- **Hạn hán:** tình trạng thiếu nước do nắng lâu, không mưa gây ra. / 79
-- **Hiển vinh:** có địa vị, được kính trọng. / 102
-- **Húng hắng:** tiếng ho nhỏ, ngắt quãng. / 124
-- **Hũ:** bình sành sứ (thuỷ tinh,...) loại nhỏ, ở giữa phình ra, nhỏ dần về đáy, dùng để đựng. / 18
-- **Khập khiễng khập khà:** dáng đi không đều do chân bị đau. / 127
-- **Kiên nhẫn:** tiếp tục làm việc đã định mà không nản lòng. / 28
-- **Lạt xạt:** tiếng va chạm của lá khô. / 32
-- **Lang thang:** đi hết chỗ này đến chỗ khác, không dừng lại ở nơi nào. / 79
-- **Lắp ráp:** lắp các bộ phận vào với nhau cho đúng vị trí để tạo nên một vật hoàn chỉnh. / 98
-- **Lẫm chẫm:** dáng đi chưa vững của trẻ mới tập đi. / 113
-- **Lớn bổng:** lớn nhanh, vượt hẳn lên. / 11
-- **Loáng (một cái):** rất nhanh. / 11
-
-**142**
-
-**Từ ngữ / Giải nghĩa / Trang**
-
-- **Lon ton:** dáng đi ngắn, nhanh của trẻ em. / 127
-- **Lúng túng:** không biết nói hoặc làm như thế nào. / 28
-- **Nắn nót:** viết rất cẩn thận cho đẹp. / 83
-- **Nắng oi:** nắng nóng, khó chịu. / 117
-- **Nhanh nhảu:** có cử chỉ, lời nói rất nhanh. / 127
-- **Níu:** nắm lấy và kéo lại, kéo xuống. / 11
-- **Nong:** vật dụng làm từ tre nứa, có hình tròn, dùng để phơi thóc lúa. / 95
-- **Ngẫm nghĩ:** nghĩ đi nghĩ lại kĩ càng. / 49
-- **Phản xạ lại:** hắt lại, chiếu lại. / 131
-- **Rảnh rỗi:** có thời gian không phải làm việc gì. / 120
-- **Rúc:** kêu lên một hồi dài. / 21
-- **Sắc xuân:** cảnh vật, màu sắc của mùa xuân. / 21
-- **Sâu thẳm:** rất sâu. / 79
-- **Sông Ngân (dải Ngân Hà):** dải trắng bạc, vắt ngang bầu trời, được tạo nên từ nhiều ngôi sao, trông giống một con sông. / 95
-- **Sưng tấy:** sưng to và đau nhức. / 127
-- **Thanh mai:** cây bụi thấp, quả mọng nước, trông như quả dâu. / 32
-- **Thứ đến:** sau đó. / 66
-- **Tỉ muội:** chị em gái (tỉ là chị, muội là em). / 110
-- **Trằn trọc:** trỏ mình luôn, không sao ngủ được. / 110
-- **Trú ngụ:** sinh sống tạm ở một nơi nào đó. / 90
-- **Tưng bừng:** (quang cảnh, không khí) nhộn nhịp, tươi vui. / 21
-- **Vịn:** nắm lấy để làm điểm tựa. / 127
-- **Vồn vã:** niềm nở, nhiệt tình khi trò chuyện với người khác. / 90
-- **Xôn xao:** nhiều âm thanh, tiếng nói nhỏ phát ra cùng một lúc. / 32
-- **Xuýt xoa:** phát ra tiếng như tiếng gió biểu thị cảm giác đau, rét hoặc sự kinh ngạc, tiếc rẻ. / 32
-
-**143**
-
-*Trang này để trống*
-
-**144**
+# CHỦ ĐỀ 4: MÁI ẤM GIA ĐÌNH (Tuần 14 - Tuần 17)
+
+Chủ đề **"Mái ấm gia đình"** mở ra những trang bài học đầy ấm áp về tình yêu thương, sự che chở, đùm bọc lẫn nhau giữa các thành viên trong gia đình. Qua các câu chuyện kể, bài thơ cảm động từ Bài 25 đến Bài 32, học sinh lớp 2 sẽ thêm trân trọng tình cảm gia đình: tình chị em hiếu thảo, tình mẫu tử thiêng liêng vô bờ bến, tình cảm bà cháu kính yêu, lòng hiếu thảo thương ông của người cháu, và cả những bài học lễ phép ngoan ngoãn, sự nhường nhịn yêu thương giữa anh em trong nhà qua các trò chơi hằng ngày.
+
+---
+
+## TUẦN 14
+
+### BÀI 25: SỰ TÍCH HOA TỈ MUỘI
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản đọc: "Sự tích hoa tỉ muội" (Theo Trần Mạnh Hùng)
+> Ngày xưa, có hai chị em Nết và Na mồ côi cha mẹ, sống trong ngôi nhà nhỏ bên sườn núi. Nết thương Na, cái gì cũng nhường em. Đêm đông, gió ù ù lùa vào nhà, Nết vòng tay ôm em:
+> – Em rét không?
+> Na ôm choàng lấy chị, cười rúc rích:
+> – Em ấm quá!
+> Nết ôm em chặt hơn, thầm thì:
+> – Mẹ bảo chị em mình là hai bông hoa hồng, chị là bông to, em là bông nhỏ. Chị em mình mãi bên nhau nhé!
+> Na gật đầu. Hai chị em cứ thế ôm nhau ngủ.
+>
+> Năm ấy, nước lũ dâng cao, Nết cõng em chạy theo dân làng đến nơi an toàn. Hai bàn chân Nết rớm máu. Thấy vậy, Bụt thương lắm. Bụt liền phẩy chiếc quạt thần. Kì lạ thay, bàn chân Nết bỗng lành hẳn. Nơi bàn chân Nết đi qua mọc lên những khóm hoa đỏ thắm. Hoa kết thành chùm, bông hoa lớn che chở cho nụ hoa bé nhỏ. Chúng cũng đẹp như tình chị em của Nết và Na.
+> Dân làng đặt tên cho loài hoa ấy là hoa tỉ muội.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Hoa tỉ muội**: Một loại hoa hồng mọc thành chùm với rất nhiều nụ hoa xinh xắn sát bên nhau.
+*   **Tỉ muội (Từ Hán Việt)**: Có nghĩa là chị em gái (trong đó, *tỉ* là chị gái, *muội* là em gái).
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Tìm những chi tiết cho thấy chị em Nết và Na sống bên nhau rất đầm ấm?**
+    *   *Trả lời*: Những chi tiết đầm ấm là: Nết thương Na, cái gì cũng nhường nhịn em. Đêm đông gió rét lùa vào nhà, Nết vòng tay ôm em hỏi han ân cần, Na ôm choàng lấy chị cười rúc rích khen ấm, rồi hai chị em thầm thì trò chuyện và ôm nhau ngủ ngoan.
+2.  **Nước lũ dâng cao, chị Nết đã đưa em Na đến nơi an toàn bằng cách nào?**
+    *   *Trả lời*: Nết đã dũng cảm cõng em Na trên lưng, cố sức chạy theo dân làng để vượt lũ tìm đến nơi an toàn, bất chấp việc hai bàn chân bị đá sỏi cứa rớm máu.
+3.  **Nói về điều kì lạ xảy ra khi Nết cõng em chạy lũ?**
+    *   *Trả lời*: Điều kì lạ là Bụt thấy thương tình hai chị em hiếu thảo nên đã phẩy quạt thần làm bàn chân Nết lành hẳn; đồng thời nơi gót chân rớm máu Nết đi qua bỗng mọc lên những khóm hoa đỏ thắm mọc thành chùm, bông lớn vươn rộng che chở cho nụ nhỏ.
+4.  **Theo em, vì sao dân làng đặt tên cho loài hoa ấy là hoa tỉ muội?**
+    *   *Trả lời*: Vì hình dáng loài hoa mọc thành chùm kết khăng khít, bông lớn che chở cho nụ hoa nhỏ ngập tràn tình yêu thương, giống hệt như sự đùm bọc, chở che của người chị Nết dành cho em gái Na mồ côi.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **N** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Có công mài sắt, có ngày nên kim.
+*   *Lưu ý thẩm mỹ*: Chú ý nét móc hai đầu của chữ hoa **N** viết liền mạch, cân đối, khoảng cách chữ ứng dụng viết đều đặn.
+
+---
+
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "HAI ANH EM"
+*(Theo Tiếng Việt 2, NXB Giáo dục, 2006)*
+
+##### 1. Tóm tắt nội dung câu chuyện
+Sau vụ gặt, hai anh em chia đều thóc lúa thành hai đống bằng nhau cất ngoài đồng. Đêm tối, người em nằm nghĩ: "Anh mình sắp cưới vợ, cần nhiều thóc lúa để lo công việc, còn mình sống một mình thế này là đủ rồi". Nghĩ thế, người em âm thầm ra đồng xúc bớt thóc ở đống của mình bỏ sang đống của anh. 
+Cùng đêm đó, người anh cũng thao thức: "Em mình sống một mình vất vả, thiệt thòi, còn mình sắp có gia đình phụ giúp. Chia đều thế này không công bằng". Thế là người anh cũng lẳng lặng ra đồng chuyển thóc từ đống của mình sang đống của em. 
+Sáng hôm sau, cả hai anh em đều vô cùng kinh ngạc khi thấy hai đống thóc vẫn bằng nhau y như cũ. Đến đêm thứ hai, hai anh em lại tiếp tục đi chuyển thóc và tình cờ bắt gặp nhau giữa đường khi mỗi người đang ôm một bao thóc lớn. Hiểu ra sự việc, hai anh em xúc động nghẹn ngào, ôm chầm lấy nhau trong tình yêu thương bao la.
+
+##### 2. Câu hỏi thảo luận theo tranh
+*   **Tranh 1**: Lúc đầu hai anh em chia lúa thế nào? *(Chia đều thành hai đống bằng nhau ngoài ruộng).*
+*   **Tranh 2**: Người em nghĩ gì và chia lại lúa ra sao? *(Nghĩ anh sắp cưới vợ cần nhiều thóc nên xúc thóc của mình sang đống của anh).*
+*   **Tranh 3**: Người anh nghĩ gì và đã làm gì để chia lại lúa? *(Nghĩ em vất vả cô đơn nên xúc thóc của mình sang đống của em).*
+*   **Tranh 4**: Vì sao hai anh em đều xúc động? *(Vì họ tình cờ gặp nhau giữa đêm đang ôm thóc nhường nhau, cảm nhận được tấm lòng thương yêu vô bờ bến của đối phương).*
+
+---
+---
+
+### BÀI 26: EM MANG VỀ YÊU THƯƠNG
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Em mang về yêu thương" (Minh Đăng)
+> Mẹ, mẹ ơi em bé
+> Từ đâu đến nhà ta
+> Nụ cười như tia nắng
+> Bàn tay như nụ hoa
+> Bước chân đi lẫm chẫm
+> Tiếng cười vang sân nhà?
+>
+> Hay bé từ sao xuống
+> Hay từ biển bước lên
+> Hay bé trong quả nhãn
+> Ông trồng cạnh hàng hiên?
+>
+> Hay bé theo cơn gió
+> Nằm cuộn tròn trong mây
+> Rồi biến thành giọt nước
+> Rơi xuống nhà mình đây?
+>
+> Mỗi sáng em thức giấc
+> Là như thể mây, hoa
+> Cùng nắng vàng biển rộng
+> Mang yêu thương vào nhà.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Lẫm chẫm**: Dáng đi chập chững, chưa vững vàng của em bé đang tuổi tập đi.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Bạn nhỏ đã hỏi mẹ điều gì?**
+    *   *Trả lời*: Bạn nhỏ tò mò hỏi mẹ xem em bé đáng yêu của nhà mình từ đâu đến.
+2.  **Trong khổ thơ đầu, bạn nhỏ tả em bé của mình như thế nào?**
+    *   *Trả lời*: Bạn nhỏ tả em bé có nụ cười tỏa rạng như tia nắng ấm, bàn tay nhỏ bé xinh xắn như nụ hoa, bước chân đi lẫm chẫm đáng yêu và tiếng cười vang giòn giã khắp sân nhà.
+3.  **Trong khổ thơ thứ hai và thứ ba, bạn nhỏ đoán em bé từ đâu đến?**
+    *   *Trả lời*: Bạn nhỏ tưởng tượng em bé đến từ những nơi rất kì thú: rơi xuống từ những ngôi sao lung linh trên trời, bước lên từ biển cả bao la, trốn trong quả nhãn ngọt ông trồng cạnh hiên, hoặc cuộn tròn theo gió trong mây hóa thành giọt nước rơi xuống nhà.
+4.  **Em bé mang đến những gì cho gia đình bạn nhỏ?**
+    *   a. Nắng vàng và biển rộng.
+    *   **b. Tình yêu thương.**
+    *   c. Mây và hoa.
+    *   *Trả lời*: Đáp án đúng là **b. Tình yêu thương** (Em bé nhỏ xuất hiện mang theo sự ấm áp, gắn kết tình yêu thương ngập tràn cả nhà).
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết chính xác 2 khổ thơ đầu bài thơ **"Em mang về yêu thương"**.
+*   **Phân biệt chính tả**: Vần **iên/yên/uyên**, phụ âm đầu **r/d/gi**, vần **ai/ay**.
+
+##### 2. Luyện từ và câu
+*   **Mở rộng vốn từ về gia đình (họ hàng)**:
+    *   Em trai của mẹ gọi là: **Cậu**.
+    *   Em trai của bố gọi là: **Chú**.
+    *   Em gái của mẹ gọi là: **Dì**.
+    *   Em gái của bố gọi là: **Cô**.
+*   **Đặt câu nêu đặc điểm của em bé**:
+    *   *Ví dụ*: *Bé Bo nhà em có đôi mắt tròn xoe và rất háo hức mỗi khi thấy mẹ đi chợ về.*
+
+##### 3. Luyện viết đoạn văn ngắn
+*   Viết đoạn văn ngắn (từ 3 đến 5 câu) kể lại một việc một người thân (bố, mẹ, anh, chị, ông, bà...) đã chăm sóc, yêu thương làm cho em.
+    *   *Bài mẫu tham khảo*:
+        > Tối hôm qua, em bị sốt cao và mệt lả. Mẹ đã lo lắng khôn nguôi, thức thâu đêm để chườm khăn mát lên trán hạ sốt cho em. Cứ chốc lát mẹ lại nhẹ nhàng đút từng thìa cháo ấm và dỗ danh em uống thuốc. Nhờ bàn tay ấm áp và lời vỗ về dịu dàng của mẹ, sáng nay em đã khỏe mạnh hẳn lên và có thể đến trường. Em tự hứa sẽ luôn ngoan ngoãn để mẹ không phải lo lắng nhiều nữa.
+
+---
+---
+
+## TUẦN 15
+
+### BÀI 27: MẸ
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Mẹ" (Trần Quốc Minh)
+> Lặng rồi cả tiếng con ve
+> Con ve cũng mệt vì hè nắng oi.
+> Nhà em vẫn tiếng ạ ời
+> Kẽo cà tiếng võng mẹ ngồi mẹ ru.
+> Lời ru có gió mùa thu
+> Bàn tay mẹ quạt mẹ đưa gió về.
+>
+> Những ngôi sao thức ngoài kia
+> Chẳng bằng mẹ đã thức vì chúng con.
+> Đêm nay con ngủ giấc tròn
+> Mẹ là ngọn gió của con suốt đời.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Nắng oi**: Thời tiết mùa hè nắng nóng gay gắt, lặng gió, gây ra cảm giác ngột ngạt, rất khó chịu.
+*   **Giấc tròn**: Giấc ngủ sâu, ngon lành, ngủ say giấc và không bị thức giấc giữa chừng.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Trong đêm hè oi bức, mẹ đã làm gì để con ngủ ngon?**
+    *   *Trả lời*: Mẹ đã đưa võng nhịp nhàng, cất tiếng hát ru "ạ ời" ngọt ngào và dùng bàn tay đưa chiếc quạt nan quạt mát liên tục mang gió lành về cho con ngủ ngon.
+2.  **Những dòng thơ nào cho thấy mẹ đã thức rất nhiều vì con?**
+    *   *Trả lời*: Những dòng thơ đầy xúc động đó là: *\"Những ngôi sao thức ngoài kia / Chẳng bằng mẹ đã thức vì chúng con.\"*
+3.  **Theo em, câu thơ cuối bài thơ muốn nói lên điều gì?**
+    *   a. Có mẹ quạt mát, con ngủ ngon lành.
+    *   b. Tay mẹ quạt mát hơn cả gió trời.
+    *   **c. Mẹ là niềm hạnh phúc của cuộc đời con.**
+    *   *Trả lời*: Đáp án đúng là **c. Mẹ là niềm hạnh phúc của cuộc đời con** (Hình ảnh ngọn gió mát lành của mẹ sẽ luôn che chở, đồng hành nâng đỡ tâm hồn con suốt cả cuộc đời).
+4.  **Hãy nói một câu thể hiện lòng biết ơn của em đối với cha mẹ?**
+    *   *Ví dụ*: *Con xin cảm ơn bố mẹ đã luôn yêu thương, vất vả nuôi nấng con khôn lớn mỗi ngày.*
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **O** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Ong chăm chỉ tìm hoa làm mật.
+*   *Lưu ý*: Viết đúng độ cao 2,5 ô ly đối với chữ hoa **O**, nét viết cong tròn đều đặn không móp méo.
+
+---
+
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "SỰ TÍCH CÂY VÚ SỮA"
+*(Theo Tiếng Việt 2, NXB Giáo dục, 2006)*
+
+##### 1. Tóm tắt nội dung câu chuyện
+Có một cậu bé ham chơi, một lần bị mẹ mắng liền giận dỗi bỏ nhà ra đi. Cậu đi lang thang khắp nơi quên cả lối về, để lại người mẹ ở nhà mòn mỏi ngóng trông, khóc cạn cả nước mắt rồi ngã quỵ xuống hóa thành một cái cây lạ ở góc vườn.
+Sau nhiều ngày đói rét, bị người khác bắt nạt, cậu bé nhớ tới mẹ liền tìm đường trở về nhà. Về đến nhà, cảnh vật vẫn như xưa nhưng không thấy mẹ đâu. Cậu ôm lấy thân cây lạ ở góc vườn khóc nức nở. Kì lạ thay, cây bỗng run rinh, trổ hoa, kết quả chín mọng rơi vào tay cậu. Khi cậu cắn khía nhẹ quả, một dòng sữa trắng óng ánh, ngọt ngào phun ra thơm ngậy như sữa mẹ. Cậu nhận ra cây lạ chính là mẹ hóa thân để ôm ấp cậu. Cậu bé khóc ân hận khôn nguôi nhưng đã muộn. Loài cây ấy chính là cây vú sữa ngày nay.
+
+##### 2. Ý nghĩa bài học
+Câu chuyện nhắn nhủ chúng ta phải luôn hiếu thảo, nghe lời cha mẹ, không được vô tâm làm cha mẹ buồn lòng để rồi phải ân hận muộn màng.
+
+---
+---
+
+### BÀI 28: TRÒ CHƠI CỦA BỐ
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản đọc: "Trò chơi của bố" (Theo Phong Thu)
+> Bố luôn dành cho Hường những điều ngạc nhiên. Lúc rảnh rỗi, hai bố con ngồi chơi với nhau như đôi bạn cùng tuổi.
+> Có lần, hai bố con chơi trò chơi "ăn cỗ". Hường đưa cái bát nhựa cho bố:
+> – Mời bác xơi!
+> Bố đỡ bằng hai tay hẳn hoi và nói:
+> – Xin bác. Mời bác xơi!
+> – Bác xơi nữa không ạ?
+> – Cảm ơn bác! Tôi đủ rồi.
+> Hai bố con cùng phá lên cười. Lát sau, hai bố con đổi vai cho nhau. Bố hỏi:
+> – Bác xơi gì ạ?
+> – Dạ, xin bác bát miến ạ.
+> – Đây, mời bác.
+> Hường đưa tay ra cầm lấy cái bát nhựa. Bố bảo:
+> – Ấy, bác phải đỡ bằng hai tay. Tôi đưa cho bác bằng hai tay cơ mà!
+>
+> Năm nay, bố đi công tác xa. Đến bữa ăn, nhìn hai bàn tay của Hường lễ phép đón bát cơm, mẹ lại nhớ đến lúc hai bố con chơi với nhau. Mẹ nghĩ, Hường không biết rằng ngay trong trò chơi ấy, bố đã dạy con một nết ngoan.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Xơi**: Từ ngữ lịch sự, kính trọng dùng khi mời người khác ăn, uống thức ăn.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Hai bố con Hường chơi trò chơi gì cùng nhau?**
+    *   *Trả lời*: Hai bố con Hường rảnh rỗi cùng ngồi chơi trò chơi đóng vai "ăn cỗ" giả vờ bằng những chiếc bát đồ chơi bằng nhựa.
+2.  **Khi chơi, hai bố con xưng hô với nhau như thế nào?**
+    *   *Trả lời*: Hai bố con xưng hô lịch sự giống như hai người lớn thân thiết: gọi nhau là "bác" và "tôi" xưng hô rất nhã nhặn.
+3.  **Nhìn hai tay Hường đón bát cơm lễ phép khi ăn, mẹ nhớ đến điều gì?**
+    *   *Trả lời*: Mẹ nhớ đến trò chơi "ăn cỗ" của hai bố con ngày trước, nhớ đến lúc bố đã kiên nhẫn uốn nắn, nhắc nhở Hường phải nhận đồ từ tay người khác bằng hai tay.
+4.  **Qua trò chơi cùng bố, Hường đã được bố dạy nết ngoan nào?**
+    *   *Trả lời*: Hường được dạy nết ngoan lễ phép: biết dùng cả hai bàn tay nâng đỡ đón nhận đồ vật từ người khác, biết nói lời chào mời lịch sự và cảm ơn khi nhận quà.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết lại đoạn cuối bài **"Trò chơi của bố"** (Từ *Đến bữa ăn* đến *một nết ngoan*).
+*   **Chính tả**: Viết hoa tên riêng địa lí Việt Nam (viết hoa chữ cái đầu tiên của các âm tiết tạo thành địa danh: *Yên Bái, Hà Nội, Sông Thao...*). Phân biệt phụ âm **l/n** và vần **ao/au**.
+
+##### 2. Luyện từ và câu
+*   **Từ ngữ chỉ tình cảm gia đình**: Yêu thương, chăm sóc, kính trọng, quý mến, hiếu thảo, đùm bọc, quan tâm...
+*   **Luyện tập dấu câu**: Thực hành phân biệt dấu chấm (kể việc), dấu chấm hỏi (hỏi han) và dấu chấm than (bộc lộ tình cảm).
+    *   *Ví dụ*: *Bố em đang uống cà phê.* (Dấu chấm) -> *Thế từ "đường" đâu?* (Dấu chấm hỏi) -> *Ôi, con cảm ơn bố mẹ nhiều lắm!* (Dấu chấm than).
+
+##### 3. Luyện viết đoạn văn (Thể hiện tình cảm với người thân)
+*   Viết đoạn văn ngắn (từ 3 đến 4 câu) thể hiện tình cảm, sự gắn kết của em dành cho một người thân yêu trong gia đình.
+    *   *Bài mẫu tham khảo*:
+        > Bố của em là một người thợ mộc rất khéo tay và vui tính. Dù công việc hằng ngày bận rộn vất vả, bố vẫn luôn dành thời gian buổi tối để giảng bài khó và chơi lắp ráp siêu nhân cùng em. Em yêu quý bố lắm, mỗi lần bố đi làm về mệt, em lại lon ton chạy lại bóp vai và rót nước mát mời bố uống. Em mong bố luôn mạnh khỏe và vui vẻ bên gia đình mình.
+
+---
+---
+
+## TUẦN 16
+
+### BÀI 29: CÁNH CỬA NHỚ BÀ
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Cánh cửa nhớ bà" (Hữu Thỉnh)
+> Ngày cháu còn thấp bé
+> Cánh cửa có hai then
+> Cháu chỉ cài then dưới
+> Nhờ bà cài then trên.
+>
+> Mỗi năm cháu lớn lên
+> Bà lưng còng còng xuống
+> Cháu đã cài then trên
+> Bà lại cài then dưới.
+>
+> Nay cánh cửa nhà mới
+> Cũng có hai then tròn
+> Cháu cài cả hai then
+> Bà đã đi xa rồi...
+
+##### 2. Từ ngữ giải nghĩa
+*   **Then (then cửa)**: Vật dụng bằng tre, gỗ hoặc sắt dùng để gài, cài ngang qua cánh cửa mục đích để giữ cửa đóng chặt, an toàn.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Ngày cháu còn nhỏ, ai thường cài then trên của cánh cửa?**
+    *   *Trả lời*: Ngày cháu còn thấp bé, bà thường là người giúp cháu cài then phía trên cao của cánh cửa vì cháu chưa vươn tới được.
+2.  **Vì sao khi cháu lớn lên, bà lại là người cài then dưới của cánh cửa?**
+    *   *Trả lời*: Vì năm tháng trôi qua cháu ngày càng cao lớn khôn ngoan, còn bà thì tuổi già sức yếu làm lưng bà còng còng thấp xuống, không còn với tới then cửa phía trên cao được nữa.
+3.  **Sắp xếp các bức tranh sau theo đúng thứ tự của 3 khổ thơ trong bài?**
+    *   *Trả lời*: Thứ tự đúng là:
+        *   **Tranh 3** (Cháu bé nhỏ nhờ bà cài then trên) -> Khổ 1.
+        *   **Tranh 1** (Cháu cao lớn tự cài then trên, bà còng lưng cài then dưới) -> Khổ 2.
+        *   **Tranh 2** (Cháu buồn bã đứng một mình cài cả hai then ở ngôi nhà mới) -> Khổ 3.
+4.  **Câu thơ nào trong bài thơ nói lên tình cảm nhớ thương sâu nặng của cháu dành cho bà?**
+    *   *Trả lời*: Đó là câu thơ cuối kết bài đầy bùi ngùi: *\"Cháu cài cả hai then / Bà đã đi xa rồi...\"* gợi niềm nhớ thương khôn nguôi hình bóng bà hiền từ.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **Ô** và chữ hoa **Ơ** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Ông bà sum vầy cùng con cháu.
+*   *Lưu ý*: Viết đúng nét cong kín của chữ hoa **O**, sau đó thêm dấu phụ (mũ ô hoặc râu ơ) nhỏ nhắn, cân đối ở phía trên bên phải chữ.
+
+---
+
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "BÀ CHÁU"
+*(Theo Trần Hoài Dương)*
+
+##### 1. Tóm tắt nội dung câu chuyện
+Ngày xưa, ở một ngôi nhà tranh nghèo có ba bà cháu sống vô cùng đầm ấm, vui vẻ bên nhau. Một hôm, có một cô tiên đi ngang qua trao cho hai anh em một hạt đào và dặn: "Khi bà mất, gieo hạt đào này bên mộ, các cháu sẽ được giàu sang phú quý".
+Sau đó bà mất, hai anh em gieo hạt đào bên mộ bà. Kì lạ thay, hạt đào nảy mầm vươn cao thành cây kết trái vàng bạc lấp lánh rực rỡ. Hai anh em bỗng chốc trở nên giàu sang, nhà cao cửa rộng, ăn mặc nhung gấm lụa là. Thế nhưng, dù sống trong cảnh giàu sang phú quý, hai anh em vẫn cảm thấy buồn bã, cô đơn trống trải vô cùng vì nhớ thương bà.
+Thấy hai đứa trẻ hiếu thảo khóc lóc tủi thân, cô tiên lại hiện lên. Hai anh em khẩn cầu cô tiên: "Xin cô cho bà chúng cháu sống lại, chúng cháu xin trả lại hết nhà cửa ruộng vườn vàng bạc này". Cô tiên mỉm cười phẩy tay phép màu, lâu đài vàng bạc lập tức biến mất, ngôi nhà tranh cũ hiện ra và bà đang đứng tựa cửa mỉm cười giang tay đón hai cháu hiếu thảo vào lòng sum vầy ấm áp.
+
+##### 2. Ý nghĩa câu chuyện
+Câu chuyện tôn vinh tình cảm gia đình, tình bà cháu thiêng liêng cao quý. Tình thương yêu ruột thịt ấm áp luôn có giá trị vượt trội, đáng quý hơn mọi của cải vật chất giàu sang trên đời.
+
+---
+---
+
+### BÀI 30: THƯƠNG ÔNG
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Thương ông" (Tú Mỡ - trích)
+> Ông bị đau chân
+> Nó sưng nó tấy,
+> Đi phải chống gậy
+> Khập khiễng, khập khà,
+> Bước lên thềm nhà
+> Nhấc chân quá khó.
+> Thấy ông nhăn nhó,
+> Việt chơi ngoài sân
+> Lon ton lại gần,
+> Âu yếm, nhanh nhảu:
+> – Ông vịn vai cháu,
+> Cháu đỡ ông lên.
+>
+> Ông bước lên thềm
+> Trong lòng sung sướng,
+> Quẳng gậy, cúi xuống
+> Quên cả đớn đau,
+> Ôm cháu xoa đầu:
+> – Hoan hô thằng bé!
+> Bé thế mà khoẻ
+> Vì nó thương ông.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Tấy**: Chỗ vết thương bị sưng đỏ lên, căng mọng, gây cảm giác nhức nhối khó chịu.
+*   **Khập khiễng, khập khà**: Dáng đi tập tễnh mất thăng bằng, bước cao bước thấp không đều do chân bị đau nhức.
+*   **Lon ton**: Bước chạy hoặc đi nhanh nhẹn với những sải chân ngắn, thường thấy ở trẻ nhỏ tinh nghịch đáng yêu.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Ông của bạn Việt gặp khó khăn gì vì bị đau chân?**
+    *   *Trả lời*: Chân ông bị sưng, tấy nhức nhối làm ông bước đi khập khiễng khập khà rất khó khăn, khi bước lên thềm nhà nhấc chân lên vô cùng đau đớn khiến ông phải nhăn mặt nhăn nhó.
+2.  **Khi thấy ông bị đau chân bước lên thềm nhà khó khăn, Việt đã làm gì để giúp đỡ ông?**
+    *   a. Mang gậy đến cho ông.
+    *   **b. Để ông vịn vào vai mình rồi đỡ ông lên thềm.**
+    *   c. Lại gần hỏi thăm sức khỏe của ông.
+    *   *Trả lời*: Đáp án đúng là **b. Để ông vịn vào vai mình rồi đỡ ông lên thềm.**
+3.  **Theo lời ông khen ngợi, vì sao Việt tuy còn rất nhỏ bé mà lại khỏe thế?**
+    *   *Trả lời*: Việt tuy nhỏ mà khỏe là vì Việt có một tấm lòng hiếu thảo, vô cùng thương yêu kính trọng ông. Chính tình cảm ấm áp đó đã tiếp thêm sức mạnh cho đôi vai nhỏ bé của Việt.
+4.  **Tìm những từ ngữ thể hiện dáng vẻ ngoan ngoãn, đáng yêu của Việt đối với ông trong bài thơ?**
+    *   *Trả lời*: Đó là những từ ngữ: *lon ton lại gần, âu yếm, nhanh nhảu*.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết chính xác và sạch đẹp 2 khổ thơ đầu của bài thơ **"Thương ông"**.
+*   **Chính tả**: Luyện tập phân biệt phụ âm đầu ghép **ch/tr**, vần **ac/at**.
+
+##### 2. Luyện từ và câu
+*   **Từ ngữ chỉ sự vật (người, vật) trong gia đình**: Ông, bà, bố, mẹ, con, cháu, cái chổi, tivi, cái bàn, ấm trà...
+*   **Từ ngữ chỉ hoạt động chăm sóc**: Quét nhà, nhặt rau, pha trà, rửa bát, đọc sách, tưới cây...
+*   **Câu nêu hoạt động kể việc của người thân**:
+    *   *Ví dụ*: *Bố đang chăm chú tưới cây cảnh ngoài ban công.* hoặc *Bà em đang ngồi hiền từ đọc sách truyện cho em nghe.*
+
+##### 3. Luyện viết đoạn văn (Kể việc làm cùng người thân)
+*   Viết đoạn văn ngắn (từ 3 đến 5 câu) kể lại một hoạt động, công việc em đã cùng làm với người thân trong gia đình (dọn dẹp nhà cửa, trồng cây...).
+    *   *Bài mẫu tham khảo*:
+        > Chiều Thứ Bảy tuần trước, em và mẹ đã cùng nhau dọn dẹp, trang hoàng lại nhà cửa đón cuối tuần. Mẹ giao cho em nhiệm vụ dùng chổi nhỏ quét bụi bàn ghế học tập và cất gọn đồ chơi vào giỏ. Mẹ thì bận rộn quét nhà, lau sàn sạch bóng và giặt rèm cửa. Sau khi hai mẹ con làm việc xong, ngôi nhà trở nên ngăn nắp, thơm tho sạch sẽ vô cùng. Em rất vui vì đã phụ giúp được mẹ một phần công việc gia đình nhỏ bé.
+
+---
+---
+
+## TUẦN 17
+
+### BÀI 31: ÁNH SÁNG CỦA YÊU THƯƠNG
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản đọc: "Ánh sáng của yêu thương" (Theo Truyện kể mẫu giáo, 1979)
+> Hôm ấy, bố vắng nhà, mẹ bị đau bụng dữ dội. Ê-đi-xơn liền chạy đi mời bác sĩ.
+> Bác sĩ đến khám bệnh và cho biết mẹ của Ê-đi-xơn bị đau ruột thừa, phải mổ gấp. Nhưng trời cứ tối dần, với ánh đèn dầu tù mù, chẳng thể làm gì được. Ê-đi-xơn lo lắng. Thấy mẹ đau đớn, cậu mếu máo:
+> – Xin bác sĩ cứu mẹ cháu!
+> Bác sĩ ái ngại nói:
+> – Đủ ánh sáng, bác mới mổ được cháu ạ!
+>
+> Thương mẹ, Ê-đi-xơn ôm đầu suy nghĩ. Làm thế nào để cứu mẹ bây giờ? Đột nhiên, cậu trông thấy ánh sáng của ngọn nến hắt lại từ mảnh sắt tây trên tủ. Nét mặt cậu rạng rỡ hẳn lên.
+> Ê-đi-xơn vội chạy sang nhà hàng xóm, mượn về một tấm gương. Lát sau, đèn nến trong nhà được cậu thắp lên và đặt trước gương. Căn phòng bỗng ngập tràn ánh sáng.
+> Nhìn căn phòng sáng trưng, bác sĩ rất ngạc nhiên, bắt tay ngay vào việc. Ca mổ thành công, mẹ của Ê-đi-xơn được cứu sống.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Ê-đi-xơn (Thomas Edison)**: Nhà bác học vĩ đại người Mỹ phát minh ra bóng đèn điện tỏa sáng thế giới, ống nghe điện thoại, máy chiếu phim...
+*   **Ái ngại**: Cảm thấy thương cảm sâu sắc, áy náy băn khoăn khi chứng kiến hoàn cảnh ngặt nghèo của người khác.
+*   **Sắt tây**: Kim loại sắt dát mỏng tráng một lớp thiếc chống gỉ, có bề mặt bóng loáng phản chiếu ánh sáng tốt.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Khi thấy mẹ đột ngột đau bụng dữ dội, Ê-đi-xơn đã làm gì?**
+    *   *Trả lời*: Ê-đi-xơn đã hốt hoảng khẩn trương chạy thật nhanh đi mời bác sĩ đến cứu chữa bệnh tình cho mẹ.
+2.  **Bác sĩ gặp khó khăn gì khi chuẩn bị phẫu thuật mổ ruột thừa cứu mẹ Ê-đi-xơn?**
+    *   *Trả lời*: Khó khăn lớn nhất là trời tối dần, căn phòng chỉ có ánh đèn dầu tù mù lờ mờ, không có đủ ánh sáng cần thiết để bác sĩ thực hiện ca mổ cứu người.
+3.  **Ê-đi-xơn đã thông minh nghĩ ra cách gì để căn phòng có đủ ánh sáng phẫu thuật?**
+    *   *Trả lời*: Nhìn ánh nến hắt vào mảnh sắt tây sáng loáng, Ê-đi-xơn đã chạy sang mượn tấm gương lớn của nhà hàng xóm về đặt phía sau các ngọn nến thắp sáng, giúp phản quang lan tỏa khiến căn phòng sáng bừng rực rỡ như ban ngày.
+4.  **Hành động dũng cảm cứu mẹ của cậu bé Ê-đi-xơn thể hiện điều gì?**
+    *   *Trả lời*: Thể hiện tình yêu thương mẹ sâu sắc vô bờ bến của Ê-đi-xơn, sự bình tĩnh, thông minh, khả năng quan sát thiên tài nhạy bén của cậu bé đã giúp xoay chuyển hoàn cảnh hiểm nghèo cứu sống mẹ mình.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **P** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Phượng nở đỏ rực một góc trời.
+*   *Lưu ý thẩm mỹ*: Chữ hoa **P** chú ý nét móc ngược phía trái viết trước, sau đó lia bút viết nét cong trên cân đối ở phần đầu chữ cái.
+
+---
+
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "ÁNH SÁNG CỦA YÊU THƯƠNG"
+##### 1. Kể chuyện theo các bức tranh minh họa
+*   **Tranh 1**: Mẹ bị đau ruột thừa cấp tính, bác sĩ ái ngại vì trời tối mịt không đủ ánh sáng mổ cấp cứu.
+*   **Tranh 2**: Ê-đi-xơn lo lắng, nỗ lực ôm đầu suy nghĩ giải pháp cứu mẹ.
+*   **Tranh 3**: Cậu nảy ra sáng kiến mượn tấm gương lớn phản chiếu ánh nến làm phòng sáng trưng.
+*   **Tranh 4**: Bác sĩ ngạc nhiên, tiến hành mổ thành công, mẹ Ê-đi-xơn được cứu sống hạnh phúc.
+
+---
+---
+
+### BÀI 32: CHƠI CHONG CHÓNG
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản đọc: "Chơi chong chóng" (Theo Tuệ Nhi)
+> An yêu thích những chiếc chong chóng giấy. Mỗi chiếc chong chóng chỉ có một cái cán nhỏ và dài, một đầu gắn bốn cánh giấy mỏng, xinh như một bông hoa. Nhưng mỗi lần quay, nó mang lại bao nhiêu là tiếng cười và sự háo hức. An thích chạy thật nhanh để những cánh giấy không ngừng quay trong gió. Gió lướt qua cánh chong chóng tạo ra tiếng u u rất lạ.
+>
+> An thường rủ bé Mai chơi chong chóng và thi xem ai thắng. Hai anh em chạy quanh sân cho chong chóng quay, rồi đột ngột dừng lại. Chong chóng của ai dừng quay trước thì người đó thua. An chạy nhanh hơn nên chong chóng quay lâu hơn. Thua mãi, Mai buồn thiu. An liền cho em giơ chong chóng ra trước quạt máy, còn mình thì phùng má thổi phù phù cho chong chóng quay. Mai cười toe vì thắng.
+> Bây giờ, cũng giống như anh, Mai cũng rất mê những chiếc chong chóng.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Cười toe**: Nụ cười nở rộng khóe môi sang hai bên biểu lộ niềm vui thích thú, sảng khoái và cực kỳ hài lòng của em bé.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Tìm chi tiết cho thấy bạn nhỏ tên An cực kỳ yêu thích chơi chong chóng?**
+    *   *Trả lời*: Chi tiết là: An rất thích chạy thật nhanh quanh sân rộng để những cánh chong chóng giấy không ngừng quay tít trước gió và khoái chí nghe tiếng gió rít qua tạo tiếng kêu u u rất lạ tai.
+2.  **Vì sao trong các cuộc thi chạy quay chong chóng, An luôn luôn là người chiến thắng em gái?**
+    *   *Trả lời*: Vì An lớn hơn, chạy khỏe và nhanh nhẹn hơn bé Mai rất nhiều nên tạo ra sức cản gió mạnh giúp chong chóng quay lâu hơn, không bị dừng sớm.
+3.  **Thấy em gái bé Mai buồn thiu vì thua mãi, người anh trai đã nghĩ ra cách nhường nhịn gì để em vui mừng?**
+    *   *Trả lời*: An đã tinh tế nhường em bằng cách cho Mai đứng cầm chong chóng trước quạt máy quay tít thoải mái, còn mình thì tự phùng má dùng sức người thổi phù phù mệt lả để chong chóng của mình dừng trước, nhường phần thắng cho em.
+4.  **Qua câu chuyện chơi chong chóng của hai anh em, em cảm nhận thế nào về tình cảm của anh An dành cho em Mai?**
+    *   *Trả lời*: Người anh trai tên An rất nhân hậu, tâm lý, biết quan tâm, nhường nhịn và chiều chuộng em gái nhỏ của mình để đem lại tiếng cười vui cho em, thể hiện tình thương anh em gia đình ấm áp.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết chính xác đoạn đầu bài thơ/truyện **"Chơi chong chóng"** (Từ đầu đến *sự háo hức*).
+*   **Phân biệt chính tả**: Vần **iu/ưu**, vần **ăt/ăc**, vần **ât/âc**.
+
+##### 2. Luyện từ và câu
+*   **Từ chỉ tình cảm gia đình, anh chị em**: Che chở, nhường nhịn, đùm bọc, giúp đỡ, hòa thuận, kính trọng...
+*   **Thực hành sử dụng Dấu phẩy**: Giúp ngăn cách các bộ phận cùng chức vụ trong câu (từ chỉ hoạt động, từ chỉ đặc điểm...).
+    *   *Ví dụ*: *Anh chị em như thể chân tay / Rách lành đùm bọc, dở hay đỡ đần.*
+
+##### 3. Luyện viết đoạn văn (Viết tin nhắn cho người thân)
+*   **Đề bài**: Em có việc đi dã ngoại hoặc sang nhà bà chơi, hãy viết tin nhắn ngắn (từ 2 đến 3 câu) để lại trên bàn cho bố mẹ yên tâm.
+    *   *Bài mẫu*:
+        > Bố mẹ ơi!
+        > Chiều nay lúc ba giờ, bà ngoại đã sang đón con sang nhà bà chơi và ăn tối bên đó cùng cả nhà cậu út. Con xin phép bố mẹ được ăn tối ở nhà bà, đến khoảng tám giờ tối bố mẹ sang đón con về nhé! Con kính chúc bố mẹ buổi chiều vui vẻ!
+        > Con của bố mẹ,
+        > Sóc con.
+
+---

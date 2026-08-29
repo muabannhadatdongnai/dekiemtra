@@ -1,877 +1,507 @@
-**40**
+# CHỦ ĐỀ 2: ĐI HỌC VUI SAO (Tuần 5 - Tuần 8)
 
-# Tuần 5
+Chủ đề **"Đi học vui sao"** đưa học sinh vào thế giới trường lớp thân thương, nơi các em không chỉ học hỏi những kiến thức bổ ích mà còn được đắm mình trong tình cảm ấm áp của thầy cô, bạn bè. Qua các bài học sinh động từ Bài 9 đến Bài 16, các em học sinh lớp 2 sẽ thêm yêu mến ngôi trường, biết trân trọng thời gian qua thời khóa biểu, rèn luyện kỹ năng đọc sách và phát triển những năng khiếu nghệ thuật, sự tự tin trong giao tiếp.
 
-**Bài 9: CÔ GIÁO LỚP EM**
+---
 
-## ĐỌC
-Đọc một bài thơ hoặc hát một bài hát về thầy cô.
+## TUẦN 5
 
-**CÔ GIÁO LỚP EM**
+### BÀI 9: CÔ GIÁO LỚP EM
 
-Sáng nào em đến lớp
-Cũng thấy cô đến rồi.
-Đáp lời "Chào cô ạ!"
-Cô mỉm cười thật tươi.
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Cô giáo lớp em" (Nguyễn Xuân Sanh)
+> Sáng nào em đến lớp
+> Cũng thấy cô đến rồi.
+> Đáp lời "Chào cô ạ!"
+> Cô mỉm cười thật tươi.
+>
+> Cô dạy em tập viết
+> Gió đưa thoảng hương nhài
+> Nắng ghé vào cửa lớp
+> Xem chúng em học bài.
+>
+> Những lời cô giáo giảng
+> Ấm trang vở thơm tho
+> Yêu thương em ngắm mãi
+> Những điểm mười cô cho.
 
-Cô dạy em tập viết
-Gió đưa thoảng hương nhài
-Nắng ghé vào cửa lớp
-Xem chúng em học bài.
+##### 2. Từ ngữ giải nghĩa
+*   **Hương nhài**: Hương thơm nhẹ nhàng, tinh khiết của hoa nhài (hoa lài).
+*   **Ghé**: Nghiêng đầu hoặc ghé sát vào một nơi nào đó để quan sát, nhìn ngó (ở đây nhân hóa hình ảnh nắng ghé vào lớp học).
 
-**41**
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Cô giáo đáp lại lời chào của học sinh như thế nào?**
+    *   *Trả lời*: Cô giáo đáp lại lời chào bằng cách mỉm cười thật tươi với học sinh.
+2.  **Tìm những câu thơ tả cảnh lớp học khi học sinh tập viết?**
+    *   *Trả lời*: Những câu thơ tả cảnh là: *"Gió đưa thoảng hương nhài / Nắng ghé vào cửa lớp / Xem chúng em học bài."*
+3.  **Bạn nhỏ đã kể những gì về cô giáo của mình?**
+    *   *Trả lời*: Bạn nhỏ kể rằng cô luôn đến lớp sớm trước học sinh, dạy các em tập viết bằng những lời giảng ấm áp, yêu thương thể hiện qua từng điểm mười cô cho trên trang vở thơm tho.
+4.  **Qua bài thơ, em thấy tình cảm của bạn nhỏ dành cho cô giáo thế nào?**
+    *   *Trả lời*: Bạn nhỏ rất yêu quý, biết ơn và kính trọng cô giáo của mình. Bạn thích ngắm nhìn những điểm mười cô cho và luôn trân trọng từng lời giảng của cô.
 
-Những lời cô giáo giảng
-Ấm trang vở thơm tho
-Yêu thương em ngắm mãi
-Những điểm mười cô cho.
-*(Nguyễn Xuân Sanh)*
+---
 
-**?**
-1. Cô giáo đáp lại lời chào của học sinh như thế nào?
-2. Tìm những câu thơ tả cảnh khi cô dạy học.
-3. Bạn nhỏ đã kể những gì về cô giáo của mình?
-4. Qua bài thơ, em thấy tình cảm bạn nhỏ dành cho cô giáo thế nào?
-* Học thuộc lòng 2 khổ thơ em thích.
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **D** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Dung dăng dung dẻ
+    > Dắt trẻ đi chơi.
+*   *Lưu ý thẩm mỹ*: Chú ý khoảng cách giữa các chữ, độ cao của chữ hoa **D** và cách nối nét từ chữ hoa sang chữ thường.
 
-1. Nói câu thể hiện sự ngạc nhiên của em khi:
-a. Lần đầu được nghe một bạn hát rất hay
-b. Được bố mẹ tặng một món quà bất ngờ
-2. Nói câu thể hiện tình cảm của em đối với thầy cô giáo của mình.
+---
 
-## VIẾT
-1. Viết chữ hoa: D
-2. Viết ứng dụng: 
-Dung dăng dung dẻ
-Dắt trẻ đi chơi.
-
-**42**
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Cậu bé ham học**
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "CẬU BÉ HAM HỌC"
 *(Theo Kể chuyện thần đồng Việt Nam)*
-1) Vì sao cậu bé Vũ Duệ không được đi học?
-2) Buổi sáng, Vũ Duệ thường cõng em đi đâu?
-3) Vì sao Vũ Duệ được thầy khen?
-4) Vì sao Vũ Duệ được đi học?
 
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể cho người thân về cậu bé Vũ Duệ trong câu chuyện Cậu bé ham học.
-
-**43**
-
-**Bài 10: THỜI KHOÁ BIỂU**
-
-## ĐỌC
-Em làm thế nào để biết được các môn học trong ngày, trong tuần?
-
-**THỜI KHOÁ BIỂU**
-
-Thời khoá biểu cho biết thời gian học các môn của từng ngày trong tuần. Thời khoá biểu gồm nhiều cột dọc và nhiều hàng ngang. Các bạn học sinh thường đọc thời khoá biểu theo trình tự thứ – buổi – tiết – môn.
-
-**44**
-
-**THỜI KHOÁ BIỂU LỚP 2A**
-
-| BUỔI | Tiết | Thứ Hai | Thứ Ba | Thứ Tư | Thứ Năm | Thứ Sáu |
-| --- | --- | --- | --- | --- | --- | --- |
-| SÁNG | 1 | Hoạt động trải nghiệm | Tiếng Việt | Toán | Tiếng Việt | Tiếng Việt |
-| | 2 | Toán | Tiếng Việt | Mĩ thuật | Tiếng Việt | Tiếng Việt |
-| | 3 | Tiếng Việt | Toán | Tiếng Việt | Giáo dục thể chất | Toán |
-| | 4 | Tiếng Việt | Giáo dục thể chất | Tiếng Việt | Toán | Tiếng Anh |
-| CHIỀU | 1 | Tiếng Anh | Đạo đức | Hoạt động trải nghiệm | Tự nhiên và Xã hội | Âm nhạc |
-| | 2 | Tự học có hướng dẫn | Tự học có hướng dẫn | Tự học có hướng dẫn | Tự học có hướng dẫn | Tự học có hướng dẫn |
-| | 3 | Tự nhiên và Xã hội | | | | Hoạt động trải nghiệm |
-
-**?**
-1. Đọc thời khoá biểu của ngày thứ Hai.
-2. Sáng thứ Hai có mấy tiết?
-3. Thứ Năm có những môn học nào?
-4. Nếu không có thời khoá biểu, em sẽ gặp khó khăn gì?
-
-1. Dựa vào thời khoá biểu trên đây, hỏi – đáp theo mẫu:
-- Lớp mình có tiết Âm nhạc vào thứ mấy?
-- Lớp mình có tiết Âm nhạc vào thứ Sáu.
-
-**45**
-
-2. Nói một câu giới thiệu môn học hoặc hoạt động ở trường mà em thích.
-M: Tiếng Việt là môn học tôi yêu thích nhất.
-
-## VIẾT
-1. Nghe – viết: Thời khoá biểu (từ đầu đến thứ – buổi – tiết – môn).
-2. Dựa vào tranh, viết tên đồ vật có tiếng bắt đầu bằng c hoặc k.
-3. Chọn a hoặc b.
-a. Chọn ch hoặc tr thay cho ô vuông.
-Mặt []ời mọc rồi lặn
-[]ên đôi chân lon ton
-Hai chân []ời của con
-Là mẹ và cô giáo.
-*(Theo Trần Quốc Toàn)*
-
-b. Chọn v hoặc d thay cho ô vuông.
-Có con chim []ành khuyên nhỏ
-[]áng trông thật ngoan ngoãn quá
-Gọi []ạ, bảo []âng lễ phép ngoan nhất nhà.
-*(Theo Hoàng Vân)*
-
-**46**
-
-## LUYỆN TẬP
-1. Dựa vào tranh, tìm từ ngữ:
-a. Chỉ sự vật
-b. Chỉ hoạt động
-2. Đặt một câu nêu hoạt động với từ ngữ vừa tìm được.
-
-**47**
-
-1. Quan sát tranh, kể lại các hoạt động của bạn Nam.
-(1) 7:00
-(2) 8:00
-(3) 9:30
-(4) 11:30
-M: 7 giờ, bạn Nam đi học.
-
-2. Viết thời gian biểu của em từ 5 giờ chiều (17:00) đến lúc đi ngủ.
-M: 
-**Thời gian biểu**
-
-| Thời gian | Hoạt động |
-| --- | --- |
-| 17:00 | Đi học về |
-| ... | ... |
-
-## ĐỌC MỞ RỘNG
-1. Đọc bảng tin của nhà trường.
-2. Chia sẻ với bạn những thông tin mà em quan tâm.
-- Thứ Năm tuần này, khối 2 được đi tham quan đấy.
-
-**48**
-
-# Tuần 6
-
-**Bài 11: CÁI TRỐNG TRƯỜNG EM**
-
-## ĐỌC
-Tiếng trống trường báo cho em biết điều gì?
-
-**CÁI TRỐNG TRƯỜNG EM**
-
-Cái trống trường em
-Mùa hè cũng nghỉ
-Suốt ba tháng liền
-Trống nằm ngẫm nghĩ.
-
-Buồn không hả trống
-Trong những ngày hè
-Bọn mình đi vắng
-Chỉ còn tiếng ve?
-
-**49**
-
-Cái trống lặng im
-Nghiêng đầu trên giá
-Chắc thấy chúng em
-Nó mừng vui quá!
-
-Kìa trống đang gọi:
-Tùng! Tùng! Tùng! Tùng!
-Vào năm học mới
-Giọng vang tưng bừng.
-*(Thanh Hào)*
-
-**Từ ngữ**
-- **Ngẫm nghĩ:** nghĩ đi nghĩ lại kĩ càng.
-
-**?**
-1. Bạn học sinh kể gì về trống trường trong những ngày hè?
-2. Tiếng trống trường trong khổ thơ cuối báo hiệu điều gì?
-3. Khổ thơ nào cho thấy bạn học sinh trò chuyện với trống trường như với một người bạn?
-4. Em thấy tình cảm của bạn học sinh với trống trường như thế nào?
-
-1. Những từ ngữ nào dưới đây nói về trống trường như nói về con người?
-ngẫm nghĩ, mừng vui, buồn, đi vắng
-2. Nói và đáp:
-a. Lời tạm biệt của bạn học sinh với trống trường
-b. Lời tạm biệt bạn bè khi bắt đầu nghỉ hè
-
-**50**
-
-## VIẾT
-1. Viết chữ hoa: Đ
-2. Viết ứng dụng: Đi một ngày đàng, học một sàng khôn.
-
-## NÓI VÀ NGHE
-**Ngôi trường của em**
-1. Nói những điều em thích về trường của em.
-G:
-- Trường em tên là gì? Ở đâu?
-- Điều gì khiến em cảm thấy yêu thích, muốn đến trường hằng ngày?
-- Tớ thích sân trường mình vì có nhiều cây.
-- Tớ thích bữa ăn trưa ở trường.
-
-2. Em muốn trường mình có những thay đổi gì?
-* Nói với người thân những điều em muốn trường mình thay đổi.
-
-**51**
-
-**Bài 12: DANH SÁCH HỌC SINH**
-
-## ĐỌC
-1. Em đã được đọc bản danh sách học sinh nào dưới đây?
-- Danh sách học sinh đi tham quan
-- Danh sách học sinh dự thi vẽ tranh
-- Danh sách Sao Nhi đồng
-2. Em biết được thông tin gì khi đọc bản danh sách đó?
-
-**DANH SÁCH HỌC SINH**
-
-Hôm nay, chúng tôi được đọc truyện tại lớp. Cô giáo cho chúng tôi đăng kí đọc truyện theo sở thích. Dưới đây là danh sách đăng kí của tổ tôi.
-
-**Danh sách học sinh tổ 2 lớp 2C đăng kí đọc truyện**
-
-| Số thứ tự | Họ và tên | Truyện |
-| :---: | --- | --- |
-| 1 | Trần Trường An | Ngày khai trường |
-| 2 | Nguyễn Hà Anh | Ếch xanh đi học |
-| 3 | Nguyễn Ngọc Bảo | Ếch xanh đi học |
-| 4 | Đỗ Duy Bắc | Ngày khai trường |
-| 5 | Vũ Tiến Bình | Vì sao gà chẳng giỏi bơi? |
-| 6 | Lê Thị Cúc | Ngày khai trường |
-| 7 | Lê Gia Hân | Vì sao gà chẳng giỏi bơi? |
-| 8 | Phùng Minh Khánh | Ếch xanh đi học |
-
-Dựa vào danh sách đăng kí, cô chia lớp thành ba nhóm, mỗi nhóm đọc một truyện. Chúng tôi đọc cho nhau nghe, rồi cùng nhau trao đổi về các nhân vật trong truyện mà nhóm đã chọn.
-
-**52**
-
-**?**
-1. Trong bản danh sách, tổ 2 lớp 2C có bao nhiêu bạn?
-2. Bạn đứng ở vị trí số 6 đăng kí đọc truyện gì?
-3. Những bạn nào đăng kí đọc cùng truyện với bạn ở vị trí số 6?
-4. Bản danh sách có tác dụng gì?
-
-1. Tên học sinh trong bản danh sách được sắp xếp thế nào?
-2. Học thuộc bảng chữ cái tiếng Việt.
-
-## VIẾT
-1. Nghe – viết: Cái trống trường em (từ Buồn không hả trống đến Tùng! Tùng! Tùng! Tùng!).
-2. Dựa vào tranh, viết từ ngữ có tiếng bắt đầu bằng g hoặc gh.
-
-**53**
-
-3. Chọn a hoặc b.
-a. Chọn s hoặc x thay cho ô vuông rồi giải câu đố.
-- Giữa đám lá mượt []anh
-Treo từng chùm chuông nhỏ
-Trắng []anh và hồng đỏ
-Bừng []áng cả vườn quê.
-*(Là quả gì?)*
-
-- Cầu gì không bắc ngang []ông
-Không trèo qua []uối mà chồng lên mây?
-*(Là gì?)*
-
-b. Chọn dấu hỏi hoặc dấu ngã cho chữ in đậm.
-- Mắt c**u**a ngôi nhà
-Là nh**ư**ng ô c**ư**a
-Hai cánh khép m**ơ**
-Như hai hàng mi
-
-- M**ôi** khi người đi
-Mắt buồn ngủ miết
-Người về mắt vui
-Thức không biết mệt.
-*(Theo Đặng Vương Hưng)*
-
-## LUYỆN TẬP
-1. Giải câu đố để tìm từ ngữ chỉ sự vật.
-a. Cái gì tích tắc ngày đêm,
-Nhắc em đi ngủ, nhắc em học bài?
-
-b. Một anh chậm bước khoan thai,
-Một anh chạy những bước dài thật nhanh?
-*(Là cái gì?)*
-
-c. Ruột dài từ mũi đến chân
-Mũi mòn ruột cũng dần dần mòn theo.
-*(Là cái gì?)*
-
-d. Nhỏ như cái kẹo
-Dẻo như bánh giầy
-Học trò lâu nay
-Vẫn cần đến tớ.
-*(Là cái gì?)*
-
-2. Tìm từ ngữ chỉ đặc điểm trong các câu đố trên.
-M: chậm
-3. Đặt một câu nêu đặc điểm của đồ vật ở trường, lớp.
-M: Thân trống nâu bóng.
-
-**54**
-
-1. Đọc danh sách dưới đây và trả lời câu hỏi.
-
-**Danh sách học sinh tổ 1 lớp 2A đăng kí đi tham quan**
-
+##### 1. Nội dung tóm tắt câu chuyện
+Câu chuyện kể về danh nhân **Vũ Duệ** thuở nhỏ. Vì nhà nghèo, không có tiền đóng học phí lại phải giúp cha mẹ trông em nhỏ nên cậu không thể vào lớp học. Hằng ngày, cậu thường cõng em đứng ngoài hiên lớp học của thầy đồ trong làng để nghe lén thầy giảng bài. 
+Một hôm, trời mưa lạnh, cậu bé vẫn cõng em đứng nép ngoài cửa. Thầy đồ nhìn thấy, thương tình gọi vào và thử tài bằng cách đưa ra câu hỏi hóc búa. Vũ Duệ đã trả lời vô cùng trôi chảy, thông minh vượt trội hơn hẳn các học trò trong lớp học. Thầy đồ vô cùng kinh ngạc, khen ngợi và cho phép cậu từ đó được vào lớp học miễn phí. Nhờ tinh thần ham học và ý chí vượt khó ấy, sau này Vũ Duệ đã đỗ Trạng nguyên và trở thành một vị quan đại thần có tài có đức.
+
+##### 2. Câu hỏi gợi ý thảo luận theo tranh
+*   **Tranh 1**: Vì sao cậu bé Vũ Duệ không được đi học? *(Do nhà nghèo và phải cõng em giúp bố mẹ).*
+*   **Tranh 2**: Buổi sáng, Vũ Duệ thường cõng em đi đâu? *(Cõng em đứng ngoài cửa lớp học nghe thầy giảng).*
+*   **Tranh 3**: Thầy giáo hỏi bài và Vũ Duệ trả lời thế nào? *(Vũ Duệ trả lời rất thông minh và lưu loát khiến thầy khen ngợi).*
+*   **Tranh 4**: Kết quả học tập của Vũ Duệ ra sao? *(Cậu đỗ đầu khoa thi, vinh quy bái tổ làm rạng danh quê hương).*
+
+---
+---
+
+### BÀI 10: THỜI KHOÁ BIỂU
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản đọc: "Thời khoá biểu"
+Văn bản giới thiệu bảng **Thời khoá biểu lớp 2A** chia làm hai buổi Sáng và Chiều từ Thứ Hai đến Thứ Sáu. Đây là công cụ giúp các em học sinh biết sắp xếp dụng cụ học tập và chuẩn bị bài học cho từng ngày một cách khoa học.
+
+| Buổi | Tiết | Thứ Hai | Thứ Ba | Thứ Tư | Thứ Năm | Thứ Sáu |
+| :--- | :---: | :--- | :--- | :--- | :--- | :--- |
+| **SÁNG** | **1** | Hoạt động trải nghiệm | Tiếng Việt | Toán | Tiếng Việt | Tiếng Việt |
+| | **2** | Toán | Tiếng Việt | Mĩ thuật | Tiếng Việt | Tiếng Việt |
+| | **3** | Tiếng Việt | Toán | Tiếng Việt | Giáo dục thể chất | Toán |
+| | **4** | Tiếng Việt | Giáo dục thể chất | Tiếng Việt | Toán | Tiếng Anh |
+| **CHIỀU** | **1** | Tiếng Anh | Đạo đức | Hoạt động trải nghiệm | Tự nhiên và Xã hội | Âm nhạc |
+| | **2** | Tự học có hướng dẫn | Tự học có hướng dẫn | Tự học có hướng dẫn | Tự học có hướng dẫn | Tự học có hướng dẫn |
+| | **3** | | Tự nhiên và Xã hội | | | Hoạt động trải nghiệm |
+
+##### 2. Câu hỏi đọc hiểu & Trả lời
+1.  **Đọc thời khoá biểu của ngày Thứ Hai?**
+    *   *Trả lời*: Buổi sáng: Tiết 1 học Hoạt động trải nghiệm, Tiết 2 học Toán, Tiết 3 và 4 học Tiếng Việt. Buổi chiều: Tiết 1 học Tiếng Anh, Tiết 2 học Tự học có hướng dẫn.
+2.  **Sáng Thứ Hai có mấy tiết?**
+    *   *Trả lời*: Sáng Thứ Hai có 4 tiết học.
+3.  **Thứ Năm có những môn học nào?**
+    *   *Trả lời*: Thứ Năm có các môn: Tiếng Việt, Toán, Giáo dục thể chất (buổi sáng); Tự nhiên và Xã hội, Tự học có hướng dẫn (buổi chiều).
+4.  **Nếu không có thời khoá biểu, em sẽ gặp khó khăn gì?**
+    *   *Trả lời*: Nếu không có thời khoá biểu, em sẽ không biết ngày mai học môn gì để chuẩn bị bài trước ở nhà, mang nhầm sách vở hoặc quên dụng cụ học tập, dẫn đến việc học tập bị thụ động và bừa bộn.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TỪ VÀ CÂU
+##### 1. Nghe - viết
+*   Nghe - viết một đoạn trong văn bản **"Thời khoá biểu"** (từ đầu đến từ *thứ - buổi - tiết - môn*).
+*   Luyện tập phân biệt các âm vần dễ lẫn lộn: **c/k**, **ch/tr**, **v/d**.
+
+##### 2. Luyện từ và câu
+*   **Tìm từ ngữ chỉ sự vật**: Học sinh, thầy giáo, cô giáo, cặp sách, cuốn sách, bút chì, bảng đen, bàn ghế...
+*   **Tìm từ ngữ chỉ hoạt động**: Đi học, viết bài, nghe giảng, đọc sách, quét lớp, tập thể dục...
+*   **Câu nêu hoạt động**: Đặt câu kể về hoạt động của em ở trường.
+    *   *Ví dụ*: *Em đang chăm chú nghe cô giáo giảng bài.* hoặc *Chúng em chơi nhảy dây dưới sân trường giờ ra chơi.*
+
+##### 3. Luyện viết đoạn văn (Thời gian biểu)
+*   Học sinh viết thời gian biểu cá nhân của mình từ lúc đi học về cho đến lúc đi ngủ (từ 17:00 đến 21:30 hoặc 22:00).
+    *   *Ví dụ mẫu*:
+        *   **17:00 - 17:30**: Đi học về, cất dọn sách vở và nghỉ ngơi.
+        *   **17:30 - 18:00**: Phụ mẹ quét nhà, nhặt rau.
+        *   **18:00 - 18:30**: Tắm rửa cá nhân.
+        *   **18:30 - 19:15**: Ăn tối cùng gia đình.
+        *   **19:15 - 20:30**: Học bài và chuẩn bị sách vở cho ngày mai theo thời khóa biểu.
+        *   **20:30 - 21:00**: Xem hoạt hình hoặc trò chuyện cùng bố mẹ.
+        *   **21:00**: Đi đánh răng và đi ngủ.
+
+---
+
+#### III. HOẠT ĐỘNG ĐỌC MỞ RỘNG
+*   **Đọc bảng tin nhà trường**: Giúp học sinh nắm bắt các thông tin hoạt động ngoại khóa, thông báo dã ngoại sắp tới (Ví dụ: thông báo khối 2 đi tham quan Bảo tàng vào Thứ Năm tuần này).
+*   **Chia sẻ**: Kể lại với bạn những thông tin thú vị mà em vừa đọc được trên bảng tin.
+
+---
+---
+
+## TUẦN 6
+
+### BÀI 11: CÁI TRỐNG TRƯỆNG EM
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Cái trống trường em" (Thanh Hào)
+> Cái trống trường em
+> Mùa hè cũng nghỉ
+> Suốt ba tháng liền
+> Trống nằm ngẫm nghĩ.
+>
+> Buồn không hả trống
+> Trong những ngày hè
+> Bọn mình đi vắng
+> Chỉ còn tiếng ve?
+>
+> Cái trống lặng im
+> Nghiêng đầu trên giá
+> Chắc thấy chúng em
+> Nó mừng vui quá!
+>
+> Kìa trống đang gọi:
+> Tùng! Tùng! Tùng! Tùng!
+> Vào năm học mới
+> Giọng vang tưng bừng.
+
+##### 2. Từ ngữ giải nghĩa
+*   **Ngẫm nghĩ**: Suy nghĩ sâu xa, chậm rãi về một việc gì đó.
+*   **Giá trống**: Khung bằng gỗ dùng để đặt trống vững chắc ở sân trường hoặc hành lang lớp học.
+
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Bạn học sinh kể gì về trống trường trong những ngày hè?**
+    *   *Trả lời*: Trong những ngày hè, bạn học sinh kể rằng cái trống cũng được nghỉ học ba tháng liền, nằm lặng im nghiêng đầu trên giá để "ngẫm nghĩ".
+2.  **Tiếng trống trường trong khổ thơ cuối báo hiệu điều gì?**
+    *   *Trả lời*: Tiếng trống báo hiệu một năm học mới đã bắt đầu bằng những âm thanh vang rộn: *"Tùng! Tùng! Tùng! Tùng!"*.
+3.  **Khổ thơ nào cho thấy bạn học sinh trò chuyện với trống trường như một người bạn?**
+    *   *Trả lời*: Khổ thơ thứ hai cho thấy điều đó: *"Buồn không hả trống / Trong những ngày hè / Bọn mình đi vắng / Chỉ còn tiếng ve?"*
+4.  **Em cảm nhận được tình cảm của bạn học sinh dành cho trống trường như thế nào?**
+    *   *Trả lời*: Bạn nhỏ rất yêu mến trường lớp và coi cái trống trường như một người bạn thân thiết, biết đồng cảm, sẻ chia niềm vui buồn trong những ngày hè xa cách và niềm vui mừng khi gặp lại ngày tựu trường.
+
+---
+
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **Đ** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Đi một ngày đàng,
+    > học một sàng khôn.
+*   *Ý nghĩa*: Nhắc nhở học sinh siêng năng đi đây đi đó học hỏi thế giới xung quanh để tích lũy thêm nhiều tri thức bổ ích cho bản thân.
+
+---
+
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: NGÔI TRƯỜNG CỦA EM
+##### 1. Nói những điều em thích về trường của em
+*   *Gợi ý*:
+    *   Ngôi trường của em tên là gì? Ở đâu? *(Ví dụ: Trường Tiểu học Quang Trung, quận Hoàn Kiếm).*
+    *   Ngôi trường có những cảnh vật gì mà em thích nhất? *(Sân trường rộng rãi có nhiều cây xanh, phòng thư viện có nhiều sách truyện hay, lớp học sạch sẽ...).*
+    *   Điều gì khiến em cảm thấy hào hứng khi đến trường mỗi ngày? *(Được gặp thầy cô, được vui chơi cùng các bạn và ăn bữa trưa bán trú rất ngon).*
+
+##### 2. Em muốn trường mình có những thay đổi gì?
+*   *Gợi ý*:
+    *   Em ước trường mình có một khu vườn hoa rực rỡ sắc màu để các bạn chăm sóc.
+    *   Em mong muốn sân trường có thêm nhiều xích đu, cầu trượt để vui chơi thỏa thích giờ ra chơi.
+
+---
+---
+
+### BÀI 12: DANH SÁCH HỌC SINH
+
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thông tin: "Danh sách học sinh"
+Văn bản đưa ra mẫu danh sách học sinh đăng ký các hoạt động học tập ngoại khóa hoặc dã ngoại.
+
+###### Danh sách học sinh tổ 1 lớp 2A đăng kí đi tham quan:
 | Số thứ tự | Họ và tên | Địa điểm tham quan |
-| :---: | --- | --- |
-| 1 | Nguyễn Hải Anh | Bảo tàng Dân tộc học |
-| 2 | Đỗ Thị Thanh Bình | Lăng Bác |
-| 3 | Nguyễn Văn Cường | Bảo tàng Dân tộc học |
-| 4 | Trần Minh Đức | Bảo tàng Dân tộc học |
-| 5 | Lê Hương Giang | Bảo tàng Dân tộc học |
-| 6 | Nguyễn Thị Thanh Hương | Lăng Bác |
-| 7 | Trịnh Cao Khải | Lăng Bác |
-| 8 | Trần Hải Phong | Lăng Bác |
+| :---: | :--- | :--- |
+| **1** | Nguyễn Hải Anh | Bảo tàng Dân tộc học |
+| **2** | Đỗ Thị Thanh Bình | Lăng Bác |
+| **3** | Nguyễn Văn Cường | Bảo tàng Dân tộc học |
+| **4** | Trần Minh Đức | Bảo tàng Dân tộc học |
+| **5** | Lê Hương Giang | Bảo tàng Dân tộc học |
+| **6** | Nguyễn Thị Thanh Hương | Lăng Bác |
+| **7** | Trịnh Cao Khải | Lăng Bác |
+| **8** | Trần Hải Phong | Lăng Bác |
 
-a. Tổ 1 lớp 2A có bao nhiêu học sinh?
-b. Có mấy bạn đăng kí đi tham quan Lăng Bác?
-c. Có mấy bạn đăng kí đi tham quan Bảo tàng Dân tộc học?
+##### 2. Câu hỏi đọc hiểu & Trả lời
+1.  **Tổ 1 lớp 2A có bao nhiêu học sinh?**
+    *   *Trả lời*: Tổ 1 lớp 2A có tất cả 8 học sinh.
+2.  **Có mấy bạn đăng kí đi tham quan Lăng Bác? Đó là những bạn nào?**
+    *   *Trả lời*: Có 4 bạn đăng ký tham quan Lăng Bác, gồm các bạn: Đỗ Thị Thanh Bình, Nguyễn Thị Thanh Hương, Trịnh Cao Khải, Trần Hải Phong.
+3.  **Có mấy bạn đăng kí đi tham quan Bảo tàng Dân tộc học?**
+    *   *Trả lời*: Có 4 bạn đăng ký tham quan Bảo tàng Dân tộc học, gồm các bạn: Nguyễn Hải Anh, Nguyễn Văn Cường, Trần Minh Đức, Lê Hương Giang.
+4.  **Bản danh sách học sinh có tác dụng gì?**
+    *   *Trả lời*: Bản danh sách giúp thầy cô và cả lớp theo dõi thông tin đăng ký của từng bạn một cách gọn gàng, nhanh chóng, chính xác, không bị nhầm lẫn hay sót thông tin khi tổ chức hoạt động tập thể.
 
-2. Lập danh sách tổ em đăng kí tham gia các câu lạc bộ của trường như: câu lạc bộ cờ vua, võ thuật, bơi lội,...
+---
 
-## ĐỌC MỞ RỘNG
-1. Tìm đọc bài thơ, câu chuyện, bài báo viết về thầy cô.
-2. Chép lại những câu thơ, câu văn em thích.
-Ngày 12 tháng 10 năm 2020
-*Bàn tay cô giáo* (Trích)
-Bàn tay cô giáo
-Tết tóc cho em
-Về nhà mẹ khen
-Tay cô đến khéo.
-*(Định Hải)*
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết lại chính xác khổ 2 và khổ 3 của bài thơ **"Cái trống trường em"**.
+*   **Phân biệt chính tả**: Phân biệt nguyên âm và phụ âm ghép dễ nhầm lẫn như: **g/gh**, **s/x**, dấu hỏi/dấu ngã.
+    *   *Quy tắc g/gh*: Phụ âm **gh** chỉ đi với các âm đứng trước là **e, ê, i** *(ghé tai, ghi nhớ, ghế gỗ)*. Phụ âm **g** đi với các âm còn lại *(gà con, gỗ tốt, giữ gìn)*.
 
-**55**
+##### 2. Luyện tập Từ và Câu
+*   **Từ ngữ chỉ đặc điểm (ngoại hình, tính chất)**: Bầu bĩnh, đen láy, mượt mà, cao, sáng, nhọn hoắt, thẳng tắp, trắng tinh...
+*   **Câu nêu đặc điểm**: Đặt câu nêu đặc điểm của người hoặc vật xung quanh em.
+    *   *Ví dụ*: *Đôi mắt em bé tròn xoe và đen láy.* hoặc *Mái tóc của mẹ em rất mượt mà.*
+*   **Phân biệt các mẫu câu**:
+    *   *Câu giới thiệu*: *Bác An là nông dân.*
+    *   *Câu nêu hoạt động*: *Bác đang gặt lúa trên đồng.*
+    *   *Câu nêu đặc điểm*: *Bác An rất chăm chỉ và cẩn thận.*
 
-# Tuần 7
+##### 3. Lập danh sách học sinh
+*   Học sinh thực hành lập danh sách đăng ký tham gia các câu lạc bộ (cờ vua, bóng đá, múa, hát, vẽ...) của tổ mình theo mẫu bảng đã học, sắp xếp tên học sinh theo thứ tự bảng chữ cái tiếng Việt.
 
-**Bài 13: YÊU LẮM TRƯỜNG ƠI!**
+---
 
-## ĐỌC
-1. Hát bài Em yêu trường em của nhạc sĩ Hoàng Vân.
-2. Bạn nhỏ trong bài hát có tình cảm như thế nào với ngôi trường của mình?
+#### III. HOẠT ĐỘNG ĐỌC MỞ RỘNG
+*   **Đọc văn bản**: Tìm đọc các bài thơ viết về tình cảm thầy cô giáo.
+*   **Ví dụ bài đọc trích**: "Bàn tay cô giáo" (Định Hải)
+    > Bàn tay cô giáo
+    > Tết tóc cho em
+    > Về nhà mẹ khen
+    > Tay cô đến khéo.
+*   **Ghi chép**: Học sinh chép lại khổ thơ hoặc câu văn cảm động nhất vào sổ tay đọc sách của mình.
 
-**YÊU LẮM TRƯỜNG ƠI!**
+---
+---
 
-Em yêu mái trường
-Có hàng cây mát
-Xôn xao khúc nhạc
-Tiếng chim xanh trời.
+## TUẦN 7
 
-Mỗi giờ ra chơi
-Sân trường nhộn nhịp
-Hồng hào gương mặt
-Bạn nào cũng xinh.
+### BÀI 13: YÊU LẮM TRƯỜNG ƠI!
 
-Yêu lớp học em
-Có khung cửa sổ
-Có bàn tay lá
-Quạt gió mát vào.
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Yêu lắm trường ơi!" (Nguyễn Trọng Hoàn)
+> Em yêu mái trường
+> Có hàng cây mát
+> Xôn xao khúc nhạc
+> Tiếng chim xanh trời.
+>
+> Mỗi giờ ra chơi
+> Sân trường nhộn nhịp
+> Hồng hào gương mặt
+> Bạn nào cũng xinh.
+>
+> Yêu lớp học em
+> Có khung cửa sổ
+> Có bàn tay lá
+> Quạt gió mát vào.
+>
+> Lời cô ngọt ngào
+> Thấm từng trang sách
+> Ngày không đến lớp
+> Thấy nhớ nhớ ghê!
+>
+> Có đêm trong mơ
+> Bỗng cười khúc khích
+> Ngỡ đang ở lớp
+> Cùng bạn đùa vui.
 
-Lời cô ngọt ngào
-Thấm từng trang sách
-Ngày không đến lớp
-Thấy nhớ nhớ ghê!
+##### 2. Từ ngữ giải nghĩa
+*   **Xôn xao**: Nhiều âm thanh nhỏ phát ra cùng một lúc, nghe rộn rã và náo nhiệt.
+*   **Cười khúc khích**: Tiếng cười nhỏ, liên tục, thể hiện sự vui sướng, thích thú trong lòng.
 
-Có đêm trong mơ
-Bỗng cười khúc khích
-Ngỡ đang ở lớp
-Cùng bạn đùa vui.
-*(Nguyễn Trọng Hoàn)*
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Học sinh yêu những cảnh vật nào ở trường trong bài thơ?**
+    *   *Trả lời*: Bạn nhỏ yêu những cảnh vật: hàng cây mát rượi đầy tiếng chim hót xôn xao, lớp học có khung cửa sổ đón gió mát từ "bàn tay lá" và những trang sách thơm chứa đựng lời giảng ngọt ngào của cô.
+2.  **Những từ ngữ nào tả cảnh nhộn nhịp của sân trường giờ ra chơi?**
+    *   *Trả lời*: Những từ ngữ miêu tả sự nhộn nhịp là: *"sân trường nhộn nhịp"*, *"hồng hào gương mặt"*, *"bạn nào cũng xinh"*.
+3.  **Vì sao khi không đến lớp, bạn nhỏ lại cảm thấy "nhớ nhớ ghê"?**
+    *   *Trả lời*: Vì bạn nhỏ yêu mái trường, yêu thầy cô, yêu tiếng cười đùa vui vẻ bên bạn bè nên hễ ngày nào nghỉ học là bạn lại thấy nhớ trường, nhớ lớp da diết.
+4.  **Khổ thơ cuối bài nói lên ước mơ gì của bạn nhỏ?**
+    *   *Trả lời*: Khổ thơ cuối cho thấy ngay cả trong giấc mơ bạn nhỏ cũng mơ thấy mình đang ở lớp học để cùng đùa vui rộn rã với bạn bè, cho thấy tình cảm sâu đậm dành cho ngôi trường.
 
-**56**
+---
 
-1. Đọc khổ thơ tương ứng với từng bức tranh dưới đây:
-(1) Ra chơi
-(2) Cửa sổ
-(3) Ngủ mơ
-2. Tìm những câu thơ tả các bạn học sinh trong giờ ra chơi.
-3. Bạn nhỏ yêu những gì ở trường, lớp của mình?
-4. Bạn nhỏ nhớ gì về cô giáo khi không đến lớp?
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **E** và **Ê** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Em yêu mái trường
+    > Có hàng cây mát.
+*   *Lưu ý*: Viết cân đối dòng thơ, đúng độ cao của các chữ cái viết hoa đầu dòng.
 
-1. Từ nào trong bài thơ thể hiện rõ nhất tình cảm của bạn nhỏ dành cho trường lớp?
-2. Kết hợp từ ngữ ở cột A với từ ngữ ở cột B để tạo câu nêu đặc điểm.
+---
 
-| A | B |
-| --- | --- |
-| Gương mặt các bạn | nhộn nhịp. |
-| Lời cô | ngọt ngào. |
-| Sân trường | hồng hào. |
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "BỮA ĂN TRƯA"
+##### 1. Tóm tắt nội dung câu chuyện
+Câu chuyện xoay quanh giờ ăn trưa bán trú đầy ấm áp của các bạn nhỏ lớp 2. Khi các bạn mở hộp cơm ra ăn, một bạn trong nhóm vô tình làm đổ hộp cơm của mình xuống đất. Bạn nhỏ vô cùng buồn bã và tủi thân. Thấy vậy, các bạn xung quanh đã nhanh chóng chạy lại an ủi và chủ động san sẻ thức ăn từ phần cơm của mình sang cho bạn: người chia cho bạn thìa cơm ngon, người chia cho bạn miếng thịt, quả trứng,... Bữa ăn trưa hôm đó trở nên vui vẻ và ý nghĩa hơn bao giờ hết nhờ tình yêu thương, sự chia sẻ ngọt ngào của tình bạn bè trong lớp học.
 
-## VIẾT
-1. Viết chữ hoa: E, Ê
-2. Viết ứng dụng: Em yêu mái trường Có hàng cây mát.
+##### 2. Ý nghĩa câu chuyện
+Câu chuyện giáo dục các em học sinh biết quan tâm, nhường nhịn, giúp đỡ và san sẻ khó khăn với bạn bè xung quanh khi gặp sự cố, xây dựng tình bạn gắn kết dưới mái trường.
 
-**57**
+---
+---
 
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Bữa ăn trưa**
-*(Phỏng theo Tốt-tô-chan, cô bé bên cửa sổ)*
-(1) - Các em có đem theo món ăn của biển và của đồi núi không?
-(2) (Học sinh nhận phần ăn)
-(3) - Món này là của biển hay của đồi núi?
-(4) (Học sinh đang ăn)
+### BÀI 14: EM HỌC VẼ
 
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Chọn a hoặc b.
-a. Kể cho người thân về giờ ăn trưa ở lớp em.
-b. Kể cho bạn về bữa ăn trưa của em.
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Em học vẽ" (Phan Thị Diên)
+> Hôm nay trong lớp học
+> Với giấy trắng, bút màu
+> Nắn nót em ngồi vẽ
+> Lung linh bầu trời sao.
+>
+> Vẽ ông trăng trên cao
+> Rải ánh vàng đầy ngõ
+> Vẽ cánh diều no gió
+> Vi vu giữa trời xanh.
+>
+> Vẽ biển cả trong lành
+> Có một con thuyền trắng
+> Giương cánh buồm đỏ thắm
+> Đang rẽ sóng ra khơi.
+>
+> Vẽ cả ông mặt trời
+> Và những chùm phượng đỏ
+> Trên sân trường lộng gió
+> Gọi ve về râm ran.
 
-**58**
+##### 2. Từ ngữ giải nghĩa
+*   **Nắn nót**: Làm một việc gì đó cực kỳ cẩn thận, tỉ mỉ cho thật đẹp, thật đúng (ở đây là nắn nót từng nét vẽ).
+*   **Râm ran**: Âm thanh phát ra liên tiếp, đều đều và rộn ràng của nhiều con ve sầu cùng lúc vào mùa hè.
 
-**Bài 14: EM HỌC VẼ**
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Bạn nhỏ vẽ những gì trong bức tranh bầu trời đêm?**
+    *   *Trả lời*: Bạn nhỏ đã vẽ *"lung linh bầu trời sao"* và *"ông trăng trên cao rải ánh vàng đầy ngõ"*.
+2.  **Bức tranh cảnh biển của bạn nhỏ có gì đẹp?**
+    *   *Trả lời*: Bức tranh cảnh biển có biển cả trong lành, có một con thuyền trắng với cánh buồm đỏ thắm rực rỡ đang giương gió rẽ sóng ra khơi xa.
+3.  **Đọc những câu thơ tả cảnh trường học trong bức tranh của bạn nhỏ?**
+    *   *Trả lời*: Đó là những câu thơ: *"Vẽ cả ông mặt trời / Và những chùm phượng đỏ / Trên sân trường lộng gió / Gọi ve về râm ran."*
+4.  **Tìm những từ chỉ hoạt động vẽ của bạn nhỏ trong bài thơ?**
+    *   *Trả lời*: Từ chỉ hoạt động là: *"nắn nót ngồi vẽ"*, *"vẽ"*.
 
-## ĐỌC
-Giới thiệu với bạn một bức tranh mà em thích.
+---
 
-**EM HỌC VẼ**
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết chính xác 2 khổ thơ đầu của bài **"Em học vẽ"**.
+*   **Phân biệt chính tả**: Phân biệt phụ âm ghép **ng/ngh**, phụ âm đầu **r/d/gi** và vần **an/ang**.
+    *   *Quy tắc ng/ngh*: **ngh** chỉ ghép với các âm **e, ê, i** *(nghe nhạc, suy nghĩ, nghề nghiệp)*. Âm **ng** ghép với các âm còn lại *(ngà voi, ngắm nhìn, ngô khoai)*.
 
-Hôm nay trong lớp học
-Với giấy trắng, bút màu
-Nắn nót em ngồi vẽ
-Lung linh bầu trời sao.
+##### 2. Luyện tập Từ và Câu
+*   **Nhận diện từ ngữ chỉ đồ dùng học tập**: Cuốn vở, bút màu, cục tẩy, thước kẻ, compa, hộp bút...
+*   **Nhận diện đặc điểm tương ứng**:
+    *   *Thước kẻ* - Thẳng tắp.
+    *   *Trang giấy* - Trắng tinh.
+    *   *Đầu bút chì* - Nhọn hoắt.
+*   **Ghép câu nêu đặc điểm đồ dùng học tập**:
+    *   *Ví dụ*: *Bút màu dùng để vẽ tranh.* hoặc *Cuốn vở của em phẳng phiu, thơm mùi giấy mới.*
 
-Vẽ ông trăng trên cao
-Rải ánh vàng đầy ngõ
-Vẽ cánh diều no gió
-Vi vu giữa trời xanh.
+##### 3. Luyện viết đoạn văn ngắn
+*   Viết từ 3 - 4 câu giới thiệu về một đồ dùng học tập dùng để vẽ (Ví dụ: hộp bút chì màu, cục tẩy hình con vật, cây bút chì...).
+    *   *Bài mẫu tham khảo*:
+        > Để chuẩn bị cho giờ học Mĩ thuật, bố đã mua tặng em một hộp bút chì màu rất đẹp. Hộp màu gồm có mười hai chiếc bút xinh xắn xếp gọn gàng thành một hàng ngang. Mỗi chiếc bút có một màu sắc rực rỡ khác nhau như đỏ, vàng, xanh lá, xanh dương... Thân bút bằng gỗ, cầm rất vừa tay giúp em nắn nót vẽ nên những bức tranh phong cảnh thiên nhiên thật tươi đẹp. Em luôn gìn giữ hộp bút màu cẩn thận sau mỗi lần sử dụng.
 
-**59**
+---
 
-Vẽ biển cả trong lành
-Có một con thuyền trắng
-Giương cánh buồm đỏ thắm
-Đang rẽ sóng ra khơi.
+#### III. HOẠT ĐỘNG ĐỌC MỞ RỘNG
+*   Tìm đọc các bài báo, câu chuyện ngắn nói về thế giới trường lớp.
+*   Chia sẻ với bạn bè về một nhân vật mà em yêu thích nhất trong bài đọc (ví dụ: chia sẻ về một chú chim dũng cảm cứu bạn hoặc một bạn học sinh chăm chỉ rèn luyện thể thao).
 
-Vẽ cả ông mặt trời
-Và những chùm phượng đỏ
-Trên sân trường lộng gió
-Gọi ve về râm ran.
-*(Phan Thị Diên)*
+---
+---
 
-**?**
-1. Bạn nhỏ vẽ những gì trong bức tranh bầu trời đêm?
-2. Bức tranh cảnh biển của bạn nhỏ có gì đẹp?
-3. Đọc khổ thơ tương ứng với bức tranh dưới đây: (Trường học và hoa phượng)
-4. Tìm tiếng cùng vần ở cuối các dòng thơ.
-* Học thuộc lòng 2 khổ thơ em thích.
+## TUẦN 8
 
-1. Tìm trong bài thơ những từ ngữ chỉ sự vật.
-2. Đặt câu nêu đặc điểm với 1 trong 3 từ lung linh, vi vu, râm ran.
-M: Bầu trời sao lung linh.
+### BÀI 15: CUỐN SÁCH CỦA EM
 
-**60**
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản đọc: "Cuốn sách của em" (Nhật Huy)
+Văn bản giới thiệu về cấu tạo cơ bản của một cuốn sách thông thường để giúp học sinh hiểu và sử dụng sách hiệu quả hơn.
+*   **Tên sách**: Là hàng chữ lớn thường nằm ở khoảng giữa trang bìa trước, mang ý nghĩa khái quát nội dung cuốn sách.
+*   **Tên tác giả**: Người viết nên cuốn sách đó, thường được ghi ở phía trên hoặc dưới cùng của trang bìa.
+*   **Nhà xuất bản**: Nơi cuốn sách được ấn hành và phân phối đến tay người đọc.
+*   **Mục lục**: Thường nằm ở đầu hoặc cuối cuốn sách, thể hiện danh sách các chương mục chính và số trang tương ứng để người đọc dễ dàng tra cứu nhanh chóng.
 
-## VIẾT
-1. Nghe – viết: Em học vẽ (2 khổ thơ đầu).
-2. Chọn ng hoặc ngh thay cho ô vuông.
-a. Trăm []e không bằng một thấy.
-b. Có công mài sắt, có []ày nên kim.
-3. Chọn a hoặc b.
-a. Tìm từ ngữ có tiếng bắt đầu bằng r, d hoặc gi thay cho hình.
-- Chậm như (Rùa)
-- Nhanh như (Gió/Điện)
-- Nắng tốt (Dưa), mưa tốt lúa.
-b. Tìm từ ngữ có tiếng chứa an hoặc ang gọi tên sự vật trong mỗi hình.
-(Bàn học, bảng đen, đàn ghi ta)
+##### 2. Câu hỏi đọc hiểu & Trả lời
+1.  **Qua tên sách, em có thể biết được điều gì?**
+    *   *Trả lời*: Qua tên sách, em có thể đoán biết được nội dung chính hoặc chủ đề mà cuốn sách muốn truyền tải.
+2.  **Tên tác giả cuốn sách thường được ghi ở đâu trên bìa sách?**
+    *   *Trả lời*: Tên tác giả thường được viết bằng chữ nhỏ hơn tên sách, nằm ở phía trên cùng hoặc dưới cùng của trang bìa trước.
+3.  **Mục lục của cuốn sách dùng để làm gì?**
+    *   *Trả lời*: Mục lục dùng để giới thiệu các mục chính, bài đọc chính và số trang tương ứng để người đọc dễ dàng tìm thấy phần mình cần đọc mà không phải lật từng trang.
+4.  **Khi đọc một cuốn sách mới, em nên chú ý đến những phần nào trước tiên?**
+    *   *Trả lời*: Trước tiên em nên quan sát bìa sách (tên sách, hình minh họa) và xem qua phần mục lục để nắm được cấu trúc toàn bộ cuốn sách.
 
-## LUYỆN TẬP
-1. Nói tên các đồ dùng có ở góc học tập.
+---
 
-**61**
+#### II. HOẠT ĐỘNG VIẾT
+*   **Luyện viết chữ hoa**: Chữ hoa **G** (cỡ vừa và cỡ nhỏ).
+*   **Viết câu ứng dụng**:
+    > Gần mực thì đen,
+    > gần đèn thì sáng.
+*   *Ý nghĩa*: Nhắc nhở các em chọn bạn tốt mà chơi, học hỏi những điều hay lẽ phải từ thầy cô và bạn bè chăm ngoan xung quanh để hoàn thiện nhân cách bản thân.
 
-2. Đặt một câu nêu công dụng của một đồ dùng học tập.
-M:
+---
 
-| Số thứ tự | Từ | Câu |
-| :---: | --- | --- |
-| 1 | bút màu | Bút màu dùng để vẽ tranh. |
-| 2 | ... | ... |
-
-3. Chọn dấu chấm hoặc dấu chấm hỏi thay cho ô vuông.
-Bút chì: - Tẩy ơi, cậu giúp tớ một chút được không []
-Tẩy: - Cậu muốn tớ giúp gì nào []
-Bút chì: - Tớ muốn xoá hình vẽ này []
-Tẩy: - Tớ sẽ giúp cậu []
-Bút chì: - Cảm ơn cậu []
-
-1. Nhìn tranh, nói tên đồ vật và nêu công dụng của chúng.
-(Gọt bút chì, Bút chì)
-
-**62**
-
-2. Viết 3 – 4 câu giới thiệu về một đồ vật được dùng để vẽ.
-G: **Giới thiệu một đồ vật dùng để vẽ**
-(1) Em muốn giới thiệu đồ vật nào?
-(2) Đồ vật đó có đặc điểm gì? (về hình dạng, màu sắc,...)
-(3) Em dùng đồ vật đó như thế nào?
-(4) Nó giúp ích gì cho em trong việc vẽ tranh?
-
-## ĐỌC MỞ RỘNG
-1. Tìm đọc một câu chuyện về trường học. Chia sẻ thông tin về câu chuyện dựa trên gợi ý sau:
-- Tên câu chuyện là gì?
-- Câu chuyện mở đầu như thế nào?
-- Điều gì diễn ra tiếp theo?
-- Câu chuyện kết thúc ra sao?
-2. Nói về một nhân vật em thích trong câu chuyện.
-- Cuốn Dế Mèn phiêu lưu kí rất hay. Tớ thích nhất là nhân vật Dế Trũi.
-
-**63**
-
-# Tuần 8
-
-**Bài 15: CUỐN SÁCH CỦA EM**
-
-## ĐỌC
-Quan sát bìa sách bên và cho biết các thông tin có trên bìa sách.
-- Diệu Linh
-- Chúng tớ sinh ra và lớn lên như thế nào?
-
-**CUỐN SÁCH CỦA EM**
-
-Mỗi cuốn sách có một tên gọi. Tên sách là hàng chữ lớn ở khoảng giữa bìa sách, thường chứa đựng rất nhiều ý nghĩa. Qua tên sách, em có thể biết được sách viết về điều gì.
-Người viết cuốn sách được gọi là tác giả. Tên tác giả thường được ghi vào phía trên của bìa sách.
-Nơi các cuốn sách ra đời được gọi là nhà xuất bản. Tên nhà xuất bản thường được ghi ở phía dưới bìa sách.
-Phần lớn các cuốn sách đều có mục lục thể hiện các mục chính và vị trí của chúng trong cuốn sách. Mục lục thường được đặt ở ngay sau trang bìa, cũng có khi được đặt ở cuối sách.
-Mỗi lần đọc một cuốn sách mới, đừng quên những điều này em nhé.
-*(Nhật Huy)*
-
-**64**
-
-**?**
-1. Chọn từ ngữ ở cột A với nội dung thích hợp ở cột B.
-
-| A | B |
-| --- | --- |
-| tên sách | nơi cuốn sách ra đời |
-| tác giả | thường chứa đựng nhiều ý nghĩa |
-| nhà xuất bản | người viết sách, báo |
-| mục lục | thể hiện các mục chính và vị trí của chúng trong cuốn sách |
-
-2. Qua tên sách, em có thể biết được điều gì?
-3. Sắp xếp các thông tin theo đúng trình tự trong bài đọc.
-a. Tác giả 
-b. Mục lục
-c. Tên sách 
-d. Nhà xuất bản
-4. Đọc mục lục ở tranh bên và cho biết:
-**MỤC LỤC**
-Phần 1. THẾ GIỚI ĐỘNG VẬT
-Khủng long 5
-Khỉ 8
-Voi 14
-Cá heo 18
-Gấu 22
-Phần 2. THẾ GIỚI THỰC VẬT
-Xương rồng 25
-Thông 29
-Đước 33
-a. Phần 2 có những mục nào?
-b. Để tìm hiểu về cây xương rồng, em đọc trang nào?
-
-**65**
-
-1. Xếp các từ ngữ sau vào nhóm thích hợp.
-tác giả, đọc sách, cuốn sách, bìa sách, ghi
-- Từ ngữ chỉ người, chỉ vật:
-- Từ ngữ chỉ hoạt động:
-
-2. Nói tiếp để hoàn thành câu.
-a. Tên sách được đặt ở (...).
-b. Tên tác giả thường được đặt ở (...).
-
-## VIẾT
-1. Viết chữ hoa: G
-2. Viết ứng dụng: Gần mực thì đen, gần đèn thì sáng.
-
-## NÓI VÀ NGHE
-1. Nghe kể chuyện.
-**Hoạ mi, vẹt và quạ**
+#### III. HOẠT ĐỘNG NÓI VÀ NGHE: KỂ CHUYỆN "HỌA MI, VẸT VÀ QUẠ"
 *(Theo 100 truyện ngụ ngôn về đạo đức)*
-(1) Hoạ mi, vẹt và quạ nói chuyện gì với nhau?
-(2) Hoạ mi, vẹt và quạ đến gặp chim hoàng oanh vì chuyện gì?
-(3) Vì sao quạ bỏ các bạn bay đi?
-(4) Câu chuyện kết thúc thế nào?
 
-2. Chọn kể 1 – 2 đoạn của câu chuyện theo tranh.
-* Kể cho người thân nghe câu chuyện Hoạ mi, vẹt và quạ.
+##### 1. Tóm tắt nội dung câu chuyện
+Câu chuyện kể về cuộc trò chuyện thú vị giữa ba loài chim: **Họa mi** có giọng hót thánh thót, **Vẹt** biết bắt chước tiếng người khéo léo và **Quạ** có bộ lông đen xì. Vẹt luôn tự phụ cho rằng mình thông minh vì nói được tiếng người, chê cười lông Quạ xấu xí. Một hôm, có một vụ cháy rừng lớn xảy ra, đe dọa đến tổ ấm của muôn loài. Vẹt chỉ biết kêu gào bắt chước những câu nói hoảng loạn mà không biết làm gì để thoát thân. Quạ với sự dũng cảm và nhanh nhẹn đã dùng đôi cánh khỏe mạnh hướng dẫn Họa mi và Vẹt bay theo đúng đường để thoát khỏi đám khói đen nguy hiểm. Vẹt hiểu ra bài học sâu sắc, từ đó không còn kiêu căng coi thường người khác và trân quý giá trị riêng biệt của mỗi loài bạn bè quanh mình.
 
-**66**
+##### 2. Câu hỏi gợi ý
+*   Họa mi, Vẹt và Quạ có những đặc điểm nổi bật gì?
+*   Chuyện gì xảy ra với khu rừng của ba bạn?
+*   Quạ đã làm gì để giúp đỡ các bạn khi nguy hiểm?
 
-**Bài 16: KHI TRANG SÁCH MỞ RA**
+---
+---
 
-## ĐỌC
-Nói tên những cuốn sách mà em đã đọc. Giới thiệu về cuốn sách em thích nhất.
+### BÀI 16: KHI TRANG SÁCH MỞ RA
 
-**KHI TRANG SÁCH MỞ RA**
+#### I. HOẠT ĐỘNG ĐỌC
+##### 1. Văn bản thơ: "Khi trang sách mở ra" (Nguyễn Nhật Ánh)
+> Khi trang sách mở ra
+> Chân trời xa xích lại
+> Bắt đầu là cỏ dại
+> Thứ đến là cánh chim
+> Sau nữa là trẻ con
+> Cuối cùng là người lớn.
+>
+> Trong trang sách có biển
+> Em thấy những cánh buồm
+> Trong trang sách có rừng
+> Với bao nhiêu là gió.
+>
+> Trang sách còn có lửa
+> Mà giấy chẳng cháy đâu
+> Trang sách có ao sâu
+> Mà giấy không hề ướt.
+>
+> Trang sách không nói được
+> Sao em nghe điều gì
+> Dạt dào như sóng vỗ
+> Một chân trời đang đi.
 
-Khi trang sách mở ra
-Chân trời xa xích lại
-Bắt đầu là cỏ dại
-Thứ đến là cánh chim
-Sau nữa là trẻ con
-Cuối cùng là người lớn.
+##### 2. Từ ngữ giải nghĩa
+*   **Chân trời**: Đường giới hạn tầm mắt nhìn thấy trời và đất như gặp nhau ở ngoài xa (ở đây ý nói trang sách mở ra những thế giới xa xôi bao la rộng lớn).
+*   **Cỏ dại**: Các loài cỏ tự mọc hoang dã ngoài thiên nhiên mà không cần bàn tay con người chăm sóc.
 
-Trong trang sách có biển
-Em thấy những cánh buồm
-Trong trang sách có rừng
-Với bao nhiêu là gió.
+##### 3. Câu hỏi đọc hiểu & Trả lời
+1.  **Sắp xếp các sự vật theo thứ tự được nhắc đến trong khổ thơ đầu?**
+    *   *Trả lời*: Thứ tự các sự vật xuất hiện trong khổ thơ đầu là: *cỏ dại -> cánh chim -> trẻ con -> người lớn*.
+2.  **Ở khổ thơ thứ hai và thứ ba, bạn nhỏ thấy những gì trong trang sách?**
+    *   *Trả lời*: Bạn nhỏ thấy có biển cả bao la với những cánh buồm nhấp nhô, có rừng cây lộng gió, có ngọn lửa bập bùng nhưng giấy không bị cháy, và có ao sâu thăm thẳm nhưng giấy không hề ướt.
+3.  **Theo em, khổ thơ cuối muốn nói lên điều kì diệu gì của trang sách?**
+    *   *Trả lời*: Khổ thơ cuối nói lên điều kì diệu là tuy trang sách không có miệng để nói, nhưng nó lại chứa đựng vô vàn những âm thanh, bài học sinh động dạt dào như tiếng sóng biển, dẫn lối các em đi khám phá những "chân trời" tri thức mới lạ của cuộc sống.
+4.  **Hãy học thuộc lòng hai khổ thơ em thích nhất?**
+    *   *Gợi ý*: Học sinh tự chọn 2 khổ thơ (thường chọn khổ 2 và 3 vì có nhiều hình ảnh thiên nhiên quen thuộc) để học thuộc lòng tại lớp.
 
-Trang sách còn có lửa
-Mà giấy chẳng cháy đâu
-Trang sách có ao sâu
-Mà giấy không hề ướt.
+---
 
-Trang sách không nói được
-Sao em nghe điều gì
-Dạt dào như sóng vỗ
-Một chân trời đang đi.
-*(Nguyễn Nhật Ánh)*
+#### II. HOẠT ĐỘNG VIẾT & LUYỆN TẬP
+##### 1. Nghe - viết
+*   Nghe - viết lại 2 khổ thơ cuối của bài thơ **"Khi trang sách mở ra"** thật chính xác và sạch đẹp.
+*   **Quy tắc viết hoa**: Thực hành luyện viết đúng quy tắc viết hoa danh từ riêng chỉ tên người Việt Nam (viết hoa chữ cái đầu tiên của tất cả các âm tiết tạo thành tên riêng đó).
+    *   *Ví dụ*: *Nguyễn Xuân Sanh, Thanh Hào, Nguyễn Nhật Ánh, Nguyễn Trọng Hoàn...*
+*   **Phân biệt chính tả**: Phân biệt cách dùng phụ âm đầu **l/n**, vần **ăn/ăng** và vần **ân/âng**.
 
-**Từ ngữ**
-- **Cỏ dại:** cỏ mọc tự nhiên.
-- **Thứ đến:** sau đó.
+##### 2. Luyện tập Từ và Câu
+*   **Tìm từ ngữ chỉ đặc điểm của trang sách, cuốn sách**: Trắng tinh, phẳng phiu, thơm tho, mỏng, dày, rực rỡ, vuông vắn...
+*   **Đặt câu nêu đặc điểm của một cuốn sách em yêu thích**:
+    *   *Ví dụ*: *Cuốn truyện tranh của em có rất nhiều hình ảnh rực rỡ sắc màu.* hoặc *Trang sách của em trắng tinh và thơm phức mùi giấy mới.*
 
-**67**
+##### 3. Viết đoạn văn ngắn tả đồ dùng học tập
+*   Viết đoạn văn ngắn (từ 3 đến 5 câu) miêu tả một món đồ dùng học tập mà em thích nhất (Ví dụ: hộp bút, cặp sách, cây bút mực, cuốn sách giáo khoa Tiếng Việt...).
+    *   *Bài mẫu tham khảo*:
+        > Vào năm học mới, mẹ mua cho em một chiếc cặp sách rất đẹp. Chiếc cặp hình chữ nhật, có màu xanh dương rực rỡ mà em vô cùng yêu thích. Mặt trước của cặp in hình chú siêu nhân đang bay lượn rất dũng cảm. Cặp gồm có hai ngăn lớn bên trong để em đựng sách vở phẳng phiu, và hai ngăn lưới nhỏ bên sườn để đựng chai nước uống. Mỗi khi đeo chiếc cặp êm ái trên vai đến trường, em luôn cảm thấy tự tin và vui sướng vô cùng. Em hứa sẽ giữ gìn chiếc cặp thật sạch đẹp và bền lâu.
 
-**?**
-1. Sắp xếp các sự vật sau theo thứ tự được nhắc đến trong khổ thơ đầu.
-a. cánh chim 
-b. cỏ dại 
-c. người lớn
-d. trẻ con
-2. Ở khổ thơ thứ hai và thứ ba, bạn nhỏ thấy những gì trong trang sách?
-3. Theo em, khổ thơ cuối ý nói gì?
-a. Trong trang sách có tiếng sóng vỗ.
-b. Trong trang sách có mây trời đang bay.
-c. Trong trang sách có nhiều điều thú vị về cuộc sống.
-4. Tìm những tiếng có vần giống nhau ở cuối các dòng thơ.
+---
 
-1. Tìm các từ ngữ chỉ sự vật trong khổ thơ thứ hai hoặc thứ ba.
-2. Đặt một câu về một cuốn truyện.
-M: Truyện Tích Chu nói về tình cảm bà cháu.
+#### III. HOẠT ĐỘNG ĐỌC MỞ RỘNG (PHIẾU ĐỌC SÁCH)
+*   Học sinh tự chọn đọc một cuốn sách truyện thiếu nhi ngoài giờ học, sau đó điền đầy đủ các thông tin vào **Phiếu đọc sách** cá nhân:
+    *   **Ngày đọc**: *(Ví dụ: 29/08/2026)*
+    *   **Tên cuốn sách**: *(Ví dụ: Dế Mèn phiêu lưu ký)*
+    *   **Tên tác giả**: *(Ví dụ: Tô Hoài)*
+    *   **Nhân vật em thích nhất**: *(Ví dụ: Chú Dế Mèn dũng cảm và yêu chuộng hòa bình)*
+    *   **Điều em học hỏi được từ cuốn sách**: *(Biết yêu thương, giúp đỡ người yếu thế và dũng cảm sửa chữa lỗi lầm của bản thân).*
 
-## VIẾT
-1. Nghe – viết: Khi trang sách mở ra (2 khổ thơ cuối).
-2. Viết tên 2 tác giả của những cuốn sách em đã đọc.
-
-**68**
-
-3. Chọn a hoặc b.
-a. Chọn l hoặc n thay cho ô vuông.
-- Dao có mài mới sắc, người có học mới []ên.
-- Hay học thì sang, hay []àm thì có.
-- []ật từng trang từng trang
-Giấy trắng sờ mát rượi
-Thơm tho mùi giấy mới
-[]ắn []ót bàn tay xinh.
-*(Theo Nguyễn Quang Huy)*
-
-b. Chọn tiếng trong ngoặc đơn thay cho ô vuông.
-- (gắn/ gắng): [] bó, cố [], [] sức
-- (nắn/ nắng): ánh [], uốn [], [] nót
-- (vẫn/ vẫng): [] thơ, [] trăng, [] trán
-- (vân/ vâng): [] gỗ, [] lời, [] tay
-
-## LUYỆN TẬP
-1. Chọn từ chỉ đặc điểm của mỗi đồ dùng học tập trong hình.
-(thẳng tắp, trắng tinh, nhọn hoắt, tím ngắt)
-
-**69**
-
-2. Kết hợp từ ngữ ở cột A với từ ngữ ở cột B để tạo câu nêu đặc điểm.
-
-| A | B |
-| --- | --- |
-| Bàn học của Bống | thơm mùi giấy mới. |
-| Cuốn vở | ngăn nắp, gọn gàng. |
-| Cục tẩy | nhỏ xíu như một viên kẹo. |
-
-3. Chọn dấu chấm hoặc dấu chấm hỏi thay cho ô vuông.
-Sách ơi thức dậy []
-Vở ơi học bài []
-Ô kìa thước kẻ
-Sao cứ nằm dài []
-Lại còn anh bút
-Trốn tít nơi đâu []
-Nhanh dậy đi mau
-Cùng em đến lớp []
-*(Theo Ngọc Minh)*
-
-1. Kể tên các đồ dùng học tập của em.
-2. Viết 3 – 4 câu tả một đồ dùng học tập của em.
-G: **Tả đồ dùng học tập**
-(1) Em chọn đồ dùng học tập nào?
-(2) Nó có đặc điểm gì? (về hình dạng, màu sắc,...)
-(3) Nó giúp ích gì cho em trong học tập?
-(4) Em có nhận xét hay suy nghĩ gì về đồ dùng học tập đó?
-
-**70**
-
-## ĐỌC MỞ RỘNG
-1. Cho biết phiếu đọc sách dưới đây của bạn Nam có những nội dung gì.
-**PHIẾU ĐỌC SÁCH**
-Ngày: 18/10/2020
-Tên sách: Cái Tết của mèo con
-Tên tác giả: Nguyễn Đình Thi
-Điều em thích nhất: Mèo con rất dũng cảm.
-
-2. Ghi chép các thông tin về cuốn sách mà em đã đọc vào phiếu đọc sách theo mẫu (làm vào vở).
-**PHIẾU ĐỌC SÁCH**
-Ngày: (...)
-Tên sách: (...)
-Tên tác giả: (...)
-Điều em thích nhất: (...)
-
-3. Nói về điều em thích nhất trong cuốn sách đã đọc.
-
-# Tuần 9
-
-**71**
-
-**ÔN TẬP GIỮA HỌC KÌ 1**
-
-## Tiết 1 - 2
-1. Tìm tên bài đọc tương ứng với nội dung của bài.
-
-| Tên bài đọc | Nội dung |
-| --- | --- |
-| 1. TÔI LÀ HỌC SINH LỚP 2 | a. Kể về niềm vui của hai anh em. |
-| 2. NIỀM VUI CỦA BI VÀ BỐNG | b. Giới thiệu về sách. |
-| 3. MỘT GIỜ HỌC | c. Kể về ngày khai trường của một bạn học sinh lớp 2. |
-| 4. CÁI TRỐNG TRƯỜNG EM | d. Nói về một đồ vật thân thuộc ở trường học. |
-| 5. CUỐN SÁCH CỦA EM | e. Kể về cậu bé Quang tự tin nói trước lớp. |
-
-**72**
-
-2. Chọn đọc một bài và trả lời câu hỏi.
-- **TÔI LÀ HỌC SINH LỚP 2:** Theo em, vì sao vào ngày khai trường, các bạn thường muốn đến trường sớm?
-- **NIỀM VUI CỦA BI VÀ BỐNG:** Theo em, vì sao Bi và Bống không vẽ tranh cho mình mà lại vẽ cho nhau?
-- **EM CÓ XINH KHÔNG?:** Cuối cùng, voi em nhận thấy mình xinh nhất khi nào?
-- **CẦU THỦ DỰ BỊ:** Theo gấu, cầu thủ dự bị là như thế nào?
-- **CÁI TRỐNG TRƯỜNG EM:** Vì sao trong những ngày hè trống trường lại buồn?
-- **CÔ GIÁO LỚP EM:** Em thích khổ thơ nào nhất? Vì sao?
-
-## Tiết 3 - 4
-3. Nghe – viết: Cô giáo lớp em (2 khổ thơ đầu).
-4. Trò chơi: Đoán từ
-a. Bắt đầu bằng tr: Đồ vật ở trường. Dùng để báo giờ học
-b. Bắt đầu bằng ch: Đồ vật trong nhà. Dùng để quét nhà
-c. Chứa vần ang: Đồ vật trong lớp. Dùng để viết chữ lên đó
-d. Chứa vần an: Đồ vật ở góc học tập. Dùng để bày sách vở
-
-**73**
-
-5. Viết tên đồ vật trong mỗi hình.
-(Đồng hồ báo thức, Cặp sách, Bóng đèn bàn)
-
-6. Hỏi – đáp về công dụng của từng đồ vật ở bài tập 5.
-M:
-- Kéo dùng để làm gì?
-- Kéo dùng để cắt giấy, cắt vải,...
-
-**74**
-
-7. Ghép các từ ngữ để tạo 4 câu nêu đặc điểm.
-- đôi mắt của bé
-- những vì sao
-- cầu vồng
-- tóc bà
-- lấp lánh trong đêm
-- to tròn, đen láy
-- đã bạc
-- rực rỡ sau cơn mưa
-
-## Tiết 5 - 6
-8. Đóng vai, nói và đáp lời trong các tình huống sau:
-a. Nhờ bạn nhặt giúp cái bút bị rơi.
-b. Khen bạn viết chữ đẹp.
-c. An ủi bạn khi bạn bị ốm nên phải nghỉ học.
-d. Chúc mừng sinh nhật bạn.
-
-9. Mỗi câu ở cột A thuộc kiểu câu nào ở cột B?
-
-| A | B |
-| --- | --- |
-| Bác An là nông dân. | Câu nêu đặc điểm |
-| Bác đang gặt lúa. | Câu nêu hoạt động |
-| Bác rất chăm chỉ và cẩn thận. | Câu giới thiệu |
-
-10. Chọn dấu chấm hoặc dấu chấm hỏi thay cho ô vuông.
-**Ăn gì trước?**
-Hai anh em vừa ăn bánh quy vừa trò chuyện:
-Anh: - Nếu cái bánh này hình chiếc ô tô, em sẽ ăn phần nào trước []
-Em: - Em sẽ ăn bốn cái bánh xe ạ []
-Anh: - Tại sao vậy []
-Em: - Em phải ăn bánh xe trước để cái xe không chạy được nữa [] Nếu ăn các bộ phận khác, anh nghĩ cái xe chịu đứng yên cho em ăn nó hay sao?
-*(Trung Nguyên sưu tầm)*
-
-**75**
-
-## Tiết 7 - 8
-11. Nhìn tranh và nói tên câu chuyện. Chọn kể một câu chuyện em thích.
-(1) Chú đỗ con
-(2) Hoạ mi, vẹt và quạ
-(3) Niềm vui của Bi và Bống
-(4) Voi em đi tìm tự tin
-
-12. Cùng bạn hỏi – đáp về những câu chuyện em và bạn vừa kể.
-M:
-- Câu chuyện có mấy nhân vật?
-- Bạn thích nhân vật nào?
-
-**76**
-
-## Tiết 9 - 10
-13. Đọc câu chuyện sau:
-
-**CÂU CHUYỆN BÓ ĐŨA**
-
-Ngày xưa, ở một gia đình kia, có hai anh em. Lúc nhỏ, anh em rất hoà thuận. Khi lớn lên, anh có vợ, em có chồng. Tuy mỗi người một nhà nhưng vẫn hay va chạm.
-Thấy các con không yêu thương nhau, người cha rất buồn phiền. Một hôm, ông đặt một bó đũa và một túi tiền lên mặt bàn rồi gọi các con lại và bảo:
-- Ai bẻ gãy được bó đũa này thì cha thưởng cho túi tiền.
-Bốn người con lần lượt bẻ bó đũa. Ai cũng cố hết sức mà không sao bẻ gãy được.
-Người cha bèn cởi bó đũa ra, rồi thong thả bẻ gãy từng chiếc một cách dễ dàng.
-Thấy vậy, bốn người con cùng nói:
-- Thưa cha, lấy từng chiếc mà bẻ thì có khó gì!
-Người cha liền bảo:
-- Đúng. Như thế là các con đều thấy rằng chia lẻ ra thì yếu, hợp lại thì mạnh. Vậy các con phải biết yêu thương, đùm bọc lẫn nhau. Có đoàn kết thì mới có sức mạnh.
-*(Theo Ngụ ngôn Việt Nam)*
-
-**77**
-
-Trả lời câu hỏi và thực hiện yêu cầu.
-a. Khi lớn lên, tình cảm giữa anh và em như thế nào?
-- không hoà thuận
-- hoà thuận
-- không thay đổi
-b. Người cha nghĩ ra cách gì để khuyên bảo các con?
-c. Vì sao bốn người con không bẻ gãy được bó đũa?
-d. Người cha bẻ gãy bó đũa bằng cách nào?
-e. Người cha muốn khuyên các con điều gì?
-g. Tìm từ ngữ ở cột A phù hợp với nghĩa của nó ở cột B.
-
-| A | B |
-| --- | --- |
-| hoà thuận | buồn và lo nghĩ, không yên lòng |
-| yêu thương | êm ấm, không có xích mích |
-| buồn phiền | có tình cảm gắn bó tha thiết, quan tâm, chăm sóc hết lòng |
-
-h. Xếp các từ ngữ dưới đây vào nhóm thích hợp.
-gọi, nhà, bẻ, bó đũa, đặt, túi, nói
-- Từ ngữ chỉ sự vật:
-- Từ chỉ hoạt động:
-
-14. Viết 3 – 4 câu giới thiệu một đồ chơi hoặc một đồ dùng gia đình.
-G:
-- Đồ vật em muốn giới thiệu là gì?
-- Đồ vật đó từ đâu mà có?
-- Nó có hình dáng, màu sắc như thế nào?
-- Em có suy nghĩ gì về ích lợi của đồ vật đó?
-
-**78**
-
-**NIỀM VUI TUỔI THƠ**
+---
