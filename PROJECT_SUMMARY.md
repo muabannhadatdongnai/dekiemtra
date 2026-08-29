@@ -1,4 +1,35 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 26: rà soát chủ động theo yêu cầu Khoa "còn gì để hoàn thiện hơn" - nâng Next.js, test Word thật bằng LibreOffice, giám sát Upstash, Error Boundary)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 27: xác nhận + viết test cho "in đen/trắng" và "Thu thập số liệu Lớp 3", xuất phiếu review icon line-art)
+
+## PHIÊN 27 — Xác nhận 2 tính năng tưởng "chưa code" đã xong từ trước + phiếu review icon
+
+**Bối cảnh**: Khoa yêu cầu làm tiếp 3 mục treo trong bảng "CẦN KHOA QUYẾT ĐỊNH": (1) chế độ in
+Màu/Đen trắng toàn phiếu, (2) Lớp 3 "Thu thập/phân loại số liệu" Đợt 3, (3) icon line-art Bài 3
+chưa qua mắt giáo viên/học sinh thật. Rà soát code THẬT trước khi viết gì mới.
+
+**Phát hiện chính**: (1) và (2) **ĐÃ CODE XONG HOÀN CHỈNH từ trước** (đủ 4 tầng
+generator/catalog/orchestrator/preview/Word export cho mục 2; đủ preview + Word export + UI
+checkbox + wiring `page.js` cho mục 1) — chỉ là `NEXT_STEPS.md` chưa được cập nhật, đúng kiểu
+lệch tài liệu đã từng gặp với `ThuThapSoLieuSection`. Đã chạy thử THẬT (không chỉ đọc code) qua
+`generateWorksheet()` + `buildWorksheetDocxBlob()` để xác nhận trước khi viết test.
+
+**Việc thực sự làm trong phiên này:**
+1. `test/worksheetPrintModeBw.test.js` (5 test) — `getSectionVisualTheme(bwMode)` luôn trả đúng
+   `BW_PALETTE` bất kể layout/index; `bwMode=false`/mặc định không bị ảnh hưởng; Word xuất ra ở
+   chế độ đen/trắng không còn sót hex màu gốc nào của `COLOR_PALETTES`.
+2. `test/worksheetLop3Dot3.test.js` (9 test) — cấu trúc dữ liệu `generateThuThapSoLieu`, ràng
+   buộc max/min duy nhất, câu hỏi khớp dữ liệu, catalog chỉ lộ ở Lớp 3, tích hợp
+   `generateWorksheet()`, Word export đúng nội dung/đáp án + không lộ đáp án bản học sinh + dùng
+   ảnh PNG (không phải ký tự Unicode rủi ro).
+3. `lineart-icon-review-sheet.html` — trang HTML độc lập liệt kê đủ 16 icon từ
+   `scripts/lineArtIconDefs.js` kèm ô tick "Đạt/Cần chỉnh sửa" + ghi chú, để Khoa đưa giáo
+   viên/học sinh thật xem (việc mục #7 vốn cần con người, Claude không tự làm thay được).
+4. Cập nhật bảng "CẦN KHOA QUYẾT ĐỊNH" trong `NEXT_STEPS.md` — đánh dấu xong mục #3, #4; ghi rõ
+   công cụ hỗ trợ cho mục #7.
+
+**Kết quả**: `npm test` 303/303 PASS (289 cũ + 14 mới), `npm run build` sạch. Không sửa logic
+sản phẩm nào - chỉ xác nhận, viết test, và làm công cụ hỗ trợ review cho việc cần con người.
+
+---
 
 ## PHIÊN 26 — Rà soát chủ động: nâng Next.js, test Word thật, giám sát Upstash, Error Boundary
 

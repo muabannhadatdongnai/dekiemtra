@@ -39,12 +39,57 @@ dòng đó khỏi bảng (không cần giữ lại lịch sử ở đây — l�
 |---|---|---|
 | 1 | Nâng cấp Next.js 14 → 16 | ✅ **Đã làm xong (Phiên 26)** — 16.3.3, build/test/audit sạch. Xem mục "PHIÊN 26" bên dưới. |
 | 2 | Có kích hoạt tab "Coloring Page" (Tô màu) hay không? | Code đã đủ 4 tầng (form/preview/export/API) nhưng chưa nối vào `page.js` — đang "chết" trong kho. Cần Khoa xác nhận có muốn thêm thành tab thứ 8 không, hay xoá hẳn cho gọn. |
-| 3 | Chế độ in Màu/Đen trắng cho TOÀN BỘ phiếu (không riêng icon Bài 3) | Đã có draft thiết kế (`printMode: color/bw`) nhưng chưa code — cần Khoa xác nhận mức độ ưu tiên so với các việc khác. |
-| 4 | Lớp 3 - "Thu thập/phân loại số liệu" (Đợt 3, đọc bảng/biểu đồ cột) | Mảng nội dung Toán 3-5 duy nhất còn thiếu, cần UI bảng/biểu đồ phức tạp hơn — cần Khoa xác nhận độ ưu tiên trước khi tách phiên riêng để làm. |
+| 3 | Chế độ in Màu/Đen trắng cho TOÀN BỘ phiếu (không riêng icon Bài 3) | ✅ **Hoá ra ĐÃ CODE XONG từ trước** (không rõ phiên nào — comment trong code ghi "Phiên 23, phản hồi giáo viên dùng in dịch vụ photocopy"), chỉ là bảng này chưa được cập nhật nên vẫn treo "chưa code". Đã xác nhận + viết test ở Phiên 27 (xem mục "PHIÊN 27" bên dưới, `test/worksheetPrintModeBw.test.js`). KHÔNG còn tồn đọng. |
+| 4 | Lớp 3 - "Thu thập/phân loại số liệu" (Đợt 3, đọc bảng/biểu đồ cột) | ✅ **Hoá ra ĐÃ CODE XONG từ trước** (đủ cả 4 tầng: generator/catalog/orchestrator/preview/Word export) - CÙNG kiểu lệch tài liệu như mục #3 ở trên, và giống hệt điều "CẦN xác nhận" đã ghi ở mục "Trên đường chân trời" cũ về `ThuThapSoLieuSection`. Đã xác nhận chạy thật end-to-end + viết test ở Phiên 27 (`test/worksheetLop3Dot3.test.js`). KHÔNG còn tồn đọng. |
 | 5 | Tạo file `chuong_{n}_bai.json` cho tính năng "gợi ý Bài theo SGK" (Phiên 25) | Tính năng đã code xong nhưng KHÔNG hoạt động cho tới khi Khoa tự tạo dữ liệu thật trong kho GitHub kiến thức (xem `docs/vi-du-phu-luc-bai-hoc.example.js` để biết cấu trúc). Có thể làm dần theo Chương. |
 | 6 | Lỗ hổng bảo mật `xlsx` (Prototype Pollution/ReDoS) | Nhà phát hành chưa có bản vá — chỉ cần Khoa biết để KHÔNG mở tính năng nhập Excel cho người dùng ẩn danh/công khai trong tương lai; chưa cần hành động ngay. |
-| 7 | Icon line-art mới vẽ (Bài 3, Phiên 20) chưa qua mắt giáo viên/học sinh thật | Nếu thấy icon nào chưa đẹp/chưa giống hình gốc, phản hồi lại để chỉnh ở `scripts/lineArtIconDefs.js`. |
+| 7 | Icon line-art mới vẽ (Bài 3, Phiên 20) chưa qua mắt giáo viên/học sinh thật | Việc NÀY cần Khoa tự làm (Claude không thể tự đưa icon cho giáo viên/học sinh thật xem) - Phiên 27 đã xuất sẵn `lineart-icon-review-sheet.html` (16 icon lấy trực tiếp từ `scripts/lineArtIconDefs.js`, có ô tick "Đạt/Cần chỉnh sửa" + dòng ghi chú cho từng icon) để Khoa in ra hoặc gửi xem, dễ thu thập phản hồi hơn là mở thẳng file code. Khi có phản hồi, sửa trực tiếp ở `scripts/lineArtIconDefs.js` rồi chạy lại `scripts/render-line-art-icons.js`. |
 | 8 | Test flaky (không nghiêm trọng) trong `test/worksheetLineArtIcons.test.js` | Phát hiện ở Phiên 26 khi nâng Next.js: khi random ra icon ⭐ cho bài "Đếm và viết số", nó trùng với ⭐ dùng cố định ở khối "Tự đánh giá" cuối phiếu, khiến assertion `!documentXml.includes(it.icon)` thỉnh thoảng báo sai (không phải bug sản phẩm thật - phiếu Word vẫn đúng). Cần sửa assertion để chỉ soi trong phạm vi `<w:drawing>` của đúng mục đó, hoặc đổi cách kiểm tra. |
+
+---
+
+## ✅ MỚI NHẤT (Phiên 27) — Rà soát 3 việc Khoa yêu cầu "làm tiếp"
+
+**Bối cảnh:** Khoa yêu cầu làm tiếp 3 mục #3, #4, #7 trong bảng "CẦN KHOA QUYẾT ĐỊNH" ở trên.
+Rà soát code THẬT (không chỉ đọc tài liệu) trước khi viết bất kỳ dòng code mới nào - phát hiện
+2/3 việc ĐÃ CODE XONG từ trước, bảng theo dõi chỉ đơn giản là chưa được cập nhật (đúng bài học
+đã có với `ThuThapSoLieuSection`, xem "Còn cần xác nhận" trước Phiên 27).
+
+**1) Chế độ in Màu/Đen trắng (mục #3):** Xác nhận `BW_PALETTE` + `getSectionVisualTheme(...,
+bwMode)` (`worksheetLayoutTemplates.js`) đã phủ ĐỦ cả `WorksheetPreview.jsx` (bar biểu đồ dùng
+vân sọc chéo thay tô đặc để tiết kiệm mực) LẪN `worksheetExportService.js`
+(`buildWorksheetDocxBlob`/`exportWorksheetBothVersions` đều nhận `bwMode`), và đã có checkbox
+thật ở `WorksheetExportActions.jsx` nối qua `page.js` (state `worksheetBwMode`) ảnh hưởng đồng
+thời web xem trước + Word + PDF (PDF tự thừa hưởng qua bản in web). Trước Phiên 27 KHÔNG có test
+tự động nào cho tính năng này - đã thêm `test/worksheetPrintModeBw.test.js` (5 test): xác nhận
+`bwMode=true` luôn trả về đúng `BW_PALETTE` bất kể layout/index, `bwMode=false`/mặc định không bị
+ảnh hưởng (không vô tình bật nhầm), và file Word xuất ra ở chế độ đen/trắng THẬT SỰ không còn sót
+hex màu gốc nào (dò từng màu trong `COLOR_PALETTES`) mà chỉ dùng đúng mã đen/xám của `BW_PALETTE`.
+
+**2) Lớp 3 - "Thu thập/phân loại số liệu" (mục #4):** Xác nhận đủ 4 tầng: generator
+(`generateThuThapSoLieu` trong `worksheetSchemas.js`, đảm bảo max/min duy nhất để câu hỏi
+"nhiều/ít nhất" luôn có 1 đáp án), catalog (giới hạn đúng `LOP_3`), orchestrator
+(`worksheetGenerator.js`), preview (`ThuThapSoLieuSection` - biểu đồ cột NGANG, đã tối ưu bw ở
+mục 1), Word export (`buildThuThapSoLieuParagraphs` - dùng ĐÚNG cách vẽ cột bằng ẢNH PNG tái sử
+dụng từ bug Phiên 24, không dùng lại ký tự Unicode khối rủi ro). Đã chạy thử THẬT end-to-end qua
+`generateWorksheet()` + `buildWorksheetDocxBlob()` (không chỉ đọc code) để xác nhận trước khi
+viết test. Thêm `test/worksheetLop3Dot3.test.js` (9 test): cấu trúc dữ liệu, ràng buộc max/min
+duy nhất, câu hỏi khớp đúng dữ liệu, catalog chỉ lộ ở Lớp 3, tích hợp `generateWorksheet()`, và
+Word export (đúng tiêu đề/câu hỏi/đáp án ở bản giáo viên, KHÔNG lộ đáp án ở bản học sinh, có ảnh
+PNG cột số liệu chứ không phải ký tự Unicode).
+
+**3) Icon line-art chưa qua mắt giáo viên/học sinh thật (mục #7):** Việc này về bản chất là 1
+bước KIỂM THỬ THỰC TẾ chỉ Khoa mới làm được (Claude không tiếp cận được giáo viên/học sinh thật).
+Đã hỗ trợ bằng cách xuất `lineart-icon-review-sheet.html` - trang HTML độc lập liệt kê ĐỦ 16 icon
+lấy trực tiếp từ `scripts/lineArtIconDefs.js` (không vẽ lại/đoán icon mới), mỗi icon có ô tick
+"Đạt, giữ nguyên" / "Cần chỉnh sửa" + dòng ghi chú - in ra giấy hoặc gửi file để giáo viên/học
+sinh xem và đánh dấu trực tiếp, dễ thu thập phản hồi có cấu trúc hơn hẳn việc mở thẳng file code.
+Khi có phản hồi, sửa icon tương ứng trong `scripts/lineArtIconDefs.js` rồi chạy lại
+`node scripts/render-line-art-icons.js` để tái tạo PNG dùng trong Word.
+
+**Kết quả:** `npm test` 303/303 PASS (289 cũ + 14 test mới), `npm run build` sạch (Next.js 16,
+không cảnh báo mới). Không sửa bất kỳ logic sản phẩm nào ở phiên này - chỉ XÁC NHẬN + TEST +
+TÀI LIỆU + 1 công cụ hỗ trợ review (HTML) cho việc thật sự cần con người (icon).
 
 ---
 

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Bảng tham khảo Icon Line-art (Bài 3) — Phiếu để giáo viên/học sinh nhận xét</title>
+<style>
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f7f7f9;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 24px;
+  }
+  h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 20px;
+    max-width: 760px;
+    line-height: 1.5;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .card {
+    background: #fff;
+    border: 1.5px solid #d8d8de;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    position: relative;
+  }
+  .card-num {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #888;
+  }
+  .icon-svg {
+    width: 88px;
+    height: 88px;
+    margin: 10px auto 4px;
+    display: block;
+  }
+  .label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .emoji-ref {
+    font-weight: 400;
+    color: #888;
+    font-size: 12px;
+  }
+  .feedback-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .note-line {
+    font-size: 11px;
+    color: #999;
+    border-top: 1px dashed #ddd;
+    padding-top: 4px;
+  }
+  @media print {
+    body { background: #fff; padding: 8px; }
+    .grid { grid-template-columns: repeat(4, 1fr); }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <h1>Bảng tham khảo 16 icon line-art (Bài 3) — Phiên 20</h1>
+  <div class="subtitle">
+    Đây là toàn bộ icon line-art đen/trắng hiện đang dùng cho Bài 3 (nhận diện hình / tô màu) khi in đen trắng,
+    trích trực tiếp từ <code>scripts/lineArtIconDefs.js</code> (không phải bản dựng lại) — dùng để đưa cho
+    giáo viên/học sinh thật xem và nhận xét trước khi quyết định giữ hay chỉnh icon nào.
+    In tờ này ra hoặc xem trên máy, tick vào ô "Đạt" hoặc "Cần chỉnh sửa" và ghi chú lý do (VD "trông giống
+    quả khác", "nét quá nhỏ khi in", "khó nhận ra là gì") cho từng icon, rồi gửi lại để chỉnh trong
+    <code>scripts/lineArtIconDefs.js</code>.
+  </div>
+  <div class="grid">
+    
+    <div class="card">
+      <div class="card-num">1</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 38c-14-14-34-6-34 14 0 20 20 38 34 38s34-18 34-38c0-20-20-28-34-14z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 38V20"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 22c6-8 16-8 18-2"/></svg>
+      <div class="label">táo <span class="emoji-ref">(gốc: 🍎)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-1"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-1"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">2</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 12l11 24 26 3-19 18 5 26-23-13-23 13 5-26-19-18 26-3z"/></svg>
+      <div class="label">sao <span class="emoji-ref">(gốc: ⭐)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-2"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-2"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">3</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M12 62l6-20c2-6 8-10 14-10h36c6 0 12 4 14 10l6 20"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M8 62h84v10H8z"/>
+<circle cx="28" cy="76" r="9" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="72" cy="76" r="9" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M22 42h56"/></svg>
+      <div class="label">ô tô <span class="emoji-ref">(gốc: 🚗)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-3"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-3"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">4</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="50" cy="44" r="24" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="42" cy="40" r="3" fill="#1a1a1a"/>
+<circle cx="58" cy="40" r="3" fill="#1a1a1a"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M45 47l5 5 5-5"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 20c3-7 12-7 12-2-2 2-7 4-12 2z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M38 68l-4 12M62 68l4 12"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M30 76h8M62 76h8"/></svg>
+      <div class="label">gà con <span class="emoji-ref">(gốc: 🐥)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-4"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-4"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">5</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="50" cy="40" r="11" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="46" cy="37" r="1.6" fill="#1a1a1a"/><circle cx="50" cy="35" r="1.6" fill="#1a1a1a"/><circle cx="54" cy="37" r="1.6" fill="#1a1a1a"/>
+<circle cx="44" cy="42" r="1.6" fill="#1a1a1a"/><circle cx="50" cy="41" r="1.6" fill="#1a1a1a"/><circle cx="56" cy="42" r="1.6" fill="#1a1a1a"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 29L44 14 50 20 56 14z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 51L44 66 50 60 56 66z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M61 40L76 34 70 40 76 46z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M39 40L24 34 30 40 24 46z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M58 32l12-10-6 8 10-2"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M42 32L30 22l6 8-10-2"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M58 48l12 10-6-8 10 2"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M42 48L30 58l6-8-10-2"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 51v30"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 68c-6-2-10 2-10 8M50 76c8-2 12 4 10 8"/></svg>
+      <div class="label">hoa hướng dương <span class="emoji-ref">(gốc: 🌻)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-5"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-5"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">6</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 30c-6-16-34-16-34 4 0 14 20 20 34 8"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 30c6-16 34-16 34 4 0 14-20 20-34 8"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 46c-4 16-30 18-30 32 0 10 16 8 30-10"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 46c4 16 30 18 30 32 0 10-16 8-30-10"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 24v58"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 24c-2-8 2-14 6-16M50 24c2-8-2-14-6-16"/></svg>
+      <div class="label">bướm <span class="emoji-ref">(gốc: 🦋)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-6"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-6"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">7</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M40 42l36 36c4 4 4 11-1 16-5 5-12 5-16 1L23 59c-6-6-5-15 1-21 6-6 10-2 16 4z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M26 22c2 5 1 11-2 15M36 16c3 6 2 13-1 18M18 30c5 3 9 8 11 13"/></svg>
+      <div class="label">cà rốt <span class="emoji-ref">(gốc: 🥕)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-7"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-7"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">8</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M14 50c14-18 44-18 58 0-14 18-44 18-58 0z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M72 50l16-14v28z"/>
+<circle cx="30" cy="46" r="3" fill="#1a1a1a"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M30 50c6 4 14 4 20 0"/></svg>
+      <div class="label">cá <span class="emoji-ref">(gốc: 🐟)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-8"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-8"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">9</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><ellipse cx="50" cy="36" rx="22" ry="26" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 62l-4 8 4 4-4 8 4 6"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M44 60c2 4 10 4 12 0"/></svg>
+      <div class="label">bóng bay <span class="emoji-ref">(gốc: 🎈)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-9"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-9"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">10</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="50" cy="34" r="22" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 12a22 22 0 0 1 0 44 14 14 0 0 1 0-28 7 7 0 0 1 0 14"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 56v34"/></svg>
+      <div class="label">kẹo mút <span class="emoji-ref">(gốc: 🍭)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-10"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-10"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">11</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M50 10c14 10 16 34 12 50H38c-4-16-2-40 12-50z"/>
+<circle cx="50" cy="32" r="7" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M38 46l-14 8v14l14-8M62 46l14 8v14l-14-8"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M42 60l-4 20 12-8M58 60l4 20-12-8"/></svg>
+      <div class="label">tên lửa <span class="emoji-ref">(gốc: 🚀)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-11"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-11"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">12</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="24" cy="52" r="9" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="20" cy="49" r="1.8" fill="#1a1a1a"/>
+<ellipse cx="56" cy="52" rx="30" ry="24" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M56 28v48M32 52h48M40 34l32 36M72 34 40 70"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M38 30c-6-8-2-16 6-14M76 42c8-4 16 2 12 10M76 62c8 4 12 12 6 16M38 74c-6 8-16 6-16-2"/></svg>
+      <div class="label">rùa <span class="emoji-ref">(gốc: 🐢)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-12"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-12"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">13</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="34" cy="24" r="9" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="66" cy="24" r="9" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="50" cy="46" r="26" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="41" cy="42" r="3" fill="#1a1a1a"/>
+<circle cx="59" cy="42" r="3" fill="#1a1a1a"/>
+<circle cx="50" cy="52" r="6" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="24" cy="70" r="12" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="76" cy="70" r="12" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <div class="label">gấu bông <span class="emoji-ref">(gốc: 🧸)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-13"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-13"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">14</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="50" cy="50" r="30" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="40" cy="38" r="3" fill="#1a1a1a"/>
+<circle cx="60" cy="40" r="3" fill="#1a1a1a"/>
+<circle cx="36" cy="58" r="3" fill="#1a1a1a"/>
+<circle cx="58" cy="62" r="3" fill="#1a1a1a"/>
+<circle cx="50" cy="48" r="3" fill="#1a1a1a"/></svg>
+      <div class="label">bánh quy <span class="emoji-ref">(gốc: 🍪)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-14"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-14"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">15</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><circle cx="50" cy="50" r="7" fill="#1a1a1a"/>
+<circle cx="50" cy="30" r="14" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="68" cy="42" r="14" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="61" cy="63" r="14" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="39" cy="63" r="14" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="32" cy="42" r="14" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <div class="label">hoa đào <span class="emoji-ref">(gốc: 🌸)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-15"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-15"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+    <div class="card">
+      <div class="card-num">16</div>
+      <svg viewBox="0 0 100 100" class="icon-svg"><ellipse cx="56" cy="56" rx="16" ry="22" transform="rotate(20 56 56)" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M42 46l26-6M45 56l26-6M48 66l26-6"/>
+<circle cx="38" cy="34" r="9" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="35" cy="32" r="2" fill="#1a1a1a"/>
+<circle cx="41" cy="32" r="2" fill="#1a1a1a"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M34 25c-2-5-7-7-9-4M42 25c2-5 7-7 9-4"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M46 44c-14-14-30-8-24 6 4 10 16 8 24-6z"/>
+<path stroke="#1a1a1a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M64 50c14-10 28 0 20 12-6 8-18 4-24-6z"/></svg>
+      <div class="label">ong <span class="emoji-ref">(gốc: 🐝)</span></div>
+      <div class="feedback-row">
+        <label><input type="checkbox" name="ok-16"> Đạt, giữ nguyên</label>
+        <label><input type="checkbox" name="fix-16"> Cần chỉnh sửa</label>
+      </div>
+      <div class="note-line">Ghi chú: ________________________________________</div>
+    </div>
+  </div>
+</body>
+</html>
