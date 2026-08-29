@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 22,
+    "tenBai": "Phép cộng các số có nhiều chữ số",
+    "noiDungCotLoi": "Thực hiện thành thạo đặt tính rồi tính phép cộng số tự nhiên có nhiều chữ số (có nhớ không quá ba lượt, không liên tiếp). Vận dụng giải bài toán thực tế tính tổng số lượng, doanh thu, quãng đường."
+  },
+  {
+    "soBai": 23,
+    "tenBai": "Phép trừ các số có nhiều chữ số",
+    "noiDungCotLoi": "Thực hiện thành thạo đặt tính rồi tính phép trừ số tự nhiên có nhiều chữ số (có nhớ không quá ba lượt, không liên tiếp), có mượn 1 khi cần. Giải bài toán thực tế so sánh chênh lệch số liệu lớn."
+  },
+  {
+    "soBai": 24,
+    "tenBai": "Tính chất giao hoán và kết hợp của phép cộng",
+    "noiDungCotLoi": "Nắm tính chất giao hoán (a+b=b+a) và kết hợp ((a+b)+c=a+(b+c)) của phép cộng. Vận dụng phối hợp cả hai tính chất để nhóm số hạng thành số tròn trăm/nghìn/triệu, tính nhanh giá trị biểu thức."
+  },
+  {
+    "soBai": 25,
+    "tenBai": "Tìm hai số khi biết tổng và hiệu của hai số đó",
+    "noiDungCotLoi": "Nhận diện dạng toán tổng-hiệu; nắm hai cách giải: Số bé=(Tổng-Hiệu):2 rồi tìm số lớn, hoặc Số lớn=(Tổng+Hiệu):2 rồi tìm số bé. Rèn vẽ sơ đồ đoạn thẳng; nhận diện tổng-hiệu ẩn dưới dạng gián tiếp (nửa chu vi, số liền kề)."
+  },
+  {
+    "soBai": 26,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, đánh giá tổng hợp phép cộng, trừ số có nhiều chữ số; tính nhẩm tròn triệu/trăm nghìn; vận dụng tính chất giao hoán, kết hợp để tính thuận tiện. Rèn giải toán dạng Tổng-Hiệu và bài toán thực tế phối hợp nhiều bước tính."
+  }
+]

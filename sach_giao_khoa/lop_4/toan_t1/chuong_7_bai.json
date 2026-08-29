@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 33,
+    "tenBai": "Ôn tập các số đến lớp triệu",
+    "noiDungCotLoi": "Đọc, viết, so sánh thành thạo số tự nhiên đến lớp triệu; nắm cấu tạo thập phân theo hàng, lớp, viết số thành tổng. Thực hành làm tròn số đến hàng trăm/nghìn/chục nghìn/trăm nghìn; giải toán so sánh số liệu lớn."
+  },
+  {
+    "soBai": 34,
+    "tenBai": "Ôn tập phép cộng, phép trừ",
+    "noiDungCotLoi": "Ôn thực hiện thành thạo cộng, trừ số trong phạm vi lớp triệu; tính nhẩm tròn nghìn/chục nghìn/trăm nghìn/triệu. Vận dụng tính chất giao hoán, kết hợp để tính thuận tiện; giải toán Tổng-Hiệu và bài toán thực tế."
+  },
+  {
+    "soBai": 35,
+    "tenBai": "Ôn tập hình học",
+    "noiDungCotLoi": "Củng cố nhận biết góc nhọn, vuông, tù, bẹt và đo góc bằng thước đo góc. Ôn cặp đoạn thẳng song song, vuông góc; nhận dạng hình bình hành, hình thoi; thực hành vẽ hình, cắt ghép và trò chơi logic phẳng."
+  },
+  {
+    "soBai": 36,
+    "tenBai": "Ôn tập đo lường",
+    "noiDungCotLoi": "Hệ thống chuyển đổi đơn vị khối lượng (yến, tạ, tấn, kg, g), diện tích (dm², m², mm², cm²) và thời gian (giây, phút, thế kỉ). Thực hiện tính toán, so sánh số đo sau chuyển đổi; giải toán thực tế đo lường (diện tích ruộng, khối lượng nông sản)."
+  },
+  {
+    "soBai": 37,
+    "tenBai": "Ôn tập chung",
+    "noiDungCotLoi": "Hệ thống, đánh giá tổng hợp toàn bộ nội dung trọng tâm Học kì I: bốn phép tính trong phạm vi 100 000, giá trị biểu thức số và biểu thức chứa chữ. Đánh giá năng lực giải toán thực tiễn phức hợp (hai, ba bước tính, Tổng-Hiệu, rút về đơn vị)."
+  }
+]

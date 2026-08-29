@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 27,
+    "tenBai": "Hai đường thẳng vuông góc",
+    "noiDungCotLoi": "Nhận biết trực quan hai đường thẳng vuông góc (giao nhau tạo 4 góc vuông chung đỉnh); biết dùng ê ke kiểm tra. Nhận diện các cặp cạnh vuông góc trong hình chữ nhật, hình vuông, hình tứ giác."
+  },
+  {
+    "soBai": 28,
+    "tenBai": "Thực hành và trải nghiệm vẽ hai đường thẳng vuông góc",
+    "noiDungCotLoi": "Vẽ được đường thẳng đi qua một điểm cho trước (nằm trên hoặc ngoài đường thẳng) và vuông góc với đường thẳng đó, phối hợp thước thẳng và ê ke. Vận dụng vẽ đường cao của hình tam giác."
+  },
+  {
+    "soBai": 29,
+    "tenBai": "Hai đường thẳng song song",
+    "noiDungCotLoi": "Nhận biết trực quan hai đường thẳng song song (không bao giờ cắt nhau dù kéo dài). Nhận diện cặp cạnh song song trong hình chữ nhật, hình vuông; liên hệ hình ảnh song song trong đời sống."
+  },
+  {
+    "soBai": 30,
+    "tenBai": "Thực hành và trải nghiệm vẽ hai đường thẳng song song",
+    "noiDungCotLoi": "Vẽ được đường thẳng đi qua một điểm cho trước và song song với đường thẳng cho trước, bằng cách vẽ đường phụ vuông góc trung gian rồi vẽ đường cần tìm vuông góc với đường phụ đó."
+  },
+  {
+    "soBai": 31,
+    "tenBai": "Hình bình hành, hình thoi",
+    "noiDungCotLoi": "Nhận biết hình bình hành (hai cặp cạnh đối song song và bằng nhau) và hình thoi (hai cặp cạnh đối song song và bốn cạnh bằng nhau) qua hình ảnh vật thật. Thực hành đo đạc kiểm tra thuộc tính, ghép que tính tạo hình."
+  },
+  {
+    "soBai": 32,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, đánh giá nhận biết hai đường thẳng vuông góc, song song, hình bình hành, hình thoi. Củng cố kĩ năng vẽ bằng thước, ê ke; đếm hình, so sánh đặc điểm cạnh giữa các hình đã học; thực hành cắt ghép hình."
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "soBai": 7,
+    "tenBai": "Đo góc, đơn vị đo góc",
+    "noiDungCotLoi": "Nhận biết đơn vị đo góc độ (°); biết cấu tạo và cách dùng thước đo góc để xác định số đo góc 60°, 90°, 120°, 180°. Đọc, viết đúng tên góc, đỉnh, cạnh và số đo góc tương ứng."
+  },
+  {
+    "soBai": 8,
+    "tenBai": "Góc nhọn, góc tù, góc bẹt",
+    "noiDungCotLoi": "Phân biệt, gọi đúng tên góc nhọn (0°-90°), góc vuông (90°), góc tù (90°-180°), góc bẹt (180°) qua trực quan hoặc ê ke, thước đo góc. Nhận diện các loại góc qua vật thật trong đời sống (kim đồng hồ, quạt nan, mái nhà...)."
+  },
+  {
+    "soBai": 9,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Ôn tập, đánh giá tổng hợp kĩ năng nhận dạng góc nhọn, vuông, tù, bẹt và đo góc bằng thước đo góc. Vận dụng đếm số lượng góc của hình đa giác, giải bài toán so sánh và phân loại góc thực tế."
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "soBai": 10,
+    "tenBai": "Số có sáu chữ số. Số 1 000 000",
+    "noiDungCotLoi": "Đọc, viết thành thạo số có sáu chữ số trong phạm vi 1 000 000; nắm cấu tạo thập phân (trăm nghìn, chục nghìn, nghìn, trăm, chục, đơn vị). Nhận biết số 1 000 000 là số liền sau của 999 999."
+  },
+  {
+    "soBai": 11,
+    "tenBai": "Hàng và lớp",
+    "noiDungCotLoi": "Nhận biết khái niệm Hàng và Lớp: lớp đơn vị (đv, chục, trăm), lớp nghìn (nghìn, chục nghìn, trăm nghìn), lớp triệu (triệu, chục triệu, trăm triệu). Biết ngắt quãng mỗi lớp 3 chữ số để đọc/viết số; xác định giá trị chữ số theo vị trí."
+  },
+  {
+    "soBai": 12,
+    "tenBai": "Các số trong phạm vi lớp triệu",
+    "noiDungCotLoi": "Đọc, viết thành thạo số có nhiều chữ số (đến 9 chữ số) trong phạm vi lớp triệu; viết số dưới dạng tổng theo cấu tạo hàng. Vận dụng đọc, so sánh số liệu lớn trong đời sống (dân số, khoảng cách địa lý)."
+  },
+  {
+    "soBai": 13,
+    "tenBai": "Làm tròn số đến hàng trăm nghìn",
+    "noiDungCotLoi": "Nắm quy tắc làm tròn số đến hàng trăm nghìn: xem chữ số hàng chục nghìn, nếu là 5-9 thì làm tròn lên, nếu 0-4 thì làm tròn xuống. Vận dụng làm tròn để ước lượng nhanh số đo lớn trong thực tế."
+  },
+  {
+    "soBai": 14,
+    "tenBai": "So sánh các số có nhiều chữ số",
+    "noiDungCotLoi": "Nắm quy tắc so sánh: số nào nhiều chữ số hơn thì lớn hơn; nếu bằng số chữ số thì so sánh từng cặp chữ số cùng hàng từ trái sang phải. Tìm số lớn nhất/bé nhất và sắp xếp thứ tự nhóm không quá 4 số."
+  },
+  {
+    "soBai": 15,
+    "tenBai": "Làm quen với dãy số tự nhiên",
+    "noiDungCotLoi": "Nhận biết các số 0,1,2,3,... là số tự nhiên và dãy số tự nhiên sắp xếp từ bé đến lớn bắt đầu từ 0. Nắm 4 đặc điểm: số bé nhất là 0, không có số lớn nhất, hai số liên tiếp hơn kém 1 đơn vị, biểu diễn trên tia số."
+  },
+  {
+    "soBai": 16,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, đánh giá tổng hợp đọc, viết, cấu tạo số nhiều chữ số; phân tích hàng và lớp; so sánh, xếp thứ tự; làm tròn số đến hàng trăm nghìn và nhận biết dãy số tự nhiên. Rèn lập số theo tiêu chí; giải toán thực tiễn tổng hợp."
+  }
+]

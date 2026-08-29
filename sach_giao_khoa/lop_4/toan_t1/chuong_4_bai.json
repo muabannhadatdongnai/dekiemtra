@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 17,
+    "tenBai": "Yến, tạ, tấn",
+    "noiDungCotLoi": "Nhận biết đơn vị đo khối lượng yến, tạ, tấn và quan hệ với kg: 1 yến=10kg, 1 tạ=100kg, 1 tấn=1000kg. Thực hành ước lượng khối lượng vật, con vật thực tế; tính toán cộng, trừ, nhân, chia trên số đo khối lượng."
+  },
+  {
+    "soBai": 18,
+    "tenBai": "Đề-xi-mét vuông, mét vuông, mi-li-mét vuông",
+    "noiDungCotLoi": "Nhận biết đơn vị đo diện tích dm², m², mm² và quy tắc chuyển đổi: 1dm²=100cm², 1m²=100dm²=10000cm², 1cm²=100mm². Thực hiện tính toán, so sánh số đo diện tích; ước lượng diện tích bề mặt thực tế."
+  },
+  {
+    "soBai": 19,
+    "tenBai": "Giây, thế kỉ",
+    "noiDungCotLoi": "Nhận biết đơn vị giây và thế kỉ; nắm quan hệ 1 phút=60 giây, 1 giờ=3600 giây, 1 thế kỉ=100 năm. Biết dùng chữ số La Mã xác định một năm thuộc thế kỉ nào."
+  },
+  {
+    "soBai": 20,
+    "tenBai": "Thực hành và trải nghiệm sử dụng một số đơn vị đo đại lượng",
+    "noiDungCotLoi": "Vận dụng đo đạc, tính toán, chuyển đổi số đo độ dài, khối lượng, diện tích, thời gian trong tình huống thực tiễn. Làm quen tiền mệnh giá 200 000đ, 500 000đ; nhận biết năm nhuận (366 ngày, tháng 2 có 29 ngày) và năm thường (365 ngày, tháng 2 có 28 ngày)."
+  },
+  {
+    "soBai": 21,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, đánh giá tổng hợp các đơn vị đo khối lượng (yến, tạ, tấn, kg, g), diện tích (mm², cm², dm², m²), thời gian (giây, phút, giờ, ngày, năm, thế kỉ) và tiền Việt Nam. Rèn tính toán trên số đo kèm danh số; giải toán thực tế một, hai bước tính phối hợp đổi đơn vị."
+  }
+]

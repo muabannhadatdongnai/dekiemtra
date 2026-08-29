@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Ôn tập các số đến 100 000",
+    "noiDungCotLoi": "Ôn đọc, viết, so sánh, sắp xếp thứ tự số trong phạm vi 100 000; phân tích cấu tạo thập phân, viết số thành tổng chục nghìn, nghìn, trăm, chục, đơn vị. Xác định số liền trước/sau, số lớn nhất/bé nhất; làm tròn số có năm chữ số đến hàng nghìn."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Ôn tập các phép tính trong phạm vi 100 000",
+    "noiDungCotLoi": "Ôn đặt tính rồi tính cộng, trừ, nhân (số có bốn, năm chữ số với số có một chữ số), chia (số có bốn, năm chữ số cho số có một chữ số) trong phạm vi 100 000. Tính nhẩm số tròn nghìn, tròn chục nghìn; tính giá trị biểu thức hai, ba phép tính; giải toán thực tế."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Số chẵn, số lẻ",
+    "noiDungCotLoi": "Nhận biết khái niệm số chẵn, số lẻ dựa vào chữ số hàng đơn vị (chẵn: 0,2,4,6,8; lẻ: 1,3,5,7,9). Nhận biết hai số chẵn/lẻ liên tiếp hơn kém nhau 2 đơn vị; lập số chẵn lớn nhất, số lẻ bé nhất từ thẻ chữ số."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Biểu thức chứa chữ",
+    "noiDungCotLoi": "Nhận biết biểu thức chứa một, hai, ba chữ; biết tính giá trị biểu thức khi thay chữ bằng số cụ thể. Vận dụng xây dựng công thức chu vi hình vuông (P=a×4), hình chữ nhật (P=(a+b)×2), hình tam giác (P=a+b+c)."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Giải bài toán có ba bước tính",
+    "noiDungCotLoi": "Nhận biết cấu trúc bài toán giải bằng ba bước tính; nắm quy trình phân tích đề bài, lập sơ đồ đoạn thẳng tóm tắt, thiết lập kế hoạch giải (3 phép tính) và trình bày bài giải khoa học."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Luyện tập chung",
+    "noiDungCotLoi": "Hệ thống, củng cố bốn phép tính trong phạm vi 100 000, tính nhẩm, tính giá trị biểu thức số và biểu thức chứa chữ. Củng cố số chẵn/lẻ, làm tròn số đến hàng nghìn; giải toán thực tế một, hai hoặc ba bước tính."
+  }
+]
