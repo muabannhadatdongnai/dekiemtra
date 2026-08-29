@@ -24,7 +24,16 @@
 > exportReportCommentsToWord thiếu "return blob", rà soát chéo sửa luôn 4 hàm tương tự), (4) log
 > giám sát hạn mức Upstash free tier ([UPSTASH_ERROR]/[UPSTASH_QUOTA?]/[UPSTASH_HEALTH] trong
 > upstashClient.js), (5) Error Boundary tổng (`src/app/error.js` + `global-error.js`) - tránh
-> màn hình trắng khi lỗi bất ngờ. 289/289 test PASS, build sạch, xem chi tiết mục "PHIÊN 26"**.
+> màn hình trắng khi lỗi bất ngờ. 289/289 test PASS, build sạch, xem chi tiết mục "PHIÊN 26"** +
+> **PHIÊN 27: xác nhận chế độ in Màu/Đen trắng + Lớp 3 "Thu thập số liệu" thực ra ĐÃ CODE XONG từ
+> trước (chỉ thiếu tài liệu + test), viết test cho cả 2 (14 test mới), làm trang review icon
+> line-art. 303/303 test PASS** + **PHIÊN 28: Soạn Giáo Án - (1) quy tắc tích hợp GDQP&AN không
+> còn ép buộc vào bài học không liên quan (Lớp 1-3 học bảng chữ cái...), tự chuyển sang Đạo đức/
+> Kỹ năng sống/Quyền Trẻ em khi phù hợp hơn, kèm nhãn hiển thị ĐỘNG (field mới
+> `tichHopGDQPANNhan`, có fallback tương thích ngược); (2) phụ lục MỚI "Gợi ý thiết kế Học liệu" -
+> tự động sinh 3 từ khoá tiếng Việt để giáo viên Lớp 1-3 copy-dán vào Canva/ChatGPT/Gemini tạo
+> Flashcard, KHÔNG cần bật cờ riêng (field mới `goiYHocLieuHinhAnh`, chỉ Lớp 1-3). 313/313 test
+> PASS (303 cũ + 10 mới), xem chi tiết mục "PHIÊN 28" trong PROJECT_SUMMARY.md**.
 > File này để mang sang chat mới không mất ngữ cảnh.
 
 ---

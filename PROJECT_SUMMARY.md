@@ -1,4 +1,57 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 27: xác nhận + viết test cho "in đen/trắng" và "Thu thập số liệu Lớp 3", xuất phiếu review icon line-art)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 28: Soạn Giáo Án — quy tắc tích hợp GDQP&AN có điều kiện + phụ lục "Gợi ý thiết kế Học liệu" tự động cho Lớp 1-3)
+
+## PHIÊN 28 — Soạn Giáo Án: GDQP&AN không ép buộc + phụ lục "Gợi ý thiết kế Học liệu" (Lớp 1-3)
+
+**Bối cảnh**: Khoa phản ánh 2 vấn đề ở tab Soạn Giáo Án: (1) tích hợp GDQP&AN bị AI lồng ghép
+gượng ép vào cả những bài học quá cơ bản (VD học bảng chữ cái Lớp 1-3) không có liên kết logic
+nào với Quốc phòng - An ninh; (2) Lớp 1/2/3 học chủ yếu bằng hình ảnh nhưng giáo án chưa có gợi ý
+học liệu trực quan nào cho giáo viên tự tạo Flashcard bằng công cụ AI.
+
+**a) Quy tắc tích hợp GDQP&AN có điều kiện** (`src/data/lessonPlanIntegrations.js`,
+entry `TICH_HOP_GDQPAN`):
+- `buildPromptFragment()` đổi từ hàm không tham số sang nhận `ctx = { grade }` (theo đúng pattern
+  đã có ở `TICH_HOP_STEM`/`buildStemGradeGuidance()`).
+- Prompt giờ cho AI 2 lựa chọn rõ ràng: (1) GIỮ GDQP&AN nếu bài học thực sự liên kết logic (biển
+  đảo, truyền thống, kỷ luật, an toàn cộng đồng...); (2) nếu bài học quá cơ bản/không liên kết rõ
+  ràng — chuyển sang 1 trong 3 hướng thay thế: Giáo dục Đạo đức / Giáo dục Kỹ năng sống / Giáo dục
+  Quyền Trẻ em. Với `grade <= 3` có thêm 1 đoạn nhấn mạnh riêng (các bài học cơ bản ở khối này hầu
+  như không liên kết được với GDQP&AN).
+- ⚠️ **Vấn đề nhãn hiển thị**: nội dung field JSON vẫn CHUNG 1 trường `"tichHopGDQPAN"` như cũ
+  (không đổi hình dạng dữ liệu), nhưng nội dung thực tế giờ có thể là Đạo đức/Kỹ năng sống/Quyền
+  trẻ em — nếu vẫn hiển thị cứng nhãn `"Tích hợp GDQP&AN:"` như trước sẽ SAI với nội dung. Giải
+  quyết bằng field phụ **`"tichHopGDQPANNhan"`** (AI tự khai báo ĐÃ CHỌN hướng nào, giới hạn đúng
+  4 giá trị cố định) — `LessonPlanPreview.jsx` và `lessonPlanExportService.js` giờ dùng
+  `lessonPlan.tichHopGDQPANNhan || "Tích hợp GDQP&AN"` (fallback an toàn nếu AI không trả về, VD
+  tương thích với giáo án cũ đã lưu trước phiên này).
+- `schemaExample` cập nhật thành `"tichHopGDQPAN": "...", "tichHopGDQPANNhan": "..."` để AI luôn
+  thấy đủ hình dạng 2 field trong ví dụ JSON chính (đúng lý do đã giải thích ở đầu file
+  `lessonPlanIntegrations.js`: ví dụ cụ thể "neo" hành vi AI tốt hơn mô tả bằng lời).
+
+**b) Phụ lục "Gợi ý thiết kế Học liệu" tự động Lớp 1-3** (`src/data/lessonPlanPromptTemplates.js`):
+- Hàm mới `buildVisualHocLieuGuidance(grade)` — **TỰ ĐỘNG** kích hoạt khi `grade` là số và `<= 3`,
+  KHÔNG qua cơ chế "tích hợp" tuỳ chọn (`lessonPlanIntegrations.js`) vì Khoa yêu cầu luôn có sẵn
+  cho đúng 3 khối lớp này, giáo viên không cần tự bật cờ nào. Lớp 4-5 và Mầm non: không thêm.
+- Yêu cầu AI trả về đúng 3 từ khoá (prompt) tiếng Việt, phong cách hoạt hình/flashcard dễ thương,
+  bám sát nội dung bài học, để giáo viên copy-dán thẳng vào Canva/ChatGPT/Gemini — field JSON mới
+  `"goiYHocLieuHinhAnh"` (mảng 3 chuỗi). Vì đây không phải 1 "tích hợp" trong registry, ví dụ JSON
+  của field này được nối trực tiếp vào `integrationSchemaLines` ngay trong
+  `buildLessonPlanPrompt()` (không qua `collectIntegrationSchemaExamples()`), vẫn giữ đúng nguyên
+  tắc "luôn có ví dụ JSON cụ thể" như các field tích hợp khác.
+- Hiển thị: thêm `HocLieuHinhAnhBlock` (`LessonPlanPreview.jsx`) và
+  `buildHocLieuHinhAnhParagraphs()` (`lessonPlanExportService.js`) — đúng pattern phụ lục "Dàn ý
+  Slide" liền trước, đặt cuối cùng trong danh sách phụ lục, KHÔNG có cờ ẩn/hiện riêng (không đụng
+  khung mục I-IV chuẩn CV2345 nên không có rủi ro "sai form" khi BGH duyệt).
+
+**Test mới**: `test/lessonPlanPhien28.test.js` (10 test) — quy tắc điều kiện GDQP&AN có đủ nội
+dung + ghi chú riêng đúng khối lớp; nhãn động hiển thị đúng khi có/không có `tichHopGDQPANNhan`
+(bao gồm test fallback tương thích ngược); phụ lục Học liệu tự động đúng Lớp 1-3, KHÔNG xuất hiện
+ở Lớp 4-5/Mầm non, cả ở prompt lẫn khi xuất Word.
+
+**Kết quả**: `npm test` 313/313 PASS (303 cũ + 10 mới), `npm run build` sạch. Không sửa hình dạng
+dữ liệu của field `tichHopGDQPAN` hiện có (chỉ thêm field phụ) nên KHÔNG ảnh hưởng giáo án đã lưu
+trước đó — `tichHopGDQPANNhan` chỉ là field bổ sung, có fallback an toàn khi thiếu.
+
+---
 
 ## PHIÊN 27 — Xác nhận 2 tính năng tưởng "chưa code" đã xong từ trước + phiếu review icon
 
