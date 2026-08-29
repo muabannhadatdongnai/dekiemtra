@@ -1,4 +1,50 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 24: sửa lỗi ký tự Unicode hiện trống trong Word ở Bài 7 + biểu đồ cột + Nhận diện hình - thay bằng ảnh PNG)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 26: rà soát chủ động theo yêu cầu Khoa "còn gì để hoàn thiện hơn" - nâng Next.js, test Word thật bằng LibreOffice, giám sát Upstash, Error Boundary)
+
+## PHIÊN 26 — Rà soát chủ động: nâng Next.js, test Word thật, giám sát Upstash, Error Boundary
+
+**Bối cảnh**: Khoa hỏi thẳng "còn cần điều chỉnh/ý tưởng gì để đạt mức hoàn hảo hơn", Claude rà
+soát toàn bộ codebase và đề xuất 1 danh sách; Khoa chọn 5 việc cụ thể để làm ngay. Chi tiết đầy đủ
+từng việc (kèm code trước/sau, lý do kỹ thuật) nằm ở mục "MỚI NHẤT (Phiên 26)" đầu `NEXT_STEPS.md`
+— mục này ở đây chỉ tóm tắt để không trùng lặp.
+
+**Tóm tắt 5 việc đã làm (tất cả đều build + test THẬT, không chỉ sửa lý thuyết):**
+
+1. **Checklist "CẦN KHOA QUYẾT ĐỊNH"** — bảng ngắn dán đầu `NEXT_STEPS.md`, tách riêng khỏi log
+   kỹ thuật, để phiên Claude sau đọc nhanh thay vì lục cả nghìn dòng log.
+
+2. **Nâng Next.js 14.2.35 → 16.3.3**: rủi ro breaking-change thấp (không dùng route động,
+   `next/headers`, `next/image`, middleware). Sửa 1 lỗi CSS thật lộ ra khi build bằng Turbopack
+   (`@import` đặt sai vị trí trong `globals.css` — bug CSS tồn tại từ trước, Webpack cũ không báo).
+   Thêm `engines.node: ">=20.9.0"`. Vá xong cả 3 lỗ hổng HIGH của Next.js + 1 lỗ hổng `nanoid` phụ.
+   `npm audit` giờ chỉ còn `xlsx` (đã biết, chưa có bản vá).
+
+3. **`npm run test:word-compat`** (file mới `scripts/check-word-compatibility.mjs`): dựng `.docx`
+   thật cho cả 6 tính năng xuất Word, convert bằng LibreOffice headless (`soffice --headless
+   --convert-to pdf`), kiểm tra bằng `pdfinfo`. **Phát hiện + sửa 2 lỗi thật ngay lần chạy đầu**:
+   `exportVietnameseExamToWord()`/`exportReportCommentsToWord()` thiếu `return blob` (cùng lỗi
+   `exportLessonPlanToWord()` từng mắc ở phiên trước) — rà soát chéo sửa nhất quán thêm 4 hàm
+   cùng họ (`exportToWord`, `exportBothVersions`, `exportOutlineToWord`,
+   `exportOutlineBothVersions`, `exportWorksheetToWord`, `exportWorksheetBothVersions`). Script
+   tách riêng khỏi `npm test` mặc định vì phụ thuộc binary ngoài (`soffice`/`pdfinfo`).
+
+4. **Giám sát hạn mức Upstash** (`src/services/upstashClient.js`, điểm giao duy nhất mà 7-8 module
+   lưu trữ đều đi qua): thêm log `[UPSTASH_ERROR]`/`[UPSTASH_QUOTA?]`/`[UPSTASH_HEALTH]` (tóm tắt
+   mỗi 200 lệnh), không đổi hành vi throw/fallback êm hiện có. Test mới `test/upstashClient.test.js`
+   (5 test, mock `fetch`).
+
+5. **Error Boundary tổng**: `src/app/error.js` (bắt lỗi render trong `page.js` và cây con, hiện
+   UI thân thiện + nút "Thử lại"/"Tải lại trang") và `src/app/global-error.js` (lưới an toàn cuối
+   cho lỗi ngay tại `layout.js`, tự render lại `<html>/<body>` theo đúng yêu cầu Next.js). Đã kiểm
+   chứng bằng route tạm cố ý throw lỗi + `next start` + `curl` → HTTP 500 đúng, đã XOÁ route tạm.
+
+**Kết quả cuối phiên**: 289/289 test PASS, `npm run build` sạch, `npm run test:word-compat` 6/6 OK.
+
+**⚠️ Phát hiện phụ CHƯA sửa** (xem mục #8 bảng checklist đầu `NEXT_STEPS.md`): test flaky có sẵn
+từ trước trong `worksheetLineArtIcons.test.js`, không liên quan Next.js — icon ⭐ random cho bài
+"Đếm và viết số" thỉnh thoảng trùng icon ⭐ cố định ở khối "Tự đánh giá" cuối phiếu, khiến 1
+assertion báo sai (không phải bug sản phẩm thật, phiếu Word vẫn đúng).
+
+---
 
 ## PHIÊN 24 — Sửa lỗi ký tự Unicode (line-art Bài 7, biểu đồ cột, Nhận diện hình) hiện TRỐNG trong Word
 

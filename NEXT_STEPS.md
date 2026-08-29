@@ -16,10 +16,136 @@
 > **PHIÊN 25: tính năng MỚI "gợi ý Bài theo Sách giáo viên" ở LessonPlanForm.jsx (soạn giáo
 > án) - gõ/chọn "Tên bài soạn" tự gợi ý theo phụ lục JSON đọc từ kho GitHub kiến thức, kèm nút
 > tự điền "Nội dung cốt lõi" - CẦN dangkhoa tự tạo file phụ lục thật cho từng Chương (xem mục
-> Phiên 25 để biết cấu trúc + file ví dụ), tính năng KHÔNG hoạt động cho tới khi có file đó**.
+> Phiên 25 để biết cấu trúc + file ví dụ), tính năng KHÔNG hoạt động cho tới khi có file đó** +
+> **PHIÊN 26: rà soát chủ động theo yêu cầu Khoa "còn cần gì để hoàn thiện hơn" - đã làm 5 việc:
+> (1) checklist "CẦN KHOA QUYẾT ĐỊNH" ngay dưới đây, (2) nâng Next.js 14→16.3.3 (vá xong cả 3 lỗ
+> hổng HIGH), (3) script `npm run test:word-compat` tự động hoá kiểm tra Word thật bằng
+> LibreOffice headless - PHÁT HIỆN + SỬA 2 lỗi thật (exportVietnameseExamToWord/
+> exportReportCommentsToWord thiếu "return blob", rà soát chéo sửa luôn 4 hàm tương tự), (4) log
+> giám sát hạn mức Upstash free tier ([UPSTASH_ERROR]/[UPSTASH_QUOTA?]/[UPSTASH_HEALTH] trong
+> upstashClient.js), (5) Error Boundary tổng (`src/app/error.js` + `global-error.js`) - tránh
+> màn hình trắng khi lỗi bất ngờ. 289/289 test PASS, build sạch, xem chi tiết mục "PHIÊN 26"**.
 > File này để mang sang chat mới không mất ngữ cảnh.
 
-## ✅ MỚI NHẤT (Phiên 25) — Gợi ý "Bài" theo Sách giáo viên khi soạn giáo án
+---
+
+## 🔴 CẦN KHOA QUYẾT ĐỊNH (đọc mục này trước, tách riêng khỏi log kỹ thuật bên dưới)
+
+Danh sách ngắn các việc đang CHỜ Khoa chốt hướng — mỗi phiên Claude mới nên đọc mục này trước
+tiên thay vì lục lại toàn bộ log để tìm xem còn gì tồn đọng. Khi Khoa quyết định xong 1 mục, xoá
+dòng đó khỏi bảng (không cần giữ lại lịch sử ở đây — lịch sử đã có trong log kỹ thuật bên dưới).
+
+| # | Việc cần quyết định | Vì sao cần Khoa (không tự quyết được) |
+|---|---|---|
+| 1 | Nâng cấp Next.js 14 → 16 | ✅ **Đã làm xong (Phiên 26)** — 16.3.3, build/test/audit sạch. Xem mục "PHIÊN 26" bên dưới. |
+| 2 | Có kích hoạt tab "Coloring Page" (Tô màu) hay không? | Code đã đủ 4 tầng (form/preview/export/API) nhưng chưa nối vào `page.js` — đang "chết" trong kho. Cần Khoa xác nhận có muốn thêm thành tab thứ 8 không, hay xoá hẳn cho gọn. |
+| 3 | Chế độ in Màu/Đen trắng cho TOÀN BỘ phiếu (không riêng icon Bài 3) | Đã có draft thiết kế (`printMode: color/bw`) nhưng chưa code — cần Khoa xác nhận mức độ ưu tiên so với các việc khác. |
+| 4 | Lớp 3 - "Thu thập/phân loại số liệu" (Đợt 3, đọc bảng/biểu đồ cột) | Mảng nội dung Toán 3-5 duy nhất còn thiếu, cần UI bảng/biểu đồ phức tạp hơn — cần Khoa xác nhận độ ưu tiên trước khi tách phiên riêng để làm. |
+| 5 | Tạo file `chuong_{n}_bai.json` cho tính năng "gợi ý Bài theo SGK" (Phiên 25) | Tính năng đã code xong nhưng KHÔNG hoạt động cho tới khi Khoa tự tạo dữ liệu thật trong kho GitHub kiến thức (xem `docs/vi-du-phu-luc-bai-hoc.example.js` để biết cấu trúc). Có thể làm dần theo Chương. |
+| 6 | Lỗ hổng bảo mật `xlsx` (Prototype Pollution/ReDoS) | Nhà phát hành chưa có bản vá — chỉ cần Khoa biết để KHÔNG mở tính năng nhập Excel cho người dùng ẩn danh/công khai trong tương lai; chưa cần hành động ngay. |
+| 7 | Icon line-art mới vẽ (Bài 3, Phiên 20) chưa qua mắt giáo viên/học sinh thật | Nếu thấy icon nào chưa đẹp/chưa giống hình gốc, phản hồi lại để chỉnh ở `scripts/lineArtIconDefs.js`. |
+| 8 | Test flaky (không nghiêm trọng) trong `test/worksheetLineArtIcons.test.js` | Phát hiện ở Phiên 26 khi nâng Next.js: khi random ra icon ⭐ cho bài "Đếm và viết số", nó trùng với ⭐ dùng cố định ở khối "Tự đánh giá" cuối phiếu, khiến assertion `!documentXml.includes(it.icon)` thỉnh thoảng báo sai (không phải bug sản phẩm thật - phiếu Word vẫn đúng). Cần sửa assertion để chỉ soi trong phạm vi `<w:drawing>` của đúng mục đó, hoặc đổi cách kiểm tra. |
+
+---
+
+## ✅ MỚI NHẤT (Phiên 26) — Rà soát chủ động theo yêu cầu Khoa "còn gì để hoàn thiện hơn"
+
+**Bối cảnh:** Khoa hỏi thẳng "còn cần điều chỉnh/ý tưởng gì để đạt mức hoàn hảo hơn", rồi chọn 5
+việc cụ thể để làm ngay trong phiên này (không phải Claude tự ý thêm việc). Toàn bộ đã build +
+test thật (không chỉ sửa code lý thuyết).
+
+**1) Checklist "CẦN KHOA QUYẾT ĐỊNH"** — xem đầu file này (mục 🔴 ngay trên "MỚI NHẤT"). Mục
+đích: phiên Claude sau đọc 1 bảng ngắn thay vì phải lục cả nghìn dòng log để biết còn gì tồn đọng
+đang chờ Khoa chốt hướng.
+
+**2) Nâng cấp Next.js 14.2.35 → 16.3.3:**
+- Rà soát trước: dự án KHÔNG dùng route `[param]` động, KHÔNG dùng `next/headers`/`next/image`/
+  `next/font`, KHÔNG có middleware → rủi ro breaking-change thấp, React 18.3.1 vẫn tương thích
+  (peer dep next@16 chấp nhận `^18.2.0`, không cần lên React 19).
+- Lỗi thật gặp phải: Turbopack (mặc định ở Next 16) strict hơn CSS spec, báo lỗi ngay khi
+  `@import` font Google đặt SAU `@tailwind` trong `globals.css` (bug CSS này tồn tại từ trước,
+  Webpack cũ chỉ không báo mà thôi) → đã sửa: chuyển `@import` lên đầu file, kèm comment giải
+  thích rõ để phiên sau không sửa nhầm chỗ khác.
+- Thêm `"engines": {"node": ">=20.9.0"}` vào `package.json` (yêu cầu bắt buộc của Next 16) —
+  tránh deploy nhầm trên Node cũ.
+- `npm audit fix` dọn thêm 1 lỗ hổng `nanoid` (transitive qua `postcss`, không liên quan Next
+  trực tiếp nhưng lộ ra cùng lúc khi cài lại `package-lock.json`).
+- Kết quả: `npm run build` sạch, `npm test` 289/289 pass, `next start` + `curl` trang chủ trả về
+  HTTP 200. `npm audit` chỉ còn `xlsx` (đã biết từ trước, nhà phát hành chưa có bản vá).
+
+**3) Test tương thích Word thật bằng LibreOffice headless — `npm run test:word-compat`:**
+- File mới: `scripts/check-word-compatibility.mjs`. Dựng `.docx` THẬT (gọi đúng hàm export
+  production, không viết lại logic) cho cả 6 tính năng xuất Word (đề kiểm tra có công thức toán,
+  phiếu bài tập gộp cả 4 dạng từng dính bug ảnh/Unicode của Phiên 20/24, giáo án, đề Tiếng Việt,
+  đề cương ôn tập, nhận xét học bạ) → convert bằng `soffice --headless --convert-to pdf` →
+  kiểm tra bằng `pdfinfo` (convert thành công + có trang + không rỗng).
+- **PHÁT HIỆN + SỬA ĐƯỢC 2 LỖI THẬT** ngay lần chạy đầu tiên (không phải lý thuyết):
+  `exportVietnameseExamToWord()` và `exportReportCommentsToWord()` thiếu `return blob` — cùng
+  lỗi mà `exportLessonPlanToWord()` từng mắc và được vá ở phiên trước, nhưng phiên đó không rà
+  soát chéo sang các hàm cùng họ. Không ảnh hưởng nút bấm thật (UI không dùng giá trị trả về),
+  nhưng khiến bất kỳ code/test nào sau này cần lấy lại Blob sẽ nhận `undefined`. Đã rà soát CHÉO
+  toàn bộ 10 hàm `export...ToWord`/`export...BothVersions` trong dự án và sửa nhất quán 6 hàm
+  còn thiếu (`exportToWord`, `exportBothVersions`, `exportOutlineToWord`,
+  `exportOutlineBothVersions`, `exportWorksheetToWord`, `exportWorksheetBothVersions`).
+- Script tách riêng khỏi `npm test` mặc định (script riêng `test:word-compat`) vì phụ thuộc
+  binary `soffice`/`pdfinfo` không chắc có sẵn ở mọi máy/CI — script tự phát hiện thiếu binary và
+  dừng với hướng dẫn cài đặt rõ ràng, không làm hỏng `npm test` bình thường.
+- ⚠️ Giới hạn trung thực (đã ghi rõ trong comment đầu script): LibreOffice KHÔNG PHẢI Microsoft
+  Word thật — đây là phép thử proxy tốt cho lớp lỗi "XML/quan hệ file hỏng, ảnh không nhúng
+  được", KHÔNG thay thế hoàn toàn việc thỉnh thoảng nhờ Khoa mở Word thật/in thử, đặc biệt sau
+  khi đổi bố cục lớn.
+- Phát hiện phụ (CHƯA sửa, xem mục #8 bảng checklist đầu file): 1 test flaky có sẵn từ trước
+  (`worksheetLineArtIcons.test.js`) không liên quan Next.js — icon ⭐ random trùng icon ⭐ cố định
+  ở khối "Tự đánh giá".
+
+**4) Giám sát hạn mức Upstash free tier** (`src/services/upstashClient.js`):
+- 7 module (`questionBankStore`, `reportCommentHistoryStore`, `geminiUsageTracker`,
+  `activeSessionCounter`, `lessonPlanDiversityStore`, `teacherGenerateRateLimiter`,
+  `teacherPreferenceStore`, `sampleAnalyzeRateLimiter`, `teacherPreferenceStore`) đều gọi chung
+  `upstashCommand()` nhưng mỗi module tự try/catch + `console.warn` RIÊNG LẺ rồi fallback êm →
+  nếu vượt hạn mức free tier, TOÀN BỘ tính năng phụ trợ âm thầm ngừng hoạt động mà không có tín
+  hiệu rõ ràng nào nổi bật giữa hàng nghìn dòng log Vercel.
+- Đã thêm logging TẠI ĐÚNG 1 ĐIỂM CHUNG (`upstashCommand`, không sửa từng module gọi nó):
+  - `[UPSTASH_ERROR]` — mọi lỗi (mạng, cú pháp lệnh, hết hạn mức...), chỉ log TÊN lệnh Redis
+    (VD "INCR"), KHÔNG log key/value đầy đủ (tránh lộ họ tên/nhận xét học sinh vào log server).
+  - `[UPSTASH_QUOTA?]` — thêm dòng CẢNH BÁO RIÊNG khi câu lỗi khớp đúng câu chữ Upstash trả về
+    lúc vượt hạn mức free tier (`/limit exceeded|quota/i`, xem docs Upstash "max daily request
+    limit exceeded"), gợi ý Khoa vào Dashboard Upstash kiểm tra Usage/Billing.
+  - `[UPSTASH_HEALTH]` — tóm tắt "X lệnh, Y lỗi" mỗi 200 lệnh (đếm trong bộ nhớ tiến trình, RESET
+    khi cold start - đã ghi rõ hạn chế này trong comment, không phải bộ đếm bền vững 100%
+    chính xác qua nhiều lần deploy, chỉ đủ dùng làm "chuông báo" định kỳ).
+  - KHÔNG đổi bất kỳ hành vi throw/catch nào đang có ở 7 module gọi hàm này - chỉ thêm log.
+- Test mới: `test/upstashClient.test.js` (5 test, mock `global.fetch`) — kiểm tra đúng cả 2 điều
+  quan trọng nhất: (a) hành vi throw/trả kết quả KHÔNG đổi so với trước, (b) log đúng tiền tố
+  đúng lúc.
+
+**5) Error Boundary tổng** — 2 file mới theo ĐÚNG quy ước Next.js App Router:
+- `src/app/error.js` — bắt lỗi render bất ngờ trong `page.js` và toàn bộ cây component con (nơi
+  có mọi logic phức tạp: form, preview, gọi AI...), hiện màn hình thân thiện có nút "Thử lại"
+  (gọi `reset()` theo API Next.js) và "Tải lại toàn bộ trang", THAY VÌ màn hình TRẮNG hoàn toàn
+  không rõ nguyên nhân giữa buổi dạy.
+- `src/app/global-error.js` — lưới an toàn CUỐI CÙNG cho lỗi xảy ra ngay tại `layout.js` (hiếm vì
+  layout.js ở đây gần như không có logic, chỉ render `<html>/<body>` + import CSS, nhưng thêm
+  gần như không tốn công). Theo yêu cầu bắt buộc của Next.js, file này TỰ RENDER LẠI đầy đủ
+  `<html>/<body>` (không dùng chung CSS/component nào từ app - nếu hệ thống import/build đó là
+  nguyên nhân gây lỗi thì global-error.js cũng lỗi theo, mất tác dụng lưới an toàn cuối).
+- Đã kiểm chứng THẬT (không chỉ code xong là xong): tạo 1 route tạm cố ý `throw new Error(...)`
+  với `export const dynamic = "force-dynamic"`, `npm run build` + `next start` + `curl` → xác
+  nhận HTTP 500 đúng, server log ghi đúng lỗi + digest, payload phản hồi có tham chiếu đúng tới
+  component error boundary (`"error":"$3"` cùng script chunk riêng) - đúng cơ chế Next.js kỳ
+  vọng. Route tạm đã XOÁ SẠCH sau khi test xong (`src/app/smoketestboundary/` không còn tồn tại
+  trong bản giao).
+- ⚠️ Giới hạn: chỉ bắt lỗi RENDER phía React (throw trong render/effect) - KHÔNG bắt lỗi bất đồng
+  bộ ngoài luồng React (setTimeout/event handler không được React quản lý, giới hạn CHUNG của cơ
+  chế Error Boundary, không phải thiếu sót riêng), và KHÔNG thay thế try/catch đã có sẵn khi gọi
+  API `/api/generate-...` (các *Form.jsx đã tự hiện lỗi ngay trong form).
+
+**Kết quả cuối phiên:** 289/289 test PASS (284 gốc + 5 test Upstash mới), `npm run build` sạch,
+`npm run test:word-compat` 6/6 kịch bản OK, `npm audit` chỉ còn `xlsx` (đã biết).
+
+---
+
+## (Phiên 25) — Gợi ý "Bài" theo Sách giáo viên khi soạn giáo án
 dangkhoa muốn: khi giáo viên chọn Lớp 5, gõ "Bài 1" vào ô Tên bài soạn, app gợi ý tên bài + tự
 điền "Nội dung cốt lõi" theo Sách giáo viên. Đã trao đổi hướng triển khai (lưu ở kho GitHub kiến
 thức đang có sẵn, thay vì tạo nguồn dữ liệu song song trong code) và làm luôn pilot Toán Lớp 5.
