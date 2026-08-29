@@ -1366,6 +1366,8 @@ function slugifyTitle(title) {
 export async function exportWorksheetToWord({ worksheet, meta, bwMode = false }) {
   const blob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: false, bwMode });
   saveAs(blob, `${slugifyTitle(meta?.title)}.docx`);
+  // ⚠️ FIX (Phiên 26): xem comment tại exportToWord() (exportService.js) - cùng họ hàm bị thiếu return.
+  return blob;
 }
 
 /**
@@ -1386,4 +1388,6 @@ export async function exportWorksheetBothVersions({ worksheet, meta, bwMode = fa
 
   const teacherBlob = await buildWorksheetDocxBlob({ worksheet, meta, showAnswers: true, bwMode });
   saveAs(teacherBlob, `${fileBase}-GiaoVien.docx`);
+  // ⚠️ FIX (Phiên 26): xem comment tại exportToWord() (exportService.js) - cùng họ hàm bị thiếu return.
+  return { studentBlob, teacherBlob };
 }

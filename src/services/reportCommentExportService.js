@@ -71,6 +71,14 @@ export async function exportReportCommentsToWord({ results, cap }) {
 
   const blob = await Packer.toBlob(doc);
   saveAs(blob, `nhan-xet-hoc-ba-${cap}.docx`);
+  // ⚠️ FIX (Phiên 26, phát hiện khi viết scripts/check-word-compatibility.mjs): hàm này thiếu
+  // "return blob" - CÙNG lỗi mà exportLessonPlanToWord() đã từng mắc và được vá ở phiên trước
+  // (xem comment tại lessonPlanExportService.js), nhưng phiên đó không rà soát chéo sang các hàm
+  // "exportXxxToWord" khác dùng chung quy ước. UI thật (nút xuất Word trong ReportCommentExportActions.jsx)
+  // không dùng giá trị trả về nên KHÔNG lộ lỗi khi dùng bình thường - chỉ lộ ra khi có code khác
+  // (như script test tương thích Word) cần lấy lại Blob để tự kiểm tra file. Không đổi hành vi
+  // nút bấm thật (saveAs vẫn chạy y hệt), chỉ thêm khả năng lấy blob khi cần.
+  return blob;
 }
 
 export async function exportReportCommentsToExcel({ results, cap }) {

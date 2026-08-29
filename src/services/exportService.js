@@ -479,6 +479,11 @@ export async function buildExamDocxBlob({
 export async function exportToWord(params) {
   const blob = await buildExamDocxBlob({ ...params, includeRubricSection: true });
   saveAs(blob, `De-thi-${params.subject}-Lop${params.grade}-Ma${params.examCode}.docx`);
+  // ⚠️ FIX (Phiên 26): rà soát chéo toàn bộ hàm "export...ToWord"/"export...BothVersions" sau
+  // khi phát hiện exportReportCommentsToWord()/exportVietnameseExamToWord() thiếu "return blob"
+  // qua scripts/check-word-compatibility.mjs - cùng họ hàm, cùng lỗi, sửa nhất quán 1 lượt.
+  // Không đổi hành vi nút bấm thật (saveAs vẫn chạy y hệt), chỉ thêm khả năng lấy blob khi cần.
+  return blob;
 }
 
 /**
@@ -495,10 +500,13 @@ export async function exportBothVersions(params) {
   const studentBlob = await buildExamDocxBlob({ ...params, includeRubricSection: false });
   saveAs(studentBlob, `${fileBase}-HocSinh.docx`);
 
+  let teacherBlob = null;
   if (hasRubric) {
-    const teacherBlob = await buildExamDocxBlob({ ...params, includeRubricSection: true });
+    teacherBlob = await buildExamDocxBlob({ ...params, includeRubricSection: true });
     saveAs(teacherBlob, `${fileBase}-GiaoVien.docx`);
   }
+  // ⚠️ FIX (Phiên 26): xem comment tại exportToWord() cùng file - cùng họ hàm bị thiếu return.
+  return { studentBlob, teacherBlob };
 }
 
 /**

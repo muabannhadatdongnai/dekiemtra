@@ -534,6 +534,8 @@ function slugifyTitle(title) {
 export async function exportOutlineToWord({ outline, meta }) {
   const blob = await buildOutlineDocxBlob({ outline, meta, showAnswers: false });
   saveAs(blob, `${slugifyTitle(outline?.tenDeCuong)}-HocSinh.docx`);
+  // ⚠️ FIX (Phiên 26): xem comment tại exportToWord() (exportService.js) - cùng họ hàm bị thiếu return.
+  return blob;
 }
 
 /**
@@ -551,4 +553,6 @@ export async function exportOutlineBothVersions({ outline, meta }) {
 
   const teacherBlob = await buildOutlineDocxBlob({ outline, meta, showAnswers: true });
   saveAs(teacherBlob, `${fileBase}-GiaoVien-PhuHuynh.docx`);
+  // ⚠️ FIX (Phiên 26): xem comment tại exportToWord() (exportService.js) - cùng họ hàm bị thiếu return.
+  return { studentBlob, teacherBlob };
 }

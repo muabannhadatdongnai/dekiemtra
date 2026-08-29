@@ -80,4 +80,8 @@ export async function exportVietnameseExamToWord({ results, meta }) {
   const doc = new Document({ sections: [{ properties: VIETNAMESE_EXAM_PAGE_PROPERTIES, children }] });
   const blob = await Packer.toBlob(doc);
   saveAs(blob, `De-Tieng-Viet-Lop${meta?.grade || ""}.docx`);
+  // ⚠️ FIX (Phiên 26): CÙNG lỗi thiếu "return blob" như exportLessonPlanToWord()/
+  // exportReportCommentsToWord() - phát hiện qua scripts/check-word-compatibility.mjs. Xem
+  // comment đầy đủ tại reportCommentExportService.js. Không đổi hành vi nút bấm thật.
+  return blob;
 }
