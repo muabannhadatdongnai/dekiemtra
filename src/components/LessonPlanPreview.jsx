@@ -486,6 +486,41 @@ function SlideOutlineBlock({ slides }) {
   );
 }
 
+// Phụ lục "Gợi ý thiết kế Học liệu" - tự động xuất hiện ở giáo án Lớp 1-3 (xem
+// buildVisualHocLieuGuidance() trong lessonPlanPromptTemplates.js): 3 từ khoá tiếng Việt để giáo
+// viên copy-dán thẳng vào công cụ tạo ảnh AI (Canva/ChatGPT/Gemini) tự tạo Flashcard minh hoạ.
+function HocLieuHinhAnhBlock({ goiY }) {
+  const items = (goiY || []).filter(Boolean);
+  if (items.length === 0) return null;
+  return (
+    <div style={{ marginTop: 16, breakInside: "avoid" }}>
+      <p style={{ fontWeight: 700, textAlign: "center", fontSize: 14, margin: "10px 0 2px" }}>
+        PHỤ LỤC: Gợi ý thiết kế Học liệu (Từ khoá tạo ảnh AI)
+      </p>
+      <p style={{ fontSize: 12, color: "#64748b", textAlign: "center", margin: "0 0 8px" }}>
+        Copy từ khoá bên dưới, dán vào Canva/ChatGPT/Gemini... để tự tạo Flashcard minh hoạ cho bài học.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {items.map((tuKhoa, i) => (
+          <div
+            key={i}
+            style={{
+              background: "#F0FDF4",
+              border: "1px solid #BBF7D0",
+              borderRadius: 8,
+              padding: "8px 10px",
+            }}
+          >
+            <p style={{ fontSize: 13.5, fontStyle: "italic", margin: 0, color: "#166534" }}>
+              {i + 1}. &ldquo;{tuKhoa}&rdquo;
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
   if (!lessonPlan) {
     return (
@@ -551,7 +586,10 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         )}
         {lessonPlan.tichHopGDQPAN && (
           <p style={{ fontSize: 13.5, marginTop: 8 }}>
-            <b>Tích hợp GDQP&AN:</b> {lessonPlan.tichHopGDQPAN}
+            {/* Nhãn ĐỘNG theo hướng AI thực tế đã chọn (xem tichHopGDQPANNhan trong
+                lessonPlanIntegrations.js) - không hardcode "Tích hợp GDQP&AN:" nữa vì nội dung có
+                thể là Đạo đức/Kỹ năng sống/Quyền trẻ em khi bài học không liên kết logic với GDQP&AN. */}
+            <b>{lessonPlan.tichHopGDQPANNhan || "Tích hợp GDQP&AN"}:</b> {lessonPlan.tichHopGDQPAN}
           </p>
         )}
         {lessonPlan.tichHopHSKT && (
@@ -573,6 +611,7 @@ export default function LessonPlanPreview({ lessonPlan, timeline, meta }) {
         <LoiDanBlock items={lessonPlan.loiDan} />
         <TinNhanPhuHuynhBlock text={lessonPlan.tinNhanPhuHuynh} />
         <SlideOutlineBlock slides={lessonPlan.slideOutline} />
+        <HocLieuHinhAnhBlock goiY={lessonPlan.goiYHocLieuHinhAnh} />
       </div>
     </div>
   );
