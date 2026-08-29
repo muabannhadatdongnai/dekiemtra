@@ -1,9 +1,14 @@
+/* Font tròn kiểu chữ thiếu nhi, chỉ dùng cho "Phiếu bài tập" (.worksheet-page).
+   ⚠️ PHẢI đặt @import TRƯỚC mọi rule khác (kể cả @tailwind) - từ Next.js 16 (Turbopack build
+   mặc định) trình biên dịch CSS strict hơn với đúng chuẩn CSS: "@import rules must precede all
+   rules aside from @charset and @layer statements". Bản build cũ (Webpack/lightningcss của
+   Next 14) không báo lỗi dù đặt sai vị trí, nhưng vẫn là CSS không hợp lệ theo chuẩn - Turbopack
+   chỉ đang báo đúng lỗi đã có từ trước. Xem PROJECT_SUMMARY.md mục nâng cấp Next.js. */
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Font tròn kiểu chữ thiếu nhi, chỉ dùng cho "Phiếu bài tập" (.worksheet-page) */
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap");
 
 :root {
   --a4-width: 210mm;
