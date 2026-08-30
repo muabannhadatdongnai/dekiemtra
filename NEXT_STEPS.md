@@ -17,6 +17,14 @@
 > án) - gõ/chọn "Tên bài soạn" tự gợi ý theo phụ lục JSON đọc từ kho GitHub kiến thức, kèm nút
 > tự điền "Nội dung cốt lõi" - CẦN dangkhoa tự tạo file phụ lục thật cho từng Chương (xem mục
 > Phiên 25 để biết cấu trúc + file ví dụ), tính năng KHÔNG hoạt động cho tới khi có file đó** +
+> **PHIÊN 30: liên kết SGK Tiếng Việt thật cho tab "📖 Đề Tiếng Việt Tiểu học" - thêm khối "Liên
+> kết SGK Tiếng Việt (tuỳ chọn)" (Tập + Chương, tái dùng nguyên `/api/chapters`+`/api/lessons` đã
+> có) vào `VietnameseExamForm.jsx`. Khối "Đọc thành tiếng"/"Chính tả" giờ có gợi ý Tên bài (datalist)
+> + hiện mô tả đoạn văn gợi nhớ (`noiDungCotLoi`) khi khớp bài - Chính tả CỐ Ý KHÔNG tự điền thẳng
+> nội dung (giáo viên vẫn phải tự gõ nguyên văn, giữ nguyên tắc chống bịa/vi phạm bản quyền). Khối
+> "Đọc thầm" có nút "Dùng mô tả làm chủ đề" + tự trích chương SGK làm `referenceContext` cho AI viết
+> ngữ liệu MỚI (không copy nguyên văn, dặn rõ trong prompt). 324/324 test PASS (319 cũ + 5 mới
+> `test/vietnameseExamSgkReference.test.js`), xem chi tiết mục "PHIÊN 30" trong PROJECT_SUMMARY.md** +
 > **PHIÊN 29: sửa 3 lỗi sư phạm Tiếng Việt Lớp 1 phản hồi qua phiếu in thật - (1) `khoanh_tu_loai`/
 > `noi_tu_nhom` (dùng thuật ngữ "từ chỉ hoạt động/đặc điểm" - kiến thức Lớp 2-3) nâng `minGrade`
 > lên LOP_2, không còn lộ ở Lớp 1; (2) sửa nhãn đề bài `noi_tu_nhom` sai logic (cam kết "từ chỉ
@@ -63,6 +71,7 @@ dòng đó khỏi bảng (không cần giữ lại lịch sử ở đây — l�
 | 7 | Icon line-art mới vẽ (Bài 3, Phiên 20) chưa qua mắt giáo viên/học sinh thật | Việc NÀY cần Khoa tự làm (Claude không thể tự đưa icon cho giáo viên/học sinh thật xem) - Phiên 27 đã xuất sẵn `lineart-icon-review-sheet.html` (16 icon lấy trực tiếp từ `scripts/lineArtIconDefs.js`, có ô tick "Đạt/Cần chỉnh sửa" + dòng ghi chú cho từng icon) để Khoa in ra hoặc gửi xem, dễ thu thập phản hồi hơn là mở thẳng file code. Khi có phản hồi, sửa trực tiếp ở `scripts/lineArtIconDefs.js` rồi chạy lại `scripts/render-line-art-icons.js`. |
 | 8 | Test flaky (không nghiêm trọng) trong `test/worksheetLineArtIcons.test.js` | Phát hiện ở Phiên 26 khi nâng Next.js: khi random ra icon ⭐ cho bài "Đếm và viết số", nó trùng với ⭐ dùng cố định ở khối "Tự đánh giá" cuối phiếu, khiến assertion `!documentXml.includes(it.icon)` thỉnh thoảng báo sai (không phải bug sản phẩm thật - phiếu Word vẫn đúng). Cần sửa assertion để chỉ soi trong phạm vi `<w:drawing>` của đúng mục đó, hoặc đổi cách kiểm tra. |
 | 9 | Thiết kế lại bài tập Tiếng Việt Lớp 1 kiểu "âm/vần" (Phiên 29) | Phiên 29 chỉ NÂNG `minGrade` của `khoanh_tu_loai`/`noi_tu_nhom` lên LOP_2 (ẩn khỏi Lớp 1) để hết lỗi vượt cấp trước mắt - CHƯA làm dạng bài THAY THẾ cho Lớp 1 mà giáo viên đề xuất (VD "Khoanh vào tiếng có âm a", "Nối từ với hình", "Điền âm a hoặc âm c"). Cần Khoa xác nhận có muốn đầu tư thêm 1-2 dạng bài ngữ âm RIÊNG cho Lớp 1 hay để trống mục Tiếng Việt AI-sinh ở Lớp 1 (hiện chỉ còn `dien_tu_cho_san` đã siết câu ngắn hơn). |
+| 10 | Chính tả: có nên thêm trường "đoạn trích nguyên văn" vào phụ lục Bài Tiếng Việt? | Phiên 30 chỉ dùng `noiDungCotLoi` (mô tả ngắn) đã có sẵn để GỢI NHỚ cho khối "Chính tả" - KHÔNG tự điền nội dung (giáo viên vẫn gõ tay, đúng nguyên tắc cũ chống AI bịa/vi phạm bản quyền ở `chinhTaBlock.js`). Nếu Khoa muốn tự động điền thẳng nguyên văn, cần Khoa tự thêm 1 trường mới (VD `trichDoan`) vào từng phần tử JSON phụ lục với nội dung CHÍNH XÁC từ SGK thật - không nên để AI tự sinh trường này. |
 
 ---
 

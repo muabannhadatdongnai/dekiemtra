@@ -1,4 +1,51 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 29: sửa 3 lỗi sư phạm Tiếng Việt Lớp 1 — vượt cấp thuật ngữ ngữ pháp, nhãn đề bài sai logic, câu văn quá sức đọc)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 30: liên kết SGK Tiếng Việt thật cho tab "📖 Đề Tiếng Việt Tiểu học" — gợi ý Tên bài + trích ngữ liệu chương cho khối Đọc thành tiếng/Đọc thầm/Chính tả)
+
+## PHIÊN 30 — Đề Tiếng Việt Tiểu học: gợi ý Tên bài + trích ngữ liệu SGK (Đọc thành tiếng/Đọc thầm/Chính tả)
+
+**Bối cảnh**: Khoa phản ánh đã tự tay đưa file markdown chương (`chuong_{n}.md`) VÀ phụ lục "Bài"
+(`chuong_{n}_bai.json`, đúng schema `{ soBai, tenBai, noiDungCotLoi }` đã dùng cho
+LessonPlanForm.jsx từ Phiên 25) vào kho GitHub kiến thức cho môn Tiếng Việt, nhưng tab "📖 Đề Tiếng
+Việt Tiểu học" (`VietnameseExamForm.jsx`) chưa hề đọc dữ liệu đó — không có gợi ý Tên bài, không có
+mô tả/trích đoạn văn tự động ở 3 khối "Đọc thành tiếng", "Đọc thầm", "Chính tả".
+
+**Thêm mới:**
+- **`VietnameseExamForm.jsx`**: thêm khối "Liên kết SGK Tiếng Việt (tuỳ chọn)" — chọn Tập + Chương
+  (TÁI DÙNG nguyên `/api/chapters` + `/api/lessons` đã có sẵn, chỉ truyền `subject="Tieng_Viet"`,
+  2 route này vốn đã tổng quát theo Môn, không hard-code "Toan"). Khi chọn 1 Chương:
+  - Khối **Đọc thành tiếng** + **Chính tả**: ô "Tên bài" có gợi ý (datalist) từ phụ lục; khi khớp
+    đúng 1 bài, hiện "📘 Mô tả đoạn văn (theo SGK)" = `noiDungCotLoi` ngay dưới ô, giúp giáo viên
+    nhớ đúng nội dung/đoạn cần dùng. Với Chính tả, CỐ Ý KHÔNG tự điền thẳng vào ô "Nội dung đoạn
+    chính tả" — giữ nguyên nguyên tắc đã chốt ở `chinhTaBlock.js` (giáo viên PHẢI tự gõ/dán nguyên
+    văn thật từ SGK, hệ thống không bịa hộ, tránh sai lệch/vi phạm bản quyền), chỉ mô tả gợi nhớ.
+  - Khối **Đọc thầm**: không có ô Tên bài, nhưng có dãy nút "Dùng mô tả '<Tên bài>' →" điền thẳng
+    `noiDungCotLoi` của 1 bài trong phụ lục vào ô "Chủ đề". Đồng thời, chọn Chương sẽ gửi kèm
+    `sgkVolume`/`sgkChapterId` lên server để AI tự viết ngữ liệu MỚI dựa trên "cảm hứng" từ nội
+    dung chương thật (KHÔNG copy nguyên văn — xem bên dưới).
+- **`vietnameseExamBlueprint.js`**: thêm `sgkVolume`/`sgkChapterId` (tuỳ chọn, mặc định `null`).
+- **`vietnameseExamOrchestrator.js`**: thêm `resolveVietnameseSgkReferenceContext()` — TÁI DÙNG
+  đúng nguyên tắc `resolveSgkChapterContext()` đã kiểm định trong `worksheetGenerator.js` (best-
+  effort, lỗi -> đẩy `warnings`, KHÔNG throw). Chỉ gọi GitHub khi khối "Đọc thầm" thực sự được
+  chọn VÀ đã chọn Chương (tránh gọi vô ích nếu chỉ tạo các khối tĩnh). Kết quả (`referenceContext`)
+  chỉ gắn vào input của khối "Đọc thầm" — các khối khác không đổi hành vi.
+- **`docThamBlock.js`**: `buildDocThamPrompt()` (đã export để test được) nhận thêm
+  `referenceContext` tuỳ chọn — nếu có, nối vào cuối prompt 1 khối "TÀI LIỆU THAM KHẢO" với dặn dò
+  RÕ RÀNG "chỉ để lấy cảm hứng, TUYỆT ĐỐI KHÔNG chép lại nguyên văn" — đúng khuôn
+  `buildReferenceContextBlock()` đã dùng cho các dạng bài Tiếng Việt bên `worksheetGenerator.js`
+  (Phiên 29), giữ nhất quán nguyên tắc chống vi phạm bản quyền toàn hệ thống.
+
+**Đã kiểm thử:** thêm `test/vietnameseExamSgkReference.test.js` (5 test): prompt "Đọc thầm" không
+có khối tài liệu tham khảo khi không truyền `referenceContext` (giữ hành vi cũ), có khối + dặn cấm
+chép nguyên văn khi có `referenceContext`; orchestrator không gọi GitHub nếu không chọn Chương HOẶC
+nếu khối "Đọc thầm" không được chọn (dù có chọn Chương); orchestrator gọi ĐÚNG URL
+`lop_{grade}/tieng_viet_t{volume}/chuong_{chapter}.md` và không làm hỏng lượt tạo nếu tải lỗi (chỉ
+đẩy warning). `npm test` 324/324 PASS (319 cũ + 5 mới), `npm run build` sạch.
+
+**Còn lại (không cấp bách):** phụ lục "Bài" hiện chỉ có `noiDungCotLoi` (mô tả ngắn), CHƯA có
+trường lưu nguyên văn đoạn trích đầy đủ — nên khối "Chính tả" vẫn cần giáo viên tự gõ/dán nguyên
+văn thật (đây là lựa chọn CHỦ ĐỘNG giữ nguyên, không phải thiếu sót, vì tự sinh nội dung chính tả
+bằng AI có rủi ro sai lệch/bản quyền — xem comment gốc trong `chinhTaBlock.js`). Nếu sau này Khoa
+muốn tự động điền thẳng nguyên văn, cần thêm 1 trường mới (VD `trichDoan`) vào từng phần tử JSON
+phụ lục và Khoa tự nhập nguyên văn chính xác vào đó — không nên để AI tự sinh trường này.
 
 ## PHIÊN 29 — Phiếu Bài Tập Tiếng Việt: sửa 3 lỗi sư phạm phản hồi qua bản in thật (Lớp 1)
 
