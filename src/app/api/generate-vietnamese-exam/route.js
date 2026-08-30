@@ -11,7 +11,7 @@ export async function POST(request) {
     if (limitError) return limitError;
 
     const body = await request.json();
-    const { grade, selectedBlocks = [], blockInputs = {} } = body;
+    const { grade, selectedBlocks = [], blockInputs = {}, sgkVolume = null, sgkChapterId = null } = body;
 
     if (!grade || !Array.isArray(selectedBlocks) || selectedBlocks.length === 0) {
       return NextResponse.json(
@@ -21,7 +21,7 @@ export async function POST(request) {
     }
 
     const { results, warnings, quotaExhausted, serverOverloaded } =
-      await orchestrateVietnameseExamGeneration({ grade, selectedBlocks, blockInputs });
+      await orchestrateVietnameseExamGeneration({ grade, selectedBlocks, blockInputs, sgkVolume, sgkChapterId });
 
     if (Object.keys(results).length === 0) {
       // Không khối nào tạo thành công - phân biệt rõ nguyên nhân giống lessonPlanOrchestrator.js,
