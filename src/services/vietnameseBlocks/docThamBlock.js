@@ -18,7 +18,14 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function buildDocThamPrompt({ grade, chuDe, soCauHoi }) {
+function buildDocThamReferenceBlock(referenceContext) {
+  return referenceContext
+    ? `\n\nTÀI LIỆU THAM KHẢO (trích từ SGK, chỉ để LẤY CẢM HỨNG về từ vựng/chủ đề - TUYỆT ĐỐI KHÔNG
+chép lại nguyên văn bất kỳ câu/đoạn nào từ tài liệu này, vẫn phải TỰ VIẾT MỚI HOÀN TOÀN):\n\n${referenceContext}`
+    : "";
+}
+
+export function buildDocThamPrompt({ grade, chuDe, soCauHoi, referenceContext = null }) {
   const count = Math.min(10, Math.max(7, Number(soCauHoi) || 8));
 
   return `
@@ -47,7 +54,7 @@ QUY TẮC BẮT BUỘC:
   "luaChon" = mảng rỗng [], "dapAn" là gợi ý đáp án ngắn gọn (không cần đúng từng chữ với bài làm
   học sinh, chỉ là hướng dẫn chấm cho giáo viên).
 - Đầu ra CHỈ trả về JSON hợp lệ theo đúng schema bên dưới, không kèm giải thích, không markdown
-  code fence, không thêm trường nào khác ngoài schema.
+  code fence, không thêm trường nào khác ngoài schema.${buildDocThamReferenceBlock(referenceContext)}
 
 Hãy trả về JSON theo đúng schema sau:
 {
@@ -76,18 +83,23 @@ function isValidDocThamResult(parsed) {
 }
 
 /**
- * generateDocThamBlock({ grade, input: { chuDe, soCauHoi } }) -> { nguLieu, cauHoi }
+ * generateDocThamBlock({ grade, input: { chuDe, soCauHoi, referenceContext } }) -> { nguLieu, cauHoi }
+ * `referenceContext` (PHIÊN 30, tuỳ chọn) - đoạn markdown chương SGK Tiếng Việt thật do giáo viên
+ * chọn ở VietnameseExamForm.jsx (liên kết qua sgkVolume/sgkChapterId, resolve ở
+ * vietnameseExamOrchestrator.js) - chỉ dùng làm CẢM HỨNG từ vựng/chủ đề cho AI tự viết ngữ liệu
+ * MỚI, KHÔNG dùng để chép nguyên văn (xem buildDocThamReferenceBlock() ở trên) - giữ đúng nguyên
+ * tắc chống vi phạm bản quyền đã áp dụng cho referenceContext bên worksheetGenerator.js.
  * Ném lỗi có gắn cờ `quotaExhausted`/`serverOverloaded` để orchestrator phân biệt được nguyên
  * nhân (giống geminiEngine.js/lessonPlanEngine.js) - KHÔNG để lọt lỗi JSON thô lên giao diện.
  */
 export async function generateDocThamBlock({ grade, input = {} }) {
-  const { chuDe = "", soCauHoi = 8 } = input;
+  const { chuDe = "", soCauHoi = 8, referenceContext = null } = input;
   const maxRetries = 2;
   let attempt = 0;
   let lastError = null;
 
   while (attempt <= maxRetries) {
-    const prompt = buildDocThamPrompt({ grade, chuDe, soCauHoi });
+    const prompt = buildDocThamPrompt({ grade, chuDe, soCauHoi, referenceContext });
     try {
       const result = await generateContentWithFailover({
         model: DOC_THAM_MODEL,

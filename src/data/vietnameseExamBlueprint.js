@@ -9,12 +9,19 @@
  * @property {string[]} selectedBlocks - danh sách key khối đã bật, xem src/data/vietnameseExamBlocks.js
  * @property {Object} blockInputs - input riêng của từng khối, dạng { [blockKey]: {...} }.
  *           VD khối "docTham": { chuDe: string, soCauHoi: number }.
+ * @property {number} [sgkVolume] - PHIÊN 30 (tuỳ chọn) Tập SGK Tiếng Việt đã chọn để gợi ý Tên bài
+ *           + trích chương làm ngữ liệu tham khảo cho khối "Đọc thầm" - xem
+ *           vietnameseExamOrchestrator.js (resolveVietnameseSgkReferenceContext()).
+ * @property {string} [sgkChapterId] - PHIÊN 30 (tuỳ chọn) Chương/Bài SGK Tiếng Việt đã chọn, đi
+ *           kèm sgkVolume ở trên.
  */
 
-export function buildVietnameseExamBlueprint({ grade, selectedBlocks = [], blockInputs = {} }) {
+export function buildVietnameseExamBlueprint({ grade, selectedBlocks = [], blockInputs = {}, sgkVolume = null, sgkChapterId = null }) {
   return {
     grade,
     selectedBlocks,
     blockInputs,
+    sgkVolume,
+    sgkChapterId,
   };
 }

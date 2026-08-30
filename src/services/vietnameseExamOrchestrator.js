@@ -1,8 +1,9 @@
-import { getBlock } from "@/data/vietnameseExamBlocks";
+import { getBlock, BLOCK_KEYS } from "@/data/vietnameseExamBlocks";
 import { generateDocThamBlock } from "./vietnameseBlocks/docThamBlock";
 import { generateDocThanhTiengBlock } from "./vietnameseBlocks/docThanhTiengBlock";
 import { generateChinhTaBlock } from "./vietnameseBlocks/chinhTaBlock";
 import { generateTapLamVanBlock } from "./vietnameseBlocks/tapLamVanBlock";
+import { fetchMarkdownFromGitHub } from "./githubService";
 
 /**
  * vietnameseExamOrchestrator.js
@@ -27,11 +28,51 @@ const BLOCK_GENERATORS = {
   tapLamVan: generateTapLamVanBlock,
 };
 
-export async function orchestrateVietnameseExamGeneration({ grade, selectedBlocks = [], blockInputs = {} }) {
+const MAX_SGK_CONTEXT_LENGTH = 4000; // khớp MAX_SGK_CONTEXT_LENGTH trong worksheetGenerator.js
+
+/**
+ * ================== PHIÊN 30 (liên kết SGK Tiếng Việt thật cho khối "Đọc thầm") ==================
+ * Tải nội dung 1 chương SGK Tiếng Việt (best-effort, KHÔNG làm hỏng cả lượt tạo đề nếu lỗi) - TÁI
+ * DÙNG đúng nguyên tắc resolveSgkChapterContext() đã kiểm định trong worksheetGenerator.js. Khác
+ * 1 điểm: mode này grade đã SẴN LÀ số 1-5 khớp thẳng SGK (không cần mapping WORKSHEET_GRADE_TO_SGK_GRADE
+ * như Phiếu bài tập), và môn LUÔN LÀ "Tieng_Viet" (mode này chỉ có 1 môn duy nhất).
+ *
+ * Trả về { context, warning } - `context` = null nếu không chọn chương hoặc tải lỗi (khối "Đọc
+ * thầm" vẫn tạo bình thường, chỉ là ngữ liệu AI tự viết sẽ kém bám sát chủ đề/từ vựng SGK hơn).
+ */
+async function resolveVietnameseSgkReferenceContext({ grade, sgkVolume, sgkChapterId }) {
+  if (!sgkChapterId) return { context: null, warning: null };
+  try {
+    const markdown = await fetchMarkdownFromGitHub(grade, "Tieng_Viet", sgkVolume || 1, sgkChapterId);
+    return { context: markdown.slice(0, MAX_SGK_CONTEXT_LENGTH), warning: null };
+  } catch (err) {
+    return {
+      context: null,
+      warning: `Không tải được tài liệu SGK Tiếng Việt cho Chương/Bài đã chọn (${err.message}) - khối "Đọc thầm" vẫn được tạo bình thường, nhưng ngữ liệu có thể kém bám sát chủ đề SGK hơn.`,
+    };
+  }
+}
+
+export async function orchestrateVietnameseExamGeneration({
+  grade,
+  selectedBlocks = [],
+  blockInputs = {},
+  sgkVolume = null,
+  sgkChapterId = null,
+}) {
   const warnings = [];
   const results = {};
   let quotaExhausted = false;
   let serverOverloaded = false;
+
+  // Chỉ resolve khi khối "Đọc thầm" thực sự được chọn - tránh gọi GitHub vô ích nếu giáo viên
+  // chỉ tạo các khối tĩnh (Đọc thành tiếng/Chính tả) dù có lỡ chọn sẵn Chương SGK trên form.
+  let sgkReferenceContext = null;
+  if (selectedBlocks.includes(BLOCK_KEYS.DOC_THAM) && sgkChapterId) {
+    const resolved = await resolveVietnameseSgkReferenceContext({ grade, sgkVolume, sgkChapterId });
+    sgkReferenceContext = resolved.context;
+    if (resolved.warning) warnings.push(resolved.warning);
+  }
 
   for (const key of selectedBlocks) {
     const blockDef = getBlock(key);
@@ -49,8 +90,14 @@ export async function orchestrateVietnameseExamGeneration({ grade, selectedBlock
       continue;
     }
 
+    // Chỉ khối "Đọc thầm" nhận thêm referenceContext - các khối khác giữ nguyên input như cũ.
+    const input =
+      key === BLOCK_KEYS.DOC_THAM
+        ? { ...(blockInputs[key] || {}), referenceContext: sgkReferenceContext }
+        : blockInputs[key] || {};
+
     try {
-      results[key] = await generate({ grade, input: blockInputs[key] || {} });
+      results[key] = await generate({ grade, input });
     } catch (err) {
       if (err.quotaExhausted) quotaExhausted = true;
       if (err.serverOverloaded) serverOverloaded = true;
