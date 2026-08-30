@@ -48,6 +48,44 @@ export const SUBJECT_PROFILES = {
   không liên quan trực tiếp đến câu hỏi - không bịa sự kiện giả.
 - Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
   },
+  // ⚠️ Đạo đức và Khoa học chỉ dạy ở Tiểu học (xem giới hạn minGrade/maxGrade trong config.js) -
+  // 2 quy tắc riêng dưới đây viết RIÊNG cho lứa tuổi Tiểu học, KHÔNG dùng chung khuôn với Lịch sử/
+  // Tiếng Anh (vốn có thể dạy tới Lớp 12).
+  Dao_Duc: {
+    label: "Đạo đức",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Đạo đức bậc Tiểu học chuẩn chương trình Giáo dục " +
+      "phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn giáo dục PHẨM CHẤT (yêu nước, nhân ái, chăm chỉ, trung thực, trách nhiệm) và KỸ
+  NĂNG ỨNG XỬ, KHÔNG phải môn kiến thức hàn lâm - TRÁNH tuyệt đối các câu hỏi kiểu học thuộc lòng
+  định nghĩa/ghi nhớ máy móc.
+- Ưu tiên dạng câu hỏi TÌNH HUỐNG cụ thể, gần gũi đời sống học sinh Tiểu học (ở nhà, ở trường, với
+  bạn bè, nơi công cộng...): mô tả 1 tình huống ngắn rồi hỏi "Em sẽ làm gì/ứng xử thế nào là đúng"
+  - với trắc nghiệm, chỉ có DUY NHẤT 1 phương án thể hiện đúng chuẩn mực đạo đức/hành vi phù hợp,
+  các phương án còn lại phải là hành vi SAI rõ ràng (không mập mờ, gây tranh cãi giữa giáo viên).
+- KHÔNG dùng công thức/số liệu/LaTeX. Ngôn ngữ ngắn gọn, gần gũi, đúng độ tuổi (Lớp 1-2 câu cực
+  ngắn 1 tình huống đơn giản; Lớp 3-5 có thể có tình huống nhiều chi tiết hơn, bắt đầu phân biệt
+  được các sắc thái đúng-sai gần giống nhau).
+- Với câu tự luận, có thể yêu cầu học sinh nêu cách xử lý tình huống hoặc kể lại 1 việc đã làm thể
+  hiện phẩm chất đang học - KHÔNG yêu cầu "định nghĩa" khái niệm đạo đức trừu tượng.`,
+  },
+  Khoa_Hoc: {
+    label: "Khoa học",
+    expertRole:
+      "một chuyên gia ra đề thi môn Khoa học bậc Tiểu học (Lớp 4-5) chuẩn chương trình Giáo dục " +
+      "phổ thông 2018 của Việt Nam",
+    extraRules: `- Nội dung xoay quanh các chủ đề Khoa học Tiểu học: chất, năng lượng, thực vật và động vật, nấm,
+  vi khuẩn, con người và sức khoẻ, sinh vật và môi trường - CHỈ dùng kiến thức có trong tài liệu
+  được cung cấp, KHÔNG mở rộng sang kiến thức Vật lý/Hoá học/Sinh học bậc THCS trở lên (VD không
+  dùng công thức hoá học, không tính toán vật lý bằng công thức).
+- Ưu tiên câu hỏi gắn với QUAN SÁT/THÍ NGHIỆM/HIỆN TƯỢNG THỰC TẾ gần gũi (VD mô tả 1 hiện tượng
+  rồi hỏi nguyên nhân/kết quả, hoặc mô tả các bước 1 thí nghiệm đơn giản trong SGK rồi hỏi về kết
+  quả/giải thích) thay vì hỏi thuộc lòng định nghĩa suông.
+- KHÔNG dùng công thức/ký hiệu hoá học/vật lý dạng LaTeX - trình bày bằng ngôn ngữ thông thường,
+  phù hợp học sinh Lớp 4-5.
+- Với câu hỏi về sức khoẻ/an toàn (VD phòng bệnh, an toàn thực phẩm, an toàn khi dùng điện), đảm
+  bảo thông tin ĐÚNG kiến thức y tế/an toàn phổ thông, không đưa lời khuyên y tế chuyên sâu.`,
+  },
 };
 
 /** Trả về profile môn học, mặc định về Toán nếu không tìm thấy (an toàn, không bao giờ throw). */

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
-import { SUBJECTS, GRADES } from "@/data/config";
+import { GRADES, getSubjectsForGrade } from "@/data/config";
 import {
   OUTLINE_LEVEL_ORDER,
   OUTLINE_LEVEL_LABELS,
@@ -34,6 +34,16 @@ export default function OutlineForm({ onGenerated }) {
   const [subject, setSubject] = useState("Toan");
   const [grade, setGrade] = useState(5);
   const [volume, setVolume] = useState(1);
+
+  // Đạo đức/Khoa học chỉ dạy 1 số khối (xem minGrade/maxGrade trong config.js) - lọc lại danh
+  // sách môn mỗi khi đổi Lớp, tránh chọn nhầm môn không tồn tại ở khối đó.
+  const availableSubjects = getSubjectsForGrade(grade);
+  useEffect(() => {
+    if (!availableSubjects.some((s) => s.value === subject)) {
+      setSubject(availableSubjects[0]?.value || "Toan");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grade]);
 
   const [availableChapters, setAvailableChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
@@ -147,7 +157,7 @@ export default function OutlineForm({ onGenerated }) {
         <div className="grid grid-cols-3 gap-3">
           <Field label="Môn học">
             <select value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass}>
-              {SUBJECTS.map((s) => (
+              {availableSubjects.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>

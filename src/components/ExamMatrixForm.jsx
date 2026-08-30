@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
 import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { getEffectiveSession } from "@/services/authService";
-import { GRADES, SUBJECTS, getSubjectLabel } from "@/data/config";
+import { GRADES, getSubjectLabel, getSubjectsForGrade } from "@/data/config";
 import { buildExamBlueprint } from "@/data/examBlueprint";
 import { buildExamResult } from "@/data/examResult";
 import { fetchChaptersRequest, generateExamRequest, analyzeSampleExamRequest } from "@/services/apiClient";
@@ -53,6 +53,18 @@ export default function ExamMatrixForm({ onGenerated }) {
   const [subject, setSubject] = useState("Toan");
   const [grade, setGrade] = useState(5);
   const [volume, setVolume] = useState(1);
+
+  // Đạo đức/Khoa học chỉ dạy 1 số khối (xem minGrade/maxGrade trong config.js) - danh sách môn
+  // hiển thị ở dropdown phải lọc lại mỗi khi đổi Lớp, tránh giáo viên chọn nhầm môn không tồn tại
+  // ở khối đó (VD Khoa học không có ở Lớp 1-3).
+  const availableSubjects = getSubjectsForGrade(grade);
+  useEffect(() => {
+    if (!availableSubjects.some((s) => s.value === subject)) {
+      setSubject(availableSubjects[0]?.value || "Toan");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grade]);
+
   const [availableChapters, setAvailableChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
   const [chaptersError, setChaptersError] = useState("");
@@ -309,7 +321,7 @@ export default function ExamMatrixForm({ onGenerated }) {
         <div className="grid grid-cols-3 gap-3">
           <Field label="Môn học">
             <select value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass}>
-              {SUBJECTS.map((s) => (
+              {availableSubjects.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>

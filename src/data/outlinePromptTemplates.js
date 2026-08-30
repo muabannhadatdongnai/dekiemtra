@@ -169,7 +169,11 @@ QUY TẮC CHUNG:
   "m2", "cm3").
 - Phân số viết theo dạng "tử số/mẫu số" (VD: "3/4", "1 và 1/4" cho hỗn số) - đây là cách trình bày
   AN TOÀN nhất khi không có công cụ hiển thị công thức, KHÔNG cần viết dạng phân số nằm dọc.
-${subject === "Toan" ? `\nQUY TẮC RIÊNG MÔN TOÁN (LƯU Ý: phần dưới đây có thể nhắc tới LaTeX vì vốn viết cho phần ra ĐỀ\nKIỂM TRA - khi soạn ĐỀ CƯƠNG vẫn áp dụng quy tắc nội dung/số liệu nhưng BỎ QUA hoàn toàn yêu cầu\ndùng LaTeX, luôn viết bằng ký hiệu thông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
+
+QUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: phần dưới đây có thể nhắc tới LaTeX vì vốn viết cho phần ra ĐỀ
+KIỂM TRA - khi soạn ĐỀ CƯƠNG vẫn áp dụng quy tắc nội dung/số liệu nhưng BỎ QUA hoàn toàn yêu cầu
+dùng LaTeX, luôn viết bằng ký hiệu thông thường như quy tắc bắt buộc ở trên):
+${subjectProfile.extraRules}
 
 ${sourceBlock}
 ${extraBlock}
