@@ -537,13 +537,30 @@ export const WORKSHEET_EXERCISE_CATALOG = [
   // khai báo "chỗ đứng" (source:"planned") để schema layout/mascot dùng chung được ngay - giờ
   // đã có generator thật trong worksheetGenerator.js (generateKhoanhTuLoai/generateNoiTuNhom/
   // generateDienTuChoSan/generateDatCauTheoMau), đổi source -> "ai".
+  //
+  // ===== PHIÊN 29 (sửa lỗi sư phạm phản hồi qua phiếu in thật - Lớp 1) =====
+  // Giáo viên chấm phiếu thật phát hiện 3 lỗi ở "khoanh_tu_loai"/"noi_tu_nhom":
+  // (1) Lỗi VƯỢT CẤP: khái niệm "từ chỉ hoạt động" (động từ) / "từ chỉ đặc điểm" (tính từ) là
+  // thuật ngữ Luyện từ và câu Lớp 2-3, học sinh Lớp 1 (đặc biệt HK1, vừa học chữ cái) hoàn toàn
+  // CHƯA được dạy - nhãn đề bài lại in thẳng thuật ngữ này lên phiếu. Sửa: minGrade -> "LOP_2"
+  // cho CẢ 2 dạng bài (không còn hiện ở phiếu Lớp 1 nữa).
+  // (2) Lỗi SAI LOGIC ở "noi_tu_nhom": instructionVariant cũ "Nối từ chỉ hoạt động với nhóm
+  // thích hợp." khẳng định các từ đưa ra đều là ĐỘNG TỪ, nhưng generateNoiTuNhom() trong
+  // worksheetGenerator.js sinh CẶP "từ - nhóm/đặc điểm" CHUNG CHUNG (danh từ nối nhóm, tính từ
+  // nối đặc điểm...), không hề ràng buộc phải là động từ - nhãn đề bài SAI với chính nội dung AI
+  // sinh ra (VD "con cá" bị gắn nhãn "từ chỉ hoạt động" dù là danh từ). Sửa: đổi lại nhãn đề bài
+  // cho ĐÚNG với dữ liệu thực tế generator trả về (không cam kết loại từ cụ thể).
+  // "dien_tu_cho_san" vẫn giữ Lớp 1 (điền từ vào câu là dạng quen thuộc SGK Lớp 1 HK2/Lớp 2) NHƯNG
+  // buildReferenceContextBlock() nay thêm nhánh ràng buộc RIÊNG cho Lớp 1 (câu cực ngắn, từ vựng
+  // quen thuộc, cấm thuật ngữ ngữ pháp) - xem buildVietnameseGradeConstraintBlock() trong
+  // worksheetGenerator.js.
   {
     key: "khoanh_tu_loai",
     subject: "TIENG_VIET",
     label: "Khoanh từ chỉ hoạt động / đặc điểm",
     skillGroup: "tu_vung",
     source: "ai",
-    minGrade: "LOP_1",
+    minGrade: "LOP_2", // PHIÊN 29: trước là LOP_1 - thuật ngữ "từ chỉ hoạt động/đặc điểm" là kiến thức Lớp 2-3, không phù hợp Lớp 1
     maxGrade: "LOP_2",
     defaultCount: 5,
     instructionVariants: ["Khoanh tròn vào từ chỉ hoạt động.", "Khoanh tròn vào từ chỉ đặc điểm."],
@@ -556,10 +573,12 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     label: "Nối từ với nhóm thích hợp",
     skillGroup: "tu_vung",
     source: "ai",
-    minGrade: "LOP_1",
+    minGrade: "LOP_2", // PHIÊN 29: trước là LOP_1 - cùng lý do với khoanh_tu_loai ở trên
     maxGrade: "LOP_2",
     defaultCount: 5,
-    instructionVariants: ["Nối từ chỉ hoạt động với nhóm thích hợp.", "Nối sự vật với đặc điểm thích hợp."],
+    // PHIÊN 29: bỏ variant "Nối từ chỉ hoạt động với nhóm thích hợp." - SAI với dữ liệu thực tế
+    // (generateNoiTuNhom() không ràng buộc phải là động từ, có thể ra danh từ/tính từ tuỳ cặp).
+    instructionVariants: ["Nối từ với nhóm thích hợp.", "Nối sự vật với đặc điểm thích hợp."],
     mascotPool: ["🔗", "🧩"],
     colorThemeTags: ["green", "purple"],
   },

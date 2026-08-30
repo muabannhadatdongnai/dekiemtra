@@ -275,15 +275,57 @@ từ vựng/chủ đề tương tự nếu phù hợp, TUYỆT ĐỐI KHÔNG ch�
     : "";
 }
 
+/**
+ * ================== PHIÊN 29 (sửa lỗi sư phạm phản hồi qua phiếu Lớp 1 in thật) ==================
+ * Giáo viên phản hồi phiếu "Điền từ thích hợp vào chỗ trống" ở Lớp 1 dùng câu dài, từ vựng phức
+ * tạp vượt quá khả năng đọc của học sinh Lớp 1 (giai đoạn mới đánh vần), VD "Mái tóc của bà đã
+ * bạc trắng vì tuổi già" - học sinh Lớp 1 KHÔNG đọc hiểu nổi câu này.
+ *
+ * Đây là "Master Prompt" RIÊNG cho Lớp 1 - chỉ áp dụng khi grade === "LOP_1", các khối Lớp 2 trở
+ * lên KHÔNG bị ảnh hưởng (giữ nguyên hành vi cũ). Áp dụng cho MỌI dạng bài Tiếng Việt AI-sinh còn
+ * mở cho Lớp 1 (hiện chỉ còn "dien_tu_cho_san" sau khi khoanh_tu_loai/noi_tu_nhom đã nâng
+ * minGrade lên LOP_2 - xem worksheetExerciseCatalog.js).
+ */
+export function buildVietnameseGradeConstraintBlock(grade) {
+  if (grade !== "LOP_1") return "";
+  return `
+
+QUY TẮC BẮT BUỘC RIÊNG CHO LỚP 1 (học sinh mới học đánh vần, HK1 chưa học hết bảng chữ cái):
+- TUYỆT ĐỐI CẤM dùng thuật ngữ ngữ pháp (như "từ chỉ hoạt động", "từ chỉ đặc điểm", "từ chỉ sự
+  vật", "danh từ", "động từ", "tính từ") ở BẤT KỲ đâu trong nội dung.
+- Mỗi câu/cụm từ CHỈ 2-4 TIẾNG, cực kỳ ngắn gọn, đúng dạng câu SGK Lớp 1 (VD: "Bà có quả na.",
+  "Bé ca hát.", "Ba bế bé."). KHÔNG dùng câu dài, câu ghép, hay câu có nhiều mệnh đề.
+- KHÔNG dùng từ có vần phức tạp (như "oang", "uynh", "iếc", "uyên"...) - chỉ dùng từ vựng quen
+  thuộc, dễ đánh vần, xoay quanh chủ đề gần gũi: gia đình, con vật, đồ vật quen thuộc.
+- Chữ cái đầu tiên của MỖI câu/cụm từ BẮT BUỘC viết hoa.`;
+}
+
+/** Viết hoa chữ cái đầu tiên của chuỗi (post-process CODE, không chỉ dựa vào AI làm đúng theo
+ * prompt) - phòng trường hợp AI quên viết hoa dù đã dặn, VD giáo viên phản hồi câu "bố sửa lại
+ * chiếc xe đạp..." thiếu viết hoa đầu câu. Bỏ qua chuỗi rỗng/không phải string. */
+export function capitalizeFirstLetter(str) {
+  if (typeof str !== "string" || !str) return str;
+  // Tìm ký tự chữ/số ĐẦU TIÊN (bỏ qua khoảng trắng đầu nếu có) để viết hoa đúng vị trí, không
+  // đụng vào các trường hợp câu bắt đầu bằng dấu câu/khoảng trắng thừa.
+  const match = str.match(/^(\s*)(\S)(.*)$/s);
+  if (!match) return str;
+  const [, leading, firstChar, rest] = match;
+  return `${leading}${firstChar.toLocaleUpperCase("vi")}${rest}`;
+}
+
 /** "Khoanh từ chỉ hoạt động / đặc điểm" - mỗi câu có 1 từ mục tiêu (động từ hoặc tính từ) để học
  * sinh khoanh tròn trên bản in. wordType chỉ dùng nội bộ (đáp án), KHÔNG hiện ra đề bài. */
 async function generateKhoanhTuLoai({ grade, count, referenceContext }) {
   if (count <= 0) return [];
+  // PHIÊN 29: khoanh_tu_loai nay minGrade="LOP_2" (xem worksheetExerciseCatalog.js) nên grade ở
+  // đây KHÔNG còn thể là "LOP_1" trong luồng bình thường - vẫn giữ buildVietnameseGradeConstraintBlock()
+  // ở đây (trả "" nếu không phải LOP_1) để phòng thủ nếu sau này có nơi gọi trực tiếp với LOP_1.
   const prompt = `
 Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
 Soạn ĐÚNG ${count} câu văn NGẮN (6-10 chữ), MỖI câu chứa ĐÚNG 1 từ chỉ HOẠT ĐỘNG (động từ) hoặc 1
 từ chỉ ĐẶC ĐIỂM (tính từ) làm từ mục tiêu để học sinh khoanh tròn. Trộn đều cả 2 loại. Từ mục tiêu
-phải xuất hiện NGUYÊN VẸN, KHÔNG chia tách trong câu (để học sinh khoanh đúng 1 từ).${buildReferenceContextBlock(referenceContext)}
+phải xuất hiện NGUYÊN VẸN, KHÔNG chia tách trong câu (để học sinh khoanh đúng 1 từ). Chữ cái đầu
+tiên của MỖI câu BẮT BUỘC viết hoa.${buildReferenceContextBlock(referenceContext)}${buildVietnameseGradeConstraintBlock(grade)}
 
 Trả về JSON đúng schema (không thêm trường khác):
 { "items": [ { "sentence": "câu văn đầy đủ", "targetWord": "từ mục tiêu xuất hiện y hệt trong câu", "wordType": "hoat_dong" | "dac_diem" } ] }
@@ -309,7 +351,9 @@ Trả về JSON đúng schema (không thêm trường khác):
           it.sentence.includes(it.targetWord) &&
           (it.wordType === "hoat_dong" || it.wordType === "dac_diem")
       )
-      .slice(0, count);
+      .slice(0, count)
+      // PHIÊN 29: viết hoa đầu câu bằng CODE, không chỉ dựa vào AI làm đúng theo prompt.
+      .map((it) => ({ ...it, sentence: capitalizeFirstLetter(it.sentence) }));
   } catch (err) {
     console.error("[worksheetGenerator] Lỗi sinh khoanh_tu_loai:", err.message);
     return [];
@@ -325,7 +369,7 @@ async function generateNoiTuNhom({ grade, count, referenceContext }) {
 Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
 Soạn ĐÚNG ${count} cặp "từ - nhóm/đặc điểm thích hợp" để học sinh nối, VD "con mèo" nối với "con
 vật", hoặc "bông hoa" nối với "màu đỏ". MỖI cặp 1 chủ đề khác nhau (đồ vật, con vật, cây cối, màu
-sắc, cảm xúc...), KHÔNG lặp lại "right" giữa các cặp (để chỉ có 1 đáp án đúng khi nối).${buildReferenceContextBlock(referenceContext)}
+sắc, cảm xúc...), KHÔNG lặp lại "right" giữa các cặp (để chỉ có 1 đáp án đúng khi nối).${buildReferenceContextBlock(referenceContext)}${buildVietnameseGradeConstraintBlock(grade)}
 
 Trả về JSON đúng schema (không thêm trường khác):
 { "pairs": [ { "left": "từ/cụm từ", "right": "nhóm/đặc điểm thích hợp, NGẮN GỌN (1-3 chữ)" } ] }
@@ -367,7 +411,8 @@ async function generateDienTuChoSan({ grade, count, referenceContext }) {
 Bạn là giáo viên Tiểu học Việt Nam dạy Tiếng Việt cho học sinh ${vietnameseGradeLabel(grade)}.
 Soạn ĐÚNG ${count} câu văn có 1 CHỖ TRỐNG (đánh dấu bằng "___"), cùng 1 "ngân hàng từ" gồm ĐÚNG
 ${count} từ để điền - MỖI từ trong ngân hàng CHỈ DÙNG CHO ĐÚNG 1 câu (không thừa, không thiếu,
-không trùng nhau).${buildReferenceContextBlock(referenceContext)}
+không trùng nhau). Chữ cái đầu tiên của MỖI câu (kể cả phần trước "___" nếu chỗ trống không nằm ở
+đầu câu) BẮT BUỘC viết hoa.${buildReferenceContextBlock(referenceContext)}${buildVietnameseGradeConstraintBlock(grade)}
 
 Trả về JSON đúng schema (không thêm trường khác):
 {
@@ -396,7 +441,10 @@ Trả về JSON đúng schema (không thêm trường khác):
           typeof s.answer === "string" &&
           wordBank.includes(s.answer)
       )
-      .slice(0, count);
+      .slice(0, count)
+      // PHIÊN 29: viết hoa đầu câu bằng CODE (không chỉ dựa vào AI) - phản hồi thực tế phát hiện
+      // câu "bố sửa lại chiếc xe đạp..." thiếu viết hoa đầu câu dù prompt cũ đã có dặn chung chung.
+      .map((s) => ({ ...s, template: capitalizeFirstLetter(s.template) }));
     // Ngân hàng từ chỉ giữ lại từ THỰC SỰ được dùng (phòng AI liệt kê dư) + xáo trộn để không lộ
     // thứ tự trùng với thứ tự câu (dễ đoán mò).
     const usedWords = new Set(sentences.map((s) => s.answer));
@@ -431,7 +479,9 @@ Trả về JSON đúng schema (không thêm trường khác):
     const items = Array.isArray(parsed.items) ? parsed.items : [];
     return items
       .filter((it) => it && typeof it.pattern === "string" && it.pattern.trim() && typeof it.example === "string" && it.example.trim())
-      .slice(0, count);
+      .slice(0, count)
+      // PHIÊN 29: viết hoa đầu câu ví dụ bằng CODE, đồng bộ với các dạng bài Tiếng Việt khác.
+      .map((it) => ({ ...it, example: capitalizeFirstLetter(it.example) }));
   } catch (err) {
     console.error("[worksheetGenerator] Lỗi sinh dat_cau_theo_mau:", err.message);
     return [];
