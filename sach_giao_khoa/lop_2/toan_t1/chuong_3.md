@@ -1,406 +1,359 @@
-# Chủ đề 3: LÀM QUEN VỚI KHỐI LƯỢNG, DUNG TÍCH
+# CHỦ ĐỀ 3: LÀM QUEN VỚI KHỐI LƯỢNG, DUNG TÍCH
 
-## Bài 15: KI-LÔ-GAM
+## BÀI 15: KI-LÔ-GAM
 
-### Khám phá
+### Trang 57
+#### Khám phá: Nặng hơn, nhẹ hơn
+- **a) So sánh trực quan:**
+  - Túi quả **nặng hơn** túi rau.
+  - Túi rau **nhẹ hơn** túi quả.
+- **b) So sánh qua bàn cân:**
+  - Quả dưa hấu nặng bằng 2 quả bưởi.
 
-**1. Khái niệm về khối lượng và cái cân**
-- Để biết một vật nặng bao nhiêu hay nhẹ bao nhiêu, người ta sử dụng **cái cân** (cân đồng hồ, cân đĩa, cân bàn, cân điện tử,...).
-- Khi đặt vật lên cân:
-  + Trên **cân đồng hồ**: Kim cân chỉ vào số nào thì vật nặng bấy nhiêu.
-  + Trên **cân đĩa**: Khi kim cân ở vạch chính giữa (cân thăng bằng), khối lượng của các vật đặt trên hai đĩa cân bằng nhau.
+---
 
-**2. Đơn vị đo Ki-lô-gam**
+### Trang 58
+#### 1) Quan sát tranh rồi chọn câu đúng:
+- **Đề bài:** Tranh vẽ một con gấu và 3 con chó đồ chơi đặt trên bàn cân thăng bằng.
+- **Các phương án:**
+  - A. Con gấu nặng hơn 3 con chó.
+  - B. Con gấu nhẹ hơn 3 con chó.
+  - C. Con gấu nặng bằng 3 con chó.
+- **Đáp án đúng:** **C. Con gấu nặng bằng 3 con chó** (vì cân ở trạng thái thăng bằng).
+
+#### 2) Quan sát tranh rồi trả lời câu hỏi:
+- **Đề bài:** Tranh vẽ hai bàn cân đĩa thăng bằng: Bàn cân thứ nhất cân 1 con mèo và 1 con thỏ (mèo nặng hơn thỏ); Bàn cân thứ hai cân 1 con mèo và 1 con chó (chó nặng hơn mèo).
+- **Câu hỏi và trả lời:**
+  - a) Mèo và chó, con nào nặng hơn? -> **Chó nặng hơn mèo**.
+  - b) Mèo và thỏ, con nào nặng hơn? -> **Mèo nặng hơn thỏ**.
+  - c) Mèo, chó và thỏ, con nào nặng nhất, con nào nhẹ nhất? -> **Chó nặng nhất, thỏ nhẹ nhất**.
+
+#### 3) Quan sát tranh rồi trả lời câu hỏi:
+- **Đề bài:** Vẽ ba bàn cân thăng bằng:
+  - Bàn cân 1: 1 quả cam nặng bằng 3 quả chanh.
+  - Bàn cân 2: 1 quả táo nặng bằng 3 quả chanh.
+  - Bàn cân 3: 1 quả bưởi nặng bằng 5 quả chanh.
+- **Câu hỏi và trả lời:**
+  - a) Quả cam nặng bằng mấy quả chanh? -> **3 quả chanh**.
+  - b) Quả táo nặng bằng mấy quả chanh? -> **3 quả chanh**.
+  - c) Quả bưởi nặng bằng mấy quả chanh? -> **5 quả chanh**.
+
+---
+
+### Trang 59
+#### Khám phá: Ki-lô-gam
 - **Ki-lô-gam** là một đơn vị đo khối lượng.
-- Ki-lô-gam viết tắt là $\text{kg}$.
-- Các quả cân thường gặp: Quả cân $1\text{ kg}$, $2\text{ kg}$, $5\text{ kg}$, $10\text{ kg}$.
+- Ki-lô-gam viết tắt là **kg**.
+- Quả cân 1 ki-lô-gam viết là **1 kg**.
+- **Ví dụ trong hình:**
+  - Hộp sữa cân nặng **1 kg**.
+  - Túi gạo cân nặng **2 kg**.
 
 ---
 
-### Hoạt động
+### Trang 60
+#### 1) Đố vui (Đúng hay Sai?):
+- **Tranh vẽ:**
+  - Bàn cân 1: 1 quả bóng và quả cân 1 kg (Bóng nhẹ hơn quả cân 1 kg).
+  - Bàn cân 2: 1 nải chuối và quả cân 1 kg (Nải chuối nặng hơn quả cân 1 kg).
+  - Bàn cân 3: 1 quả bưởi và quả cân 1 kg (Bàn cân thăng bằng).
+- **Câu hỏi:**
+  - a) Quả bóng nhẹ hơn 1 kg. -> **Đúng (Đ)**
+  - b) Nải chuối nặng hơn 1 kg. -> **Đúng (Đ)**
+  - c) Quả bưởi cân nặng 1 kg. -> **Đúng (Đ)**
+  - d) Quả bóng nặng bằng quả bưởi. -> **Sai (S)**
+  - e) Nải chuối nặng hơn quả bưởi. -> **Đúng (Đ)**
 
-**1. Số?**
-Quan sát tranh các vật trên cân đồng hồ và ghi số ki-lô-gam tương ứng:
-a) Túi táo nặng $3\text{ kg}$.
-b) Quả dưa hấu nặng $4\text{ kg}$.
-c) Con chó nặng $6\text{ kg}$.
-d) Quả mít nặng $5\text{ kg}$.
+#### 2) Đọc cân nặng của mỗi quả hoặc đồ vật dưới đây:
+- Quả bí ngô: **2 kg**
+- Hộp đường: **1 kg**
+- Quả mít: **3 kg**
+- Bao gạo: **10 kg**
+- Túi bột mì: **5 kg**
 
-**2. Tính (theo mẫu):**
-Mẫu: $5\text{ kg} + 3\text{ kg} = 8\text{ kg}$
-       $15\text{ kg} - 5\text{ kg} = 10\text{ kg}$
-
-a) $6\text{ kg} + 4\text{ kg} = 10\text{ kg}$
-$18\text{ kg} - 6\text{ kg} = 12\text{ kg}$
-$12\text{ kg} + 8\text{ kg} = 20\text{ kg}$
-
-b) $25\text{ kg} - 15\text{ kg} = 10\text{ kg}$
-$14\text{ kg} + 5\text{ kg} = 19\text{ kg}$
-$30\text{ kg} - 10\text{ kg} = 20\text{ kg}$
-
-**3. Giải bài toán:**
-Bạn cá heo cân nặng $20\text{ kg}$, bạn hải cẩu cân nặng hơn bạn cá heo $10\text{ kg}$. Hỏi bạn hải cẩu cân nặng bao nhiêu ki-lô-gam?
-
-**Tóm tắt:**
-Cá heo nặng: $20\text{ kg}$
-Hải cẩu nặng hơn cá heo: $10\text{ kg}$
-Hải cẩu nặng: ... $\text{kg}$?
-
-**Bài giải:**
-Bạn hải cẩu cân nặng số ki-lô-gam là:
-$20 + 10 = 30$ ($\text{kg}$)
-Đáp số: $30\text{ kg}$.
-
----
-
-### Luyện tập
-
-**1. Số?**
-Quan sát tranh cân đĩa đang ở vị trí thăng bằng:
-a) Đĩa bên trái có một túi gạo, đĩa bên phải có quả cân $5\text{ kg}$ và quả cân $2\text{ kg}$.
-$\rightarrow$ Túi gạo cân nặng: $5\text{ kg} + 2\text{ kg} = 7\text{ kg}$.
-
-b) Đĩa bên trái có một hộp quà và quả cân $1\text{ kg}$, đĩa bên phải có quả cân $5\text{ kg}$.
-$\rightarrow$ Hộp quà cân nặng: $5\text{ kg} - 1\text{ kg} = 4\text{ kg}$.
-
-**2. Chọn câu trả lời đúng:**
-Quan sát tranh cân nặng của các con vật: Con cáo nặng $6\text{ kg}$, con thỏ nặng $3\text{ kg}$, con chó nặng $8\text{ kg}$, con mèo nặng $2\text{ kg}$.
-a) Con vật nào cân nặng nhất?
-A. Con cáo
-B. Con thỏ
-C. Con chó
-D. Con mèo
-$\rightarrow$ **Đáp án đúng: C. Con chó ($8\text{ kg}$)**
-
-b) Con vật nào cân nhẹ nhất?
-A. Con cáo
-B. Con thỏ
-C. Con chó
-D. Con mèo
-$\rightarrow$ **Đáp án đúng: D. Con mèo ($2\text{ kg}$)**
-
-**3. Tính:**
-a) $12\text{ kg} + 7\text{ kg} = 19\text{ kg}$
-$26\text{ kg} - 16\text{ kg} = 10\text{ kg}$
-$15\text{ kg} + 5\text{ kg} = 20\text{ kg}$
-
-b) $9\text{ kg} + 6\text{ kg} - 5\text{ kg} = 10\text{ kg}$
-$18\text{ kg} - 8\text{ kg} + 7\text{ kg} = 17\text{ kg}$
-
-**4. Giải bài toán:**
-Mẹ mua $15\text{ kg}$ gạo tẻ và $5\text{ kg}$ gạo nếp. Hỏi mẹ đã mua tất cả bao nhiêu ki-lô-gam gạo?
-
-**Tóm tắt:**
-Gạo tẻ: $15\text{ kg}$
-Gạo nếp: $5\text{ kg}$
-Tất cả: ... $\text{kg}$?
-
-**Bài giải:**
-Mẹ đã mua tất cả số ki-lô-gam gạo là:
-$15 + 5 = 20$ ($\text{kg}$)
-Đáp số: $20\text{ kg}$ gạo.
-
-**5. Thử thách tư duy:**
-Có một quả cân $2\text{ kg}$ và một quả cân $5\text{ kg}$. Dùng cân đĩa, làm thế nào để cân được đúng $3\text{ kg}$ gạo từ một thúng gạo to?
-* **Cách làm:**
-  - Đặt quả cân $5\text{ kg}$ lên đĩa cân bên trái.
-  - Đặt quả cân $2\text{ kg}$ lên đĩa cân bên phải, sau đó xúc gạo từ thúng cho từ từ vào đĩa cân bên phải cho đến khi cân thăng bằng.
-  - Số gạo ở đĩa bên chính là $3\text{ kg}$ gạo (vì $5\text{ kg} - 2\text{ kg} = 3\text{ kg}$).
+#### 3) Quan sát tranh rồi trả lời:
+- **Tranh vẽ:**
+  - Cân 1: Hộp A thăng bằng với 1 quả cân 1 kg and 1 quả cân 2 kg.
+  - Cân 2: Hộp B thăng bằng với 2 quả cân 2 kg.
+  - Cân 3: Hộp C thăng bằng với 1 quả cân 5 kg.
+- **Câu hỏi và trả lời:**
+  - a) Số ?
+    - Hộp A cân nặng: **3 kg** (1 kg + 2 kg = 3 kg).
+    - Hộp B cân nặng: **4 kg** (2 kg + 2 kg = 4 kg).
+    - Hộp C cân nặng: **5 kg**.
+  - b) Hộp nào nặng nhất? Hộp nào nhẹ nhất?
+    - Hộp nặng nhất: **Hộp C (5 kg)**.
+    - Hộp nhẹ nhất: **Hộp A (3 kg)**.
 
 ---
 
-## Bài 16: LÍT
+### Trang 61
+#### Luyện tập
+#### 1) Tính (theo mẫu):
+- **Mẫu:** 5 kg + 4 kg = 9 kg; 10 kg - 3 kg = 7 kg.
+- **Phép tính a:**
+  - 12 kg + 23 kg = **35 kg**
+  - 45 kg + 20 kg = **65 kg**
+  - 9 kg + 7 kg = **16 kg**
+- **Phép tính b:**
+  - 42 kg - 30 kg = **12 kg**
+  - 13 kg - 9 kg = **4 kg**
+  - 60 kg - 40 kg = **20 kg**
 
-### Khám phá
+#### 2) Số ?
+- **Tranh vẽ:**
+  - Bàn cân bên trái: 1 con ngỗng thăng bằng với quả cân 5 kg và 2 kg.
+  - Bàn cân bên phải: 1 con gà thăng bằng với quả cân 2 kg và 1 kg.
+- **Trả lời:**
+  - a) Con ngỗng cân nặng: **7 kg** (5 kg + 2 kg = 7 kg).
+  - b) Con gà cân nặng: **3 kg** (2 kg + 1 kg = 3 kg).
 
-**1. Khái niệm về dung tích và sức chứa**
-- Để biết vật nào chứa được nhiều nước (hoặc chất lỏng) hơn, vật nào chứa được ít nước hơn, ta so sánh lượng nước chứa đầy trong mỗi vật đó.
-- Ví dụ: Rót đầy nước từ ca vào các cốc, nếu ca rót được nhiều cốc hơn thì ca chứa được nhiều nước hơn.
+#### 3) Tìm tổng số ki-lô-gam thóc của hai bao thóc:
+- **Tóm tắt:**
+  - Bao 1: 30 kg
+  - Bao 2: 50 kg
+- **Bài giải:**
+  - Cả hai bao thóc cân nặng số ki-lô-gam là:
+    30 + 50 = **80 (kg)**
+  - **Đáp số:** 80 kg thóc.
 
-**2. Đơn vị đo Lít**
-- **Lít** là một đơn vị đo dung tích (sức chứa).
-- Lít viết tắt là $\text{l}$.
-- Các đồ vật đong đo thường gặp: Ca $1\text{ l}$, chai $1\text{ l}$, chai $2\text{ l}$, can $3\text{ l}$, can $5\text{ l}$, can $10\text{ l}$, xô $15\text{ l}$, thùng $20\text{ l}$.
+#### 4) Robot A cân nặng 32 kg, Robot B nặng hơn Robot A là 2 kg, Robot C nhẹ hơn Robot A là 2 kg. Hỏi:
+- **Bài giải:**
+  - a) Robot B cân nặng số ki-lô-gam là:
+    32 + 2 = **34 (kg)**
+  - b) Robot C cân nặng số ki-lô-gam là:
+    32 - 2 = **30 (kg)**
+  - **Đáp số:** Robot B: 34 kg; Robot C: 30 kg.
+
+---
+---
+
+## BÀI 16: LÍT
+
+### Trang 62
+#### Khám phá
+- **a) So sánh sức chứa:**
+  - Bình đựng **nhiều nước hơn** cốc.
+  - Cốc đựng **ít nước hơn** bình.
+  - Đổ nước đầy bình rồi rót hết ra cốc, ta được 4 cốc đầy nước. Như vậy, lượng nước trong bình **bằng** lượng nước ở cả 4 cốc.
+- **b) Đơn vị đo dung tích:**
+  - **Lít** là một đơn vị đo dung tích.
+  - Lít viết tắt là **l**.
+  - Ca 1 lít, chai 1 lít chứa lượng nước bằng **1 l**.
 
 ---
 
-### Hoạt động
+### Trang 63
+#### 1) Quan sát hình rồi chọn câu đúng:
+- **Đề bài:** Đổ hết nước từ ca 1 l được đầy một chai nước và một cốc nước.
+- **Các phương án:**
+  - A. Chai đựng 1 l nước.
+  - B. Chai đựng ít hơn 1 l nước.
+  - C. Chai đựng nhiều hơn 1 l nước.
+- **Đáp án đúng:** **B. Chai đựng ít hơn 1 l nước** (vì 1 l nước đổ đầy được cả chai và còn thừa để đổ đầy thêm 1 cốc).
 
-**1. Số?**
-a) Rót đầy nước từ can vào các chai $1\text{ l}$:
-- Can $3\text{ l}$ rót đầy được $3$ chai $1\text{ l}$.
-- Can $5\text{ l}$ rót đầy được $5$ chai $1\text{ l}$.
+#### 2) Số ?
+- **Đọc số lít nước trong mỗi đồ vật dựa vào nhãn ghi:**
+  - Can màu xanh: **10 l**.
+  - Bình thủy tinh đựng nước: **2 l** (Mẫu).
+  - Ấm trà: **3 l**.
+  - Ca nhựa đựng nước: **1 l**.
+  - Xô màu xanh lá: **5 l**.
+  - Thùng nhựa màu đỏ: **20 l**.
 
-b) Trong can $10\text{ l}$ đang đựng $6\text{ l}$ nước. Cần đổ thêm $4\text{ l}$ nước nữa thì đầy can (vì $10\text{ l} - 6\text{ l} = 4\text{ l}$).
-
-**2. Tính (theo mẫu):**
-Mẫu: $6\text{ l} + 3\text{ l} = 9\text{ l}$
-       $12\text{ l} - 4\text{ l} = 8\text{ l}$
-
-a) $8\text{ l} + 6\text{ l} = 14\text{ l}$
-$15\text{ l} - 7\text{ l} = 8\text{ l}$
-$12\text{ l} + 8\text{ l} = 20\text{ l}$
-
-b) $20\text{ l} - 10\text{ l} = 10\text{ l}$
-$5\text{ l} + 6\text{ l} + 4\text{ l} = 15\text{ l}$
-$18\text{ l} - 8\text{ l} - 5\text{ l} = 5\text{ l}$
-
-**3. Giải bài toán:**
-Có một can $10\text{ l}$ đựng đầy dầu. Bác Hà đã dùng hết $6\text{ l}$ dầu. Hỏi trong can còn lại bao nhiêu lít dầu?
-
-**Tóm tắt:**
-Có: $10\text{ l}$
-Dùng hết: $6\text{ l}$
-Còn lại: ... $\text{l}$?
-
-**Bài giải:**
-Số lít dầu còn lại trong can là:
-$10 - 6 = 4$ ($\text{l}$)
-Đáp số: $4\text{ l}$ dầu.
+#### 3) Số ?
+- **Tranh vẽ:** Rót hết nước từ bình A và bình B ra các cốc nước có kích thước như nhau.
+  - Bình A rót được 4 cốc đầy.
+  - Bình B rót được 7 cốc đầy.
+- **Trả lời:**
+  - a) Lượng nước ở bình A là **4** cốc. Lượng nước ở bình B là **7** cốc.
+  - b) Lượng nước ở bình B nhiều hơn lượng nước ở bình A là **3** cốc (7 - 4 = 3).
 
 ---
 
-### Luyện tập
+### Trang 64
+#### Luyện tập
+#### 1) Tính (theo mẫu):
+- **Mẫu:** 8 l + 6 l = 14 l; 12 l - 7 l = 5 l.
+- **Phép tính a:**
+  - 5 l + 4 l = **9 l**
+  - 12 l + 20 l = **32 l**
+  - 7 l + 6 l = **13 l**
+- **Phép tính b:**
+  - 9 l - 3 l = **6 l**
+  - 19 l - 10 l = **9 l**
+  - 11 l - 2 l = **9 l**
 
-**1. Số?**
-Tính tổng số lít nước đựng trong các bình và can:
-a) Bình A ($3\text{ l}$) + Bình B ($5\text{ l}$) = $8\text{ l}$.
-b) Can $10\text{ l}$ + Can $5\text{ l}$ + Chai $2\text{ l}$ = $17\text{ l}$.
+#### 2) Số ?
+- **Đề bài a:** Cho các đồ vật chứa nước:
+  - Một ca nhựa chứa **1 l** và một bình chứa **2 l**. Cả hai đựng: **3 l** (Mẫu).
+  - Một bình chứa **3 l** và một can chứa **5 l**. Cả hai đựng: **8 l** (3 + 5 = 8).
+  - Một xô chứa **5 l** và một thùng chứa **8 l**. Cả hai đựng: **13 l** (5 + 8 = 13).
+- **Đề bài b:**
+  - Ba ca chứa nước lần lượt là: **1 l**, **2 l** và **5 l**. Cả ba ca đựng tất cả: **8 l** (1 + 2 + 5 = 8).
 
-**2. Chọn câu trả lời đúng:**
-Trong các vật dưới đây, đồ vật nào chứa được nhiều nước nhất?
-A. Chai $1\text{ l}$
-B. Can $5\text{ l}$
-C. Xô $10\text{ l}$
-D. Thùng $20\text{ l}$
-$\rightarrow$ **Đáp án đúng: D. Thùng $20\text{ l}$**
-
-**3. Giải bài toán:**
-Lần thứ nhất người ta đổ $15\text{ l}$ nước vào bể, lần thứ hai đổ thêm $10\text{ l}$ nước vào bể. Hỏi cả hai lần đã đổ tất cả bao nhiêu lít nước vào bể?
-
-**Tóm tắt:**
-Lần thứ nhất: $15\text{ l}$
-Lần thứ hai: $10\text{ l}$
-Cả hai lần: ... $\text{l}$?
-
-**Bài giải:**
-Cả hai lần đã đổ tất cả số lít nước vào bể là:
-$15 + 10 = 25$ ($\text{l}$)
-Đáp số: $25\text{ l}$ nước.
-
-**4. Giải bài toán:**
-Trong thùng có $18\text{ l}$ nước mắm. Mẹ đã bán đi $8\text{ l}$ nước mắm. Hỏi trong thùng còn lại bao nhiêu lít nước mắm?
-
-**Tóm tắt:**
-Có: $18\text{ l}$
-Bán đi: $8\text{ l}$
-Còn lại: ... $\text{l}$?
-
-**Bài giải:**
-Số lít nước mắm còn lại trong thùng là:
-$18 - 8 = 10$ ($\text{l}$)
-Đáp số: $10\text{ l}$ nước mắm.
-
-**5. Thử thách tư duy:**
-Trong tay em có một can $3\text{ l}$ và một can $5\text{ l}$ (không có vạch chia). Làm thế nào để lấy được đúng $2\text{ l}$ nước từ vòi nước máy?
-* **Cách làm:**
-  - Rót nước từ vòi đầy vào can $5\text{ l}$.
-  - Từ can $5\text{ l}$, rót sang can $3\text{ l}$ cho đến khi đầy can $3\text{ l}$.
-  - Lượng nước còn lại trong can $5\text{ l}$ lúc này chính là $2\text{ l}$ nước (vì $5\text{ l} - 3\text{ l} = 2\text{ l}$).
+#### 3) Số ? (Trong can còn lại bao nhiêu lít nước?)
+- **Hình 1:** Can 5 l rót đầy ca 2 l. -> Trong can còn lại: **3 l** (5 - 2 = 3).
+- **Hình 2:** Can 10 l rót đầy bình 4 l. -> Trong can còn lại: **6 l** (10 - 4 = 6).
+- **Hình 3:** Can 15 l rót đầy xô 5 l. -> Trong can còn lại: **10 l** (15 - 5 = 10).
 
 ---
 
-## Bài 17: THỰC HÀNH VÀ TRẢI NGHIỆM VỚI CÁC ĐƠN VỊ KI-LÔ-GAM, LÍT
+### Trang 65
+#### 4) Mỗi đồ vật đựng số lít nước bằng tổng số lít nước ở các ca bên cạnh (như hình vẽ).
+- **Hình vẽ cho thấy:**
+  - **Bình:** Đi kèm 2 ca nước loại 1 l. -> Bình chứa: **2 l**.
+  - **Ấm:** Đi kèm 3 ca nước loại 1 l. -> Ấm chứa: **3 l**.
+  - **Xô:** Đi kèm 2 ca nước loại 2 l và 1 ca loại 1 l. -> Xô chứa: **5 l** (2 + 2 + 1 = 5).
+  - **Can:** Đi kèm 3 ca nước loại 2 l. -> Can chứa: **6 l** (2 + 2 + 2 = 6).
+- **Trả lời câu hỏi:**
+  - a) Hoàn thành bảng số lít nước:
+    - Bình: **2** l
+    - Ấm: **3** l
+    - Xô: **5** l
+    - Can: **6** l
+  - b) Đồ vật đựng **nhiều nước nhất**: **Can** (6 l). Đồ vật đựng **ít nước nhất**: **Bình** (2 l).
 
-### Hoạt động 1: Thực hành cân đồ vật
-**1. Cân đồ dùng học tập và đồ dùng sinh hoạt:**
-- Dùng cân đồng hồ hoặc cân đĩa để xác định khối lượng của cặp sách, túi gạo, chồng sách, quả bóng,...
-- Ghi lại kết quả cân được vào bảng:
+#### 5) Trong can có 15 l nước mắm. Mẹ đã rót 7 l nước mắm vào các chai. Hỏi trong can còn lại bao nhiêu lít nước mắm?
+- **Bài giải:**
+  - Số lít nước mắm còn lại trong can là:
+    15 - 7 = **8 (l)**
+  - **Đáp số:** 8 lít nước mắm.
 
-| Tên đồ vật | Khối lượng ước lượng | Khối lượng thực tế cân được |
-|---|---|---|
-| Cặp sách của em | khoảng $2\text{ kg}$ | $2\text{ kg}$ |
-| Túi gạo | khoảng $5\text{ kg}$ | $5\text{ kg}$ |
-| Hộp đồ dùng toán học | khoảng $1\text{ kg}$ | $1\text{ kg}$ |
-| Chồng vở lớp 2 | khoảng $3\text{ kg}$ | $3\text{ kg}$ |
+---
+---
 
-**2. So sánh khối lượng:**
-- Cặp sách của bạn nào nặng hơn? Cặp sách của bạn nào nhẹ hơn?
-- Đồ vật nào nặng nhất trong các đồ vật vừa cân?
+## BÀI 17: THỰC HÀNH VÀ TRẢI NGHIỆM VỚI CÁC ĐƠN VỊ KI-LÔ-GAM, LÍT
+
+### Trang 66
+#### Khám phá
+- **a) Giới thiệu một số loại cân thông dụng:**
+  - **Cân đĩa:** Gồm hai đĩa cân thăng bằng, dùng quả cân để đo (Ví dụ: Gói đường cân nặng 1 kg).
+  - **Cân đồng hồ:** Đọc số cân qua kim chỉ trên mặt đồng hồ (Ví dụ: Con vịt cân nặng 2 kg).
+  - **Cân bàn đồng hồ:** Người đứng lên bàn cân để đo khối lượng cơ thể hiển thị trên đồng hồ tròn hoặc màn hình điện tử (Ví dụ: Mi cân nặng 18 kg).
+- **b) Thực hành đong nước:**
+  - Sử dụng ca 1 l hoặc chai 1 l để đong lượng nước vào các đồ chứa lớn hơn hoặc đong chia ra các cốc nhỏ.
 
 ---
 
-### Hoạt động 2: Thực hành đong và đo dung tích
-**1. Đong nước bằng ca và chai $1\text{ l}$:**
-- Dùng chai $1\text{ l}$ đong nước đổ vào ca, xô hoặc chậu để biết vật đó chứa được bao nhiêu lít nước.
-- Thực hành: Đổ đầy 5 chai $1\text{ l}$ vào một chiếc xô thì đầy xô $\rightarrow$ Xô đó có dung tích là $5\text{ l}$.
+### Trang 67
+#### Hoạt động
+#### 1) Em đoán xem đồ vật nào nặng hơn, đồ vật nào nhẹ hơn:
+- **a) Quyển vở và cái bút chì:** **Quyển vở nặng hơn, cái bút chì nhẹ hơn**.
+- **b) Quả bóng bay và quả bóng đá:** **Quả bóng đá nặng hơn, quả bóng bay nhẹ hơn**.
 
-**2. Ước lượng dung tích:**
-- Ước lượng xem bình nước uống của lớp chứa được khoảng bao nhiêu lít nước.
-- Dùng chai $1\text{ l}$ đong thử để kiểm tra kết quả ước lượng.
+#### 2) Quan sát tranh rồi trả lời câu hỏi:
+- **Tranh vẽ:**
+  - Quả bưởi đặt trên bàn cân đĩa đối trọng với quả cam và quả cân 1 kg (Trạng thái cân thăng bằng).
+- **Câu hỏi và trả lời:**
+  - a) Em đoán xem quả bưởi và quả cam, quả nào nặng hơn? -> **Quả bưởi nặng hơn quả cam** (vì khối lượng quả bưởi bằng cả quả cam cộng thêm 1 kg).
+  - b) Quả bưởi cân nặng mấy ki-lô-gam? -> **Không thể kết luận trực tiếp chính xác** nếu chưa biết khối lượng quả cam, nhưng từ hình có thể biết quả bưởi nặng hơn quả cam 1 kg.
+  - c) Quả cam nặng hơn hay nhẹ hơn 1 kg? -> **Không đủ dữ liệu khẳng định**, nhưng thông thường 1 quả cam sẽ nhẹ hơn 1 kg rất nhiều.
 
----
-
-### Hoạt động 3: Thống kê và so sánh khối lượng của các bạn trong tổ
-**1. Ghi lại số cân nặng của các bạn trong nhóm/tổ:**
-Học sinh tiến hành đo cân nặng bằng cân sức khỏe và lập bảng thống kê (theo mẫu):
-
-| STT | Tên học sinh | Khối lượng ($\text{kg}$) |
-|---|---|---|
-| 1 | Nguyễn Văn Nam | $25\text{ kg}$ |
-| 2 | Trần Thị Mai | $22\text{ kg}$ |
-| 3 | Lê Hoàng Việt | $26\text{ kg}$ |
-| 4 | Phạm Minh Châu | $24\text{ kg}$ |
-| 5 | Đỗ Đức Hùng | $28\text{ kg}$ |
-
-**2. Trả lời câu hỏi dựa vào bảng thống kê:**
-a) Trong tổ em, bạn nào cân nặng nhất? Bạn nào cân nhẹ nhất?
-$\rightarrow$ Bạn Đỗ Đức Hùng cân nặng nhất ($28\text{ kg}$). Bạn Trần Thị Mai cân nhẹ nhất ($22\text{ kg}$).
-b) Bạn Hùng nặng hơn bạn Mai bao nhiêu ki-lô-gam?
-$\rightarrow$ Bạn Hùng nặng hơn bạn Mai số ki-lô-gam là: $28 - 22 = 6$ ($\text{kg}$).
-c) Sắp xếp tên các bạn theo thứ tự khối lượng từ nhẹ đến nặng:
-$\rightarrow$ Mai ($22\text{ kg}$), Châu ($24\text{ kg}$), Nam ($25\text{ kg}$), Việt ($26\text{ kg}$), Hùng ($28\text{ kg}$).
+#### 3) Quan sát tranh rồi trả lời câu hỏi:
+- **Tranh vẽ:** Hai chiếc cân đồng hồ đang cân túi muối và túi gạo.
+  - Kim cân túi muối chỉ số **1**.
+  - Kim cân túi gạo chỉ số **5**.
+- **Trả lời:**
+  - a) Mỗi túi cân nặng bao nhiêu ki-lô-gam? -> **Túi muối cân nặng 1 kg, túi gạo cân nặng 5 kg**.
+  - b) Túi gạo nặng hơn túi muối mấy ki-lô-gam? -> **Nặng hơn 4 kg** (5 - 1 = 4).
 
 ---
 
-## Bài 18: LUYỆN TẬP CHUNG
+### Trang 68
+#### Hoạt động
+#### 1) Bốn bạn Mai, Nam, Việt và Rô-bốt cân kiểm tra sức khỏe được kết quả như sau:
+- **Kết quả đọc từ cân bàn đồng hồ:**
+  - Mai: **23 kg**
+  - Nam: **25 kg**
+  - Việt: **24 kg**
+  - Rô-bốt: **20 kg**
+- **Hoàn thành câu hỏi:**
+  - a) Số ?
+    - Việt: **24 kg**
+    - Rô-bốt: **20 kg**
+    - Nam: **25 kg**
+    - Mai: **23 kg**
+  - b) Bạn nào nặng nhất? Bạn nào nhẹ nhất?
+    - Bạn nặng nhất: **Nam (25 kg)**.
+    - Bạn nhẹ nhất: **Rô-bốt (20 kg)**.
 
-### Luyện tập 1
-
-**1. Tính:**
-a) $8\text{ kg} + 6\text{ kg} = 14\text{ kg}$
-$15\text{ kg} - 7\text{ kg} = 8\text{ kg}$
-$20\text{ kg} - 10\text{ kg} + 5\text{ kg} = 15\text{ kg}$
-
-b) $9\text{ l} + 5\text{ l} = 14\text{ l}$
-$16\text{ l} - 8\text{ l} = 8\text{ l}$
-$12\text{ l} + 8\text{ l} - 6\text{ l} = 14\text{ l}$
-
-**2. Chọn câu trả lời đúng:**
-a) Quan sát hình cân đĩa thăng bằng: Quả cam cân bằng với $2$ quả chanh; Quả bưởi cân bằng với $3$ quả cam. Hỏi quả bưởi cân nặng bằng bao nhiêu quả chanh?
-A. $3$ quả chanh
-B. $5$ quả chanh
-C. $6$ quả chanh
-D. $4$ quả chanh
-$\rightarrow$ **Đáp án đúng: C. $6$ quả chanh** (vì $3 \times 2 = 6$)
-
-b) Một ca $2\text{ l}$ rót đầy được vào $4$ cốc nước giống nhau. Hỏi mỗi cốc nước chứa được bao nhiêu?
-$\rightarrow$ $2\text{ l}$ chia đều cho $4$ cốc, mỗi cốc chứa nửa lít nước ($500\text{ ml}$).
-
-**3. Giải bài toán:**
-Con lợn to cân nặng $50\text{ kg}$, con lợn bé cân nặng $30\text{ kg}$. Hỏi con lợn to nặng hơn con lợn bé bao nhiêu ki-lô-gam?
-
-**Tóm tắt:**
-Lợn to: $50\text{ kg}$
-Lợn bé: $30\text{ kg}$
-Lợn to nặng hơn lợn bé: ... $\text{kg}$?
-
-**Bài giải:**
-Con lợn to nặng hơn con lợn bé số ki-lô-gam là:
-$50 - 30 = 20$ ($\text{kg}$)
-Đáp số: $20\text{ kg}$.
-
-**4. Giải bài toán:**
-Buổi sáng cửa hàng bán được $15\text{ l}$ sữa, buổi chiều bán được nhiều hơn buổi sáng $5\text{ l}$ sữa. Hỏi buổi chiều cửa hàng bán được bao nhiêu lít sữa?
-
-**Tóm tắt:**
-Buổi sáng bán: $15\text{ l}$
-Buổi chiều bán nhiều hơn buổi sáng: $5\text{ l}$
-Buổi chiều bán: ... $\text{l}$?
-
-**Bài giải:**
-Buổi chiều cửa hàng bán được số lít sữa là:
-$15 + 5 = 20$ ($\text{l}$)
-Đáp số: $20\text{ l}$ sữa.
-
-**5. Thử thách:**
-Quan sát tranh cân đĩa thăng bằng và tìm khối lượng của quả bí ngô:
-- Đĩa bên trái có quả bí ngô và quả cân $2\text{ kg}$.
-- Đĩa bên phải có quả cân $5\text{ kg}$ và quả cân $5\text{ kg}$ (tổng là $10\text{ kg}$).
-$\rightarrow$ Khối lượng quả bí ngô là: $10 - 2 = 8$ ($\text{kg}$).
+#### 2) Thực hành đo lường:
+- Sử dụng các loại cân (cân đĩa, cân đồng hồ, cân bàn) có sẵn trong lớp học để tập cân một số đồ vật xung quanh em như cặp sách, hộp bút, sách giáo khoa,...
 
 ---
 
-### Luyện tập 2
+### Trang 69
+#### 3) Rót hết nước từ bình của Việt và Mai được các cốc nước (như hình vẽ). Bình nước của bạn nào chứa nhiều nước hơn và nhiều hơn mấy cốc?
+- **Đếm số cốc nước rót ra từ mỗi bình:**
+  - Bình của bạn Việt rót được: **8 cốc**.
+  - Bình của bạn Mai rót được: **6 cốc**.
+- **Bài giải:**
+  - Số cốc nước bình của Việt nhiều hơn bình của Mai là:
+    8 - 6 = **2 (cốc)**
+  - **Trả lời:** Bình nước của bạn **Việt** chứa nhiều nước hơn và nhiều hơn **2 cốc**.
 
-**1. Tính nhẩm:**
-$7\text{ kg} + 8\text{ kg} = 15\text{ kg}$
-$16\text{ kg} - 9\text{ kg} = 7\text{ kg}$
-$14\text{ l} - 6\text{ l} = 8\text{ l}$
-$6\text{ l} + 7\text{ l} = 13\text{ l}$
+#### 4) Rót nước từ bình A và bình B vào các cốc như hình vẽ:
+- Lượng nước ở bình A bằng 9 cốc.
+- Lượng nước ở bình B bằng 7 cốc.
+- **Trả lời câu hỏi:**
+  - a) Lượng nước ở cả hai bình bằng bao nhiêu cốc? -> **16 cốc** (9 + 7 = 16).
+  - b) Lượng nước ở bình nào ít hơn và ít hơn bao nhiêu cốc? -> Lượng nước ở bình **B ít hơn** bình A là **2 cốc** (9 - 7 = 2).
 
-**2. Số?**
-Điền số thích hợp vào chỗ trống trong sơ đồ mũi tên:
-a) $15\text{ l} \xrightarrow{-6\text{ l}} 9\text{ l} \xrightarrow{+8\text{ l}} 17\text{ l}$
-b) $12\text{ kg} \xrightarrow{+8\text{ kg}} 20\text{ kg} \xrightarrow{-5\text{ kg}} 15\text{ kg}$
-c) $8\text{ kg} \xrightarrow{+7\text{ kg}} 15\text{ kg} \xrightarrow{-9\text{ kg}} 6\text{ kg}$
+#### 5) Dùng ca 1 l, múc nước ở trong thùng đổ 3 ca đầy vào xô màu vàng và 5 ca đầy vào xô màu đỏ. Hỏi cả hai xô có bao nhiêu lít nước?
+- **Bài giải:**
+  - Số lít nước ở xô màu vàng là: 3 x 1 = 3 (l).
+  - Số lít nước ở xô màu đỏ là: 5 x 1 = 5 (l).
+  - Cả hai xô có tất cả số lít nước là:
+    3 + 5 = **8 (l)**
+  - **Đáp số:** 8 lít nước.
 
-**3. Quan sát tranh và trả lời câu hỏi:**
-Cho 4 bình đựng nước với dung tích như sau:
-- Bình A: $5\text{ l}$
-- Bình B: $10\text{ l}$
-- Bình C: $3\text{ l}$
-- Bình D: $8\text{ l}$
+---
+---
 
-a) Bình nào chứa được nhiều nước nhất? Bình nào chứa được ít nước nhất?
-$\rightarrow$ Bình B ($10\text{ l}$) chứa được nhiều nước nhất. Bình C ($3\text{ l}$) chứa được ít nước nhất.
-b) Bình B chứa được nhiều hơn bình A bao nhiêu lít nước?
-$\rightarrow$ Bình B chứa được nhiều hơn bình A là: $10 - 5 = 5$ ($\text{l}$).
-c) Sắp xếp các bình theo thứ tự dung tích từ bé đến lớn:
-$\rightarrow$ Bình C ($3\text{ l}$), Bình A ($5\text{ l}$), Bình D ($8\text{ l}$), Bình B ($10\text{ l}$).
+## BÀI 18: LUYỆN TẬP CHUNG
 
-**4. Giải bài toán:**
-Bố Việt cân nặng $65\text{ kg}$, Việt nhẹ hơn bố $38\text{ kg}$. Hỏi Việt cân nặng bao nhiêu ki-lô-gam?
+### Trang 70
+#### Luyện tập
+#### 1) Tính:
+- **Nhóm phép tính a (Khối lượng):**
+  - 40 kg + 20 kg = **60 kg**
+  - 60 kg - 40 kg = **20 kg**
+  - 8 kg + 5 kg = **13 kg**
+  - 13 kg - 8 kg = **5 kg**
+  - 25 kg + 31 kg = **56 kg**
+  - 56 kg - 31 kg = **25 kg**
+- **Nhóm phép tính b (Dung tích):**
+  - 30 l + 10 l = **40 l**
+  - 40 l - 10 l = **30 l**
+  - 7 l + 6 l = **13 l**
+  - 13 l - 7 l = **6 l**
+  - 45 l + 23 l = **68 l**
+  - 68 l - 23 l = **45 l**
 
-**Tóm tắt:**
-Bố cân nặng: $65\text{ kg}$
-Việt nhẹ hơn bố: $38\text{ kg}$
-Việt cân nặng: ... $\text{kg}$?
-
-**Bài giải:**
-Việt cân nặng số ki-lô-gam là:
-$65 - 38 = 27$ ($\text{kg}$)
-Đáp số: $27\text{ kg}$.
-
-**5. Thử thách tư duy:**
-Có 3 thùng đựng dầu: Thùng thứ nhất đựng $12\text{ l}$, thùng thứ hai đựng $8\text{ l}$, thùng thứ ba đựng $10\text{ l}$. Hỏi:
-a) Cả ba thùng đựng tất cả bao nhiêu lít dầu?
-$\rightarrow$ $12\text{ l} + 8\text{ l} + 10\text{ l} = 30\text{ l}$ dầu.
-b) Phải đổ từ thùng thứ nhất sang thùng thứ hai bao nhiêu lít dầu để số dầu ở hai thùng bằng nhau?
-$\rightarrow$ Tổng số dầu hai thùng là $12 + 8 = 20$ ($\text{l}$). Để hai thùng bằng nhau thì mỗi thùng phải có $10\text{ l}$. Vậy cần đổ từ thùng thứ nhất sang thùng thứ hai: $12 - 10 = 2$ ($\text{l}$) dầu.
+#### 2) Đố vui (Thỏ, gà, chó chơi cầu thăng bằng):
+- **Tranh vẽ:**
+  - Hình 1: Cầu thăng bằng giữa 1 con thỏ và 2 con gà (cầu thăng bằng). -> **1 thỏ nặng bằng 2 gà**.
+  - Hình 2: Cầu thăng bằng giữa 1 con chó và 1 con thỏ cộng thêm 1 con gà (cầu thăng bằng). -> **1 chó nặng bằng 1 thỏ + 1 gà**.
+- **Câu hỏi và trả lời:**
+  - a) Con thỏ nặng bằng **2** con gà.
+  - b) Con chó nặng bằng **3** con gà (vì 1 chó = 1 thỏ + 1 gà = 2 gà + 1 gà = 3 gà).
 
 ---
 
-### Luyện tập 3 / Trò chơi
+### Trang 71
+#### Luyện tập (Tiếp theo)
+#### 3) Tại cửa hàng xăng dầu, một người đi ô tô vào mua 25 l xăng, một người đi xe máy vào mua 3 l xăng. Hỏi cả hai người mua bao nhiêu lít xăng?
+- **Bài giải:**
+  - Cả hai người mua số lít xăng là:
+    25 + 3 = **28 (l)**
+  - **Đáp số:** 28 lít xăng.
 
-**TRÒ CHƠI: ĐƯỜNG ĐẾN KHO BÁU**
-
-**Luật chơi và cách chơi:**
-- Chơi theo nhóm 2 - 4 người.
-- Mỗi người chơi chọn một quân cờ (hoặc nút bấc) đặt ở **Ô Xuất phát**.
-- Lần lượt từng người gieo xúc xắc: Đếm số chấm ở mặt trên xúc xắc rồi di chuyển quân cờ tiến lên số ô bằng đúng số chấm đó.
-- Khi đi đến ô nào, người chơi phải đọc to và tính đúng kết quả của phép tính ghi trên ô đó.
-  + Nếu tính **đúng**: Được đứng yên tại ô đó và chờ lượt tiếp theo.
-  + Nếu tính **sai**: Phải lùi lại về ô xuất phát trước khi gieo xúc xắc ở lượt đó.
-  + Nếu đi vào ô **May mắn**: Được bay hoặc tiến nhanh lên ô chỉ định.
-  + Nếu đi vào ô **Chướng ngại vật / Mất lượt**: Phải dừng lại một lượt chơi hoặc lùi lại theo chỉ dẫn.
-- Trò chơi kết thúc khi có người di chuyển về đến **Ô Kho báu (Đích)** trước tiên.
-
-**Bảng các phép tính trên đường đi:**
-
-| Vị trí ô | Phép tính / Thử thách | Kết quả đúng cần trả lời |
-|---|---|---|
-| Ô số 1 | $6\text{ kg} + 5\text{ kg} = ?$ | $11\text{ kg}$ |
-| Ô số 2 | $14\text{ l} - 8\text{ l} = ?$ | $6\text{ l}$ |
-| Ô số 3 | $9\text{ kg} + 7\text{ kg} = ?$ | $16\text{ kg}$ |
-| Ô số 4 | **May mắn: Tiến lên 2 ô** | *(Di chuyển đến ô số 6)* |
-| Ô số 5 | $18\text{ l} - 9\text{ l} = ?$ | $9\text{ l}$ |
-| Ô số 6 | $12\text{ kg} - 5\text{ kg} = ?$ | $7\text{ kg}$ |
-| Ô số 7 | $8\text{ l} + 8\text{ l} = ?$ | $16\text{ l}$ |
-| Ô số 8 | **Chướng ngại vật: Mất 1 lượt** | *(Dừng chơi 1 lượt)* |
-| Ô số 9 | $15\text{ kg} - 6\text{ kg} = ?$ | $9\text{ kg}$ |
-| Ô số 10 | $7\text{ l} + 6\text{ l} = ?$ | $13\text{ l}$ |
-| Ô số 11 | $20\text{ kg} - 10\text{ kg} + 4\text{ kg} = ?$ | $14\text{ kg}$ |
-| Ô số 12 | $16\text{ l} - 7\text{ l} + 5\text{ l} = ?$ | $14\text{ l}$ |
-| Ô số 13 | **May mắn: Bay thẳng đến Đích!** | **CHIẾN THẮNG!** |
-| Ô ĐÍCH | **KHO BÁU TOÁN HỌC** | **HOÀN THÀNH CHỦ ĐỀ 3** |
+#### 4) Có năm túi gạo sau: 2 kg, 4 kg, 6 kg, 3 kg, 7 kg.
+- **Yêu cầu và cách tìm:**
+  - **a) Muốn lấy hai túi để được 13 kg gạo thì phải lấy hai túi gạo nào?**
+    - Ta tìm hai số trong các số trên có tổng bằng 13: 6 + 7 = 13.
+    - **Trả lời:** Phải lấy hai túi gạo loại **6 kg** và **7 kg**.
+  - **b) Muốn lấy ba túi để được 9 kg gạo thì phải lấy ba túi gạo nào?**
+    - Ta tìm ba số trong các số trên có tổng bằng 9: 2 + 4 + 3 = 9.
+    - **Trả lời:** Phải lấy ba túi gạo loại **2 kg**, **3 kg** và **4 kg**.

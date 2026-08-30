@@ -1,232 +1,240 @@
-# Chủ đề 6: NGÀY – GIỜ, GIỜ – PHÚT, NGÀY – THÁNG
+# CHỦ ĐỀ 6: NGÀY - GIỜ, GIỜ - PHÚT, NGÀY - THÁNG
 
-## Bài 29: NGÀY - GIỜ, GIỜ - PHÚT
+## BÀI 29: NGÀY - GIỜ, GIỜ - PHÚT
 
-### Khám phá
-
-**1. Ngày và Giờ**
-- Một ngày có $24$ giờ.
-- $24$ giờ trong một ngày được tính từ $12$ giờ đêm hôm trước đến $12$ giờ đêm hôm sau.
-- Các buổi trong ngày:
-  + **Sáng:** Từ $1$ giờ sáng đến $10$ giờ sáng.
-  + **Trưa:** Từ $11$ giờ trưa đến $12$ giờ trưa.
-  + **Chiều:** Từ $1$ giờ chiều (hay $13$ giờ) đến $6$ giờ chiều (hay $18$ giờ).
-  + **Tối:** Từ $7$ giờ tối (hay $19$ giờ) đến $9$ giờ tối (hay $21$ giờ).
-  + **Đêm:** Từ $10$ giờ đêm (hay $22$ giờ) đến $12$ giờ đêm (hay $24$ giờ).
-
-**2. Giờ và Phút**
-- Một giờ có $60$ phút.
-- $1$ giờ $= 60$ phút.
-- Trên mặt đồng hồ:
-  + Kim ngắn chỉ giờ, kim dài chỉ phút.
-  + Khi kim dài (kim phút) quay được một vòng trọn vẹn là được $60$ phút (tức là $1$ giờ).
-  + Khoảng cách giữa hai số liền nhau trên mặt đồng hồ (theo kim phút) là $5$ phút.
-
-**3. Xem đồng hồ (Kim phút chỉ số 3, số 6)**
-- Khi kim phút chỉ vào **số 12**: Là giờ đúng (ví dụ: Kim ngắn chỉ số $8$, kim dài chỉ số $12 \rightarrow$ $8$ giờ).
-- Khi kim phút chỉ vào **số 3**: Là giờ rưỡi (hay ... giờ $15$ phút). (Ví dụ: Kim ngắn qua số $8$ một chút, kim dài chỉ số $3 \rightarrow$ $8$ giờ $15$ phút).
-- Khi kim phút chỉ vào **số 6**: Là giờ rưỡi (hay ... giờ $30$ phút). (Ví dụ: Kim ngắn nằm giữa số $8$ và số $9$, kim dài chỉ số $6 \rightarrow$ $8$ giờ $30$ phút hoặc $8$ giờ rưỡi).
+### Trang 112
+#### **Khám phá**
+*   **Kiến thức cần nhớ:**
+    *   Một ngày có **24 giờ**.
+    *   Một giờ có **60 phút**.
+    *   **24 giờ** trong một ngày được tính từ **12 giờ đêm hôm trước** đến **12 giờ đêm hôm sau**.
+*   **Phân chia các buổi trong ngày và các giờ tương ứng:**
+    *   **Buổi Sáng:**
+        *   1 giờ sáng, 2 giờ sáng, 3 giờ sáng, 4 giờ sáng, 5 giờ sáng, 6 giờ sáng, 7 giờ sáng, 8 giờ sáng, 9 giờ sáng, 10 giờ sáng.
+    *   **Buổi Trưa:**
+        *   11 giờ trưa, 12 giờ trưa.
+    *   **Buổi Chiều:**
+        *   1 giờ chiều (13 giờ), 2 giờ chiều (14 giờ), 3 giờ chiều (15 giờ), 4 giờ chiều (16 giờ), 5 giờ chiều (17 giờ), 6 giờ chiều (18 giờ).
+    *   **Buổi Tối:**
+        *   7 giờ tối (19 giờ), 8 giờ tối (20 giờ), 9 giờ tối (21 giờ).
+    *   **Buổi Đêm:**
+        *   10 giờ đêm (22 giờ), 11 giờ đêm (23 giờ), 12 giờ đêm (24 giờ).
 
 ---
 
-### Hoạt động 1: Xem đồng hồ chỉ giờ đúng, giờ rưỡi, giờ 15 phút
+### Trang 113
+#### **Hoạt động**
+#### **1) Số? (Nam làm gì lúc mấy giờ?)**
+*   **Hình 1:** Nam và bố đi câu cá lúc **4** giờ chiều.
+*   **Hình 2:** Nam và bố đọc sách lúc **8** giờ tối.
+*   **Hình 3:** Lúc **11** giờ đêm, Nam đang ngủ.
 
-**1. Đồng hồ chỉ mấy giờ?**
-a) Kim ngắn chỉ số $7$, kim dài chỉ số $12 \rightarrow$ **$7$ giờ**.
-b) Kim ngắn nằm giữa số $2$ và số $3$, kim dài chỉ số $6 \rightarrow$ **$2$ giờ $30$ phút** (hoặc $2$ giờ rưỡi).
-c) Kim ngắn qua số $10$, kim dài chỉ số $3 \rightarrow$ **$10$ giờ $15$ phút**.
+#### **2) Tìm đồng hồ chỉ thời gian thích hợp với mỗi bức tranh:**
+*   **Bức tranh 1:** Nam đi học lúc 7 giờ sáng. -> Nối với đồng hồ điện tử chỉ **07:00**.
+*   **Bức tranh 2:** Việt xem bóng đá lúc 7 giờ tối. -> Nối với đồng hồ điện tử chỉ **19:00**.
+*   **Bức tranh 3:** Rô-bốt vẽ tranh lúc 2 giờ chiều. -> Nối với đồng hồ điện tử chỉ **14:00**.
 
-**2. Nối đồng hồ với cách đọc tương ứng:**
-- Đồng hồ A (kim phút chỉ số $6$, kim giờ giữa số $4$ và $5$) $\rightarrow$ Nối với "Bốn giờ ba mươi phút".
-- Đồng hồ B (kim phút chỉ số $12$, kim giờ chỉ số $9$) $\rightarrow$ Nối với "Chín giờ".
-- Đồng hồ C (kim phút chỉ số $3$, kim giờ qua số $11$) $\rightarrow$ Nối với "Mười một giờ mười lăm phút".
-
-**3. Chọn đồng hồ điện tử thích hợp:**
-- Bạn nam nói: "Bây giờ là $3$ giờ chiều" $\rightarrow$ Chọn đồng hồ điện tử chỉ **15:00**.
-- Bạn nữ nói: "Bây giờ là $8$ giờ tối" $\rightarrow$ Chọn đồng hồ điện tử chỉ **20:00**.
-
----
-
-### Hoạt động 2: Ngày - Giờ
-
-**1. Nối tranh sinh hoạt với đồng hồ thích hợp:**
-- Tranh 1: Em thức dậy lúc $6$ giờ sáng $\rightarrow$ Đồng hồ kim chỉ $6$ giờ.
-- Tranh 2: Em học bài ở trường lúc $9$ giờ $15$ phút sáng $\rightarrow$ Đồng hồ kim chỉ $9$ giờ $15$ phút.
-- Tranh 3: Em ăn trưa lúc $11$ giờ $30$ phút $\rightarrow$ Đồng hồ kim chỉ $11$ giờ $30$ phút.
-- Tranh 4: Em chơi bóng lúc $5$ giờ chiều ($17$ giờ) $\rightarrow$ Đồng hồ kim chỉ $5$ giờ.
-
-**2. Trả lời câu hỏi:**
-a) Một ngày có bao nhiêu giờ? $\rightarrow$ Một ngày có **$24$ giờ**.
-b) Lúc $14$ giờ, em thường làm gì? $\rightarrow$ Lúc $14$ giờ ($2$ giờ chiều), em thường đang học bài trên lớp (hoặc đang ngủ trưa tùy lịch sinh hoạt).
-c) Lúc $21$ giờ, em thường làm gì? $\rightarrow$ Lúc $21$ giờ ($9$ giờ tối), em thường đi ngủ (hoặc chuẩn bị đi ngủ).
-
-**3. Đúng (Đ) hay Sai (S)?**
-a) $15$ giờ còn gọi là $3$ giờ chiều. (Đ)
-b) $20$ giờ còn gọi là $10$ giờ đêm. (S - Sửa lại: $20$ giờ là $8$ giờ tối).
-c) $12$ giờ đêm còn gọi là $24$ giờ. (Đ)
-d) $18$ giờ còn gọi là $6$ giờ tối. (S - Sửa lại: $18$ giờ là $6$ giờ chiều).
+#### **3) Chọn đồng hồ chỉ thời gian thích hợp với mỗi bức tranh:**
+*   **a) Lúc 11 giờ đêm, Rô-bốt đang ngủ.**
+    *   Đồng hồ điện tử lựa chọn: **A. 11:00** hoặc **B. 23:00**.
+    *   **Đáp án đúng:** **B. 23:00** (vì 11:00 là chỉ 11 giờ trưa/sáng).
+*   **b) Bé chơi bóng đá lúc 3 giờ chiều.**
+    *   Đồng hồ điện tử lựa chọn: **A. 03:00** hoặc **B. 15:00**.
+    *   **Đáp án đúng:** **B. 15:00** (vì 03:00 là chỉ 3 giờ đêm).
 
 ---
 
-### Luyện tập 1
+### Trang 114
+#### **Khám phá (Giờ - Phút)**
+*   **Hình 1:** Nam vẽ cảnh mặt trời mọc lúc **5 giờ 15 phút** sáng. (Kim giờ chỉ qua số 5 một chút, kim phút chỉ đúng số 3).
+*   **Hình 2:** Mai vẽ cảnh mặt trời lặn lúc **5 giờ 30 phút** chiều (hoặc 5 giờ rưỡi chiều). (Kim giờ chỉ ở giữa số 5 và số 6, kim phút chỉ đúng số 6).
 
-**1. Quay kim trên mặt đồng hồ để đồng hồ chỉ:**
-a) $8$ giờ sáng. (Kim ngắn chỉ số $8$, kim dài chỉ số $12$).
-b) $2$ giờ chiều ($14$ giờ). (Kim ngắn chỉ số $2$, kim dài chỉ số $12$).
-c) $9$ giờ tối ($21$ giờ). (Kim ngắn chỉ số $9$, kim dài chỉ số $12$).
-
-**2. Điền số thích hợp:**
-a) Mai bắt đầu học bài lúc $8$ giờ sáng. Mai học xong lúc $10$ giờ sáng. Mai đã học bài trong ... giờ?
-$\rightarrow$ $10 - 8 = 2$. Mai đã học bài trong **$2$ giờ**.
-b) Bố đi làm ca đêm từ $22$ giờ đến $6$ giờ sáng hôm sau. Bố đã làm việc trong ... giờ?
-$\rightarrow$ Từ $22$ giờ đến $24$ giờ là $2$ giờ. Từ $0$ giờ đến $6$ giờ là $6$ giờ. Tổng cộng: $2 + 6 = 8$. Bố đã làm việc trong **$8$ giờ**.
-
-**3. Giải bài toán:**
-Chuyến xe buýt xuất phát từ bến A lúc $7$ giờ sáng và đến bến B lúc $9$ giờ sáng cùng ngày. Hỏi xe buýt đi từ bến A đến bến B mất bao nhiêu giờ?
-**Bài giải:**
-Thời gian xe buýt đi từ bến A đến bến B là:
-$9 - 7 = 2$ (giờ)
-Đáp số: $2$ giờ.
+#### **Hoạt động**
+#### **1) Số? (Mỗi bạn làm gì lúc mấy giờ?)**
+*   **Hình 1 (Việt):** Việt học bài lúc **8** giờ **15** phút sáng.
+*   **Hình 2 (Nam):** Nam làm bài tập lúc **3** giờ **30** phút chiều.
+*   **Hình 3 (Mi):** Mi ăn tối lúc **6** giờ **15** phút tối.
+*   **Hình 4 (Rô-bốt):** Lúc **9** giờ **30** phút đêm, Rô-bốt đang ngủ.
 
 ---
 
-### Luyện tập 2
+### Trang 115
+#### **2) Tìm hai đồng hồ chỉ cùng thời gian vào buổi chiều, tối hoặc đêm:**
+*   **Đồng hồ kim 1** (chỉ 6 giờ 15 phút) -> Nối với đồng hồ điện tử **A. 18:15** (6 giờ 15 phút chiều).
+*   **Đồng hồ kim 2** (chỉ 10 giờ 30 phút) -> Nối với đồng hồ điện tử **B. 22:30** (10 giờ 30 phút đêm).
+*   **Đồng hồ kim 3** (chỉ 7 giờ đúng) -> Nối với đồng hồ điện tử **C. 19:00** (7 giờ tối).
+*   **Đồng hồ kim 4** (chỉ 2 giờ 30 phút) -> Nối với đồng hồ điện tử **D. 14:30** (2 giờ 30 phút chiều).
 
-**1. Nối đồng hồ kim với đồng hồ điện tử chỉ cùng thời gian:**
-- Đồng hồ kim chỉ $2$ giờ chiều (kim ngắn chỉ số $2$, kim dài chỉ số $12$) $\rightarrow$ Nối với đồng hồ điện tử **14:00**.
-- Đồng hồ kim chỉ $5$ giờ $15$ phút chiều $\rightarrow$ Nối với đồng hồ điện tử **17:15**.
-- Đồng hồ kim chỉ $8$ giờ $30$ phút tối $\rightarrow$ Nối với đồng hồ điện tử **20:30**.
+#### **3) Số? (Nam làm gì lúc mấy giờ?)**
+*   **Hình 1:** Nam học bài lúc **9** giờ **30** phút sáng (đồng hồ điện tử hiển thị **09:30**).
+*   **Hình 2:** Nam ở thư viện lúc **3** giờ **15** phút chiều (đồng hồ điện tử hiển thị **15:15**).
+*   **Hình 3:** Nam tan học lúc **4** giờ chiều (đồng hồ điện tử hiển thị **16:00**).
+*   **Hình 4:** Nam rửa bát lúc **7** giờ **15** phút tối (đồng hồ điện tử hiển thị **19:15**).
 
-**2. Chọn giờ thích hợp cho mỗi hoạt động (trong ngày Chủ nhật):**
-- Bức tranh 1 (Đá bóng): Chơi bóng lúc $16$ giờ ($4$ giờ chiều) hay $4$ giờ sáng? $\rightarrow$ Chọn **$16$ giờ**.
-- Bức tranh 2 (Xem tivi): Xem tivi lúc $20$ giờ ($8$ giờ tối) hay $8$ giờ sáng? $\rightarrow$ Chọn **$20$ giờ** (thường xem phim buổi tối cùng gia đình).
-- Bức tranh 3 (Đi ngủ): Đi ngủ lúc $22$ giờ ($10$ giờ đêm) hay $10$ giờ sáng? $\rightarrow$ Chọn **$22$ giờ**.
+---
+---
 
-**3. Điền vào chỗ trống:**
-Mẹ đi chợ lúc $8$ giờ $30$ phút. Mẹ về đến nhà lúc $9$ giờ $30$ phút.
-a) Mẹ đi chợ hết ... giờ? $\rightarrow$ Từ $8$ giờ $30$ phút đến $9$ giờ $30$ phút là **$1$ giờ**.
-b) Nếu mẹ về nhà sớm hơn $15$ phút thì mẹ sẽ về đến nhà lúc mấy giờ? $\rightarrow$ $9$ giờ $30$ phút lùi $15$ phút là **$9$ giờ $15$ phút**.
+## BÀI 30: NGÀY - THÁNG
+
+### Trang 116
+#### **Khám phá**
+*   **Quan sát tờ lịch Tháng 11:**
+    *   Tháng 11 có **30 ngày**.
+    *   Ngày 1 tháng 11 là thứ Hai.
+    *   Ngày 20 tháng 11 là thứ Bảy.
+*   **Kiến thức cần nhớ:**
+    *   Các tháng có **31 ngày**: Tháng 1, Tháng 3, Tháng 5, Tháng 7, Tháng 8, Tháng 10, Tháng 12.
+    *   Các tháng có **30 ngày**: Tháng 4, Tháng 6, Tháng 9, Tháng 11.
+    *   Tháng 2 có **28 hoặc 29 ngày**.
+
+#### **Hoạt động**
+#### **1) Tìm hai con vật có cùng ngày sinh:**
+*   **Chó** (Ngày mười tháng Một) có cùng ngày sinh với **Bò** (Ngày 10 tháng 1). -> Sinh ngày **10 tháng 1**.
+*   **Mèo** (Ngày tám tháng Ba) có cùng ngày sinh with **Trâu** (Ngày 8 tháng 3). -> Sinh ngày **8 tháng 3**.
+*   **Dê** (Ngày một tháng Sáu) có cùng ngày sinh với **Thỏ** (Ngày 1 tháng 6). -> Sinh ngày **1 tháng 6**.
+*   **Heo** (Ngày mười bốn tháng Tám) có cùng ngày sinh với **Chim** (Ngày 14 tháng 8). -> Sinh ngày **14 tháng 8**.
 
 ---
 
-## Bài 30: NGÀY – THÁNG
+### Trang 117
+#### **2) Điền lịch và trả lời câu hỏi:**
+*   **a) Nêu các ngày còn thiếu trong tờ lịch tháng 12:**
+    *   Các ngày cần điền vào chỗ trống là: **10**, **14**, **16**, **20**, **22**, **26**, **28**.
+*   **b) Xem tờ lịch tháng 12 rồi trả lời câu hỏi:**
+    *   Tháng 12 có bao nhiêu ngày? -> Đáp án: Tháng 12 có **31 ngày**.
+    *   Ngày đầu tiên của tháng 12 là thứ mấy? -> Đáp án: Thứ **Tư**.
+    *   Ngày cuối cùng của tháng 12 là thứ mấy? -> Đáp án: Thứ **Sáu**.
 
-### Khám phá
+#### **3) Xem tờ lịch tháng 1 dưới đây rồi trả lời câu hỏi:**
+*   Tháng 1 có bao nhiêu ngày? -> Đáp án: Tháng 1 có **31 ngày**.
+*   Ngày tết Dương lịch 1 tháng 1 là thứ mấy? -> Đáp án: Thứ **Sáu**.
+*   Ngày 1 tháng 2 cùng năm là thứ mấy? -> Đáp án: Ngày 31 tháng 1 là thứ Hai, nên ngày 1 tháng 2 là thứ **Ba**.
 
-**1. Tờ lịch tháng**
-- Tờ lịch tháng giúp ta biết một tháng có bao nhiêu ngày và mỗi ngày trong tháng rơi vào thứ mấy trong tuần.
-- Các ngày trong tuần: Thứ Hai, Thứ Ba, Thứ Tư, Thứ Năm, Thứ Sáu, Thứ Bảy, Chủ nhật.
-- Một tuần lễ có $7$ ngày.
-
-**2. Xem lịch tháng**
-Quan sát tờ lịch tháng $11$ năm $2021$:
-- Tháng $11$ có **$30$ ngày**.
-- Ngày đầu tiên của tháng (ngày $1$) là **Thứ Hai**.
-- Ngày cuối cùng của tháng (ngày $30$) là **Thứ Ba**.
-- Ngày $20$ tháng $11$ (Ngày Nhà giáo Việt Nam) là **Thứ Bảy**.
-- Tháng $11$ có **$4$ ngày Chủ nhật**, đó là các ngày: $7, 14, 21, 28$.
-
----
-
-### Hoạt động
-
-**1. Quan sát tờ lịch tháng 12 năm 2021 và trả lời các câu hỏi:**
-(Tờ lịch tháng $12$: Ngày $1$ là Thứ Tư, ngày $31$ là Thứ Sáu)
-a) Tháng $12$ có bao nhiêu ngày?
-$\rightarrow$ Tháng $12$ có **$31$ ngày**.
-b) Ngày $22$ tháng $12$ (Ngày thành lập Quân đội nhân dân Việt Nam) là thứ mấy?
-$\rightarrow$ Ngày $22$ tháng $12$ là **Thứ Tư**.
-c) Tháng $12$ có mấy ngày Thứ Bảy? Đó là những ngày nào?
-$\rightarrow$ Tháng $12$ có **$4$ ngày Thứ Bảy**, đó là các ngày: **$4, 11, 18, 25$**.
-
-**2. Số?**
-Nếu hôm nay là Thứ Năm, ngày $15$ tháng $12$.
-a) Ngày mai là thứ ... , ngày ... tháng $12$. $\rightarrow$ Ngày mai là **Thứ Sáu, ngày $16$**.
-b) Ngày hôm qua là thứ ... , ngày ... tháng $12$. $\rightarrow$ Ngày hôm qua là **Thứ Tư, ngày $14$**.
-c) Thứ Năm tuần sau là ngày ... tháng $12$. $\rightarrow$ $15 + 7 = 22$. Thứ Năm tuần sau là **ngày $22$**.
-
-**3. Xem lịch và điền vào chỗ trống:**
-Trong tháng $5$, bạn Mai đi học đàn piano vào các ngày Thứ Ba và Thứ Năm hằng tuần.
-a) Bạn Mai đi học đàn vào những ngày nào trong tháng? (Quan sát lịch tháng $5$: Ngày $1$ là Thứ Bảy).
-$\rightarrow$ Các ngày Thứ Ba: **$4, 11, 18, 25$**. Các ngày Thứ Năm: **$6, 13, 20, 27$**.
-b) Trong tháng $5$, Mai học tất cả bao nhiêu buổi đàn?
-$\rightarrow$ Có $4$ ngày Thứ Ba và $4$ ngày Thứ Năm. Vậy Mai học tất cả: $4 + 4 = 8$ (buổi).
+#### **Luyện tập**
+#### **1) Mỗi hình dưới đây ứng với ô chữ nào?**
+*   **Hình chúc mừng ngày 20 tháng 11** -> Nối với ô **"Ngày hai mươi tháng Mười một"**.
+*   **Hình ngày Quốc tế Thiếu nhi 1 tháng 6** -> Nối với ô **"Ngày một tháng Sáu"**.
+*   **Hình ngày Quốc khánh 2 tháng 9** -> Nối với ô **"Ngày hai tháng Chín"**.
+*   **Hình ngày Tết Dương lịch 1 tháng 1** -> Nối với ô **"Ngày một tháng Một"**.
 
 ---
 
-### Luyện tập
+### Trang 118
+#### **2) Điền lịch và trả lời câu hỏi:**
+*   **a) Nêu các ngày còn thiếu trong tờ lịch tháng 2:**
+    *   Các ngày cần điền là: **19**, **23**, **24**.
+*   **b) Xem tờ lịch tháng 2 rồi trả lời câu hỏi:**
+    *   Tháng 2 có bao nhiêu ngày? -> Đáp án: Tháng 2 có **28 ngày**.
+    *   Ngày Thầy thuốc Việt Nam 27 tháng 2 là thứ mấy? -> Đáp án: Thứ **Chủ nhật**.
 
-**1. Trả lời câu hỏi (dựa vào tờ lịch của năm hiện tại):**
-a) Tháng này là tháng mấy? Tháng này có bao nhiêu ngày?
-b) Ngày Quốc tế Thiếu nhi (ngày $1$ tháng $6$) năm nay rơi vào thứ mấy?
-c) Sinh nhật của em là ngày mấy tháng mấy? Năm nay sinh nhật em rơi vào thứ mấy?
+#### **3) Xem tờ lịch tháng 3 rồi trả lời câu hỏi:**
+*   Tháng 3 có bao nhiêu ngày? -> Đáp án: Tháng 3 có **31 ngày**.
+*   Ngày thứ Hai đầu tiên của tháng 3 là ngày nào? -> Đáp án: Ngày 1 tháng 3 là thứ Tư, nên ngày thứ Hai đầu tiên là ngày **6 tháng 3**.
+*   Ngày Quốc tế Phụ nữ 8 tháng 3 là thứ mấy? -> Đáp án: Thứ **Tư**.
 
-**2. Điền số hoặc chữ thích hợp:**
-Một hội chợ xuân mở cửa từ ngày $25$ tháng $1$ đến hết ngày $31$ tháng $1$.
-a) Hội chợ xuân mở cửa trong bao nhiêu ngày?
-$\rightarrow$ Tính từ ngày $25$ đến $31$: $25, 26, 27, 28, 29, 30, 31$. Mở cửa trong **$7$ ngày** (tức là $1$ tuần lễ).
-b) Nếu ngày khai mạc ($25$ tháng $1$) là Thứ Tư thì ngày bế mạc ($31$ tháng $1$) là thứ mấy?
-$\rightarrow$ Sau $1$ tuần lễ, lùi lại $1$ ngày (do tính cả ngày $25$). $31 - 25 = 6$ ngày sau. Thứ Tư cộng thêm $6$ ngày là **Thứ Ba**.
+#### **4) Xem tờ lịch tháng 4 rồi trả lời câu hỏi:**
+*   Tháng 4 có bao nhiêu ngày? -> Đáp án: Tháng 4 có **30 ngày**.
+*   Nếu thứ Bảy tuần này là ngày Giải phóng miền Nam 30 tháng 4 thì thứ Bảy tuần trước là ngày nào? -> Đáp án: Thứ Bảy tuần trước là ngày **23 tháng 4** (lấy 30 trừ đi 7 ngày của một tuần).
 
-**3. Trò chơi: Ghép thẻ lịch**
-- Chuẩn bị các thẻ ghi "Thứ", thẻ ghi "Ngày", thẻ ghi "Tháng".
-- Giáo viên nêu yêu cầu: "Hãy ghép các thẻ để tạo thành ngày Quốc khánh nước Cộng hòa xã hội chủ nghĩa Việt Nam".
-- Học sinh ghép thẻ: **Ngày 2 - Tháng 9**.
-- Yêu cầu tiếp: "Tra lịch xem ngày đó năm nay là thứ mấy và ghép thêm thẻ Thứ vào".
+---
+---
+
+## BÀI 31: THỰC HÀNH VÀ TRẢI NGHIỆM XEM ĐỒNG HỒ, XEM LỊCH
+
+### Trang 119
+#### **Hoạt động**
+#### **1) Quay kim đồng hồ để đồng hồ chỉ:**
+*   **a) 2 giờ:** Kim giờ chỉ đúng số 2, kim phút chỉ đúng số 12.
+*   **b) 9 giờ 30 phút:** Kim giờ chỉ ở giữa số 9 và số 10, kim phút chỉ đúng số 6.
+*   **c) 7 giờ 15 phút:** Kim giờ chỉ hơi lệch quá số 7 một chút, kim phút chỉ đúng số 3.
+
+#### **2) Xem thời khóa biểu hôm nay của em rồi trả lời câu hỏi:**
+*   *(Học sinh thực hành dựa trên thời khóa biểu thực tế của trường lớp mình)*.
+
+#### **3) Đồng hồ chỉ mấy giờ?**
+*   **Đồng hồ A:** Chỉ **10 giờ 10 phút**.
+*   **Đồng hồ B:** Chỉ **12 giờ 25 phút** (hoặc 12 giờ 25 phút trưa).
+*   **Đồng hồ C:** Chỉ **4 giờ 40 phút** (hoặc 5 giờ kém 20 phút).
+*   **Đồng hồ D:** Chỉ **2 giờ 20 phút** (hoặc 2 giờ 20 phút chiều).
 
 ---
 
-## Bài 31: LUYỆN TẬP CHUNG
+### Trang 120
+#### **4) Xem tranh và trả lời câu hỏi:**
+*   **a) Vào ngày nghỉ cuối tuần, Nam làm gì lúc mấy giờ?**
+    *   Nam chơi xếp hình lúc **8 giờ sáng** (đồng hồ kim chỉ 8:00).
+    *   Nam ăn cơm lúc **11 giờ 30 phút trưa** (đồng hồ kim chỉ 11:30).
+    *   Nam đi xe đạp lúc **4 giờ 15 phút chiều** (đồng hồ kim chỉ 4:15).
+    *   Nam nhặt rau giúp mẹ lúc **5 giờ 30 phút chiều** (đồng hồ kim chỉ 5:30).
+    *   Nam đọc sách lúc **8 giờ 15 phút tối** (đồng hồ kim chỉ 8:15).
+    *   Nam đi ngủ lúc **10 giờ đêm** (đồng hồ kim chỉ 10:00).
+*   **b) Liên hệ bản thân:**
+    *   *(Học sinh tự liên hệ về thời gian biểu hoạt động ngày nghỉ của mình)*.
 
-### Luyện tập 1
-
-**1. Đồng hồ điện tử chỉ mấy giờ?**
-- Đồng hồ A: 08:15 $\rightarrow$ Tám giờ mười lăm phút sáng.
-- Đồng hồ B: 13:30 $\rightarrow$ Mười ba giờ ba mươi phút (hay một giờ rưỡi chiều).
-- Đồng hồ C: 21:00 $\rightarrow$ Hai mươi mốt giờ (hay chín giờ tối).
-
-**2. Đọc tờ lịch và điền vào chỗ trống:**
-Tờ lịch tháng $8$: Ngày $1$ là Chủ nhật, ngày $31$ là Thứ Ba.
-a) Tháng $8$ có **$31$** ngày.
-b) Ngày $19$ tháng $8$ (Ngày Cách mạng tháng Tám thành công) là **Thứ Năm**.
-c) Chủ nhật cuối cùng của tháng $8$ là ngày **$29$**.
-
-**3. Giải bài toán về thời gian:**
-Chuyến tàu khởi hành từ ga Hà Nội lúc $10$ giờ đêm ($22$ giờ). Tàu chạy hết $8$ giờ thì đến ga Vinh. Hỏi tàu đến ga Vinh lúc mấy giờ sáng hôm sau?
-**Bài giải:**
-Từ $22$ giờ đến $24$ giờ (hết ngày) là mất $2$ giờ.
-Số giờ tàu chạy vào ngày hôm sau là:
-$8 - 2 = 6$ (giờ).
-Vậy tàu đến ga Vinh lúc **$6$ giờ sáng** ngày hôm sau.
+#### **5) Xem đồng hồ chỉ thời gian đến lớp học của mỗi bạn:**
+*   **Biết lớp học bắt đầu lúc 2 giờ chiều (14:00).**
+    *   **Mai** đến lúc **14:00** (Đúng giờ).
+    *   **Mi** đến lúc **14:15** (Muộn mất 15 phút).
+    *   **Việt** đến lúc **13:30** (Sớm trước 30 phút).
+*   **Trả lời:** Bạn **Mi** đi học muộn.
 
 ---
 
-### Luyện tập 2
+### Trang 121
+#### **1) Xem tờ lịch tháng này rồi trả lời câu hỏi:**
+*   *(Học sinh thực hành dựa trên tháng hiện tại)*.
 
-**1. Khoanh vào chữ cái trước câu trả lời đúng:**
-Buổi chiều, em bắt đầu đi bơi lúc $16$ giờ $30$ phút và bơi trong $1$ giờ. Hỏi em bơi xong lúc mấy giờ?
-A. $15$ giờ $30$ phút
-B. $17$ giờ
-C. $17$ giờ $30$ phút
-D. $5$ giờ chiều
-$\rightarrow$ **Đáp án đúng: C ($17$ giờ $30$ phút)**. (Chú ý: $17$ giờ $30$ phút cũng chính là $5$ rưỡi chiều, nhưng không có phương án này).
+#### **2) Xem tờ lịch tháng 5 rồi trả lời câu hỏi:**
+*   Tháng 5 có bao nhiêu ngày? -> Đáp án: Tháng 5 có **31 ngày**.
+*   Tháng 5 có bao nhiêu ngày thứ Ba, đó là những ngày nào? -> Đáp án: Có **5 ngày thứ Ba**, đó là các ngày: **3, 10, 17, 24, 31**.
+*   Ngày 19 tháng 5 là sinh nhật Bác Hồ. Ngày đó là thứ mấy? -> Đáp án: Thứ **Năm**.
 
-**2. Quan sát bảng kế hoạch Chủ nhật của Nam và trả lời câu hỏi:**
-*Bảng kế hoạch:*
-- 08:00 - 09:00: Dọn dẹp phòng ngủ
-- 09:00 - 10:30: Làm bài tập về nhà
-- 15:00 - 16:00: Chơi đá bóng
-- 16:30 - 17:30: Giúp mẹ nấu ăn
-- 20:00 - 21:00: Đọc sách
+#### **3) Điền tờ lịch tháng 6 và trả lời câu hỏi:**
+*   **a) Nêu các ngày còn thiếu trong tờ lịch tháng 6 ở bên:**
+    *   Các ngày cần điền là: **1**, **6**, **7**, **8**, **18**, **26**.
+*   **b) Trả lời câu hỏi:**
+    *   Ngày Quốc tế Thiếu nhi 1 tháng 6 là thứ mấy? -> Đáp án: Thứ **Ba**.
+    *   Nếu hôm nay là thứ Năm ngày 16 tháng 6 thì:
+        *   Thứ Năm tuần trước là ngày nào? -> Đáp án: Ngày **9 tháng 6** (lấy 16 - 7).
+        *   Thứ Năm tuần sau là ngày nào? -> Đáp án: Ngày **23 tháng 6** (lấy 16 + 7).
 
-a) Nam dọn dẹp phòng ngủ trong bao nhiêu giờ? $\rightarrow$ $9 - 8 = 1$ (giờ).
-b) Nam bắt đầu làm bài tập lúc mấy giờ và kết thúc lúc mấy giờ? $\rightarrow$ Bắt đầu lúc $9$ giờ, kết thúc lúc $10$ giờ $30$ phút.
-c) Nam đọc sách vào buổi nào trong ngày? $\rightarrow$ Nam đọc sách từ $20$ giờ đến $21$ giờ, tức là vào **buổi tối**.
+---
+---
 
-**3. Thử thách tư duy:**
-Tháng Hai của một năm không nhuận có $28$ ngày. Biết ngày mùng $1$ Tết Nguyên Đán năm đó rơi vào Thứ Hai, ngày $1$ tháng $2$. Hỏi ngày $28$ tháng $2$ của năm đó là thứ mấy?
-*Hướng dẫn:*
-Ngày $1$ là Thứ Hai $\rightarrow$ Các ngày Thứ Hai trong tháng là: $1, 8, 15, 22$.
-Từ ngày $22$ (Thứ Hai) đến ngày $28$ là $6$ ngày nữa ($22+6=28$).
-Thứ Hai tiến thêm $6$ ngày là **Chủ nhật**.
-Vậy ngày $28$ tháng $2$ năm đó là **Chủ nhật**.
+## BÀI 32: LUYỆN TẬP CHUNG
+
+### Trang 122
+#### **Luyện tập**
+#### **1) Xem hình vẽ rồi chọn câu trả lời đúng:**
+*   **Đề bài:** Trong đồng hồ bên, khi kim dài chạy qua số 4, số 5, số 6 thì lúc này đồng hồ chỉ:
+    *   *Quan sát hình vẽ:* Đồng hồ đang chỉ 3 giờ 30 phút.
+    *   **Các phương án:** A. 3 giờ 30 phút | B. 4 giờ 15 phút | C. 4 giờ 30 phút.
+    *   **Đáp án đúng:** **A. 3 giờ 30 phút**.
+
+#### **2) Xem tờ lịch và các ảnh chụp của Rô-bốt rồi trả lời câu hỏi (theo mẫu):**
+*   **Mẫu:** Rô-bốt ghé thăm Tây Nguyên vào ngày **2 tháng 8**.
+*   **Hỏi:**
+    *   Rô-bốt ghé thăm Mù Cang Chải vào ngày nào? -> Đáp án: Ngày **30 tháng 8**.
+    *   Rô-bốt ghé thăm chợ nổi Năm Căn vào ngày nào? -> Đáp án: Ngày **14 tháng 8**.
+    *   Rô-bốt ghé thăm Huế vào ngày nào? -> Đáp án: Ngày **7 tháng 8**.
+
+---
+
+### Trang 123
+#### **3) Thời gian đến thăm Bảo tàng Lịch sử Quân sự Việt Nam của mỗi bạn:**
+*   **Cân nặng/Giờ đến của mỗi bạn:**
+    *   **Mai** đến lúc: **8 giờ 15 phút**.
+    *   **Rô-bốt** đến lúc: **16 giờ 30 phút** (4 giờ 30 phút chiều).
+    *   **Việt** đến lúc: **10 giờ 15 phút**.
+    *   **Nam** đến lúc: **16 giờ** (4 giờ chiều).
+*   **Đề bài:** Biết bảo tàng mở cửa từ **8 giờ** đến **16 giờ 30 phút**. Hỏi những bạn nào được vào thăm bảo tàng?
+*   **Đáp án:** **Cả 4 bạn Mai, Rô-bốt, Việt, Nam** đều được vào thăm bảo tàng vì giờ đến của tất cả các bạn đều nằm trong khung giờ mở cửa của bảo tàng (từ 8 giờ đến 16 giờ 30 phút).
+
+#### **4) Giờ học các môn năng khiếu vào sáng ngày thứ Bảy của Rô-bốt:**
+*   **Thời gian biểu:**
+    *   Rô-bốt học bóng rổ: lúc **8 giờ**.
+    *   Rô-bốt học vẽ: lúc **9 giờ**.
+    *   Rô-bốt học hát: lúc **10 giờ**.
+    *   Rô-bốt học võ: lúc **11 giờ**.
+*   **Câu hỏi:** Trước giờ học bóng rổ, Rô-bốt đã học những môn nào?
+*   **Đáp án:** **Trước giờ học bóng rổ (8 giờ sáng), Rô-bốt chưa học môn nào cả**, vì bóng rổ là môn học sớm nhất và bắt đầu đầu tiên trong ngày thứ Bảy của bạn ấy.

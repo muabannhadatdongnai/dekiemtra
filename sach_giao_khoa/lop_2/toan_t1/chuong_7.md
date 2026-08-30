@@ -1,287 +1,402 @@
-# Chủ đề 7: ÔN TẬP HỌC KÌ I
+# CHỦ ĐỀ 7: ÔN TẬP HỌC KÌ 1
 
-## Bài 32: ÔN TẬP PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 20
+## BÀI 33: ÔN TRẬP PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 20, 100
 
-### Luyện tập 1
+### Trang 124
+#### 1) Tính nhẩm:
+* **Hàng 1:**
+  * $7 + 7 = 14$
+  * $9 + 6 = 15$
+  * $8 + 4 = 12$
+  * $5 + 7 = 12$
+* **Hàng 2:**
+  * $6 + 9 = 15$
+  * $4 + 8 = 12$
+  * $14 - 5 = 9$
+  * $15 - 6 = 9$
+* **Hàng 3:**
+  * $12 - 4 = 8$
+  * $11 - 7 = 4$
+  * $15 - 9 = 6$
+  * $13 - 8 = 5$
 
-**1. Tính nhẩm:**
-$9 + 4 = 13$
-$8 + 6 = 14$
-$7 + 5 = 12$
-$8 + 8 = 16$
-$11 - 5 = 6$
-$12 - 7 = 5$
-$13 - 6 = 7$
-$15 - 8 = 7$
+#### 2) Mỗi số 7, 5, 11, 13 là kết quả của những phép tính nào?
+* **Các phép tính ghi trên bánh quy và kết quả tương ứng:**
+  * $8 + 3 = 11$ -> Số 11
+  * $12 - 7 = 5$ -> Số 5
+  * $9 + 4 = 13$ -> Số 13
+  * $14 - 9 = 5$ -> Số 5
+  * $9 + 2 = 11$ -> Số 11
+  * $14 - 7 = 7$ -> Số 7
+  * $12 - 5 = 7$ -> Số 7
+  * $8 + 5 = 13$ -> Số 13
+  * $14 - 7 = 7$ -> Số 7
+  * $14 - 9 = 5$ -> Số 5
 
-**2. Đặt tính rồi tính:**
-a) $8 + 7 = 15$
-b) $6 + 9 = 15$
-c) $14 - 8 = 6$
-d) $17 - 9 = 8$
-
-**3. Chọn câu trả lời đúng:**
-a) Trong các phép tính dưới đây, phép tính nào có kết quả lớn nhất?
-A. $8 + 5$
-B. $9 + 6$
-C. $15 - 7$
-D. $18 - 9$
-$\rightarrow$ **Đáp án đúng: B ($9 + 6 = 15$)**
-
-b) Trong các phép tính dưới đây, phép tính nào có kết quả bé nhất?
-A. $12 - 4$
-B. $14 - 6$
-C. $11 - 5$
-D. $13 - 4$
-$\rightarrow$ **Đáp án đúng: C ($11 - 5 = 6$)**
-
-**4. Giải bài toán:**
-Vườn nhà Nam có $15$ cây nhãn, vườn nhà Mai có $8$ cây nhãn. Hỏi vườn nhà Nam có nhiều hơn vườn nhà Mai bao nhiêu cây nhãn?
-
-**Tóm tắt:**
-Nhà Nam: $15$ cây
-Nhà Mai: $8$ cây
-Nhà Nam nhiều hơn nhà Mai: ... cây?
-
-**Bài giải:**
-Vườn nhà Nam có nhiều hơn vườn nhà Mai số cây nhãn là:
-$15 - 8 = 7$ (cây)
-Đáp số: $7$ cây nhãn.
+#### 3) Số? (Sơ đồ cánh hoa liên hoàn)
+* Phép tính vòng tròn nối tiếp bắt đầu từ số 8 (ở cánh hoa đỏ góc dưới bên trái):
+  * $8 + 6 = 14$ (Cánh hoa tiếp theo bên trái)
+  * $14 - 5 = 9$ (Cánh hoa hồng phía trên bên trái)
+  * $9 + 7 = 16$ (Cánh hoa cam trên cùng)
+  * $16 - 7 = 9$ (Cánh hoa đỏ phía trên bên phải)
+  * $9 - 4 = 5$ (Cánh hoa vàng bên phải)
+  * $5 + 5 = 10$ (Cánh hoa đỏ góc dưới bên phải)
 
 ---
 
-### Luyện tập 2
+### Trang 125
+#### 1) Mỗi sọt sẽ đựng những quả bưởi có ghi số là kết quả của phép tính ghi trên sọt đó.
+* **Các sọt đựng bưởi:**
+  * Sọt **A** ghi: $8 + 7 = 15$ (đựng bưởi ghi số 15)
+  * Sọt **B** ghi: $6 + 5 = 11$ (đựng bưởi ghi số 11)
+  * Sọt **C** ghi: $7 + 5 = 12$ (đựng bưởi ghi số 12)
+  * Sọt **D** ghi: $9 + 4 = 13$ (đựng bưởi ghi số 13)
+* **Kết quả đếm số bưởi tương ứng trên cây bưởi và điền bảng:**
+  * Sọt **A** (số 15): **3** quả
+  * Sọt **B** (số 11): **2** quả
+  * Sọt **C** (số 12): **2** quả
+  * Sọt **D** (số 13): **4** quả
 
-**1. Tính:**
-a) $8 + 4 + 3 = 15$
-b) $9 + 6 - 5 = 10$
-c) $14 - 6 + 7 = 15$
-d) $17 - 8 - 4 = 5$
+#### 2) >, <, = ?
+* a)
+  * $5 + 7 = 12$ (Điền dấu $=$)
+  * $6 + 7 > 12$ (vì $13 > 12$, Điền dấu $>$)
+  * $4 + 7 < 12$ (vì $11 < 12$, Điền dấu $<$)
+* b)
+  * $8 + 3 = 3 + 8$ (Điền dấu $=$)
+  * $6 + 5 < 6 + 6$ (vì $11 < 12$, Điền dấu $<$)
 
-**2. Điền dấu $>, <, =$ thích hợp:**
-a) $8 + 5$ ? $14$
-$\rightarrow 13 < 14$ (Điền dấu $<$)
-
-b) $15 - 7$ ? $9$
-$\rightarrow 8 < 9$ (Điền dấu $<$)
-
-c) $9 + 8$ ? $17$
-$\rightarrow 17 = 17$ (Điền dấu $=$)
-
-d) $16 - 8$ ? $7$
-$\rightarrow 8 > 7$ (Điền dấu $>$)
-
-**3. Số?**
-Hoàn thành các sơ đồ mũi tên:
-a) $9 \xrightarrow{+6} 15 \xrightarrow{-8} 7 \xrightarrow{+5} 12$
-b) $16 \xrightarrow{-9} 7 \xrightarrow{+8} 15 \xrightarrow{-6} 9$
-
-**4. Giải bài toán:**
-Có $13$ bạn đang chơi nhảy dây, sau đó có $5$ bạn nghỉ chơi. Hỏi còn lại bao nhiêu bạn đang chơi nhảy dây?
-
-**Tóm tắt:**
-Có: $13$ bạn
-Nghỉ: $5$ bạn
-Còn lại: ... bạn?
-
-**Bài giải:**
-Còn lại số bạn đang chơi nhảy dây là:
-$13 - 5 = 8$ (bạn)
-Đáp số: $8$ bạn.
+#### 4) Bài toán học vẽ:
+* **Đề bài:** Lớp 2A có 8 bạn học hát. Số bạn học vẽ nhiều hơn số bạn học hát là 5 bạn. Hỏi lớp 2A có bao nhiêu bạn học vẽ?
+* **Tóm tắt:**
+  * Học hát: 8 bạn
+  * Học vẽ nhiều hơn học hát: 5 bạn
+  * Học vẽ: ... bạn?
+* **Bài giải:**
+  * Số bạn học vẽ của lớp 2A là:
+    $$8 + 5 = 13 \text{ (bạn)}$$
+  * **Đáp số:** 13 bạn học vẽ.
 
 ---
 
-## Bài 33: ÔN TẬP PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 100
+### Trang 126
+#### 3) Đĩa cân thăng bằng:
+* **Đề bài:** Lấy hai trong ba túi gạo nào đặt lên đĩa bên phải để cân thăng bằng?
+  * Đĩa cân bên trái có: túi 3 kg và túi 9 kg. Tổng cân nặng đĩa trái là: $3 + 9 = 12$ kg.
+  * Ba túi gạo ở ngoài lựa chọn: (1) 5 kg, (2) 6 kg, (3) 7 kg.
+* **Cách giải:**
+  * Để cân thăng bằng thì tổng cân nặng đĩa bên phải cũng phải bằng 12 kg.
+  * Nhận thấy: $5\text{ kg} + 7\text{ kg} = 12\text{ kg}$.
+  * **Kết quả:** Lấy túi gạo **(1) 5 kg** và túi gạo **(3) 7 kg** đặt lên đĩa cân bên phải.
 
-### Luyện tập 1
+#### 4) Bài toán bán máy tính:
+* **Đề bài:** Một cửa hàng điện máy, buổi sáng bán được 11 máy tính, buổi chiều bán được ít hơn buổi sáng 3 máy tính. Hỏi buổi chiều cửa hàng bán được bao nhiêu máy tính?
+* **Bài giải:**
+  * Số máy tính cửa hàng bán được trong buổi chiều là:
+    $$11 - 3 = 8 \text{ (máy tính)}$$
+  * **Đáp số:** 8 máy tính.
 
-**1. Tính nhẩm:**
-$30 + 40 = 70$
-$50 + 20 = 70$
-$80 - 30 = 50$
-$90 - 50 = 40$
-$60 + 30 = 90$
-$70 - 40 = 30$
-
-**2. Đặt tính rồi tính:**
-a) $45 + 32 = 77$
-b) $67 + 25 = 92$
-c) $84 - 36 = 48$
-d) $92 - 45 = 47$
-
-**3. Ghép các thẻ thành phép tính đúng:**
-- Thẻ ghi số $54$ và thẻ ghi $+ 28 \rightarrow$ Nối với kết quả $82$.
-- Thẻ ghi số $73$ và thẻ ghi $- 19 \rightarrow$ Nối với kết quả $54$.
-- Thẻ ghi số $65$ và thẻ ghi $+ 17 \rightarrow$ Nối với kết quả $82$.
-- Thẻ ghi số $91$ và thẻ ghi $- 26 \rightarrow$ Nối với kết quả $65$.
-
-**4. Giải bài toán:**
-Nhà bác Bình nuôi $48$ con gà và $25$ con vịt. Hỏi nhà bác Bình nuôi tất cả bao nhiêu con gà và vịt?
-
-**Tóm tắt:**
-Gà: $48$ con
-Vịt: $25$ con
-Tất cả: ... con?
-
-**Bài giải:**
-Nhà bác Bình nuôi tất cả số con gà và vịt là:
-$48 + 25 = 73$ (con)
-Đáp số: $73$ con.
+#### ÔN TẬP PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 100
+#### 1) Đoàn tàu hỏa:
+* **a) Số? Điền kết quả phép tính ghi trên mỗi toa tàu:**
+  * Toa **A**: $80 - 20 = 60$
+  * Toa **B**: $50 + 10 = 60$
+  * Toa **C**: $60 + 40 = 100$
+  * Toa **D**: $60 - 30 = 30$
+  * Toa **E**: $70 - 20 = 50$
+* **b) Những toa nào ghi phép tính có kết quả bé hơn 60?**
+  * Toa **D** (30) và Toa **E** (50) có kết quả bé hơn 60.
+* **c) Những toa nào ghi phép tính có kết quả lớn hơn 50 và bé hơn 100?**
+  * Toa **A** (60) và Toa **B** (60) có kết quả lớn hơn 50 và bé hơn 100.
 
 ---
 
-### Luyện tập 2
+### Trang 127
+#### 2) Đặt tính rồi tính:
+* **Cột a:**
+  $$\begin{array}{r} 28 \\ +\quad 35 \\ \hline 63 \end{array} \qquad \begin{array}{r} 63 \\ -\quad 28 \\ \hline 35 \end{array} \qquad \begin{array}{r} 63 \\ -\quad 35 \\ \hline 28 \end{array}$$
+* **Cột b:**
+  $$\begin{array}{r} 42 \\ +\quad 49 \\ \hline 91 \end{array} \qquad \begin{array}{r} 91 \\ -\quad 42 \\ \hline 49 \end{array} \qquad \begin{array}{r} 91 \\ -\quad 49 \\ \hline 42 \end{array}$$
 
-**1. Tính:**
-a) $36 + 28 + 15 = 79$
-b) $84 - 35 - 18 = 31$
-c) $47 + 36 - 29 = 54$
+#### 3) Tìm chỗ đỗ cho ô tô (Nối phép tính với kết quả đúng):
+* **Ô tô ghi phép tính:**
+  * Ô tô đỏ: $28 + 15 = 43$ -> Nối với ô đỗ số **43**
+  * Ô tô xanh lá: $14 + 16 = 30$ -> Nối với ô đỗ số **30**
+  * Ô tô vàng: $72 - 45 = 27$ -> Nối với ô đỗ số **27**
+  * Ô tô xanh dương: $65 - 12 = 53$ -> Nối với ô đỗ số **53**
+  * Ô tô cam: $34 + 16 = 50$ -> Nối với ô đỗ số **50**
 
-**2. Tìm số:**
-- Các phép tính trên ô tô:
-  + $38 + 24 = 62$
-  + $75 - 19 = 56$
-  + $56 + 18 = 74$
-  + $82 - 37 = 45$
-
-**3. Lựa chọn phép tính:**
-Bé Bi muốn đi đến cửa hàng đồ chơi. Có hai đường đi, đường đi nào có tổng các phép tính bằng $90$?
-- Đường thứ nhất: Đi qua phép tính $45 + 35 = 80$.
-- Đường thứ hai: Đi qua phép tính $62 + 28 = 90$.
-$\rightarrow$ Bé Bi cần đi theo **đường thứ hai**.
-
-**4. Giải bài toán:**
-Một cửa hàng có $85\text{ kg}$ gạo, cửa hàng đã bán đi $38\text{ kg}$ gạo. Hỏi cửa hàng còn lại bao nhiêu ki-lô-gam gạo?
-
-**Tóm tắt:**
-Có: $85\text{ kg}$
-Bán: $38\text{ kg}$
-Còn lại: ... $\text{kg}$?
-
-**Bài giải:**
-Cửa hàng còn lại số ki-lô-gam gạo là:
-$85 - 38 = 47$ ($\text{kg}$)
-Đáp số: $47\text{ kg}$.
+#### 4) Bài toán đồng diễn thể thao:
+* **Đề bài:** Một đội đồng diễn thể dục thể thao gồm có 56 người mặc áo đỏ và 28 người mặc áo vàng. Hỏi đội đồng diễn đó có tất cả bao nhiêu người?
+* **Bài giải:**
+  * Đội đồng diễn có tất cả số người là:
+    $$56 + 28 = 84 \text{ (người)}$$
+  * **Đáp số:** 84 người.
 
 ---
 
-## Bài 34: ÔN TẬP HÌNH HỌC VÀ ĐO LƯỜNG
+### Trang 128
+#### 1) a) Số? (Sơ đồ phép tính liên hoàn)
+* **Sơ đồ thứ nhất:**
+  * $18 + 17 = 35$
+  * $35 - 9 = 26$
+* **Sơ đồ thứ hai:**
+  * $24 - 8 = 16$
+  * $16 + 15 = 31$
 
-### Luyện tập 1
+#### 1) b) Tính tổng các số hạng bằng nhau:
+* $24 + 24 + 24 = 72$
+* $2 + 2 + 2 + 2 + 2 = 10$
 
-**1. Kể tên các điểm, đoạn thẳng, đường gấp khúc trong hình:**
-- **Hình tam giác MNP:** Có $3$ đoạn thẳng MN, NP, PM và $3$ điểm M, N, P.
-- **Đường gấp khúc ABCD:** Gồm $3$ đoạn thẳng AB, BC, CD.
+#### 2) Cho bảng số (Từ 11 đến 45):
+* **a) Tính tổng của ba số tròn chục có trong bảng:**
+  * Các số tròn chục trong bảng: 20, 30, 40.
+  * Tổng: $20 + 30 + 40 = 90$.
+* **b) Hai số nào trong bảng có tổng là 23?**
+  * Số **11** và **12** (vì $11 + 12 = 23$).
+* **c) Hai số nào trong bảng có tổng lớn nhất?**
+  * Hai số lớn nhất trong bảng: **44** và **45**.
+  * Tổng lớn nhất: $44 + 45 = 89$.
 
-**2. Chọn câu trả lời đúng:**
-Hình nào dưới đây là đường cong?
-A. Đoạn thẳng
-B. Đường cong
-C. Đường thẳng
-D. Đường gấp khúc
-$\rightarrow$ **Đáp án đúng: B**
+#### 3) Bài toán cưa gỗ:
+* **Đề bài:** Một thanh gỗ dài 92 cm. Bác thợ mộc đã cưa đi một đoạn dài 27 cm. Hỏi thanh gỗ còn lại dài bao nhiêu xăng-ti-mét?
+* **Bài giải:**
+  * Thanh gỗ còn lại dài số xăng-ti-mét là:
+    $$92 - 27 = 65 \text{ (cm)}$$
+  * **Đáp số:** 65 cm.
 
-**3. Số?**
-Ba điểm nào thẳng hàng trong hình vẽ?
-$\rightarrow$ Các điểm nằm trên cùng một đoạn thẳng. Ví dụ: A, B, C thẳng hàng.
-
-**4. Tính độ dài đường gấp khúc:**
-Đường gấp khúc MNPQ có MN $= 5\text{ cm}$, NP $= 6\text{ cm}$, PQ $= 4\text{ cm}$. Hỏi đường gấp khúc MNPQ dài bao nhiêu xăng-ti-mét?
-**Bài giải:**
-Độ dài đường gấp khúc MNPQ là:
-$5 + 6 + 4 = 15$ ($\text{cm}$)
-Đáp số: $15\text{ cm}$.
-
----
-
-### Luyện tập 2
-
-**1. Đọc giờ trên đồng hồ:**
-a) Đồng hồ kim chỉ $8$ giờ sáng. (Kim ngắn chỉ số $8$, kim dài chỉ số $12$).
-b) Đồng hồ kim chỉ $10$ giờ $15$ phút. (Kim ngắn qua số $10$, kim dài chỉ số $3$).
-c) Đồng hồ kim chỉ $3$ giờ $30$ phút chiều ($15$ giờ $30$ phút). (Kim ngắn giữa số $3$ và $4$, kim dài chỉ số $6$).
-
-**2. Xem lịch và trả lời câu hỏi:**
-Tờ lịch tháng $12$: Ngày $1$ là Thứ Tư.
-a) Tháng $12$ có bao nhiêu ngày? $\rightarrow$ **$31$ ngày**.
-b) Ngày $25$ tháng $12$ (Lễ Giáng sinh) là thứ mấy? $\rightarrow$ **Thứ Bảy**.
-c) Trong tháng có mấy ngày Chủ nhật? $\rightarrow$ Có **$4$ ngày Chủ nhật** ($5, 12, 19, 26$).
-
-**3. Tính:**
-a) $15\text{ kg} + 28\text{ kg} = 43\text{ kg}$
-b) $52\text{ kg} - 36\text{ kg} = 16\text{ kg}$
-c) $34\text{ l} + 27\text{ l} = 61\text{ l}$
-d) $63\text{ l} - 45\text{ l} = 18\text{ l}$
-
-**4. Giải bài toán:**
-Bình đựng được $12\text{ l}$ nước, thùng đựng được nhiều hơn bình $8\text{ l}$ nước. Hỏi thùng đựng được bao nhiêu lít nước?
-
-**Tóm tắt:**
-Bình: $12\text{ l}$
-Thùng nhiều hơn bình: $8\text{ l}$
-Thùng: ... $\text{l}$?
-
-**Bài giải:**
-Thùng đựng được số lít nước là:
-$12 + 8 = 20$ ($\text{l}$)
-Đáp số: $20\text{ l}$ nước.
+#### 4) Số? (Kim tự tháp số - Quy luật cộng dồn hai số kề dưới bằng số phía trên):
+* **Hàng đáy (Hàng 1):** `2`, `3`, `3`, `4`, `4`
+* **Hàng 2:**
+  * $2 + 3 = 5$ (đã có)
+  * $3 + 3 = 6$ (đã có)
+  * $3 + 4 =$ **7**
+  * $4 + 4 =$ **8**
+* **Hàng 3:**
+  * $5 + 6 = 11$ (đã có)
+  * $6 + 7 =$ **13**
+  * $7 + 8 =$ **15**
+* **Hàng 4:**
+  * $11 + 13 = 24$ (đã có)
+  * $13 + 15 =$ **28**
+* **Đỉnh tháp (Hàng 5):**
+  * $24 + 28 =$ **52**
 
 ---
 
-## Bài 35: ÔN TẬP CHUNG (Kiểm tra Học kì I)
+## BÀI 34: ÔN TẬP HÌNH PHẲNG VÀ ĐO LƯỜNG (HÌNH PHẲNG)
 
-### Luyện tập 1
+### Trang 129
+#### 1) Số? (Đếm số đoạn thẳng tạo thành các hình phẳng):
+* a) Đường gấp khúc gồm **3** đoạn thẳng.
+* b) Hình tam giác gồm **3** đoạn thẳng.
+* c) Hình vuông gồm **4** đoạn thẳng.
+* d) Hình đa giác mẫu gồm **5** đoạn thẳng.
 
-**1. Tính:**
-a) $24 + 18 = 42$
-b) $43 + 29 = 72$
-c) $61 - 35 = 26$
-d) $82 - 47 = 35$
-
-**2. Điền số thích hợp:**
-a) $45 + \dots = 80$ $\rightarrow 35$
-b) $\dots - 26 = 38$ $\rightarrow 64$
-c) $72 - \dots = 45$ $\rightarrow 27$
-
-**3. Giải bài toán:**
-Nhà Lan nuôi một đàn thỏ có $42$ con. Sau khi bán đi $18$ con, hỏi nhà Lan còn lại bao nhiêu con thỏ?
-
-**Tóm tắt:**
-Có: $42$ con thỏ
-Bán đi: $18$ con thỏ
-Còn lại: ... con thỏ?
-
-**Bài giải:**
-Nhà Lan còn lại số con thỏ là:
-$42 - 18 = 24$ (con)
-Đáp số: $24$ con thỏ.
+#### 3) Những hình nào dưới đây là hình tứ giác?
+* Hình **A** (Hình thang), hình **C** (Hình chữ nhật), và hình **D** (Hình tứ giác lồi) là các hình tứ giác.
+* Hình **B** là hình tam giác.
 
 ---
 
-### Luyện tập 2
+### Trang 130
+#### 4) Tìm ba điểm thẳng hàng có trong hình vẽ:
+* Bộ ba điểm thẳng hàng nằm trên các cạnh và đường chéo của hình vẽ:
+  * **M, R, N** (nằm trên cạnh ngang phía trên)
+  * **M, O, P** (nằm trên đường chéo xiên phải)
+  * **N, O, Q** (nằm trên đường chéo xiên trái)
+  * **N, S, P** (nằm trên cạnh xiên bên phải)
 
-**1. Tính toán liên hợp:**
-a) $54 + 18 - 25 = 47$
-b) $86 - 49 + 17 = 54$
+#### LUYỆN TẬP
+#### 2) a) Tính độ dài đoạn thẳng BC:
+* **Đề bài:** Cho biết đoạn thẳng AC dài 13 cm, đoạn thẳng AB dài 6 cm. Điểm B nằm giữa hai điểm A và C. Tính độ dài đoạn thẳng BC.
+* **Bài giải:**
+  * Độ dài đoạn thẳng BC là:
+    $$13 - 6 = 7 \text{ (cm)}$$
+  * **Đáp số:** 7 cm.
 
-**2. Số?**
-(Điền số vào sơ đồ tháp)
-- Tầng trên cùng là tổng của hai ô ngay bên dưới nó.
-- Ví dụ: Đáy $15, 28, 19 \rightarrow$ Tầng hai là $43 (15+28)$ và $47 (28+19) \rightarrow$ Đỉnh là $90 (43+47)$.
+---
 
-**3. Nêu tên đường gấp khúc và tính độ dài:**
-Đường gấp khúc MNPQ có độ dài các đoạn thẳng lần lượt là $4\text{ cm}, 5\text{ cm}, 6\text{ cm}$.
-Độ dài đường gấp khúc MNPQ là: $4 + 5 + 6 = 15\text{ cm}$.
+### Trang 131
+#### 5) Chọn câu trả lời đúng. Số hình tam giác có trong hình vẽ là:
+* **Hình vẽ:** Gồm một tam giác lớn được chia thành 3 tam giác nhỏ kề nhau.
+* **Cách đếm:**
+  * Tam giác đơn (1 mảnh): 3 hình
+  * Tam giác ghép (2 mảnh ghép kề nhau): 2 hình
+  * Tam giác ghép (3 mảnh ghép toàn bộ): 1 hình
+  * Tổng cộng: $3 + 2 + 1 = 6$ hình tam giác.
+* **Đáp án đúng:** **D. 6**
 
-**4. Giải bài toán:**
-Mẹ mua một túi gạo nặng $15\text{ kg}$ và một túi ngô nặng $8\text{ kg}$. Hỏi mẹ đã mua tất cả bao nhiêu ki-lô-gam gạo và ngô?
+---
 
-**Tóm tắt:**
-Gạo: $15\text{ kg}$
-Ngô: $8\text{ kg}$
-Tất cả: ... $\text{kg}$?
+## BÀI 35: ÔN TẬP ĐO LƯỜNG
 
-**Bài giải:**
-Mẹ đã mua tất cả số ki-lô-gam gạo và ngô là:
-$15 + 8 = 23$ ($\text{kg}$)
-Đáp số: $23\text{ kg}$.
+### Trang 132
+#### 1) Đ, S ? (Quan sát bập bênh so sánh khối lượng đồ chơi):
+* a) Gấu bông nặng hơn thỏ bông: **Đ** (vì bập bênh nghiêng về phía gấu bông)
+* b) Thỏ bông nhẹ hơn sóc bông: **S** (quan sát bập bênh thứ hai thấy sóc bông ở phía cao hơn thỏ bông, tức là sóc bông nhẹ hơn thỏ bông)
+* c) Sóc bông nhẹ hơn gấu bông: **Đ** (vì sóc bông nhẹ hơn thỏ bông, thỏ bông nhẹ hơn gấu bông)
+
+#### 2) Tính:
+* $19\text{ kg} + 25\text{ kg} = 44\text{ kg}$
+* $35\text{ kg} + 28\text{ kg} = 63\text{ kg}$
+* $44\text{ kg} - 19\text{ kg} = 25\text{ kg}$
+* $63\text{ kg} - 28\text{ kg} = 35\text{ kg}$
+* $44\text{ kg} - 25\text{ kg} = 19\text{ kg}$
+* $63\text{ kg} - 35\text{ kg} = 28\text{ kg}$
+
+#### 3) Số? (Xem cân đọc khối lượng):
+* a) Đĩa cân bên trái có con thỏ, đĩa bên phải có hai quả cân 1 kg và 2 kg. Đĩa cân thăng bằng.
+  * Con thỏ cân nặng: $1 + 2 =$ **3** kg.
+* b) Bàn cân đĩa có túi gạo đặt chung với quả cân 1 kg. Kim đồng hồ của cân chỉ số 3 kg.
+  * Túi gạo cân nặng: $3 - 1 =$ **2** kg.
+
+---
+
+### Trang 133
+#### 4) Bài toán cân nặng con lợn:
+* **Đề bài:** Mẹ mua con lợn cân nặng 25 kg về nuôi. Sau một thời gian, con lợn tăng thêm 18 kg. Hỏi lúc này, con lợn cân nặng bao nhiêu ki-lô-gam?
+* **Bài giải:**
+  * Hiện tại con lợn cân nặng số ki-lô-gam là:
+    $$25 + 18 = 43 \text{ (kg)}$$
+  * **Đáp số:** 43 kg.
+
+#### 5) Bài toán ba con dê qua sông:
+* **Đề bài:** Có ba con dê cân nặng 14 kg, 18 kg, 16 kg muốn sang sông để ăn cỏ. Rô-bốt nói: "Thuyền chỉ chở thêm được nhiều nhất là 31 kg". Hỏi hai con dê nào có thể cùng nhau sang sông?
+* **Cách giải:**
+  * Ta cần chọn ra cặp dê có tổng cân nặng bé hơn hoặc bằng 31 kg:
+    * Dê 14 kg + Dê 18 kg = 32 kg (Không đạt vì > 31 kg)
+    * Dê 16 kg + Dê 18 kg = 34 kg (Không đạt vì > 31 kg)
+    * Dê 14 kg + Dê 16 kg = 30 kg (Thỏa mãn vì < 31 kg)
+  * **Kết quả:** Hai con dê cân nặng **14 kg** và **16 kg** có thể cùng nhau sang sông.
+
+#### LUYỆN TẬP
+#### 1) Số? (Dung tích bình nước A và B):
+* Rót hết nước từ bình A được đầy 8 ca 1 lít. Rót hết nước từ bình B được đầy 5 ca 1 lít.
+  * a) Bình A chứa được **8** $l$ nước; Bình B chứa được **5** $l$ nước.
+  * b) Cả hai bình chứa được: $8 + 5 =$ **13** $l$ nước.
+
+---
+
+### Trang 134
+#### 2) Tính:
+* **Cột a:**
+  * $25\text{ }l + 8\text{ }l = 33\text{ }l$
+  * $44\text{ }l + 19\text{ }l = 63\text{ }l$
+  * $33\text{ }l - 8\text{ }l = 25\text{ }l$
+  * $63\text{ }l - 44\text{ }l = 19\text{ }l$
+  * $33\text{ }l - 25\text{ }l = 8\text{ }l$
+  * $63\text{ }l - 19\text{ }l = 44\text{ }l$
+* **Cột b:**
+  * $15\text{ }l + 8\text{ }l + 30\text{ }l = 53\text{ }l$
+  * $42\text{ }l - 7\text{ }l + 16\text{ }l = 51\text{ }l$
+
+#### 3) Chọn câu trả lời đúng:
+* **Đề bài:** Trong thùng có 15 $l$ nước. Mẹ đã rót hết nước từ trong thùng ra đầy ba chiếc can. Đó là ba chiếc can nào?
+  * **A.** Can 3 $l$, Can 10 $l$, Can 5 $l$ (Tổng = 18 $l$)
+  * **B.** Can 2 $l$, Can 5 $l$, Can 15 $l$ (Tổng = 22 $l$)
+  * **C.** Can 10 $l$, Can 2 $l$, Can 3 $l$ (Tổng = 15 $l$)
+* **Đáp án đúng:** **C** (vì $10 + 2 + 3 = 15\text{ }l$).
+
+#### 4) Bài toán thùng nước mắm:
+* **Đề bài:** Giải bài toán theo tóm tắt sau:
+  * Có: 18 thùng nước mắm
+  * Thêm: 4 thùng nước mắm
+  * Có tất cả: ... thùng nước mắm?
+* **Bài giải:**
+  * Số thùng nước mắm có tất cả là:
+    $$18 + 4 = 22 \text{ (thùng)}$$
+  * **Đáp số:** 22 thùng nước mắm.
+
+---
+
+## BÀI 36: ÔN TẬP CHUNG
+
+### Trang 135
+#### 1) Chọn câu trả lời đúng:
+* **a) Số thích hợp điền vào dấu "?" trên tia số là:**
+  * Đoạn tia số ghi: `34`, `35`, `36`, ..., `?`, ..., `44`. Điểm chỉ dấu "?" nằm tại vạch chỉ số 40.
+  * **Đáp án đúng:** **B. 40**
+* **b) Nếu ngày 19 tháng 12 là thứ Hai thì ngày 22 tháng 12 là thứ mấy?**
+  * Ngày 19 (Thứ Hai) -> Ngày 20 (Thứ Ba) -> Ngày 21 (Thứ Tư) -> Ngày 22 (Thứ Năm).
+  * **Đáp án đúng:** **B. Thứ Năm**
+
+#### 2) Tìm đồng hồ thích hợp với mỗi bức tranh:
+* **Nối tranh sinh hoạt của Nam với đồng hồ điện tử đúng:**
+  * Nam đi học lúc 7 giờ 15 phút sáng -> Đồng hồ điện tử chỉ **`07:15`**
+  * Nam tập vẽ lúc 2 giờ chiều -> Đồng hồ điện tử chỉ **`14:00`**
+  * Nam chơi đá bóng lúc 4 giờ 30 phút chiều -> Đồng hồ điện tử chỉ **`16:30`**
+  * Nam xem phim hoạt hình lúc 8 giờ tối -> Đồng hồ điện tử chỉ **`20:00`**
+
+#### 3) Đặt tính rồi tính:
+* **Dòng a (Phép cộng):**
+  $$\begin{array}{r} 36 \\ +\quad 7 \\ \hline 43 \end{array} \qquad \begin{array}{r} 5 \\ +\quad 48 \\ \hline 53 \end{array} \qquad \begin{array}{r} 29 \\ +\quad 64 \\ \hline 93 \end{array}$$
+* **Dòng b (Phép trừ):**
+  $$\begin{array}{r} 73 \\ -\quad 6 \\ \hline 67 \end{array} \qquad \begin{array}{r} 82 \\ -\quad 57 \\ \hline 25 \end{array} \qquad \begin{array}{r} 91 \\ -\quad 85 \\ \hline 6 \end{array}$$
+
+---
+
+### Trang 136
+#### 4) Bài toán chiều cao của Mi:
+* **Đề bài:** Rô-bốt cao 89 cm, Mi cao hơn Rô-bốt 9 cm. Hỏi Mi cao bao nhiêu xăng-ti-mét?
+* **Bài giải:**
+  * Chiều cao của bạn Mi là:
+    $$89 + 9 = 98 \text{ (cm)}$$
+  * **Đáp số:** 98 cm.
+
+#### 5) Bài toán đường đi của Kiến:
+* **Đề bài:** Có hai con đường đi để kiến đến chỗ miếng bánh ngọt:
+  * Đường thứ nhất (Đường gấp khúc ABC): Đoạn AB = 52 cm, BC = 38 cm.
+  * Đường thứ hai (Đường gấp khúc MNPQ): Đoạn MN = 39 cm, NP = 23 cm, PQ = 35 cm.
+* **a) Số? Tính tổng độ dài mỗi con đường:**
+  * Đường đi ABC dài: $52 + 38 =$ **90** cm.
+  * Đường đi MNPQ dài: $39 + 23 + 35 =$ **97** cm.
+* **b) Đường đi nào ngắn hơn?**
+  * Vì $90\text{ cm} < 97\text{ cm}$ nên đường đi **ABC ngắn hơn**.
+
+#### LUYỆN TẬP
+#### 1) Chọn câu trả lời đúng:
+* **a) Hai đồng hồ chỉ cùng giờ vào buổi chiều là:**
+  * Đồng hồ kim **M** chỉ 3 giờ 30 phút chiều (tức 15:30).
+  * Đồng hồ điện tử **E** hiển thị 15:30.
+  * **Đáp án đúng:** **A. M và E**
+* **b) Độ dài đường gấp khúc ABCD (gồm AB = 4 cm, BC = 3 cm, CD = 6 cm) là:**
+  * Độ dài đường gấp khúc: $4 + 3 + 6 = 13$ cm.
+  * **Đáp án đúng:** **C. 13 cm**
+
+---
+
+### Trang 137
+#### 2) Số? (Đọc số cân nặng và lượng nước):
+* **a) Quả mít cân nặng bao nhiêu ki-lô-gam?**
+  * Trên đĩa cân thăng bằng: bên trái có quả mít, bên phải có quả cân 2 kg và 5 kg.
+  * Quả mít nặng: $2 + 5 =$ **7** kg.
+* **b) Trong can còn lại bao nhiêu lít nước?**
+  * Can ban đầu chứa đầy 10 lít nước. Rót đầy vào 2 chiếc ca loại 2 lít.
+  * Số nước còn lại trong can: $10 - 2 - 2 =$ **6** lít.
+
+#### 3) Bài toán lớp 2B quyên góp sách ủng hộ:
+* **Đề bài:** Để ủng hộ các bạn vùng lũ lụt, lớp 2A quyên góp được 83 quyển sách, lớp 2B quyên góp được ít hơn lớp 2A là 18 quyển sách. Hỏi lớp 2B quyên góp được bao nhiêu quyển sách?
+* **Bài giải:**
+  * Số quyển sách lớp 2B quyên góp được là:
+    $$83 - 18 = 65 \text{ (quyển sách)}$$
+  * **Đáp số:** 65 quyển sách.
+
+#### 4) Số? (Sơ đồ tam giác phép tính liên hoàn):
+* **Sơ đồ a:**
+  * $62 - 6 = 56$
+  * $56 + 27 = 83$
+  * $83 - 40 = 43$
+* **Sơ đồ b:**
+  * $27 + 5 = 32$
+  * $32 - 19 = 13$
+  * $13 + 30 = 43$
+
+#### 5) Chọn câu trả lời đúng. Số hình tứ giác có trong hình vẽ là:
+* **Hình vẽ:** Một hình thang lớn chứa 3 hình tam giác kề nhau.
+* **Cách đếm:**
+  * Hình thang lớn bao quanh ngoài cùng: 1 hình tứ giác.
+  * Ghép hình tam giác 1 và tam giác 2: 1 hình bình hành (tứ giác).
+  * Ghép hình tam giác 2 và tam giác 3: 1 hình bình hành (tứ giác).
+  * Tổng cộng: $1 + 1 + 1 = 3$ hình tứ giác.
+* **Đáp án đúng:** **B. 3**

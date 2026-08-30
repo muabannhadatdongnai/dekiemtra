@@ -1,227 +1,230 @@
-# Chủ đề 5: LÀM QUEN VỚI HÌNH PHẢNG
+# CHỦ ĐỀ 5: LÀM QUEN VỚI HÌNH PHẲNG
 
-## Bài 25: ĐIỂM, ĐOẠN THẲNG, ĐƯỜNG THẲNG, ĐƯỜNG CONG, ĐƯỜNG GẤP KHÚC
+## BÀI 25: ĐIỂM, ĐOẠN THẲNG, ĐƯỜNG THẲNG, ĐƯỜNG CONG, BA ĐIỂM THẲNG HÀNG
 
-### Khám phá
+### Trang 98
+#### **Khám phá: Điểm, đoạn thẳng**
+*   **Hình ảnh thực tế:**
+    *   Đầu mỗi chiếc đinh trên bảng là một **điểm**.
+    *   Sợi dây treo cờ căng thẳng giữa các chiếc đinh là một **đoạn thẳng**.
+*   **Khái niệm cơ bản:**
+    *   **Điểm A**, **Điểm B**, **Điểm C**.
+    *   Nối điểm B với điểm C, ta được **đoạn thẳng BC**.
 
-**1. Điểm và Đoạn thẳng**
-- Khi chấm một chấm nhỏ trên giấy, ta được một **điểm**. Ví dụ: Điểm A, Điểm B.
-- Dùng thước nối hai điểm A và B lại với nhau, ta được **đoạn thẳng AB** (hoặc đoạn thẳng BA).
-
-**2. Đường thẳng và Đường cong**
-- Khi kéo dài mãi đoạn thẳng về cả hai phía, ta được **đường thẳng**.
-- Sợi dây uốn cong, nét vẽ uốn lượn tạo thành **đường cong**.
-
-**3. Đường gấp khúc**
-- Đường gồm nhiều đoạn thẳng nối tiếp nhau nhưng không thẳng hàng gọi là **đường gấp khúc**.
-- Ví dụ: Đường gấp khúc ABCD gồm $3$ đoạn thẳng là: đoạn thẳng AB, đoạn thẳng BC và đoạn thẳng CD.
-
----
-
-### Hoạt động
-
-**1. Đọc tên các điểm, đoạn thẳng, đường thẳng, đường cong trong tranh:**
-- **Điểm:** Điểm A, Điểm B, Điểm C, Điểm D.
-- **Đoạn thẳng:** Đoạn thẳng MN, Đoạn thẳng PQ.
-- **Đường thẳng:** Đường thẳng xy, Đường thẳng HK.
-- **Đường cong:** Đường cong uốn lượn màu xanh, màu đỏ.
-
-**2. Đếm số đoạn thẳng:**
-a) Hình tam giác ABC có $3$ đoạn thẳng: AB, BC, CA.
-b) Hình tứ giác MNPQ có $4$ đoạn thẳng: MN, NP, PQ, QM.
-c) Đường gấp khúc EGHIK có $4$ đoạn thẳng: EG, GH, HI, IK.
-
-**3. Thực hành vẽ đoạn thẳng:**
-Vẽ đoạn thẳng AB dài $5\text{ cm}$ theo các bước:
-- **Bước 1:** Chấm điểm A trùng với vạch số $0$ của thước, chấm điểm B trùng với vạch số $5$ của thước.
-- **Bước 2:** Dùng bút nối thẳng điểm A với điểm B theo mép thước.
-- **Bước 3:** Nhấc thước ra, ta được đoạn thẳng AB dài $5\text{ cm}$.
+#### **Hoạt động**
+#### 1) Kể tên các điểm và đoạn thẳng trong hình vẽ:
+*   **Các điểm:** Điểm $A$, Điểm $B$, Điểm $C$, Điểm $D$, Điểm $H$, Điểm $G$.
+*   **Các đoạn thẳng:** Đoạn thẳng $AB$, Đoạn thẳng $CD$.
 
 ---
 
-### Luyện tập 1
+### Trang 99
+#### 2) Kể tên các đoạn thẳng trong mỗi hình vẽ sau:
+*   **Hình a) Hình tam giác MNP:**
+    *   Có 3 đoạn thẳng là: Đoạn thẳng $MN$, Đoạn thẳng $NP$, Đoạn thẳng $PM$.
+*   **Hình b) Hình đường gấp khúc gồm các đoạn nối ABCD:**
+    *   Có 3 đoạn thẳng là: Đoạn thẳng $AB$, Đoạn thẳng $BC$, Đoạn thẳng $CD$.
 
-**1. Chọn câu trả lời đúng:**
-Hình nào dưới đây là đường gấp khúc?
-A. Hình 1 (Đường cong)
-B. Hình 2 (Đoạn thẳng)
-C. Hình 3 (Đường gấp khúc gồm $3$ đoạn thẳng)
-D. Hình 4 (Đường tròn)
-$\rightarrow$ **Đáp án đúng: C**
-
-**2. Đọc tên đường gấp khúc và các đoạn thẳng tạo thành đường gấp khúc đó:**
-a) Đường gấp khúc MNPQ gồm $3$ đoạn thẳng: MN, NP, PQ.
-b) Đường gấp khúc ABCDE gồm $4$ đoạn thẳng: AB, BC, CD, DE.
-
-**3. Tính độ dài đường gấp khúc (theo mẫu):**
-*Khái niệm:* Độ dài đường gấp khúc bằng **tổng độ dài các đoạn thẳng** của đường gấp khúc đó.
-Mẫu: Đường gấp khúc ABC có AB $= 4\text{ cm}$, BC $= 5\text{ cm}$.
-        Độ dài đường gấp khúc ABC là: $4 + 5 = 9$ ($\text{cm}$).
-
-a) Đường gấp khúc MNPQ có MN $= 3\text{ cm}$, NP $= 4\text{ cm}$, PQ $= 5\text{ cm}$.
-$\rightarrow$ Độ dài đường gấp khúc MNPQ là:
-$3 + 4 + 5 = 12$ ($\text{cm}$)
-Đáp số: $12\text{ cm}$.
-
-b) Đường gấp khúc GHIJK có GH $= 4\text{ cm}$, HI $= 3\text{ cm}$, IJ $= 4\text{ cm}$, JK $= 3\text{ cm}$.
-$\rightarrow$ Độ dài đường gấp khúc GHIJK là:
-$4 + 3 + 4 + 3 = 14$ ($\text{cm}$)
-Đáp số: $14\text{ cm}$.
+#### 3) Số? (Dùng thước đo độ dài đoạn thẳng):
+*   **Đoạn thẳng mẫu AB:** Đặt thước thẳng sao cho vạch số $0$ trùng with điểm $A$, điểm $B$ trùng với vạch số $5$. Đoạn thẳng $AB$ dài **5** cm.
+*   **Đoạn thẳng MN:** Đo thực tế dài **6** cm.
+*   **Đoạn thẳng PQ:** Đo thực tế dài **8** cm.
 
 ---
 
-### Luyện tập 2
+### Trang 100
+#### **Khám phá: Đường thẳng, đường cong, ba điểm thẳng hàng**
+*   **Hình ảnh thực tế:**
+    *   Vạch sơn kẻ đường thẳng tắp trên đường lộ có dạng **đường thẳng**.
+    *   Cầu vồng cong cong trên bầu trời có dạng **đường cong**.
+*   **Khái niệm cơ bản:**
+    *   **Đường thẳng:** Kéo dài đoạn thẳng $AB$ về cả hai phía, ta được **đường thẳng AB**.
+    *   **Đường cong:** Đường cong $a$.
+    *   **Ba điểm thẳng hàng:** Ba điểm $M, P, N$ cùng nằm trên một đường thẳng. Ta nói: **M, P, N là ba điểm thẳng hàng**.
 
-**1. Số?**
-Quan sát tranh chú ốc sên bò theo đường gấp khúc từ nhà đến vườn rau:
-a) Đoạn đường thứ nhất dài: $6\text{ cm}$.
-b) Đoạn đường thứ hai dài: $5\text{ cm}$.
-c) Đoạn đường thứ ba dài: $8\text{ cm}$.
-$\rightarrow$ Chú ốc sên phải bò quãng đường gấp khúc dài tất cả số xăng-ti-mét là:
-$6 + 5 + 8 = 19$ ($\text{cm}$)
-
-**2. Vẽ tiếp đường gấp khúc:**
-Vẽ tiếp $2$ đoạn thẳng để được một đường gấp khúc có $4$ đoạn thẳng đi qua tất cả $5$ điểm cho trước trên lưới ô vuông.
-
-**3. Thử thách:**
-Một sợi dây thép được uốn thành hình tam giác có các cạnh lần lượt dài $5\text{ cm}$, $6\text{ cm}$ và $7\text{ cm}$. Hỏi sợi dây thép đó dài bao nhiêu xăng-ti-mét?
-$\rightarrow$ **Bài giải:**
-Sợi dây thép đó dài số xăng-ti-mét là:
-$5 + 6 + 7 = 18$ ($\text{cm}$)
-Đáp số: $18\text{ cm}$.
+#### **Hoạt động**
+#### 1) Kể tên trong hình vẽ:
+*   **a) Các đường thẳng:** Đường thẳng $BC$.
+*   **b) Các đường cong:** Đường cong $x$, Đường cong $y$.
 
 ---
 
-## Bài 26: ĐƯỜNG THẲNG, ĐƯỜNG CONG, ĐƯỜNG GẤP KHÚC (Luyện tập thực hành)
+### Trang 101
+#### 2) Đúng hay Sai (Điền Đ hoặc S)?
+*   **a)** Ba điểm $A, B, C$ thẳng hàng $\rightarrow$ **Đ** *(Vì mép thước thẳng đi qua cả ba điểm $A, B, C$)*.
+*   **b)** Ba điểm $D, E, G$ thẳng hàng $\rightarrow$ **S** *(Vì điểm $E$ nằm lệch ra ngoài mép thước nối $D$ và $G$)*.
 
-### Hoạt động
+#### 3) Kể tên ba điểm thẳng hàng có trong hình vẽ:
+*   Trong hình tam giác $ABC$ có điểm $H$ nằm trên cạnh đáy $BC$.
+*   **Kết quả:** Ba điểm thẳng hàng là **B, H, C**.
 
-**1. Phân biệt Đường thẳng - Đoạn thẳng - Đường cong:**
-Quan sát hình vẽ và cho biết chú kiến nào bò theo đường thẳng, chú kiến nào bò theo đoạn thẳng, chú kiến nào bò theo đường cong để đến viên đường?
-- Chú kiến đỏ bò theo **đoạn thẳng**.
-- Chú kiến đen bò theo **đường thẳng**.
-- Chú kiến vàng bò theo **đường cong**.
-
-**2. Ba điểm thẳng hàng:**
-*Khái niệm:* Khi $3$ điểm cùng nằm trên một đường thẳng thì ta nói ba điểm đó **thẳng hàng**.
-- Dùng thước thẳng để kiểm tra xem $3$ điểm nào thẳng hàng trong tranh:
-  + Ba điểm A, B, C cùng nằm trên một mép thước $\rightarrow$ Ba điểm A, B, C **thẳng hàng**.
-  + Ba điểm M, N, P không cùng nằm trên một mép thước $\rightarrow$ Ba điểm M, N, P **không thẳng hàng**.
+#### 4) Tìm một đường thẳng, một đường cong và ba cây thẳng hàng trong hình vẽ:
+*   **Một đường thẳng:** Đường vạch kẻ sơn màu trắng phân chia các khu vực trên sân trường.
+*   **Một đường cong:** Sợi dây nhảy cầu vồng khi hai bạn nhỏ đang chơi nhảy dây.
+*   **Ba cây thẳng hàng:** Nhóm ba cây xanh tán tròn được trồng thẳng hàng ngay ngắn ở góc sân trường.
 
 ---
 
-### Luyện tập
+## BÀI 26: ĐƯỜNG GẤP KHÚC. HÌNH TỨ GIÁC
 
-**1. Nêu tên ba điểm thẳng hàng trong mỗi hình sau:**
-a) Hình 1: Ba điểm M, O, N thẳng hàng; Ba điểm P, O, Q thẳng hàng.
-b) Hình 2: Ba điểm A, D, B thẳng hàng; Ba điểm A, E, C thẳng hàng.
-
-**2. Em hãy trồng cây theo hàng thẳng:**
-Trong vườn có $5$ cây hoa, làm thế nào để trồng $5$ cây hoa đó thành $2$ hàng, mỗi hàng có đúng $3$ cây thẳng hàng?
-$\rightarrow$ **Cách trồng:** Trồng các cây hoa theo các đỉnh và điểm chính giữa các cạnh của một hình chữ V (hoặc hình tam giác có chung $1$ đỉnh ở góc), cây số $1$ nằm ở đỉnh chung, $2$ hàng tỏa ra hai bên, mỗi bên có thêm $2$ cây $\rightarrow$ Tổng $5$ cây, mỗi hàng $3$ cây thẳng hàng.
-
-**3. Trò chơi: Xếp hình đường gấp khúc**
-- Dùng các que tính hoặc ống hút xếp thành các đường gấp khúc khác nhau:
-  + Đường gấp khúc gồm $2$ đoạn thẳng.
-  + Đường gấp khúc gồm $3$ đoạn thẳng khép kín (tạo thành hình tam giác).
-  + Đường gấp khúc gồm $4$ đoạn thẳng khép kín (tạo thành hình tứ giác).
+### Trang 102
+#### **Khám phá**
+*   **a) Đường gấp khúc. Độ dài đường gấp khúc:**
+    *   Cầu thang lên Thác Bạc (Sa Pa) có dạng **đường gấp khúc**.
+    *   Đường gấp khúc $MNPQ$ gồm ba đoạn thẳng: $MN$, $NP$ và $PQ$.
+    *   **Độ dài đường gấp khúc MNPQ** là tổng độ dài các đoạn thẳng $MN, NP$ và $PQ$:
+        $$2\text{ cm} + 5\text{ cm} + 3\text{ cm} = 10\text{ cm}$$
+*   **b) Hình tứ giác:**
+    *   Giới thiệu hình tứ giác qua các hình học phẳng có 4 cạnh.
+    *   Bức tranh các bạn nhỏ chơi xếp hình: *"Trong bức tranh này có nhiều hình tứ giác"*.
 
 ---
 
-## Bài 27: THỰC HÀNH VÀ TRẢI NGHIỆM ĐO ĐỘ DÀI
+### Trang 103
+#### **Hoạt động**
+#### 1) Kể tên các đường gấp khúc trong mỗi hình vẽ sau:
+*   **Hình a):** Đường gấp khúc **ABC** (gồm 2 đoạn thẳng: $AB$ và $BC$).
+*   **Hình b):** Đường gấp khúc **DHGE** hoặc **EGH_D** (gồm 3 đoạn thẳng: $DH$, $HG$, và $GE$).
 
-### Hoạt động 1: Đo độ dài các vật dụng xung quanh em
+#### 2) Có mấy hình tứ giác?
+*   Đếm các mảnh ghép màu vàng hình tứ giác trong bức tranh con vật:
+    *   **Kết quả:** Có **5** hình tứ giác.
 
-**1. Thực hành đo bằng thước thẳng có chia vạch xăng-ti-mét ($\text{cm}$) hoặc đề-xi-mét ($\text{dm}$):**
-Học sinh dùng thước đo độ dài thực tế của các đồ vật trong lớp học và ghi kết quả vào bảng thống kê:
-
-| STT | Tên đồ vật được đo | Độ dài ước lượng | Độ dài thực tế đo được |
-|---|---|---|---|
-| 1 | Chiều dài quyển sách Toán 2 | khoảng $25\text{ cm}$ | $24\text{ cm}$ |
-| 2 | Chiều rộng quyển sách Toán 2 | khoảng $18\text{ cm}$ | $17\text{ cm}$ |
-| 3 | Chiều dài chiếc bút chì của em | khoảng $15\text{ cm}$ | $14\text{ cm}$ |
-| 4 | Chiều dài hộp bút | khoảng $20\text{ cm}$ | $20\text{ cm}$ |
-| 5 | Chiều dài cạnh bàn học | khoảng $11\text{ dm}$ | $12\text{ dm}$ ($120\text{ cm}$) |
-
-**2. Trả lời câu hỏi:**
-a) Trong các đồ vật em vừa đo, đồ vật nào dài nhất? Đồ vật nào ngắn nhất?
-$\rightarrow$ Cạnh bàn học dài nhất ($120\text{ cm}$). Chiếc bút chì ngắn nhất ($14\text{ cm}$).
-b) Chiều dài quyển sách Toán 2 dài hơn chiếc bút chì bao nhiêu xăng-ti-mét?
-$\rightarrow$ Sách Toán 2 dài hơn bút chì số xăng-ti-mét là: $24 - 14 = 10$ ($\text{cm}$).
+#### 3) Tính độ dài đường gấp khúc ABCD:
+*   **Tóm tắt:** Đoạn thẳng $AB = 5\text{ cm}$, $BC = 4\text{ cm}$, $CD = 4\text{ cm}$.
+*   **Bài giải:**
+    Độ dài đường gấp khúc $ABCD$ là:
+    $$5 + 4 + 4 = 13\text{ (cm)}$$
+    *   **Đáp số:** $13\text{ cm}$.
 
 ---
 
-### Hoạt động 2: Đo bước chân và sải tay
+### Trang 104
+#### **Luyện tập**
+#### 1) Tìm trong phòng học/đồ dùng học tập:
+*   **a) Hai đồ vật có dạng đường gấp khúc:** Khung của chiếc giá sách treo tường trang trí, nếp gấp của chiếc quạt giấy.
+*   **b) Hai đồ vật có dạng hình tứ giác:** Mặt bàn học sinh, bảng viết của lớp học, khung cửa sổ.
 
-**1. Thực hành đo bước chân của em và bạn:**
-- Dùng thước dây hoặc thước thẳng đo độ dài bước chân bình thường của em và các bạn trong tổ.
-- Ghi lại số liệu vào bảng:
-
-| Tên bạn | Độ dài $1$ bước chân | Độ dài sải tay |
-|---|---|---|
-| Nguyễn Văn Nam | $35\text{ cm}$ | $115\text{ cm}$ |
-| Trần Thị Mai | $32\text{ cm}$ | $110\text{ cm}$ |
-| Lê Hoàng Việt | $36\text{ cm}$ | $120\text{ cm}$ |
-
-**2. Thử thách đo sân trường bằng bước chân:**
-- Em hãy bước đi từ mép sân bên này sang mép sân bên kia và đếm xem được tất cả bao nhiêu bước chân.
-- Ước lượng chiều dài sân trường dựa vào số bước chân em vừa đếm.
+#### 2) Trong mỗi hình dưới đây có mấy hình tứ giác?
+*   **Hình a) Con thuyền:** Có **1** hình tứ giác (là phần thân thuyền màu cam ở dưới).
+*   **Hình b) Xe tải:** Có **3** hình tứ giác (cabin xe, thùng xe phía sau và cả khối thân xe ghép lại).
+*   **Hình c) Tháp hình xếp:** Có **2** hình tứ giác (phần bệ đỡ ở dưới cùng và phần thân gỗ nối).
 
 ---
 
-## Bài 28: LUYỆN TẬP CHUNG
+### Trang 105
+#### 3) Rô-bốt, Việt và Mai chạy qua một bãi cỏ theo ba đường:
+*   **a) Đọc tên đường chạy của mỗi bạn:**
+    *   **Rô-bốt** chạy theo đường thẳng **AB**.
+    *   **Việt** chạy theo đường gấp khúc **CDEG** (gồm 3 đoạn thẳng).
+    *   **Mai** chạy theo đường gấp khúc **HIK** (gồm 2 đoạn thẳng).
+*   **b) Bạn nào chạy theo đường gấp khúc?**
+    *   Đáp án: Bạn **Việt** và bạn **Mai**.
+*   **c) Đường chạy gồm mấy đoạn thẳng?**
+    *   Đường chạy của bạn **Mai** gồm **2** đoạn thẳng ($HI$ và $IK$).
+    *   Đường chạy của bạn **Việt** gồm **3** đoạn thẳng ($CD, DE$ và $EG$).
 
-### Luyện tập 1
+#### 4) Tính độ dài các đường gấp khúc ABC và MNPQ:
+*   **Hình a) Đường gấp khúc ABC (có AB = 3 cm, BC = 6 cm):**
+    *   Độ dài đường gấp khúc ABC là: $3 + 6 = 9\text{ (cm)}$.
+*   **Hình b) Đường gấp khúc MNPQ (có MN = 4 cm, NP = 4 cm, PQ = 4 cm):**
+    *   Độ dài đường gấp khúc MNPQ là: $4 + 4 + 4 = 12\text{ (cm)}$.
 
-**1. Điền từ thích hợp (điểm, đoạn thẳng, đường thẳng, đường gấp khúc, ba điểm thẳng hàng) vào chỗ trống:**
-a) Hình nối từ điểm A đến điểm B bằng một vạch thẳng gọi là **đoạn thẳng** AB.
-b) Khi $3$ điểm A, M, B cùng nằm trên một đường thẳng thì ta nói **ba điểm thẳng hàng**.
-c) Đường gồm các đoạn thẳng AB, BC, CD nối tiếp nhau nhưng không thẳng hàng gọi là **đường gấp khúc** ABCD.
-
-**2. Tính độ dài đường gấp khúc:**
-
-| Tên đường gấp khúc | Số đoạn thẳng | Độ dài các đoạn thẳng | Tổng độ dài đường gấp khúc |
-|---|---|---|---|
-| ABC | $2$ | AB $= 6\text{ cm}$, BC $= 8\text{ cm}$ | $6\text{ cm} + 8\text{ cm} = 14\text{ cm}$ |
-| MNPQ | $3$ | MN $= 5\text{ cm}$, NP $= 5\text{ cm}$, PQ $= 5\text{ cm}$ | $5\text{ cm} + 5\text{ cm} + 5\text{ cm} = 15\text{ cm}$ |
-| GHIJK | $4$ | GH $= 3\text{ cm}$, HI $= 4\text{ cm}$, IJ $= 3\text{ cm}$, JK $= 4\text{ cm}$ | $3 + 4 + 3 + 4 = 14$ ($\text{cm}$) |
-
-**3. Giải bài toán:**
-Con kiến bò từ tổ A đến nguồn thức ăn B theo đường gấp khúc ACB gồm hai đoạn thẳng: đoạn AC dài $18\text{ cm}$ và đoạn CB dài $15\text{ cm}$. Hỏi quãng đường con kiến bò dài tất cả bao nhiêu xăng-ti-mét?
-
-**Tóm tắt:**
-Đoạn AC: $18\text{ cm}$
-Đoạn CB: $15\text{ cm}$
-Tất cả: ... $\text{cm}$?
-
-**Bài giải:**
-Quãng đường con kiến bò dài tất cả số xăng-ti-mét là:
-$18 + 15 = 33$ ($\text{cm}$)
-Đáp số: $33\text{ cm}$.
+#### 5) Đường gấp khúc nào dài hơn?
+*   Đếm số ô vuông của hai đường gấp khúc vẽ trên lưới:
+    *   Đường màu hồng: gồm 3 đoạn thẳng có tổng độ dài bằng **7 cạnh ô vuông** ($2 + 3 + 2 = 7$).
+    *   Đường màu xanh: gồm 4 đoạn thẳng có tổng độ dài bằng **7 cạnh ô vuông** ($1 + 2 + 1 + 3 = 7$).
+    *   **Kết luận:** Cả hai đường gấp khúc dài **bằng nhau**.
 
 ---
 
-### Luyện tập 2 / Trò chơi
+## BÀI 27: THỰC HÀNH GẤP, CẮT, GHÉP, XẾP HÌNH. VẼ ĐOẠN THẲNG
 
-**1. >, <, = ?**
-So sánh độ dài các đường gấp khúc sau:
-a) Đường gấp khúc A ($5\text{ cm} + 8\text{ cm}$) ? Đường gấp khúc B ($6\text{ cm} + 7\text{ cm}$)
-$\rightarrow 13\text{ cm} = 13\text{ cm}$ (Điền dấu $=$)
+### Trang 106
+#### **Hoạt động: Thực hành gấp, cắt, ghép, xếp hình**
+*   **1) Thực hành:** Dùng một tờ giấy hình chữ nhật, gấp chéo rồi cắt bỏ phần thừa để được một hình vuông và một hình chữ nhật nhỏ.
+*   **2) Xếp hình từ 4 hình tam giác nhỏ:**
+    *   Học sinh cắt chéo hình vuông thành 4 hình tam giác bằng nhau.
+    *   Thực hành xếp thành các hình theo mẫu:
+        *   **a)** Hình hai ngọn núi/mái nhà kép.
+        *   **b)** Hình chú vịt/thiên nga đang bơi.
+        *   **c)** Hình chiếc mũ ca-lô/chiếc thuyền có mui.
+        *   **d)** Hình chiếc thuyền buồm vượt sóng.
 
-b) Đường gấp khúc C ($12\text{ cm} + 15\text{ cm}$) ? Đường gấp khúc D ($30\text{ cm}$)
-$\rightarrow 27\text{ cm} < 30\text{ cm}$ (Điền dấu $<$)
+---
 
-**2. Tìm đường đi ngắn nhất:**
-Có $3$ con đường đi từ nhà Thỏ đến vườn cà rốt:
-- Đường 1 (Đường thẳng): dài $15\text{ dm}$.
-- Đường 2 (Đường gấp khúc 2 đoạn): dài $9\text{ dm} + 8\text{ dm} = 17\text{ dm}$.
-- Đường 3 (Đường cong): dài $20\text{ dm}$.
-$\rightarrow$ **Kết luận:** Đường số $1$ (đường thẳng) là con đường ngắn nhất ($15\text{ dm}$).
+### Trang 107
+#### 3) Cắt hình đã cho thành hai phần để ghép lại được một hình vuông:
+*   **Hình mẫu:** Hình chữ nhật $1 \times 4$ cắt đôi ở giữa rồi xếp chồng ghép thành hình vuông $2 \times 2$.
+*   **Hình a) Hình chữ T:** Thực hành cắt ngang phần thanh dọc chữ T và ghép lại vào bên cạnh phần thanh ngang để tạo thành hình vuông $2 \times 2$.
+*   **Hình b) Hình thang vuông:** Cắt một hình tam giác vuông ở đầu nhọn phía trên, di chuyển ghép vào phần khuyết phía dưới để tạo thành hình vuông hoàn chỉnh.
 
-**3. TRÒ CHƠI: NHÀ KIẾN TRÚC SƯ TÀI BA**
-- Sử dụng bảng đinh (geoboard) và các sợi dây thun màu.
-- Học sinh thi đua nhau móc thun vào các đinh để tạo ra:
-  + $1$ đường thẳng đi qua $3$ đinh (ba điểm thẳng hàng).
-  + $1$ đường gấp khúc gồm $4$ đoạn thẳng.
-  + Các hình tam giác, hình tứ giác có độ dài cạnh khác nhau.
-- Ai xếp được đúng và nhiều hình nhất theo yêu cầu sẽ là "Nhà kiến trúc sư tài ba".
+#### 4) Hai hình nào ở cột bên trái ghép được hình ở cột bên phải?
+*   **Cặp a) Ghép thành hình tam giác cân lớn:** Hình **1** (tam giác nhỏ) và hình **3** (hình thang cân) ghép lại với nhau.
+*   **Cặp b) Ghép thành hình vuông lớn:** Hình **1** (hình thang vuông), hình **2** (tam giác vuông lỡ) và hình **3** (tam giác vuông nhỏ) ghép lại with nhau.
+
+---
+
+### Trang 108
+#### **Hoạt động: Vẽ đoạn thẳng**
+*   **Hướng dẫn các bước vẽ đoạn thẳng dài 7 cm:**
+    *   *Bước 1:* Chấm một điểm làm điểm đầu.
+    *   *Bước 2:* Đặt thước kẻ sao cho vạch số $0$ trùng với điểm vừa chấm.
+    *   *Bước 3:* Tìm vạch chỉ số $7$ trên thước kẻ và chấm một điểm thứ hai tại đó.
+    *   *Bước 4:* Dùng bút chì nối hai điểm dọc theo mép thước để được đoạn thẳng dài $7\text{ cm}$.
+*   **Bài tập 1: Vẽ đoạn thẳng vào vở:**
+    *   **a)** Đoạn thẳng $AB$ có độ dài $9\text{ cm}$.
+    *   **b)** Đoạn thẳng $CD$ có độ dài $12\text{ cm}$.
+
+---
+
+### Trang 109
+#### 2) Đo độ dài mỗi đoạn thẳng:
+*   Học sinh dùng thước đo trực tiếp các đoạn thẳng trong sách:
+    *   Đoạn thẳng $AB = \mathbf{6}\text{ cm}$.
+    *   Đoạn thẳng $CD = \mathbf{8}\text{ cm}$.
+    *   Đoạn thẳng $MN = \mathbf{3}\text{ cm}$.
+
+#### 3) Đo độ dài các đoạn thẳng của hình ngôi nhà và vẽ vào vở:
+*   Thực hiện đo các đoạn thẳng tạo hình ngôi nhà:
+    *   Đoạn thẳng mái nhà $AM, MN$, đoạn thẳng tường bao $AB, CD, NP, GH$.
+    *   Học sinh ghi lại số đo thực tế và thực hành vẽ lại ngôi nhà bằng thước kẻ vào vở.
+
+---
+
+## BÀI 28: LUYỆN TẬP CHUNG
+
+### Trang 110
+#### **Luyện tập**
+#### 1) Đúng hay Sai (Điền Đ hoặc S)?
+Trong hình vẽ trực quan có các đường và điểm cho trước:
+*   **a)** Đoạn thẳng $BC$ $\rightarrow$ **Đ** *(Giới hạn bởi hai đầu mút $B$ và $C$)*.
+*   **b)** Đường thẳng $DE$ và đường thẳng $MN$ $\rightarrow$ **Đ** *(Kéo dài vô hạn về hai phía)*.
+*   **c)** Ba điểm $M, N, P$ thẳng hàng $\rightarrow$ **S** *(Vì điểm $P$ nằm lệch hẳn ra ngoài đường thẳng chứa $M, N$)*.
+*   **d)** Đường cong $x$ $\rightarrow$ **Đ**.
+
+#### 2) Cho ba điểm M, N, P thẳng hàng. Kể tên các đoạn thẳng trong hình vẽ:
+*   **Quy tắc:** Đoạn thẳng nối giữa hai điểm bất kỳ.
+*   **Kết quả:** Có **3** đoạn thẳng là: Đoạn thẳng $MN$, Đoạn thẳng $NP$, Đoạn thẳng $MP$.
+
+---
+
+### Trang 111
+#### 3) Số?
+*   **a) Hình chiếc diều:** Có **3** hình tứ giác *(gồm hình tứ giác lớn toàn thể ở ngoài và 2 hình tứ giác ghép từ các phần nửa diều)*.
+*   **b) Hình chữ nhật lớn chia bởi một nét cắt xiên:** Có **3** hình tứ giác *(gồm hình chữ nhật lớn bao quanh bên ngoài và các hình tứ giác nhỏ được tạo ra sau khi cắt)*.
+
+#### 4) Kể tên các nhóm ba bạn đứng thẳng hàng trong hình vẽ:
+*   Quan sát vị trí các bạn học sinh đứng trên sân tập vẽ lưới ô vuông:
+    *   **Nhóm thẳng hàng dọc:** Ba bạn **Nam, Việt, Mi** đứng thẳng hàng với nhau.
+    *   **Nhóm thẳng hàng ngang:** Ba bạn **Rô-bốt, Mi, Mai** đứng thẳng hàng với nhau.
+
+#### 5) Chú ốc sên bò từ trường học đến sân bóng, ghé qua thư viện rồi về nhà:
+*   **Sơ đồ quãng đường bò:**
+    *   Trường học $\rightarrow$ Sân bóng: $10\text{ cm}$.
+    *   Sân bóng $\rightarrow$ Thư viện: $30\text{ cm}$.
+    *   Thư viện $\rightarrow$ Nhà: $20\text{ cm}$.
+*   **Bài giải:**
+    Độ dài quãng đường chú ốc sên đã bò là:
+    $$10 + 30 + 20 = 60\text{ (cm)}$$
+    *   **Đáp số:** $60\text{ cm}$ *(hoặc đổi bằng $6\text{ dm}$)*.
