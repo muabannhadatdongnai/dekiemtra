@@ -17,6 +17,14 @@
 > án) - gõ/chọn "Tên bài soạn" tự gợi ý theo phụ lục JSON đọc từ kho GitHub kiến thức, kèm nút
 > tự điền "Nội dung cốt lõi" - CẦN dangkhoa tự tạo file phụ lục thật cho từng Chương (xem mục
 > Phiên 25 để biết cấu trúc + file ví dụ), tính năng KHÔNG hoạt động cho tới khi có file đó** +
+> **PHIÊN 29: sửa 3 lỗi sư phạm Tiếng Việt Lớp 1 phản hồi qua phiếu in thật - (1) `khoanh_tu_loai`/
+> `noi_tu_nhom` (dùng thuật ngữ "từ chỉ hoạt động/đặc điểm" - kiến thức Lớp 2-3) nâng `minGrade`
+> lên LOP_2, không còn lộ ở Lớp 1; (2) sửa nhãn đề bài `noi_tu_nhom` sai logic (cam kết "từ chỉ
+> hoạt động" dù generator không ràng buộc loại từ); (3) `dien_tu_cho_san` (dạng bài Tiếng Việt DUY
+> NHẤT còn chạy ở Lớp 1) thêm `buildVietnameseGradeConstraintBlock()` ép câu ngắn 2-4 tiếng, cấm
+> thuật ngữ ngữ pháp, cấm vần phức tạp, + `capitalizeFirstLetter()` viết hoa đầu câu bằng CODE
+> (không chỉ dựa AI). 319/319 test PASS (313 cũ + 6 mới `test/worksheetTiengVietLop1Fix.test.js`),
+> xem chi tiết mục "PHIÊN 29" trong PROJECT_SUMMARY.md** +
 > **PHIÊN 26: rà soát chủ động theo yêu cầu Khoa "còn cần gì để hoàn thiện hơn" - đã làm 5 việc:
 > (1) checklist "CẦN KHOA QUYẾT ĐỊNH" ngay dưới đây, (2) nâng Next.js 14→16.3.3 (vá xong cả 3 lỗ
 > hổng HIGH), (3) script `npm run test:word-compat` tự động hoá kiểm tra Word thật bằng
@@ -54,6 +62,7 @@ dòng đó khỏi bảng (không cần giữ lại lịch sử ở đây — l�
 | 6 | Lỗ hổng bảo mật `xlsx` (Prototype Pollution/ReDoS) | Nhà phát hành chưa có bản vá — chỉ cần Khoa biết để KHÔNG mở tính năng nhập Excel cho người dùng ẩn danh/công khai trong tương lai; chưa cần hành động ngay. |
 | 7 | Icon line-art mới vẽ (Bài 3, Phiên 20) chưa qua mắt giáo viên/học sinh thật | Việc NÀY cần Khoa tự làm (Claude không thể tự đưa icon cho giáo viên/học sinh thật xem) - Phiên 27 đã xuất sẵn `lineart-icon-review-sheet.html` (16 icon lấy trực tiếp từ `scripts/lineArtIconDefs.js`, có ô tick "Đạt/Cần chỉnh sửa" + dòng ghi chú cho từng icon) để Khoa in ra hoặc gửi xem, dễ thu thập phản hồi hơn là mở thẳng file code. Khi có phản hồi, sửa trực tiếp ở `scripts/lineArtIconDefs.js` rồi chạy lại `scripts/render-line-art-icons.js`. |
 | 8 | Test flaky (không nghiêm trọng) trong `test/worksheetLineArtIcons.test.js` | Phát hiện ở Phiên 26 khi nâng Next.js: khi random ra icon ⭐ cho bài "Đếm và viết số", nó trùng với ⭐ dùng cố định ở khối "Tự đánh giá" cuối phiếu, khiến assertion `!documentXml.includes(it.icon)` thỉnh thoảng báo sai (không phải bug sản phẩm thật - phiếu Word vẫn đúng). Cần sửa assertion để chỉ soi trong phạm vi `<w:drawing>` của đúng mục đó, hoặc đổi cách kiểm tra. |
+| 9 | Thiết kế lại bài tập Tiếng Việt Lớp 1 kiểu "âm/vần" (Phiên 29) | Phiên 29 chỉ NÂNG `minGrade` của `khoanh_tu_loai`/`noi_tu_nhom` lên LOP_2 (ẩn khỏi Lớp 1) để hết lỗi vượt cấp trước mắt - CHƯA làm dạng bài THAY THẾ cho Lớp 1 mà giáo viên đề xuất (VD "Khoanh vào tiếng có âm a", "Nối từ với hình", "Điền âm a hoặc âm c"). Cần Khoa xác nhận có muốn đầu tư thêm 1-2 dạng bài ngữ âm RIÊNG cho Lớp 1 hay để trống mục Tiếng Việt AI-sinh ở Lớp 1 (hiện chỉ còn `dien_tu_cho_san` đã siết câu ngắn hơn). |
 
 ---
 

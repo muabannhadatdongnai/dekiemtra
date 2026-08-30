@@ -1,4 +1,53 @@
-# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 28: Soạn Giáo Án — quy tắc tích hợp GDQP&AN có điều kiện + phụ lục "Gợi ý thiết kế Học liệu" tự động cho Lớp 1-3)
+# AI Exam Generator — Tóm tắt dự án (bản cập nhật sau PHIÊN 29: sửa 3 lỗi sư phạm Tiếng Việt Lớp 1 — vượt cấp thuật ngữ ngữ pháp, nhãn đề bài sai logic, câu văn quá sức đọc)
+
+## PHIÊN 29 — Phiếu Bài Tập Tiếng Việt: sửa 3 lỗi sư phạm phản hồi qua bản in thật (Lớp 1)
+
+**Bối cảnh**: giáo viên chấm 1 phiếu Tiếng Việt Lớp 1 in thật, phát hiện 3 lỗi:
+1. **Vượt cấp**: 2 dạng bài "Khoanh từ chỉ hoạt động/đặc điểm" (`khoanh_tu_loai`) và "Nối từ với
+   nhóm thích hợp" (`noi_tu_nhom`) mở cho cả Lớp 1 (`minGrade: "LOP_1"`), nhưng khái niệm "từ chỉ
+   hoạt động" (động từ)/"từ chỉ đặc điểm" (tính từ) là kiến thức phân môn Luyện từ và câu Lớp 2-3
+   — học sinh Lớp 1 (nhất là HK1, vừa học chữ cái) chưa được dạy, và đề bài lại IN THẲNG thuật ngữ
+   này lên phiếu.
+2. **Sai logic (ảo giác AI)**: nhãn đề bài `noi_tu_nhom` ("Nối từ chỉ hoạt động với nhóm thích
+   hợp.") khẳng định các từ đưa ra đều là ĐỘNG TỪ, nhưng `generateNoiTuNhom()` trong
+   `worksheetGenerator.js` thực ra sinh cặp "từ - nhóm/đặc điểm" CHUNG CHUNG (có thể là danh từ
+   nối nhóm, tính từ nối đặc điểm...) — không hề ràng buộc phải là động từ. Ví dụ thực tế: "con
+   cá" (danh từ) bị gắn nhãn "từ chỉ hoạt động" — sai kiến thức cơ bản.
+3. **Văn bản quá sức đọc + thiếu viết hoa**: dạng bài "Điền từ thích hợp vào chỗ trống"
+   (`dien_tu_cho_san`, minGrade Lớp 1) sinh câu dài/phức tạp vượt khả năng đánh vần Lớp 1 (VD "Mái
+   tóc của bà đã bạc trắng vì tuổi già"), và câu "2. bố sửa lại chiếc xe đạp..." thiếu viết hoa chữ
+   cái đầu câu.
+
+**Sửa (`src/data/worksheetExerciseCatalog.js` + `src/services/worksheetGenerator.js`):**
+- **Lỗi 1 (vượt cấp)**: `khoanh_tu_loai` và `noi_tu_nhom` đổi `minGrade: "LOP_1"` → `"LOP_2"` (2
+  dạng bài này giờ chỉ hiện ở Lớp 2, đúng thời điểm SGK dạy khái niệm từ loại). `dien_tu_cho_san`
+  và `dat_cau_theo_mau` không đổi phạm vi khối lớp (bản chất dạng bài phù hợp, chỉ cần ràng buộc
+  nội dung chặt hơn — xem mục dưới).
+- **Lỗi 2 (sai logic)**: bỏ variant nhãn sai "Nối từ chỉ hoạt động với nhóm thích hợp." trong
+  `instructionVariants` của `noi_tu_nhom`, thay bằng "Nối từ với nhóm thích hợp." — khớp đúng với
+  dữ liệu `generateNoiTuNhom()` thực sự trả về (không cam kết loại từ cụ thể).
+- **Lỗi 3 (văn bản quá sức + viết hoa)**: thêm hàm mới `buildVietnameseGradeConstraintBlock(grade)`
+  — trả `""` cho mọi khối trừ `"LOP_1"`; với `"LOP_1"` trả về 1 khối quy tắc bắt buộc nối vào cuối
+  prompt: cấm thuật ngữ ngữ pháp, câu/cụm từ chỉ 2-4 tiếng đúng dạng câu SGK Lớp 1 (VD "Bà có quả
+  na."), cấm vần phức tạp (oang/uynh/iếc/uyên...), chủ đề quen thuộc (gia đình/con vật/đồ vật),
+  viết hoa đầu câu. Đã nối vào prompt của `generateKhoanhTuLoai`/`generateNoiTuNhom` (phòng thủ dù
+  2 dạng này hiện không còn chạy ở Lớp 1 sau lỗi 1) và `generateDienTuChoSan` (dạng DUY NHẤT còn
+  thực sự chạy ở Lớp 1). Đồng thời thêm `capitalizeFirstLetter(str)` — viết hoa đầu câu bằng CODE
+  (không chỉ dựa vào AI làm đúng theo prompt) — áp dụng post-process cho `sentence` (khoanh_tu_loai),
+  `template` (dien_tu_cho_san), `example` (dat_cau_theo_mau).
+
+**Đã kiểm thử:** thêm `test/worksheetTiengVietLop1Fix.test.js` (6 test): xác nhận
+`khoanh_tu_loai`/`noi_tu_nhom` không còn lộ ở catalog Lớp 1 nhưng vẫn còn ở Lớp 2 (không xoá nhầm
+tính năng), nhãn `noi_tu_nhom` không còn cam kết sai "từ chỉ hoạt động", `dien_tu_cho_san` vẫn còn
+ở Lớp 1, `buildVietnameseGradeConstraintBlock` rỗng cho khối khác Lớp 1 và có đủ quy tắc cho Lớp 1,
+`capitalizeFirstLetter` viết hoa đúng ký tự đầu tiên (kể cả nguyên âm có dấu như "ăn" → "Ăn"), giữ
+nguyên chuỗi rỗng/null. `npm test` 319/319 PASS (313 cũ + 6 mới), `npm run build` sạch.
+
+**Còn lại (không cấp bách):** `khoanh_tu_loai`/`noi_tu_nhom` sau khi nâng lên Lớp 2 vẫn dùng
+`buildVietnameseGradeConstraintBlock()` ở chế độ "phòng thủ" (luôn trả `""` trong luồng bình
+thường) — nếu sau này có nhu cầu THẬT SỰ đưa lại 2 dạng bài này về Lớp 1 dưới hình thức khác (VD
+đổi hẳn sang "Khoanh vào tiếng có âm..." như đề xuất gốc của giáo viên), cần thiết kế generator +
+nhãn đề bài HOÀN TOÀN MỚI phù hợp ngữ âm Lớp 1, không chỉ nới điều kiện `minGrade`.
 
 ## PHIÊN 28 — Soạn Giáo Án: GDQP&AN không ép buộc + phụ lục "Gợi ý thiết kế Học liệu" (Lớp 1-3)
 
