@@ -1,67 +1,45 @@
+# Chủ đề 6: Đường thẳng vuông góc. Đường thẳng song song
 
-# Chủ đề: HÌNH HỌC VÀ ĐO LƯỜNG (Tiếp theo)
-
-## Bài 29: HAI ĐƯỜNG THẲNG SONG SONG (Tiếp theo)
-
-### Khám phá
-- Hai đường thẳng song song với nhau không bao giờ cắt nhau.
-- Kéo dài hai cạnh AB và DC của hình chữ nhật ABCD ta được hai đường thẳng song song với nhau.
-
-### Hoạt động
-1. Quan sát hình vẽ và chỉ ra các cặp đường thẳng song song trong các hình cho trước.
-2. Dùng thước kẻ để kiểm tra các cặp đường thẳng sau có song song với nhau không.
-
-### Luyện tập
-1. Trong các hình sau, hình nào có cặp cạnh song song với nhau?
-2. Cho hình chữ nhật ABCD. Nêu tên các cặp cạnh song song với nhau.
-3. Tìm các đồ vật quanh em có các bộ phận song song với nhau.
+Chủ đề 6 trong chương trình Toán lớp 4 (Tập 1 - Kết nối tri thức với cuộc sống) kéo dài từ trang 91 đến trang 113, bao gồm **6 bài học chính** về hình học phẳng, cách vẽ, nhận diện hai đường thẳng vuông góc, song song và hai hình phẳng quan trọng là hình bình hành và hình thoi.
 
 ---
 
-## Bài 30: THỰC HÀNH VÀ TRẢI NGHIỆM VẼ HAI ĐƯỜNG THẲNG SONG SONG
+## 1. Bài 27: Hai đường thẳng vuông góc (Trang 91)
+- **Khái niệm:** 
+  - Kéo dài hai cạnh AB và AD của hình chữ nhật ABCD ta được hai đường thẳng vuông góc với nhau.
+  - Hai đường thẳng OM và ON cắt nhau tạo thành 4 góc vuông có chung đỉnh O được gọi là hai đường thẳng vuông góc với nhau.
+- **Công cụ kiểm tra:** Thường dùng ê ke để kiểm tra hoặc vẽ hai đường thẳng vuông góc với nhau.
 
-### Hướng dẫn
-- Để vẽ đường thẳng CD đi qua điểm M và song song với đường thẳng AB cho trước:
-  1. Vẽ đường thẳng vuông góc với AB đi qua M, gọi là đường thẳng EF.
-  2. Vẽ đường thẳng CD đi qua M và vuông góc với đường thẳng EF.
-  3. Khi đó, CD song song với AB.
+## 2. Bài 28: Thực hành và trải nghiệm vẽ hai đường thẳng vuông góc (Trang 94)
+- **Cách vẽ đường thẳng CD đi qua điểm H và vuông góc với đường thẳng AB cho trước:**
+  - **Trường hợp điểm H nằm trên đường thẳng AB:**
+    1. Đặt một cạnh góc vuông của ê ke trùng với đường thẳng AB sao cho đỉnh góc vuông của ê ke trùng với điểm H.
+    2. Vạch một đường thẳng theo cạnh góc vuông thứ hai của ê ke ta được đường thẳng CD vuông góc với AB tại H.
+  - **Trường hợp điểm H nằm ngoài đường thẳng AB:**
+    1. Đặt một cạnh góc vuông của ê ke trùng với đường thẳng AB và cạnh góc vuông thứ hai của ê ke đi qua điểm H.
+    2. Vạch một đường thẳng theo cạnh góc vuông thứ hai của ê ke đi qua điểm H ta được đường thẳng CD vuông góc với AB.
 
-### Hoạt động
-1. Thực hành vẽ hai đường thẳng song song trên giấy kẻ ô vuông.
-2. Vẽ đường thẳng song song với một cạnh của hình chữ nhật cho trước.
+## 3. Bài 29: Hai đường thẳng song song (Trang 98)
+- **Khái niệm:** 
+  - Kéo dài hai cạnh đối diện AB và DC của hình chữ nhật ABCD ta được hai đường thẳng song song với nhau.
+  - Hai đường thẳng song song với nhau là hai đường thẳng không bao giờ cắt nhau.
 
----
+## 4. Bài 30: Thực hành và trải nghiệm vẽ hai đường thẳng song song (Trang 101)
+- **Cách vẽ đường thẳng CD đi qua điểm H và song song với đường thẳng AB cho trước:**
+  - **Bước 1:** Vẽ đường thẳng MN đi qua điểm H và vuông góc với đường thẳng AB.
+  - **Bước 2:** Vẽ đường thẳng CD đi qua điểm H và vuông góc với đường thẳng MN. Ta được đường thẳng CD song song với đường thẳng AB.
 
-## Bài 31: LUYỆN TẬP CHUNG (HÌNH HỌC)
+## 5. Bài 31: Hình bình hành, hình thoi (Trang 105)
+- **Hình bình hành (ABCD):**
+  - Có 2 cặp cạnh đối diện song song và bằng nhau: AB song song và bằng DC, AD song song và bằng BC.
+  - **Định nghĩa:** Hình bình hành có hai cặp cạnh đối diện song song và bằng nhau.
+- **Hình thoi (ABCD):**
+  - Có 2 cặp cạnh đối diện song song và bốn cạnh bằng nhau: AB // CD, AD // BC và AB = BC = CD = DA.
+  - **Định nghĩa:** Hình thoi có hai cặp cạnh đối diện song song và bốn cạnh bằng nhau.
+  - **Tính chất hai đường chéo:** Hai đường chéo của hình thoi vuông góc với nhau tại trung điểm của mỗi đường (O).
 
-### Luyện tập
-1. Trong các cặp đường thẳng sau, cặp nào vuông góc, cặp nào song song?
-2. Vẽ hình vuông, hình chữ nhật theo kích thước cho trước.
-3. Tính chu vi và diện tích của các hình đã học trong chương.
-
-### Bài tập ôn tập chương
-1. Cho hình vẽ dưới đây, hãy:
-   a) Chỉ ra các cặp đường thẳng vuông góc.
-   b) Chỉ ra các cặp đường thẳng song song.
-2. Vẽ đường thẳng đi qua điểm P và song song với đường thẳng Q.
-
----
-
-## BÀI TẬP ÔN TẬP CUỐI TẬP MỘT
-
-### Phần 1: Số và phép tính
-1. Đọc và viết các số có nhiều chữ số.
-2. So sánh và sắp xếp các số tự nhiên.
-3. Thực hiện phép cộng, phép trừ các số có nhiều chữ số.
-4. Tìm hai số khi biết tổng và hiệu.
-
-### Phần 2: Hình học và đo lường
-1. Đo góc bằng thước đo góc.
-2. Nhận biết góc nhọn, góc tù, góc bẹt, góc vuông.
-3. Nhận biết và vẽ hai đường thẳng vuông góc, hai đường thẳng song song.
-4. Chuyển đổi các đơn vị đo: yến, tạ, tấn, $dm^2, m^2, mm^2$, giây, thế kỉ.
-
-### Phần 3: Bài tập tổng hợp
-1. Một cửa hàng ngày thứ nhất bán được 2 tấn gạo, ngày thứ hai bán ít hơn ngày thứ nhất 5 tạ. Hỏi cả hai ngày cửa hàng bán được bao nhiêu tạ gạo?
-2. Tính giá trị biểu thức: $12~500 + 3~200 - 4~500 = ?$
-3. Hình chữ nhật có chu vi $60$ cm, chiều dài hơn chiều rộng $10$ cm. Tính diện tích hình chữ nhật đó.
+## 6. Bài 32: Luyện tập chung (Trang 110)
+- Hệ thống hóa lại toàn bộ các kiến thức về:
+  - Nhận diện các đoạn thẳng song song, vuông góc trong hình học thực tế.
+  - Vẽ hình, đo đạc và cắt ghép hình bình hành, hình thoi.
+  - Giải các bài tập thực hành ứng dụng các thuộc tính song song và vuông góc để giải quyết vấn đề.

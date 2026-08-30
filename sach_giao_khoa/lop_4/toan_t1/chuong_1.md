@@ -1,310 +1,163 @@
-
-# Chủ đề 1: ÔN TẬP VÀ BỔ SUNG
-
-## Bài 1: ÔN TẬP CÁC SỐ ĐẾN 100 000
-
-### Luyện tập
-
-#### 1. Số ?
-
-| Viết số | Hàng chục nghìn | Hàng nghìn | Hàng trăm | Hàng chục | Hàng đơn vị | Đọc số |
-| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| 36 515 | 3 | 6 | 5 | 1 | 5 | ba mươi sáu nghìn năm trăm mười lăm |
-| ? | 6 | 0 | 3 | 1 | ? | sáu mươi mốt nghìn không trăm ba mươi tư |
-| ? | ? | 7 | 9 | 4 | 1 | bảy nghìn chín trăm bốn mươi mốt |
-| ? | 2 | 0 | 8 | 0 | 9 | hai mươi nghìn tám trăm linh chín |
-
-#### 2. Viết số rồi đọc số, biết số đó gồm:
-a) 4 chục nghìn, 2 nghìn, 5 trăm và 3 chục.
-b) 8 nghìn, 8 trăm, 8 chục và 8 đơn vị.
-c) 5 chục nghìn, 7 trăm, 1 chục và 4 đơn vị.
-d) 9 chục nghìn, 4 nghìn và 5 đơn vị.
-
-#### 3. Số ?
-a) $6~825 = 6~000 + 800 + 20 + ?$
-b) $3~471 = 30~000 + 3~000 + ? + 70 + 1$
-c) $75~850 = 70~000 + 5~000 + 800 + ?$
-d) $6~209 = 80~000 + 6~000 + ? + 9$
-
-#### 4. Số ?
-a) 17 595, 17 596, 17 597, ?, 17 599, ?, ?, 17 602
-b) 30 000, 40 000, ?, 60 000, ?, ?, 90 000, ?
-
-#### 5. Số ?
-
-| Số liền trước | Số đã cho | Số liền sau |
-| :---: | :---: | :---: |
-| 8 289 | 8 290 | 8 291 |
-| ? | 42 135 | ? |
-| ? | 80 000 | ? |
-| ? | 99 999 | ? |
+# CHỦ ĐỀ 1: ÔN TẬP VÀ BỔ SUNG
+*(Nội dung được trích xuất từ sách giáo khoa Toán 4 Tập 1 - Kết nối tri thức với cuộc sống)*
 
 ---
 
-### Luyện tập
-
-#### 1. >; <; = ?
-a) 9 897 ? 10 000
-68 534 ? 68 499
-34 000 ? 33 979
-b) 8 563 ? $8~000 + 500 + 60 + 3$
-45 031 ? $40~000 + 5~000 + 100 + 30$
-70 208 ? $60~000 + 9~000 + 700 + 9$
-
-#### 2. Chọn câu trả lời đúng.
-a) Số bé nhất trong các số 20 107, 19 482, 15 999, 18 700 là:
-A. 20 107 | B. 19 482 | C. 15 999 | D. 18 700
-
-b) Số nào dưới đây có chữ số hàng trăm là 8?
-A. 57 680 | B. 48 954 | C. 84 273 | D. 39 825
-
-c) Số dân của một phường là 12 967 người. Số dân của phường đó làm tròn đến hàng nghìn là:
-A. 12 900 | B. 13 000 | C. 12 000 | D. 12 960
-
-#### 3. Số ?
-$6~000 + 500 + 40 + ? = 50~738$
-$30~000 + ? + 800 + 2 = 96~041$
-$50~000 + ? + 30 + 8 = 6~547$
-$? + 6~000 + 40 + 1 = 35~802$
-
-#### 4. Trong bốn ngày đầu của tuần chiến dịch tiêm chủng mở rộng, thành phố A đã tiêm được số liều vắc-xin phòng COVID-19 như sau:
-Thứ Hai: 36 785 liều vắc-xin
-Thứ Ba: 35 952 liều vắc-xin
-Thứ Tư: 37 243 liều vắc-xin
-Thứ Năm: 29 419 liều vắc-xin
-a) Ngày nào thành phố A tiêm được nhiều liều vắc-xin nhất? Ngày nào thành phố A tiêm được ít liều vắc-xin nhất?
-b) Viết tên các ngày theo thứ tự có số liều vắc-xin đã tiêm được từ ít nhất đến nhiều nhất.
-
-#### 5. Đố em!
-Số 28 569 được xếp bởi các que tính như sau. Hãy chuyển chỗ một que tính để tạo thành số bé nhất.
+## MỤC LỤC CHỦ ĐỀ 1
+1. **Bài 1:** Ôn tập các số đến 100 000 (Trang 6)
+2. **Bài 2:** Ôn tập các phép tính trong phạm vi 100 000 (Trang 9)
+3. **Bài 3:** Số chẵn, số lẻ (Trang 12)
+4. **Bài 4:** Biểu thức chứa chữ (Trang 14)
+5. **Bài 5:** Giải bài toán có ba bước tính (Trang 19)
+6. **Bài 6:** Luyện tập chung (Trang 21)
 
 ---
 
-## Bài 2: ÔN TẬP CÁC PHÉP TÍNH TRONG PHẠM VI 100 000
+## NỘI DUNG CHI TIẾT TỪNG BÀI HỌC
 
-### Luyện tập
+### BÀI 1: ÔN TẬP CÁC SỐ ĐẾN 100 000 (Trang 6 - 8)
 
-#### 1. Tính nhẩm.
-a) $8~000 + 7~000$; $16~000 - 9~000$; $25~000 + 30~000$
-b) $46~000 + 4~000 + 9~000$; $73~000 - 3~000 - 50~000$; $32~000 + 5~000 - 17~000$
+#### 1. Kiến thức cần nhớ
+* **Cấu tạo số thập phân:** Nhận biết các hàng gồm hàng chục nghìn, hàng nghìn, hàng trăm, hàng chục, hàng đơn vị.
+* **Đọc và viết số:** Biết cách đọc và viết các số có năm chữ số trong phạm vi 100 000.
+* **Phân tích cấu tạo số:** Viết số thành tổng các chục nghìn, nghìn, trăm, chục và đơn vị.
+* **So sánh và thứ tự:** So sánh các số, sắp xếp thứ tự, tìm số liền trước, số liền sau và làm tròn số đến hàng nghìn.
 
-#### 2. Đặt tính rồi tính.
-$8~254 + 6~392$; $58~623 + 25~047$; $36~073 - 847$; $74~528 - 16~240$
+#### 2. Các dạng bài tập minh họa
+* **Dạng 1: Đọc, viết và phân tích số**
+  * *Ví dụ:* Số **36 515** gồm 3 chục nghìn, 6 nghìn, 5 trăm, 1 chục và 5 đơn vị. Đọc là: *ba mươi sáu nghìn năm trăm mười lăm*.
+  * *Bài tập phân tích thành tổng:*
+    $$6\,825 = 6\,000 + 800 + 20 + 5$$
+    $$33\,471 = 30\,000 + 3\,000 + 400 + 70 + 1$$
+    $$75\,850 = 70\,000 + 5\,000 + 800 + 50$$
+    $$86\,209 = 80\,000 + 6\,000 + 200 + 9$$
 
-#### 3. Tính giá trị của biểu thức.
-a) $57~670 - (29~653 - 2~653)$
-b) $16~000 + 8~140 + 2~760$
+* **Dạng 2: Xác định số liền trước, số liền sau**
+  * *Quy tắc:* Số liền trước kém số đã cho 1 đơn vị. Số liền sau hơn số đã cho 1 đơn vị.
+  * *Ví dụ:* 
+    * Số đã cho: **8 290** $\rightarrow$ Số liền trước: **8 289**, Số liền sau: **8 291**.
+    * Số đã cho: **99 999** $\rightarrow$ Số liền trước: **99 998**, Số liền sau: **100 000**.
 
-#### 4. Giá một hộp bút là 16 500 đồng, giá một ba lô học sinh nhiều hơn giá một hộp bút là 62 500 đồng. Mẹ mua cho An một hộp bút và một ba lô học sinh. Hỏi mẹ của An phải trả người bán hàng bao nhiêu tiền?
-
----
-
-### Luyện tập
-
-#### 1. Những phép tính nào dưới đây có cùng kết quả?
-$80~000 : 2$; $6~000 \times 4$; $90~000 : 3$; $20~000 \times 2$; $5~000 \times 8$
-
-#### 2. Đặt tính rồi tính.
-$5~071 \times 9$; $17~218 \times 4$; $56~472 : 8$; $91~503 : 7$
-
-#### 3. Có 4 xe ô tô, mỗi xe chở 4 500 kg gạo đến giúp đỡ đồng bào vùng bị lũ lụt. Dự kiến tất cả số gạo đó được chia đều cho 5 xã. Hỏi mỗi xã sẽ nhận được bao nhiêu ki-lô-gam gạo?
-
-#### 4. Tính giá trị của biểu thức.
-a) $10~000 \times 5 : 3$
-b) $13~206 \times (36 : 9)$
+* **Dạng 3: Điền số trên tia số**
+  * Điền các số liên tiếp: $17\,595 \rightarrow 17\,596 \rightarrow 17\,597 \rightarrow \mathbf{17\,598} \rightarrow 17\,599 \rightarrow \mathbf{17\,600} \rightarrow \mathbf{17\,601} \rightarrow 17\,602$.
+  * Điền các số tròn chục nghìn: $30\,000 \rightarrow 40\,000 \rightarrow \mathbf{50\,000} \rightarrow 60\,000 \rightarrow \mathbf{70\,000} \rightarrow \mathbf{80\,000} \rightarrow 90\,000 \rightarrow \mathbf{100\,000}$.
 
 ---
 
-### Luyện tập
+### BÀI 2: ÔN TẬP CÁC PHÉP TÍNH TRONG PHẠM VI 100 000 (Trang 9 - 11)
 
-#### 1. Chọn câu trả lời đúng.
-a) Tổng của 53 640 và 8 290 là: A. 61 830 | B. 61 930 | C. 51 930 | D. 60 930
-b) Hiệu của 68 497 và 35 829 là: A. 31 668 | B. 32 568 | C. 32 678 | D. 32 668
-c) Tích của 29 073 và 3 là: A. 67 219 | B. 87 019 | C. 87 219 | D. 87 291
-d) Thực hiện phép tính 54 658 : 9 được: A. Thương là 6 073 và số dư là 1 | B. Thương là 673 và số dư là 1 | C. Thương là 6 072 và số dư là 10 | D. Thương là 672 và số dư là 1
+#### 1. Kiến thức cần nhớ
+* **Tính nhẩm:** Các phép tính cộng, trừ, nhân, chia cơ bản với số tròn nghìn, tròn chục nghìn.
+* **Đặt tính rồi tính:** Thực hiện chính xác bốn phép tính Cộng, Trừ, Nhân, Chia trong phạm vi 100 000.
+* **Tính giá trị biểu thức:** Áp dụng quy tắc thứ tự thực hiện phép tính (trong ngoặc trước, ngoài ngoặc sau; nhân chia trước, cộng trừ sau).
 
-#### 2. Ở một nhà máy sản xuất đồ chơi trẻ em, tháng Một sản xuất được 12 960 sản phẩm. Số sản phẩm sản xuất được trong tháng Hai giảm đi 2 lần so với tháng Một. Hỏi tháng Hai nhà máy đó sản xuất được bao nhiêu sản phẩm?
+#### 2. Các dạng bài tập minh họa
+* **Dạng 1: Tính nhẩm nhanh**
+  * $8\,000 + 7\,000 = 15\,000$
+  * $16\,000 - 9\,000 = 7\,000$
+  * $46\,000 + 4\,000 + 9\,000 = 50\,000 + 9\,000 = 59\,000$
+  * $73\,000 - 3\,000 - 50\,000 = 70\,000 - 50\,000 = 20\,000$
 
-#### 3. Tính giá trị của biểu thức.
-a) $(54~000 - 6~000) : 8$
-b) $43~680 - 7~120 \times 5$
+* **Dạng 2: Đặt tính rồi tính**
+  * Đặt tính cột dọc đối với phép cộng, trừ, nhân và chia. Chú ý viết các chữ số cùng hàng thẳng cột với nhau.
+  * *Ví dụ phép nhân và chia:*
+    * $5\,071 \times 9 = 45\,639$
+    * $56\,472 : 8 = 7\,059$
 
-#### 4. Để phục vụ năm học mới, một cửa hàng nhập về 4 050 quyển sách tham khảo. Số sách giáo khoa nhập về gấp 5 lần số sách tham khảo. Hỏi cửa hàng đó nhập về tất cả bao nhiêu quyển sách giáo khoa và sách tham khảo?
-
----
-
-## Bài 3: SỐ CHẴN, SỐ LẺ
-
-### Khám phá
-- Số chia hết cho 2 là số chẵn.
-- Số không chia hết cho 2 là số lẻ.
-
-### Nhận xét
-- Các số có chữ số tận cùng 0, 2, 4, 6, 8 là các số chẵn (Ví dụ: 40, 72, 214, 96, 2 318,...).
-- Các số có chữ số tận cùng 1, 3, 5, 7, 9 là các số lẻ (Ví dụ: 31, 73, 615, 107, 1 909,...).
-
-### Hoạt động
-1. Trong các số dưới đây, số nào là số chẵn, số nào là số lẻ: 12, 315, 108, 71, 194, 656, 649, 72, 113, 107.
+* **Dạng 3: Bài toán giải có lời văn**
+  * *Đề bài mẫu:* Có 4 xe ô tô, mỗi xe chở $4\,500$ kg gạo đến giúp đỡ đồng bào vùng bị lũ lụt. Dự kiến tất cả số gạo đó được chia đều cho 5 xã. Hỏi mỗi xã nhận được bao nhiêu ki-lô-gam gạo?
+  * *Bài giải:*
+    * Tổng số gạo cả 4 xe chở là:
+      $$4\,500 \times 4 = 18\,000 \text{ (kg)}$$
+    * Số gạo mỗi xã nhận được là:
+      $$18\,000 : 5 = 3\,600 \text{ (kg)}$$
+    * *Đáp số:* $3\,600$ kg gạo.
 
 ---
 
-### Luyện tập
-1. Con ong bay đến bông hoa màu nào nếu: a) Con ong bay theo đường ghi các số chẵn? b) Con ong bay theo đường ghi các số lẻ?
-2. Nêu số nhà còn thiếu.
-3. a) Số ?
-- Biết 116 và 118 là hai số chẵn liên tiếp. Hai số chẵn liên tiếp hơn kém nhau ? đơn vị.
-- Biết 117 và 119 là hai số lẻ liên tiếp. Hai số lẻ liên tiếp hơn kém nhau ? đơn vị.
-b) Nêu tiếp các số chẵn để được ba số chẵn liên tiếp: 78, ?, ?
-- Nêu tiếp các số lẻ để được ba số lẻ liên tiếp: 67, ?, ?
-4. Từ hai trong ba thẻ số 7, 4, 5, hãy lập tất cả các số chẵn và các số lẻ có hai chữ số.
+### BÀI 3: SỐ CHẴN, SỐ LẺ (Trang 12 - 13)
+
+#### 1. Kiến thức cần nhớ
+* **Số chẵn:** Là các số có chữ số tận cùng là **0, 2, 4, 6, 8**. Số chẵn chia hết cho 2.
+* **Số lẻ:** Là các số có chữ số tận cùng là **1, 3, 5, 7, 9**. Số lẻ không chia hết cho 2.
+* **Quy luật:** Hai số chẵn (hoặc hai số lẻ) liên tiếp hơn kém nhau **2 đơn vị**.
+
+#### 2. Các dạng bài tập minh họa
+* **Dạng 1: Phân loại số chẵn và số lẻ**
+  * Cho dãy số: $12, 315, 108, 71, 194, 656, 649, 72, 113, 107$.
+    * **Số chẵn:** $12, 108, 194, 656, 72$ (tận cùng bằng 2, 8, 4, 6).
+    * **Số lẻ:** $315, 71, 649, 113, 107$ (tận cùng bằng 5, 1, 9, 3, 7).
+
+* **Dạng 2: Điền số nhà hoặc số trên dãy số**
+  * Bên dãy số chẵn: $116 \rightarrow 118 \rightarrow \mathbf{120} \rightarrow \mathbf{122} \rightarrow \mathbf{124} \rightarrow 126$.
+  * Bên dãy số lẻ: $117 \rightarrow 119 \rightarrow \mathbf{121} \rightarrow \mathbf{123} \rightarrow \mathbf{125} \rightarrow 127$.
 
 ---
 
-## Bài 4: BIỂU THỨC CHỨA CHỮ
+### BÀI 4: BIỂU THỨC CHỨA CHỮ (Trang 14 - 17)
 
-### Khám phá
-$2 + a$ là biểu thức chứa chữ.
-- Mỗi lần thay chữ a bằng một số ta tính được một giá trị của biểu thức $2 + a$.
+#### 1. Kiến thức cần nhớ
+* **Khái niệm:** Biểu thức chứa chữ là biểu thức có chứa chữ (ví dụ: $2 + a$, $40 - b$, $a + b + c$, $a \times 4$).
+* **Giá trị của biểu thức chứa chữ:** Mỗi lần thay chữ bằng một số cụ thể, ta tính được một giá trị tương ứng của biểu thức đó.
 
-### Hoạt động
-1. Tính giá trị của biểu thức.
-a) 125 : m với m = 5.
-b) (b + 4) x 3 với b = 27.
-2. Chu vi P của hình vuông có độ dài cạnh là a được tính theo công thức: $P = a \times 4$. Hãy tính chu vi hình vuông với a = 5 cm; a = 9 cm.
-3. Chọn giá trị của biểu thức 35 + 5 x a trong mỗi trường hợp sau: a = 2, a = 5, a = 7, a = 6.
+#### 2. Các dạng bài tập minh họa
+* **Dạng 1: Tính giá trị biểu thức với một chữ**
+  * Tính giá trị của $40 - b$ với $b = 15$:
+    $$\text{Nếu } b = 15 \text{ thì } 40 - b = 40 - 15 = 25$$
+  * Tính chu vi $P$ của hình vuông có độ dài cạnh $a$ theo công thức $P = a \times 4$:
+    * Với $a = 5 \text{ cm} \rightarrow P = 5 \times 4 = 20 \text{ (cm)}$.
+    * Với $a = 9 \text{ cm} \rightarrow P = 9 \times 4 = 36 \text{ (cm)}$.
 
-### Luyện tập
-1. Chu vi P của hình chữ nhật có chiều dài a, chiều rộng b được tính theo công thức: $P = (a + b) \times 2$. Tính chu vi hình chữ nhật theo bảng:
+* **Dạng 2: Tính giá trị biểu thức với nhiều chữ**
+  * Công thức tính chu vi $P$ của hình tam giác có độ dài ba cạnh $a, b, c$ là $P = a + b + c$.
+  * Với $a = 62 \text{ dm}, b = 75 \text{ dm}, c = 81 \text{ dm}$:
+    $$P = 62 + 75 + 81 = 218 \text{ (dm)}$$
 
-| Chiều dài (cm) | Chiều rộng (cm) | Chu vi hình chữ nhật (cm) |
+---
+
+### BÀI 5: GIẢI BÀI TOÁN CÓ BA BƯỚC TÍNH (Trang 19 - 20)
+
+#### 1. Kiến thức cần nhớ
+* Đây là dạng toán yêu cầu học sinh phải thực hiện qua **ba bước tính** trung gian mới tìm ra được kết quả cuối cùng của bài toán.
+* Cần đọc kỹ đề bài, phân tích mối quan hệ giữa các đại lượng, xác định các bước tính trung gian (tìm phần hơn/kém, tìm tổng số lượng, hoặc chia đều).
+
+#### 2. Các dạng bài tập minh họa
+* **Dạng bài toán tính tổng số lượng của nhiều nhóm**
+  * *Đề bài:* Đàn vịt nhà bác Đào có $1\,200$ con. Đàn vịt nhà bác Mận có ít hơn đàn vịt nhà bác Đào $300$ con. Đàn vịt nhà bác Cúc có nhiều hơn đàn vịt nhà bác Đào $500$ con. Hỏi số vịt của nhà bác Đào, bác Mận và bác Cúc có tất cả bao nhiêu con?
+  * *Bài giải:*
+    * **Bước 1: Tìm số vịt nhà bác Mận:**
+      $$1\,200 - 300 = 900 \text{ (con)}$$
+    * **Bước 2: Tìm số vịt nhà bác Cúc:**
+      $$1\,200 + 500 = 1\,700 \text{ (con)}$$
+    * **Bước 3: Tìm tổng số vịt của cả ba nhà:**
+      $$1\,200 + 900 + 1\,700 = 3\,800 \text{ (con)}$$
+    * *Đáp số:* $3\,800$ con vịt.
+
+---
+
+### BÀI 6: LUYỆN TẬP CHUNG (Trang 21 - 22)
+
+#### 1. Kiến thức tổng hợp
+* Hệ thống hóa toàn bộ kiến thức của **Chủ đề 1** bao gồm: đọc viết số, so sánh số, làm tròn số, thực hiện phép tính cộng, trừ, nhân, chia, tính giá trị biểu thức chứa chữ và giải bài toán thực tế có nhiều bước tính.
+
+#### 2. Các dạng bài tập minh họa
+* **Bài tập tổng hợp so sánh giá trị tiết kiệm:**
+  * Bạn Nam có biểu thức tiết kiệm: $20\,000 + 10\,000 \times 6 = 80\,000$ đồng.
+  * Bạn Việt có biểu thức tiết kiệm: $5\,000 \times 7 + 50\,000 = 85\,000$ đồng.
+  * Bạn Mai có biểu thức tiết kiệm: $50\,000 + 2\,000 \times 9 = 68\,000$ đồng.
+  * *Kết luận:* Bạn Việt có nhiều tiền tiết kiệm nhất ($85\,000$ đồng). Bạn Mai có ít tiền tiết kiệm nhất ($68\,000$ đồng).
+
+* **Bài tập xác định tuổi dựa trên biểu thức chứa chữ:**
+  * Việt hỏi chị Hoa bao nhiêu tuổi, chị Hoa trả lời tuổi của chị là số lẻ bé nhất có hai chữ số. Số lẻ bé nhất có hai chữ số là **11**. Vậy chị Hoa **11 tuổi**.
+
+---
+
+## BẢNG TỔNG HỢP CÁC KỸ NĂNG ĐÃ ĐẠT ĐƯỢC TRONG CHỦ ĐỀ 1
+
+| Kỹ năng toán học | Yêu cầu đạt được | Ví dụ minh họa |
 | :--- | :--- | :--- |
-| 10 | 7 | 34 |
-| 25 | 16 | ? |
-| 34 | 28 | ? |
-
-2. a) Tính giá trị của biểu thức $a + b \times 2$ với a = 8, b = 2.
-b) Tính giá trị của biểu thức $(a + b) : 2 với a = 15, b = 27.
-
----
-
-4. a) Tính giá trị của biểu thức 12 : (3 - m) với m = 0; m = 1; m = 2.
-b) Trong ba giá trị của biểu thức tìm được ở câu a, với m bằng bao nhiêu thì biểu thức 12 : (3 - m) có giá trị lớn nhất?
-
-### Luyện tập
-1. Chu vi P của hình tam giác có độ dài ba cạnh lần lượt là a, b, c được tính theo công thức: $P = a + b + c$. Tính chu vi hình tam giác, biết:
-a) a = 62 cm, b = 75 cm, c = 81 cm.
-b) a = 50 dm, b = 61 dm, c = 72 dm.
-2. Với m = 9, n = 6, p = 4, hai biểu thức nào có giá trị bằng nhau?
-(A) $m - (n - p)$ | (B) $m \times (n - p)$ | (C) $m \times n - m \times p$ | (D) $m - n + p$
-
----
-
-## Bài 5: GIẢI BÀI TOÁN CÓ BA BƯỚC TÍNH
-
-### Hoạt động
-1. Mai đến cửa hàng văn phòng phẩm mua 5 quyển vở, mỗi quyển giá 8 000 đồng và mua 2 hộp bút chì màu, mỗi hộp giá 25 000 đồng. Hỏi Mai phải trả cô bán hàng tất cả bao nhiêu tiền?
-2. Chia 40 quả táo vào các túi, mỗi túi 8 quả và chia 36 quả cam vào các túi, mỗi túi 6 quả. Hỏi số túi táo hay số túi cam có nhiều hơn và nhiều hơn mấy túi?
-
-### Luyện tập
-1. Đàn vịt nhà bác Đào có 1 200 con. Đàn vịt nhà bác Mận có ít hơn đàn vịt nhà bác Đào 300 con. Đàn vịt nhà bác Cúc có nhiều hơn đàn vịt nhà bác Đào 500 con. Hỏi số vịt của nhà bác Đào, bác Mận và bác Cúc có tất cả bao nhiêu con?
-2. Một thùng nước mắm có 120 l. Lần đầu bán được 25 l nước mắm, lần thứ hai bán được gấp đôi số lít nước mắm ở lần đầu, lần thứ ba bán được 35 l nước mắm. Hỏi trong thùng còn lại bao nhiêu lít nước mắm?
-3. Một cửa hàng ngày thứ Sáu bán được 12 máy tính, ngày thứ Bảy bán được nhiều hơn ngày thứ Sáu 5 máy tính, ngày Chủ nhật bán được nhiều hơn ngày thứ Bảy 10 máy tính. Hỏi cả ba ngày, cửa hàng đó bán được bao nhiêu máy tính?
-4. Đặt đề toán theo tóm tắt sau rồi giải.
-
----
-
-## Bài 6: LUYỆN TẬP CHUNG
-
-### Luyện tập
-1. Cho các số sau: 65 237, 63 794, 66 053, 59 872.
-a) Trong các số trên, số nào là số chẵn, số nào là số lẻ?
-b) Viết các số trên theo thứ tự từ bé đến lớn.
-c) Làm tròn số bé nhất trong các số trên đến hàng chục.
-d) Làm tròn số lớn nhất trong các số trên đến hàng chục nghìn.
-2. Đặt tính rồi tính: 63 758 - 5 364; 37 429 + 49 235; 43 652 : 7
-3. Giá trị của mỗi biểu thức dưới đây là số tiền tiết kiệm (đồng) của mỗi bạn. Hỏi bạn nào có nhiều tiền tiết kiệm nhất?
-- $20~000 + 10~000 \times 6$
-- $5~000 \times 7 + 50~000$
-- $50~000 + 2~000 \times 9$
-4. Một trận đấu bóng đá có 37 636 khán giả vào sân xem trực tiếp, trong đó có 9 273 khán giả nữ. Hỏi số khán giả nam nhiều hơn số khán giả nữ bao nhiêu người?
-
----
-
-### Luyện tập
-1. Đặt tính rồi tính và thử lại (theo mẫu).
-a) $8~413 \times 7$
-b) $56~732 : 8$
-2. Tính giá trị của biểu thức:
-a) $a + b - 135$ với a = 539 và b = 243
-b) $c + m \times n$ với c = 2 370, m = 105 và n = 6
-3. Mai mua 1 bút mực và 5 quyển vở. Một bút mực giá 8 500 đồng, một quyển vở giá 6 500 đồng. Mai đưa cho cô bán hàng tờ tiền 50 000 đồng. Hỏi cô bán hàng phải trả lại Mai bao nhiêu tiền?
-4. Tính giá trị của biểu thức:
-a) $(13~640 - 5~537) \times 8$
-b) $27~164 + 8~470 + 1~230$
-5. Trong một chuyến đi du lịch:
-Việt hỏi: Chị Hoa ơi, năm nay chị bao nhiêu tuổi?
-Chị Hoa trả lời: Năm nay, tuổi của chị là số lẻ bé nhất có hai chữ số.
-Em hãy cùng Việt tìm tuổi của chị Hoa năm nay.
-
----
-
-## Chủ đề 2: GÓC VÀ ĐƠN VỊ ĐO GÓC
-
-## Bài 7: ĐO GÓC, ĐƠN VỊ ĐO GÓC
-
-### Khám phá
-- Độ là đơn vị đo góc, kí hiệu là $\circ$. Chẳng hạn một độ viết là $1^{\circ}$.
-- Góc đỉnh O; cạnh OA, OB bằng ba mươi độ. Ba mươi độ viết là $30^{\circ}$.
-
-### Hoạt động
-1. Quan sát thước đo góc rồi nêu số đo của mỗi góc.
-2. Quan sát tranh rồi nêu số đo các góc.
-
-### Luyện tập
-1. Nêu số đo góc.
-2. Dùng thước đo góc để đo góc đỉnh B cạnh BA, BC.
-3. Dùng thước đo góc để đo các góc được tạo bởi hai kim đồng hồ khi đồng hồ chỉ 3 giờ, 4 giờ, 6 giờ, 2 giờ.
-
----
-
-## Bài 8: GÓC NHỌN, GÓC TÙ, GÓC BẸT
-
-### Khám phá
-- Góc nhọn bé hơn góc vuông.
-- Góc tù lớn hơn góc vuông.
-- Góc bẹt bằng hai góc vuông.
-
-### Hoạt động
-1. Tìm các góc nhọn, góc tù và góc bẹt trong các góc sau.
-2. Việt có hai cái kéo. Hình cái kéo nào có hai lưỡi kéo tạo thành góc tù? Hình cái kéo nào có hai lưỡi kéo tạo thành góc nhọn?
-3. Bạn An chọn một trong ba miếng bánh 1, 2, 3. Tìm miếng bánh bạn An đã chọn.
-
-### Luyện tập
-1. Tìm các góc nhọn, góc tù và góc bẹt trong các góc sau.
-2. Con nhện bò theo một trong hai đường đi màu đỏ hoặc màu xanh để về tổ.
-a) Tìm đường đi cho nhện, biết rằng đường đi này có ít nhất một góc tù.
-b) Dùng thước đo góc để xác định số đo của góc đỉnh O; cạnh OM, ON.
-3. a) Quan sát các mặt đồng hồ rồi cho biết lúc mấy giờ thì kim giờ và kim phút tạo thành góc nhọn, góc tù, góc bẹt, góc vuông.
-4. Có một bánh xe bằng gỗ đã hỏng. Nan xe đó và một nan xe màu xanh tạo thành một góc tù. Tìm nan xe mà con mọt gỗ đang gặm.
-
----
-
-### Luyện tập
-1. Mỗi chiếc quạt xoè ra tạo thành một góc. Bạn Nga đếm số góc nhọn, góc vuông, góc tù và góc bẹt rồi tạo một biểu đồ. Nhưng bạn ấy bị nhầm một cột, hỏi cột đó là cột nào?
-2. Hình bên có bao nhiêu góc nhọn, góc vuông, góc tù?
-
----
-
-## Bài 9: LUYỆN TẬP CHUNG
-
-### Luyện tập
-1. Đo rồi nêu số đo của các góc sau.
-2. Dùng thước đo góc để tìm số đo của các góc.
-3. Chọn câu trả lời đúng.
-4. Em hãy tìm một số hình ảnh về góc nhọn, góc tù, góc vuông có ở những đồ vật quanh em.
-
-### Luyện tập
-1. Vẽ góc tù.
-2. Trong các hình ảnh dưới đây, em thấy hình nào có góc có số đo bằng $90^{\circ}$?
-3. Dùng thước đo góc để đo các góc đỉnh G.
-4. Đ, S?
+| **Đọc, viết số** | Đọc viết chính xác số đến hàng chục nghìn | Viết số: $36\,515$ <br> Đọc: Ba mươi sáu nghìn năm trăm mười lăm |
+| **Phép tính** | Cộng, trừ, nhân (với số có một chữ số), chia (cho số có một chữ số) | $56\,472 : 8 = 7\,059$ |
+| **Số chẵn, lẻ** | Nhận biết nhanh số chẵn/lẻ qua chữ số hàng đơn vị | Chữ số tận cùng $0, 2, 4, 6, 8 \rightarrow$ Số chẵn |
+| **Biểu thức chữ** | Biết cách thay thế chữ bằng số để tính giá trị biểu thức | Cạnh hình vuông $a = 5\text{ cm} \rightarrow P = 20\text{ cm}$ |
+| **Giải toán** | Giải quyết thành thạo bài toán có từ 2 đến 3 bước tính | Bài toán tính tổng số vịt của 3 nông hộ |
