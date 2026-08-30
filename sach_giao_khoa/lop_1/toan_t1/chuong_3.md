@@ -1,582 +1,115 @@
+# CHỦ ĐỀ 3: PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 10 (Trang 56 - 91)
 
-# Chủ đề 3: PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 10
-
-## Bài 10: PHÉP CỘNG TRONG PHẠM VI 10
-
-### Khám phá
-a) **Gộp lại thì bằng mấy?**
-Gộp $3$ quả bóng và $2$ quả bóng được mấy quả bóng?
-b) 
-$3 + 2 = 5$
-Ba cộng hai bằng năm.
-
-Dấu cộng: $+$
-
-### Hoạt động
-
-**1. Số ?**
-$1 + 3 = 4$
-Một cộng ba bằng bốn.
-a) $1 + 1 = ?$
-b) $2 + 1 = ?$
-c) $3 + 1 = ?$
-d) $1 + 4 = ?$
-
-**2. Số ?**
-a) $2 + ? = ?$
-b) $4 + ? = ?$
-
-**3. Số ?**
-a) $2 + 3 = ?$
-$1 + 2 = ?$
-$2 + 2 = ?$
-
-b)
-$1 + 1 = ?$
-$3 + 1 = ?$
-$2 + 1 = ?$
-# Chủ đề 3: PHÉP CỘNG, PHÉP TRỪ TRONG PHẠM VI 10 (tiếp theo)
+Chủ đề 3 là nội dung trọng tâm của học kỳ 1, giúp học sinh lớp 1 hình thành khái niệm về phép cộng (gộp vào, thêm vào) và phép trừ (bớt đi, tách ra), nhận biết vai trò của số 0 trong phép tính, và bước đầu rèn luyện kỹ năng tính toán, giải toán trực quan trong phạm vi 10.
 
 ---
 
-## Bài 10: PHÉP CỘNG TRONG PHẠM VI 10 (tiếp theo)
+## BÀI 10: PHÉP CỘNG TRONG PHẠM VI 10 (Trang 56 - Trang 67)
 
-### Luyện tập
+### 1. Khám phá (Trang 56, Trang 60, Trang 62)
+* **Ý nghĩa phép cộng - Gộp lại thì bằng mấy? (Trang 56):** 
+  * Giới thiệu thông qua ví dụ: Gộp 3 quả bóng màu đỏ và 2 quả bóng màu xanh được mấy quả bóng? Có phép tính: **$3 + 2 = 5$** (Đọc là: Ba cộng hai bằng năm; Dấu cộng: $+$).
+  * Ví dụ bãi đỗ xe: 1 chiếc ô tô màu vàng cộng thêm 3 chiếc ô tô màu đỏ được 4 chiếc ô tô: **$1 + 3 = 4$**.
+* **Ý nghĩa phép cộng - Thêm vào thì bằng mấy? (Trang 60):**
+  * Ví dụ bình hoa: Mai có 5 bông hoa, cắm thêm 2 bông hoa nữa. Có tất cả mấy bông hoa? Thực hiện đếm thêm: 5, thêm 6, 7. Kết quả: **$5 + 2 = 7$**.
+* **Số 0 trong phép cộng (Trang 62):**
+  * Nhận biết cộng với số 0 thông qua hình ảnh đĩa quả và lồng chim:
+    * Đĩa bên trái có 4 quả cam, đĩa bên phải không có quả nào. Tổng số cam là: **$4 + 0 = 4$**.
+    * Lồng chim bên trái không có con nào, lồng bên phải có 2 con chim. Tổng số chim là: **$0 + 2 = 2$**.
+  * *Quy tắc:* Một số cộng với 0 hoặc 0 cộng với một số thì kết quả bằng chính số đó.
 
-**1. Số ?**
-* $5 + 1 = ?$
-* $4 + 2 = ?$
-* $3 + 3 = ?$
-* $2 + 4 = ?$
-* $1 + 5 = ?$
-
-**2. Tính nhẩm.**
-* $1 + 1$
-* $1 + 2$
-* $1 + 5$
-* $2 + 1$
-* $1 + 3$
-* $2 + 3$
-* $3 + 1$
-* $1 + 4$
-* $4 + 2$
-
-**3. Số ?**
-a) $3 + ? = ?$
-b) $2 + ? = ?$
-c) $? + 4 = ?$
-
-**4. Số ?**
-* $1 + ? = 2$
-* $3 + ? = 5$
-* $2 + ? = 4$
-* $5 + ? = 6$
-
-### Khám phá
-Thêm vào thì bằng mấy?
-* 5 bông hoa, thêm 2 bông hoa được mấy bông hoa?
-$5 + 2 = 7$
-Đếm thêm: $5, 6, 7$
-
-### Hoạt động
-
-**1. Số ?**
-a) $6 + 1 = ?$
-b) $4 + 3 = ?$
-
-**2. Số ?**
-a) $4 + ? = ?$
-b) $3 + ? = ?$
-
-**3. Số ?**
-* Xuất phát: $6 + 1 = ?$
-* $6 + 2 = ?$
-* $7 + 3 = ?$
-* $7 + 2 = ?$
-* $6 + 3 = 9$
-* $7 + 1 = ?$
-* $6 + 4 = ?$
-* $8 + 1 = ?$
-* $8 + 2 = ?$
-* $9 + 1 = ?$
-* Đích
-
-### Khám phá
-Số 0 trong phép cộng
-a) $4 + 0 = 4$
-b) $0 + 2 = 2$
-
-### Hoạt động
-
-**1. Tính nhẩm.**
-* $0 + 4$
-* $2 + 3$
-* $3 + 3$
-* $3 + 1$
-* $0 + 5$
-* $4 + 2$
-* $2 + 2$
-* $1 + 4$
-* $6 + 0$
-
-**2. Số ?**
-| + | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-|---|---|---|---|---|---|---|---|
-| | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-| = | 7 | ? | ? | 7 | ? | ? | 7 |
-
-**3. Số ?**
-a) $? + ? = ?$
-b) $? + ? = ?$
-
-**4. Tìm chuồng cho thỏ.**
-* $3 + 1$
-* $6 + 2$
-* $5 + 2$
-* $2 + 4$
-* $3 + 2$
-* $6 + 3$
-*(Các chuồng được đánh số: 4, 5, 6, 7, 8, 9)*
-
-### Luyện tập
-
-**1. Số ?**
-a) $6 + 2 = ?$ ; $2 + 6 = ?$
-b) $5 + 4 = ?$ ; $4 + 5 = ?$
-c) $4 + 6 = ?$ ; $6 + 4 = ?$
-
-**2. Tính nhẩm.**
-* $7 + 1$
-* $6 + 2$
-* $5 + 3$
-* $4 + 4$
-* $1 + 7$
-* $2 + 6$
-* $3 + 5$
-* $8 + 0$
-
-**3. Số ?**
-| 9 | 8 | 7 | 6 | 5 |
-|---|---|---|---|---|
-| + | + | + | + | + |
-| 0 | 1 | 2 | 3 | 4 |
-| = | = | = | = | = |
-| 9 | ? | ? | ? | ? |
-
-**4. Số ?**
-a) $? + ? = ?$
-b) $? + ? = ?$
-
-**Trò chơi: Cặp tấm thẻ anh em**
-* **Cách chơi:** Chơi theo nhóm.
-* Úp các tấm thẻ có các phép cộng dưới đây thành một nhóm theo thứ tự bất kì: $1+0, 4+3, 2+1, 2+4, 7+3, 6+2, 1+1, 2+2, 5+4, 3+2$.
-* Úp các tấm thẻ có các số dưới đây thành một nhóm theo thứ tự bất kì: $8, 2, 6, 3, 7, 1, 10, 5, 4, 9$.
-* Khi đến lượt, người chơi lấy ở mỗi nhóm 1 tấm thẻ.
-* Nếu là cặp tấm thẻ anh em (cặp tấm thẻ có ghi phép tính và kết quả của phép tính đó, ví dụ $1+0$ và $1$) thì người chơi được giữ lấy, nếu không thì xếp trả lại.
-* Trò chơi kết thúc khi có người lấy được 2 cặp tấm thẻ anh em.
-
-### Luyện tập
-
-**1. Số ?**
-| + | 9 | 8 | 7 | 6 |
-|---|---|---|---|---|
-| 1 | ? | ? | 10| ? |
-| 2 | ? |   |   |   |
-| 3 |   |   |   |   |
-| 4 |   |   |   |   |
-
-**2. a) Tính nhẩm:**
-* $2 + 7$
-* $2 + 8$
-* $1 + 8$
-* $3 + 7$
-* $3 + 5$
-* $1 + 7$
-
-**b) Số ?**
-* $4 + ? = 7$
-* $? + 4 = 10$
-* $? + 3 = 8$
-* $3 + ? = 3$
-
-**3.**
-Ví dụ: $3 + 1 + 2 = 6$. Nhẩm: $3 + 1 = 4$; $4 + 2 = 6$.
-Tính:
-* $1 + 2 + 2$
-* $2 + 3 + 5$
-* $5 + 4 + 0$
-
-**4. Tìm những quả bóng ghi phép tính có kết quả bằng 10:**
-* $5 + 3$
-* $5 + 5$
-* $3 + 6$
-* $1 + 6$
-* $8 + 2$
-* $1 + 9$
-
-**5. Số ?**
-* $4 + 1 = 5$
-* $1 + 1 = 2$
-*(Điền tiếp theo quy luật trên các khối xếp)*
+### 2. Hoạt động & Luyện tập (Trang 56 - Trang 67)
+* **Thực hành phép cộng cơ bản (Trang 56 - 57):**
+  * Tính nhẩm qua hình ảnh quả táo, gấu bông, chú vịt bơi dưới ao.
+  * Hoạt động cấu tạo số theo sơ đồ nhánh tách - gộp: Ví dụ số 5 gồm 2 và 3 ($2 + 3 = 5$), số 3 gồm 1 và 2 ($1 + 2 = 3$).
+* **Đếm thêm và tính nhẩm (Trang 58 - 61):**
+  * Ôn tập phép cộng qua hình vẽ các quả xoài (vàng và xanh), thỏ mặc váy, máy bay trực thăng và xe ô tô.
+  * Bài tập Việt vớt cá ($6 + 1 = 7$) và chim đậu trên cành ($4 + 3 = 7$).
+  * Trò chơi vận động: Xe ô tô chạy qua các trạm phép tính trên đường đi để về đích ($6+1=?, 7+2=?, 8+1=?...$).
+* **Ghép cặp và tìm chuồng cho Thỏ (Trang 63):**
+  * Các chú thỏ mang phép tính cần tìm đúng chuồng có số là kết quả của phép tính đó:
+    * Thỏ ôm bảng $3+1$ về chuồng số **$4$**.
+    * Thỏ ôm bảng $2+4$ và $3+2$ về chuồng số **$5$** và **$6$**.
+    * Thỏ ôm bảng $6+2$ và $5+2$ về chuồng số **$8$** và **$7$**.
+    * Thỏ ôm bảng $6+3$ về chuồng số **$9$**.
+* **Phép cộng ba số (Trang 66):**
+  * Học sinh làm quen với phép tính cộng liên tiếp: Ví dụ đếm số hoa hồng đỏ trong các lọ: $3 + 1 + 2 = 6$. 
+  * *Cách nhẩm:* Thực hiện từ trái sang phải: nhẩm $3 + 1 = 4$, sau đó lấy $4 + 2 = 6$.
+* **Trò chơi "Cặp tấm thẻ anh em" (Trang 65) và tìm bóng bay bằng 10 (Trang 67):**
+  * Học sinh lật các thẻ ghi phép tính để ghép với thẻ ghi kết quả tương ứng (Ví dụ: thẻ $1+0$ ghép với thẻ số $1$).
+  * Tìm các quả bóng bay ghi phép tính có kết quả bằng 10 (gồm các bóng: $5+5, 1+9, 8+2$).
 
 ---
 
-## Bài 11: PHÉP TRỪ TRONG PHẠM VI 10
+## BÀI 11: PHÉP TRỪ TRONG PHẠM VI 10 (Trang 68 - Trang 79)
 
-### Khám phá
-a) Bớt đi còn lại mấy?
-* Bớt $1$ quả, còn lại mấy quả?
-$6 - 1 = 5$ (Sáu trừ một bằng năm)
-* Dấu trừ: $-$
+### 1. Khám phá (Trang 68, Trang 70)
+* **Ý nghĩa phép trừ - Bớt đi còn lại mấy? (Trang 68):**
+  * Ví dụ đĩa quả: Có 6 quả cam trên đĩa, bớt đi 1 quả cam. Còn lại mấy quả cam? Phép tính: **$6 - 1 = 5$** (Đọc là: Sáu trừ một bằng năm; Dấu trừ: $-$).
+  * Ví dụ bóng bay: Chùm bóng có 5 quả, bay mất 2 quả. Còn lại: **$5 - 2 = 3$**.
+* **Ý nghĩa phép trừ - Tách ra còn lại mấy? (Trang 70):**
+  * Ví dụ lọ hoa: Có tất cả 9 bông hoa màu vàng và đỏ, trong đó có 3 bông màu vàng. Hỏi có mấy bông màu đỏ? Ta lấy tổng số hoa trừ đi số hoa vàng: **$9 - 3 = 6$**.
+* **Số 0 trong phép trừ (Trang 74):**
+  * Nhận biết thông qua hoạt động vớt cá trong bể có 3 con cá:
+    * Vớt 1 con cá: Còn lại **$3 - 1 = 2$** con.
+    * Vớt 2 con cá: Còn lại **$3 - 2 = 1$** con.
+    * Vớt tất cả 3 con cá: Còn lại **$3 - 3 = 0$** con (Một số trừ đi chính nó thì bằng 0).
+    * Không vớt con cá nào: Còn lại **$3 - 0 = 3$** con (Một số trừ đi 0 vẫn bằng chính số đó).
 
-b) Bay mất $2$ quả, còn lại mấy quả bóng?
-* $5 - 2 = 3$ (Năm trừ hai bằng ba)
-
-### Hoạt động
-
-**1. Số ?**
-a) Còn lại mấy quả bưởi trên cây? $8 - ? = ?$
-b) Còn lại mấy quả trứng chưa nở? $10 - ? = ?$
-
-**2. Số ?**
-* $7 - 2 = ?$
-* $7 - 5 = ?$
-* $8 - 5 = ?$
-* $6 - 4 = ?$
-* $9 - 4 = ?$
-
-### Khám phá
-Tách ra còn lại mấy?
-a) Hoa màu vàng có $3$ bông. Hoa màu đỏ có mấy bông?
-$9 - 3 = 6$
-b) Đĩa màu vàng có $3$ quả. Đĩa màu xanh có mấy quả?
-$8 - 3 = 5$
-
-### Hoạt động
-
-**1. Số ?**
-Có $6$ gấu bông và sóc bông, trong đó có $2$ gấu bông. Hỏi có mấy sóc bông?
-$6 - 2 = ?$
-
-**2. Số ?**
-a) $6 - 5 = ?$
-b) $6 - 1 = ?$
-c) $8 - ? = ?$
-
-**3. Số ?**
-a) $7 - 1 = ?$ ; $7 - 6 = ?$
-b) $10 - 2 = ?$ ; $9 - 2 = ?$
-c) $9 - 7 = ?$ ; $10 - 8 = ?$
-
-### Luyện tập
-
-**1. Số ?**
-* $6 - 1 = 5$
-* $6 - 2 = ?$
-* $6 - 3 = ?$
-* $6 - 4 = ?$
-* $6 - 5 = ?$
-
-**2. Tìm những chú thỏ ghi phép tính có kết quả bằng 4:**
-* $5 - 1$
-* $7 - 2$
-* $6 - 2$
-* $9 - 4$
-* $7 - 3$
-* $8 - 4$
-
-**3. Số ?**
-| 9 | 9 | 9 | 9 | 9 | 9 | 9 | 9 |
-|---|---|---|---|---|---|---|---|
-| - | - | - | - | - | - | - | - |
-| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-| = | = | = | = | = | = | = | = |
-| 8 | 7 | ? | ? | ? | ? | ? | ? |
-
-**4. Tìm phép tính thích hợp với mỗi hình.**
-* $10 - 2 = 8$
-* $10 - 5 = 5$
-* $10 - 3 = 7$
-
-### Khám phá
-Số 0 trong phép trừ
-a) Vớt $1$ con cá, còn lại mấy con cá? $3 - 1 = 2$
-b) Vớt $2$ con cá, còn lại mấy con cá? $3 - 2 = 1$
-c) Vớt $3$ con cá, còn lại mấy con cá? $3 - 3 = 0$
-d) Không vớt con cá nào, còn lại mấy con cá? $3 - 0 = 3$
-
-### Hoạt động
-
-**1. Tính nhẩm.**
-* $5 - 0$
-* $4 - 0$
-* $3 - 0$
-* $2 - 0$
-* $6 - 6$
-* $7 - 7$
-* $4 - 4$
-* $9 - 9$
-* $5 + 0$
-* $0 + 4$
-* $3 + 0$
-* $0 + 2$
-
-**2. Hai phép tính nào có cùng kết quả?**
-* $7 - 4$
-* $5 - 5$
-* $7 - 0$
-* $4 - 0$
-* $3 - 3$
-* $3 - 0$
-* $6 - 2$
-* $9 - 2$
-
-**3. Số ?**
-$? - ? = 0$
-
-### Luyện tập
-
-**1. a) Tính nhẩm:**
-* $2 - 1$
-* $3 - 2$
-* $4 - 3$
-* $4 - 4$
-* $4 - 1$
-* $3 - 1$
-* $5 - 1$
-* $2 - 0$
-
-**b) Số ?**
-| 7 | 7 | 7 | 7 | 7 | 7 | 7 | 7 | 7 |
-|---|---|---|---|---|---|---|---|---|
-| - | - | - | - | - | - | - | - | - |
-| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 0 | ? |
-| = | = | = | = | = | = | = | = | = |
-| 6 | ? | 4 | ? | ? | ? | 0 | ? | 7 |
-
-**2. Những bông hoa nào ghi phép tính có kết quả lớn hơn 3?**
-* $7 - 4$
-* $4 - 0$
-* $7 - 2$
-* $8 - 4$
-* $6 - 1$
-
-**3. a) Có mấy con cá đang cắn câu?**
-**b) Số ?**
-$7 - 2 = ?$
-
-**4. Số ?**
-$7 - ? = 2$
-
-### Luyện tập
-
-**1. Số ?**
-* Vớt ra $3$ con, còn lại mấy con cá? $9 - 3 = ?$
-* Vớt ra tiếp $2$ con, còn lại mấy con cá? $6 - 2 = ?$
-* $9 - 3 - 2 = 4$ (Nhẩm: $9 - 3 = 6$ ; $6 - 2 = 4$)
-
-**2. Tính:**
-a) $8 - 2 - 3$
-b) $7 - 4 - 1$
-c) $10 - 5 - 2$
-d) $3 + 6 - 4$
-
-**Trò chơi: Câu cá**
-* **Xúc xắc A:** Sáu mặt ghi các số $0, 1, 2, 3, 4, 5$.
-* **Xúc xắc B:** Sáu mặt ghi các số $5, 6, 7, 8, 9, 10$.
-* **Cách chơi:** Chơi theo nhóm. Khi đến lượt, người chơi gieo $2$ con xúc xắc. Lấy số ở mặt trên xúc xắc B trừ đi số ở mặt trên xúc xắc A. Bắt con cá ghi số bằng với kết quả nhận được. Trò chơi kết thúc khi bắt được $5$ con cá.
+### 2. Hoạt động & Luyện tập (Trang 69 - Trang 79)
+* **Thực hành đếm bớt và tính trừ (Trang 69):**
+  * Quan sát cây bưởi có 8 quả, rụng mất 2 quả, còn lại trên cây: $8 - 2 = 6$ quả bưởi.
+  * Ổ trứng chim có 10 quả, đã nở ra 4 chú vịt con, còn lại trứng chưa nở: $10 - 4 = 6$ quả.
+  * Phép trừ trực quan qua việc gạch bớt các chấm tròn màu sắc ($7-2=5, 7-5=2, 8-5=3, 6-4=2, 9-4=5$).
+* **Mèo câu cá và Đàn vịt dưới ao (Trang 73):**
+  * Tìm phép tính thích hợp cho các chú mèo câu cá có dây câu nối vào từng con cá mang số kết quả (Ví dụ: cá số 5 ứng với phép tính $7-2$).
+  * Đàn vịt dưới ao: Có một số con lên bờ, học sinh đếm số vịt ban đầu, số vịt lên bờ để lập phép tính trừ thích hợp ($?-?=3$).
+* **Tính liên tiếp cộng, trừ (Trang 74):**
+  * Thực hiện phép tính từ trái qua phải:
+    * $8 - 2 - 3$: Nhẩm $8 - 2 = 6$, lấy $6 - 3 = 3$.
+    * $3 + 6 - 4$: Nhẩm $3 + 6 = 9$, lấy $9 - 4 = 5$.
+* **Trò chơi "Câu cá" (Trang 79):**
+  * Người chơi gieo 2 xúc xắc A (số 0 đến 5) và B (số 5 đến 10). Lấy số ở xúc xắc B trừ đi số ở xúc xắc A để được điểm số và đi câu con cá mang số tương ứng.
 
 ---
 
-## Bài 12: BẢNG CỘNG, BẢNG TRỪ TRONG PHẠM VI 10
+## BÀI 12: BẢNG CỘNG, BẢNG TRỪ TRONG PHẠM VI 10 (Trang 80 - Trang 85)
 
-### Khám phá
-**Bảng cộng**
-* $1 + 6 = 7$
-* $2 + 5 = 7$
-* $3 + 4 = 7$
-* $4 + 3 = 7$
-* $5 + 2 = 7$
-* $6 + 1 = 7$
+### 1. Bảng cộng trong phạm vi 10 (Trang 80 - Trang 81)
+* Hệ thống hóa các phép tính cộng có kết quả từ 2 đến 10 dưới dạng bảng bậc thang trực quan.
+* **Ví dụ bảng cộng có kết quả bằng 7:**
+  * $1 + 6 = 7$
+  * $2 + 5 = 7$
+  * $3 + 4 = 7$
+  * $4 + 3 = 7$
+  * $5 + 2 = 7$
+  * $6 + 1 = 7$
+* **Trò chơi "Cánh hoa hướng dương" (Trang 81):** Ong mang phép tính tìm cánh hoa có số kết quả thích hợp (Ví dụ: Ong mang thẻ $6+3$ bay về cánh hoa số $9$).
 
-### Hoạt động
+### 2. Bảng trừ trong phạm vi 10 (Trang 82 - Trang 83)
+* Hệ thống hóa các phép tính trừ có số bị trừ từ 2 đến 10.
+* **Ví dụ bảng trừ của số 8:**
+  * $8 - 1 = 7$
+  * $8 - 2 = 6$
+  * $8 - 3 = 5$
+  * $8 - 4 = 4$
+  * $8 - 5 = 3$
+  * $8 - 6 = 2$
+  * $8 - 7 = 1$
+* **Trò chơi "Tính nhẩm bình gốm" (Trang 83):** Tính nhẩm các phép trừ ghi trên lá cờ cắm ở các bình gốm ($4-1, 5-2, 6-3, 7-3...$).
 
-**1. Số ?**
-| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
-|---|---|---|---|---|---|---|---|---|
-| + | + | + | + | + | + | + | + | + |
-| 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
-| = | = | = | = | = | = | = | = | = |
-| 10| ? | ? | ? | ? | ? | ? | ? | ? |
-
-**2. Em hoàn thành bảng cộng.**
-* $1+1=2$, $2+1=3$, $3+1=4$, $4+1=5$, $5+1=6$, $6+1=7$, $7+1=8$, $8+1=9$, $9+1=10$
-* $1+2=3$, $2+2=4$, $3+2=5$, $4+2=6$, $5+2=7$, $6+2=?$, $7+2=9$, $8+2=?$
-* $1+3=4$, $2+3=5$, $3+3=6$, $4+3=7$, $5+3=8$, $6+3=?$, $7+3=10$
-* $1+4=5$, $2+4=6$, $3+4=7$, $4+4=?$, $5+4=9$, $6+4=?$
-* $1+5=6$, $2+5=7$, $3+5=8$, $4+5=?$, $5+5=10$
-* $1+6=7$, $2+6=?$, $3+6=9$, $4+6=?$
-* $1+7=8$, $2+7=?$, $3+7=10$
-* $1+8=9$, $2+8=?$
-* $1+9=10$
-
-**3. Tìm cánh hoa cho mỗi chú ong.**
-Phép tính: $7+3$, $3+2$, $4+1$, $6+3$, $3+1$, $2+8$
-
-### Khám phá
-**Bảng trừ**
-* $8 - 1 = 7$
-* $8 - 2 = 6$
-* $8 - 3 = 5$
-* $8 - 4 = 4$
-* $8 - 5 = 3$
-* $8 - 6 = 2$
-* $8 - 7 = 1$
-
-### Hoạt động
-
-**1. Số ?**
-| 6 | 6 | 6 | 6 | 6 | 6 |
-|---|---|---|---|---|---|
-| - | - | - | - | - | - |
-| 1 | 2 | 3 | 4 | 5 | 6 |
-| = | = | = | = | = | = |
-| 5 | ? | ? | ? | ? | ? |
-
-**2. Em hoàn thành bảng trừ.**
-* $2-1=1$, $6-1=5$, $9-1=8$, $10-1=9$
-* $3-2=?$, $5-2=?$, $8-2=6$, $9-2=7$, $10-2=8$
-* $5-3=?$, $6-3=3$, $7-3=4$, $8-3=5$, $9-3=6$, $10-3=7$
-* $5-4=?$, $7-4=?$, $8-4=4$, $10-4=6$
-* $6-5=1$, $8-5=3$, $9-5=4$, $10-5=5$
-* $7-6=?$, $9-6=?$, $10-6=4$
-* $8-7=1$, $9-7=?$, $10-7=3$
-* $9-8=?$, $10-8=2$
-* $10-9=1$
-
-**3. Tính nhẩm.**
-* $10 - 5$
-* $5 - 1$
-* $6 - 1$
-* $7 - 3$
-* $4 - 1$
-* $6 - 3$
-* $5 - 2$
-* $8 - 5$
-
-### Luyện tập
-
-**1. Số ?**
-a) $4 + 3 = ?$ ; $7 - 3 = ?$ ; $7 - 4 = ?$
-b) $3 + 4 = ?$ ; $5 + ? = ?$ ; $3 + ? = ?$ ; $8 - ? = ?$ ; $8 - ? = ?$
-
-**2. Số ?**
-a) $5 \xrightarrow{+4} ? \xrightarrow{-4} ?$
-b) $8 \xrightarrow{-2} ? \xrightarrow{+2} ?$
-
-**Trò chơi: Chọn tấm thẻ nào?**
-* **Cách chơi:** Chơi theo nhóm. Đặt 12 tấm thẻ trên mặt bàn. Khi đến lượt, người chơi gieo xúc xắc, úp tấm thẻ ghi phép tính có kết quả bằng số chấm ở mặt trên xúc xắc. Trò chơi kết thúc khi úp được 6 tấm thẻ.
-* Các thẻ: $1+0$, $2-1$, $1+1$, $5-3$, $3+0$, $6-3$, $3+1$, $10-6$, $3+2$, $8-3$, $3+3$, $10-4$
+### 3. Luyện tập tổng hợp (Trang 84 - Trang 85)
+* Bài tập mối quan hệ giữa phép cộng và phép trừ thông qua các chấm tròn đỏ/xanh ($4+3=7 \rightarrow 7-3=4$) và các nhóm xe ô tô màu xanh/đỏ.
+* Bài tập xích chuỗi phép tính dạng sơ đồ: $5 \xrightarrow{+4} 9 \xrightarrow{-4} 5$.
+* Trò chơi lật thẻ bài nhóm để so sánh điểm số kết quả phép tính.
 
 ---
 
-## Bài 13: LUYỆN TẬP CHUNG
+## BÀI 13: LUYỆN TẬP CHUNG (Trang 86 - Trang 91)
 
-### Luyện tập
-
-**1. Số ?**
-a)
-$3 + 5 = 8$
-$8 - 3 = ?$
-$8 - 5 = ?$
-
-$4 + 2 = 6$
-$6 - 4 = ?$
-$6 - 2 = ?$
-
-$8 + 2 = 10$
-$10 - 2 = ?$
-$10 - 8 = ?$
-
-b)
-$4 + 3 = 7$
-$3 + 4 = ?$
-$7 - 4 = ?$
-
-$7 + 1 = 8$
-$1 + 7 = ?$
-$8 - 1 = ?$
-
-$5 + 0 = 5$
-$5 - 0 = ?$
-$5 - 5 = ?$
-
-**2. Số ?**
-* $1 + 9 = 10 \rightarrow 10 - 1 = 9$
-* $2 + 8 = 10 \rightarrow 10 - 2 = 8$
-* $3 + 7 = 10 \rightarrow 10 - 3 = 7$
-* $4 + 6 = 10 \rightarrow 10 - 4 = 6$
-* $5 + 5 = 10 \rightarrow 10 - 5 = 5$
-* $6 + 4 = ? \rightarrow 10 - 6 = ?$
-* $7 + 3 = ? \rightarrow 10 - 7 = ?$
-* $8 + 2 = ? \rightarrow 10 - 8 = ?$
-* $9 + 1 = ? \rightarrow 10 - 9 = ?$
-
-**3. Số ?**
-a)
-|   | 3 | 6 | 7 | 4 | 2 | 4 | 9 |
-|---|---|---|---|---|---|---|---|
-| + | 4 | 2 | 1 | 3 | 8 | 6 | 0 |
-| = | 7 | ? | ? | ? | 10| ? | ? |
-
-b) Tách số
-* $9$ gồm $5$ và $4$
-* $6$ gồm $?$ và $2$
-* $0$ gồm $?$ và $?$
-* $8$ gồm $6$ và $2$
-* $5$ gồm $?$ và $1$
-* $8$ gồm $?$ và $8$
-* $7$ gồm $5$ và $2$
-* $?$ gồm $4$ và $6$
-* $?$ gồm $?$ và $0$
-
-**4. Số ?**
-a) $5 \xrightarrow{+4} ? \xrightarrow{-6} ? \xrightarrow{+7} ?$
-b) $6 \rightarrow ?$ ; $3 \rightarrow ?$ ; $1 \rightarrow ?$ (Tính theo mẫu)
-
-### Luyện tập
-
-**1. Những con ong nào chứa phép tính có kết quả bằng 4?**
-$4-0$, $5+1$, $3+1$, $2+4$, $6-2$, $4+0$
-
-**2. Số ?**
-* $3+2=5$ ; $5+?=?$
-* $4+?=?$ ; $2+?=?$
-* $10-?=?$ ; $8-?=?$
-
-**3.**
-Các phép tính: $3+3, 7-2, 8-3, 2+4, 8-4, 3+1, 0+4, 4+1, 10-4, 2+3$
-a) Tìm kết quả phép tính ghi trên mỗi quả bưởi.
-b) Có mấy quả bưởi ghi phép tính có kết quả bằng 5?
-
-### Luyện tập
-
-**1. Số ?**
-(Thực hiện phép tính theo hình ảnh minh họa)
-
-**2. Số ?**
-$? + ? = ?$
-$? - ? = ?$
-
-**3. >; <; = ?**
-a) $9 \ ? \ 4+1$
-b) $8 \ ? \ 10-2$
-c) $7 \ ? \ 2+6$
-
-**4. Số ?**
-* $3 + 4 \ ? \ 7$
-* $7 + 2 \ ? \ 8$
-* $10 - 2 \ ? \ 7$
-* $8 - ? = ?$
-
----
+Bài ôn tập cuối chủ đề giúp củng cố toàn bộ kỹ năng tính toán và tư duy toán học cho học sinh:
+* **Tính nhẩm nhanh (Trang 86):** Các phép cộng trừ cơ bản như $3+5=8, 8-3=5, 8-5=3$, nhận diện mối liên hệ đảo ngược giữa phép cộng và phép trừ.
+* **Xếp nhà số (Trang 87):** Điền số thích hợp vào ô trống còn thiếu trong các ngôi nhà số 9, số 8 và số 7 để luyện cấu tạo số.
+* **Sơ đồ kim tự tháp số (Trang 87):** Điền số theo quy luật: tổng hai số cạnh nhau ở hàng dưới bằng số ở hàng trên ngay giữa chúng (Ví dụ: $1$ và $2$ ở hàng dưới cùng gộp lại thành $3$ ở hàng trên).
+* **Bài toán thực tế "Hái bưởi" (Trang 89):** Đếm số quả bưởi chín ghi phép tính trên cây và tìm những quả bưởi có kết quả bằng 5 ($2+3, 5-0...$).
+* **So sánh kết quả phép tính với một số (Trang 91):** Điền dấu `>`, `<`, `=` thích hợp vào ô trống (Ví dụ: $9 > 4+1$, $10-2 > 7$).
