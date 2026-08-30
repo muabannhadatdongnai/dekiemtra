@@ -1,287 +1,220 @@
-# Chủ đề 3: LÀM QUEN VỚI HÌNH PHẲNG, HÌNH KHỐI
-
-## Bài 16: ĐIỂM Ở GIỮA, TRUNG ĐIỂM CỦA ĐOẠN THẲNG
-
-### Khám phá
-- *Việt giúp tớ cắt đoạn dây này thành hai đoạn bằng nhau nhé!*
-- *Cậu phải cắt ở trung điểm của đoạn dây ấy.*
-
-**a) Điểm ở giữa**
-- $A, B, C$ là ba điểm thẳng hàng.
-- $B$ là điểm ở giữa hai điểm $A$ và $C$.
-
-**b) Trung điểm của đoạn thẳng**
-- $H$ là điểm ở giữa hai điểm $D$ và $E$.
-- Độ dài đoạn thẳng $DH$ bằng độ dài đoạn thẳng $HE$, viết là: $DH = HE$.
-- $H$ được gọi là trung điểm của đoạn thẳng $DE$.
-
-### Hoạt động
-**1. Đ, S?**
-a) M là trung điểm của đoạn thẳng AB. ?
-b) N là điểm ở giữa hai điểm B và C. ?
-c) N là trung điểm của đoạn thẳng BC. ?
-d) B là điểm ở giữa hai điểm M và N. ?
-
-**2. Trong hình bên:**
-a) Tìm ba điểm thẳng hàng.
-b) Điểm H ở giữa hai điểm nào?
-c) Điểm M là trung điểm của đoạn thẳng nào?
-
-**3. Nêu tên trung điểm của các đoạn thẳng AC, BD trong hình vẽ.**
-
-### Luyện tập
-**1. Quan sát hình vẽ rồi trả lời câu hỏi.**
-a) Điểm M có là trung điểm của đoạn thẳng AB hay không?
-b) Điểm B có là trung điểm của đoạn thẳng AC hay không?
-
-**2. Xác định trung điểm của đoạn thẳng MN và đoạn thẳng NP.**
-
-**3. Quan sát tranh rồi trả lời.**
-Cào cào cần nhảy thêm mấy bước để đến trung điểm của đoạn thẳng AB?
-
-**4. Việt có một đoạn dây dài 20 cm. Nếu Việt không dùng thước có vạch chia xăng-ti-mét thì bạn ấy làm như thế nào để cắt được một đoạn dây có độ dài 10 cm từ đoạn dây ban đầu?**
-
-## Bài 17: HÌNH TRÒN. TÂM, BÁN KÍNH, ĐƯỜNG KÍNH CỦA HÌNH TRÒN
-
-### Khám phá
-**a)** - Hình tròn tâm O, bán kính OM, đường kính AB.
-- Tâm O là trung điểm của đường kính AB.
-- Đường kính dài bằng hai lần bán kính.
-
-**b) Dùng com pa vẽ đường tròn tâm O.**
-
-### Hoạt động
-**Tìm tâm, bán kính, đường kính của mỗi hình tròn.**
-a) Hình tròn tâm I, đường kính AB, bán kính IM, IA, IB.
-b) Hình tròn tâm O, đường kính CD, bán kính OP, OC, OD.
-
-### Luyện tập
-**1.**
-a) Vẽ đường tròn tâm O.
-b) Vẽ bán kính OA, đường kính CD của đường tròn đó.
-
-**2. Trong bức tranh sau, mỗi hình tròn đều có bán kính 7 cm. Bọ ngựa đang ở điểm A bò theo đường gấp khúc ABCD để đến chỗ vòi voi ở điểm D. Hỏi bọ ngựa phải bò bao nhiêu xăng-ti-mét?**
-
-## Bài 18: GÓC, GÓC VUÔNG, GÓC KHÔNG VUÔNG
-
-### Khám phá
-**a) Góc**
-Hai tay của mỗi bạn cho ta hình ảnh về góc.
-
-**b) Góc vuông, góc không vuông**
-- Góc vuông đỉnh O; cạnh OA, OB.
-- Góc không vuông đỉnh P; cạnh PM, PN.
-- Góc không vuông đỉnh E; cạnh EC, ED.
-
-**c) Ê ke**
-Cái ê ke. Dùng ê ke để biết góc vuông hay góc không vuông.
-
-### Hoạt động
-**Dùng ê ke, hãy tìm góc vuông, góc không vuông trong các hình dưới đây:**
-
-### Luyện tập
-**1. Hãy vẽ một góc vuông trên lưới ô vuông.**
-
-**2. Trong các hình sau, hình nào có nhiều góc vuông nhất?**
-
-## Bài 19: HÌNH TAM GIÁC, HÌNH TỨ GIÁC. HÌNH CHỮ NHẬT, HÌNH VUÔNG
-
-### Khám phá
-**Hình tam giác, hình tứ giác**
-- Điểm A là một đỉnh, đoạn AB là một cạnh của hình tam giác.
-- Hình tam giác ABC có:
-  + 3 đỉnh là: A, B, C;
-  + 3 cạnh là: AB, BC, CA;
-  + 3 góc là: góc đỉnh A, góc đỉnh B, góc đỉnh C.
-- Hình tứ giác MNPQ có:
-  + 4 đỉnh là: M, N, P, Q;
-  + 4 cạnh là: MN, NP, PQ, QM;
-  + 4 góc là: góc đỉnh M, góc đỉnh N, góc đỉnh P, góc đỉnh Q.
-
-* Hình tam giác có 3 đỉnh, 3 cạnh và 3 góc.
-* Hình tứ giác có 4 đỉnh, 4 cạnh và 4 góc.
-
-### Hoạt động
-**1. Nêu tên các đỉnh và các cạnh của mỗi hình (theo mẫu).**
-
-| | Hình tam giác MNP | Hình tam giác DEG | Hình tứ giác ABCD |
-|---|---|---|---|
-| **Các đỉnh** | M, N, P | D, E, G | A, B, C, D |
-| **Các cạnh** | MN, NP, PM | DE, EG, GD | AB, BC, CD, DA |
-
-**2. Nêu tên các hình tam giác và các hình tứ giác có trong hình dưới đây:**
-
-**3. Mai đánh dấu một số điểm trên tờ giấy màu (như hình vẽ). Qua hai điểm trong các điểm đã đánh dấu, Mai có thể cắt tờ giấy theo đoạn thẳng nào để được:**
-a) 2 hình tứ giác?
-b) 1 hình tam giác và 1 hình tứ giác?
-
-### Khám phá
-**Hình chữ nhật, hình vuông**
-- Hình chữ nhật ABCD có:
-  + 4 đỉnh, 4 cạnh và 4 góc vuông;
-  + 2 cạnh dài AB và DC có độ dài bằng nhau, viết là $AB = DC$;
-  + 2 cạnh ngắn AD và BC có độ dài bằng nhau, viết là $AD = BC$.
-- Hình vuông MNPQ có:
-  + 4 đỉnh;
-  + 4 góc vuông;
-  + 4 cạnh bằng nhau.
-
-* Hình chữ nhật có 4 đỉnh, 4 góc vuông, 2 cạnh dài có độ dài bằng nhau và 2 cạnh ngắn có độ dài bằng nhau.
-* Độ dài cạnh dài gọi là chiều dài, độ dài cạnh ngắn gọi là chiều rộng.
-* Hình vuông có 4 đỉnh, 4 góc vuông và 4 cạnh có độ dài bằng nhau.
-
-### Hoạt động
-**1. a) Trong các hình dưới đây, hình nào là hình vuông?**
-**b) Trong các hình dưới đây, những hình nào là hình chữ nhật?**
-
-**2. Số?**
-Bằng cách đo trên hình vẽ, hình vuông ABCD có độ dài cạnh là ? cm; hình chữ nhật MNPQ có chiều dài là ? cm và chiều rộng là ? cm.
-
-**3. Chọn câu trả lời đúng.**
-Để cắt tờ giấy như hình bên thành một hình vuông, Rô-bốt cần cắt theo đoạn thẳng nào dưới đây?
-A. Đoạn thẳng MQ.
-B. Đoạn thẳng PN.
-C. Đoạn thẳng PQ.
-D. Đoạn thẳng MN.
-
-### Luyện tập
-**1. Nhà các bạn dế mèn, dế trũi, châu chấu voi và xén tóc ở bốn đỉnh của hình chữ nhật ABCD (như hình vẽ). Biết rằng BC = 13 dm, CD = 20 dm.**
-a) Nhà dế mèn cách nhà xén tóc bao nhiêu đề-xi-mét?
-b) Nhà dế mèn cách nhà dế trũi bao nhiêu đề-xi-mét?
-
-**2. Một con đường thẳng nối từ địa điểm A đến địa điểm B. Do đoạn đường CD bị hỏng nên người ta phải làm một đường tránh CMND có kích thước như hình vẽ. Biết CDNM là hình chữ nhật.**
-a) Số?
-Độ dài đoạn đường CD là ? km.
-b) Chọn câu trả lời đúng.
-Đi từ địa điểm A đến địa điểm B theo đường tránh dài hơn đi theo đường thẳng bao nhiêu ki-lô-mét?
-A. 1 km
-B. 3 km
-C. 2 km
-
-**3. Với 6 que tính, Rô-bốt xếp được một hình chữ nhật như hình bên. Sử dụng 10 que tính, em hãy xếp một hình chữ nhật. Em tìm được mấy cách xếp?**
-
-## Bài 20: THỰC HÀNH VẼ GÓC VUÔNG, VẼ ĐƯỜNG TRÒN, HÌNH VUÔNG, HÌNH CHỮ NHẬT VÀ VẼ TRANG TRÍ
-
-### Hoạt động
-**1. a) Vẽ góc vuông đỉnh A; cạnh AB, AC.**
-**b) Vẽ đường tròn tâm I.**
-
-**2. Tự làm ê ke giấy: Gấp tờ giấy làm đôi, rồi lại gấp làm đôi tiếp (như hình vẽ).**
-a) Dùng ê ke trong bộ đồ dùng học tập của em, hãy kiểm tra lại góc vuông ở ê ke giấy vừa làm.
-b) Dùng ê ke giấy vừa làm, em hãy tìm xem trong hình bên có mấy góc vuông.
-
-**3. Vẽ hình chữ nhật và hình vuông (theo mẫu).**
-
-### Hoạt động
-**1. Vẽ một hình mà em thích từ những hình vuông hoặc hình chữ nhật (theo mẫu).**
-
-**2. a) Quan sát rồi vẽ hình theo mẫu.**
-Bước 1 $\rightarrow$ Bước 2 $\rightarrow$ Bước 3
-**b) Tô màu trang trí hình em vừa vẽ được.**
-
-## Bài 21: KHỐI LẬP PHƯƠNG, KHỐI HỘP CHỮ NHẬT
-
-### Khám phá
-- Khối hộp chữ nhật: Các mặt của khối hộp chữ nhật đều là hình chữ nhật.
-- Khối lập phương: Các mặt của khối lập phương đều là hình vuông.
-
-* Khối hộp chữ nhật và khối lập phương đều có 8 đỉnh, 6 mặt và 12 cạnh.
-* Các mặt của khối hộp chữ nhật đều là hình chữ nhật.
-* Các mặt của khối lập phương đều là hình vuông.
-
-### Hoạt động
-**1. Một chiếc khung sắt dạng khối hộp chữ nhật có các cạnh được sơn màu như hình vẽ.**
-a) Có mấy cạnh được sơn màu xanh, mấy cạnh được sơn màu đỏ?
-b) Chọn câu trả lời đúng.
-Người ta lắp một tấm gỗ vừa khít vào mặt trước của chiếc khung sắt đó. Miếng gỗ cần lắp có dạng hình gì?
-A. Hình tròn
-B. Hình tam giác
-C. Hình chữ nhật
-
-**2. Số?**
-Ở gần mỗi đỉnh của một chiếc hộp gỗ dạng khối lập phương, bác Hà chạm ba bông hoa (như hình vẽ).
-Bác Hà đã chạm tất cả ? bông hoa.
-
-### Luyện tập
-**1. Con kiến bò theo đường màu cam trên chiếc khung nhôm dạng khối hộp chữ nhật để đến chỗ hạt gạo (như hình vẽ). Hỏi con kiến cần bò qua mấy cạnh?**
-
-**2. Số?**
-Chú Ba làm những chiếc đèn lồng có dạng khối lập phương. Mỗi cạnh dùng một nan tre, mỗi mặt dán một tờ giấy màu.
-a) Mỗi chiếc đèn lồng cần dùng ? nan tre.
-b) 5 chiếc đèn lồng như vậy cần dùng ? tờ giấy màu.
-
-## Bài 22: LUYỆN TẬP CHUNG
-
-### Luyện tập
-**1. Bạn Mai vẽ một hình vuông trên giấy ô vuông rồi vẽ trung điểm mỗi cạnh của hình vuông đó. Hình nào sau đây là hình vẽ đúng của Mai?**
-- Hình 1
-- Hình 2
-- Hình 3
-
-**2. Một tờ giấy hình tròn được dán vào tờ giấy hình vuông (như hình vẽ). Biết bán kính của hình tròn là 2 cm. Hỏi cạnh hình vuông dài bao nhiêu xăng-ti-mét?**
-
-**3. Cái ao của chú ếch có dạng hình chữ nhật (như hình vẽ). Mỗi lá súng có dạng hình tròn đường kính 1 dm. Em hãy tìm:**
-a) Chiều dài của cái ao.
-b) Chiều rộng của cái ao.
-
-### Luyện tập (tiếp theo)
-**1. Tìm các hình tam giác và các hình tứ giác có trong hình sau:**
-
-**2. Trong hình dưới đây, hãy dùng ê ke kiểm tra xem hai bán kính nào của hình tròn tâm O tạo thành một góc vuông.**
-
-**3. Ghép 8 khối lập phương nhỏ được khối lập phương lớn (như hình vẽ). Người ta sơn màu đỏ vào tất cả các mặt của khối lập phương lớn. Hỏi có tất cả bao nhiêu mặt của các khối lập phương nhỏ được sơn màu đỏ?**
-
-# Chủ đề 4: PHÉP NHÂN, PHÉP CHIA TRONG PHẠM VI 100
-
-## Bài 23: NHÂN SỐ CÓ HAI CHỮ SỐ VỚI SỐ CÓ MỘT CHỮ SỐ
-
-### Khám phá
-Mỗi hộp có 12 chiếc bút màu. Hỏi 3 hộp có bao nhiêu chiếc bút màu?
-
-$12 \times 3 = ?$
-$12 + 12 + 12 = 36$
-$12 \times 3 = 36$
-
-Đặt tính rồi tính:
-$$
-\begin{aligned}
-& 12 \\
-\times \quad & 3 \\
-\hline
-& 36
-\end{aligned}
-$$
-- 3 nhân 2 bằng 6, viết 6.
-- 3 nhân 1 bằng 3, viết 3.
-
-$12 \times 3 = 36$
-
-### Hoạt động
-**1. Tính.**
-
-$$
-\begin{aligned}
-& 34 \\
-\times \quad & 2 \\
-\hline
-& \quad
-\end{aligned}
-$$
-\quad
-$$
-\begin{aligned}
-& 13 \\
-\times \quad & 3 \\
-\hline
-& \quad
-\end{aligned}
-$$
-\quad
-$$
-\begin{aligned}
-& 11 \\
-\times \quad & 7 \\
-\hline
-& \quad
-\end{aligned}
-$$
+# CHỦ ĐỀ 3: LÀM QUEN VỚI HÌNH PHẲNG, HÌNH KHỐI (Trang 49 - 66)
+
+## Bài 16: Điểm ở giữa, trung điểm của đoạn thẳng (Trang 49)
+
+### 1. Kiến thức lý thuyết (Khám phá)
+* **Điểm ở giữa:** 
+  * Khi ba điểm $A, B, C$ thẳng hàng (cùng nằm trên một đường thẳng) theo thứ tự từ trái sang phải.
+  * Ta nói: $B$ là **điểm ở giữa** hai điểm $A$ và $C$.
+* **Trung điểm của đoạn thẳng:**
+  * Cho điểm $H$ nằm ở giữa hai điểm $D$ và $E$.
+  * Nếu độ dài đoạn thẳng $DH$ bằng độ dài đoạn thẳng $HE$ (viết là: $DH = HE$), thì $H$ được gọi là **trung điểm** của đoạn thẳng $DE$.
+
+---
+
+### 2. Bài tập thực hành & Luyện tập
+* **Phần Hoạt động (Trang 50):**
+  * **Bài 1 (Đúng/Sai?):** Cho đoạn thẳng thẳng hàng $A - M - B - N - C$ có độ dài các đoạn lần lượt là $AM = 3\text{ cm}$, $MB = 3\text{ cm}$, $BN = 3\text{ cm}$, $NC = 2\text{ cm}$.
+    * a) $M$ là trung điểm của đoạn thẳng $AB$. $\rightarrow$ **Đúng** (vì $M$ nằm giữa $A$ và $B$, đồng thời $AM = MB = 3\text{ cm}$).
+    * b) $N$ là điểm ở giữa hai điểm $B$ và $C$. $\rightarrow$ **Đúng**.
+    * c) $N$ là trung điểm của đoạn thẳng $BC$. $\rightarrow$ **Sai** (vì $N$ nằm giữa nhưng độ dài $BN = 3\text{ cm}$ khác $NC = 2\text{ cm}$).
+    * d) $B$ là điểm ở giữa hai điểm $M$ và $N$. $\rightarrow$ **Đúng**.
+  * **Bài 2 (Xác định điểm trên lưới ô vuông):**
+    * a) Ba điểm thẳng hàng là: $A, H, B$ (theo chiều dọc); $C, K, D$ (theo chiều dọc); $H, M, K$ (theo chiều ngang).
+    * b) Điểm $H$ ở giữa hai điểm $A$ và $B$.
+    * c) Điểm $M$ là trung điểm của đoạn thẳng $HK$ (vì $M$ nằm ở giữa $H$, $K$ và đoạn $HM = MK = 3$ ô vuông).
+  * **Bài 3:** Cho hình thoi $ABCD$ có hai đường chéo $AC$ và $BD$ giao nhau tại điểm $G$.
+    * Trung điểm của đoạn thẳng $AC$ là điểm $G$.
+    * Trung điểm của đoạn thẳng $BD$ là điểm $G$.
+
+* **Phần Luyện tập (Trang 51):**
+  * **Bài 1:** Cho thước đo cm từ $0$ đến $14\text{ cm}$. Đoạn $AC$ có các điểm $A$ ở vạch $0$, $M$ ở vạch $3$, $B$ ở vạch $6$, $C$ ở vạch $13$.
+    * a) Điểm $M$ có là trung điểm của đoạn thẳng $AB$ hay không? **Có** (vì $M$ nằm giữa $A, B$ và độ dài $AM = 3\text{ cm}$, $MB = 6 - 3 = 3\text{ cm} \Rightarrow AM = MB$).
+    * b) Điểm $B$ có là trung điểm của đoạn thẳng $AC$ hay không? **Không** (vì $AB = 6\text{ cm}$ còn $BC = 13 - 6 = 7\text{ cm} \Rightarrow AB \neq BC$).
+  * **Bài 2:** Xác định trung điểm trên lưới ô vuông:
+    * Trung điểm $I$ của đoạn thẳng đứng $MN$ (dài 4 ô vuông) nằm cách $M$ và $N$ một khoảng là 2 ô vuông.
+    * Trung điểm $K$ của đoạn nằm ngang $NP$ (dài 6 ô vuông) nằm cách $N$ và $P$ một khoảng là 3 ô vuông.
+  * **Bài 3 (Bài toán Cào Cào):** Cào cào nhảy từng bước bằng nhau dọc theo các đốt tre trên đoạn $AB$. Học sinh đếm tổng số đốt và tìm vị trí chính giữa (trung điểm) để xác định số bước nhảy cần thiết của cào cào.
+  * **Bài 4 (Toán mẹo thực tế):** Làm thế nào để cắt được một đoạn dây dài đúng $10\text{ cm}$ từ một sợi dây dài $20\text{ cm}$ mà không cần thước đo xăng-ti-mét?
+    * *Giải pháp:* Gập đôi sợi dây lại sao cho hai đầu sợi dây trùng khít vào nhau. Điểm nếp gập ở chính giữa chính là trung điểm của sợi dây. Cắt ngay tại nếp gập đó ta sẽ thu được hai đoạn dây bằng nhau, mỗi đoạn dài đúng $10\text{ cm}$.
+
+---
+
+## Bài 17: Hình tròn. Tâm, bán kính, đường kính của hình tròn (Trang 52)
+
+### 1. Kiến thức lý thuyết (Khám phá)
+* **Các thành phần cơ bản:**
+  * **Tâm $O$:** Điểm nằm ở chính giữa hình tròn. Tâm $O$ luôn là trung điểm của đường kính.
+  * **Bán kính (ví dụ $OM$):** Đoạn thẳng nối từ tâm $O$ tới một điểm $M$ bất kỳ trên đường tròn.
+  * **Đường kính (ví dụ $AB$):** Đoạn thẳng đi qua tâm $O$ và nối hai điểm $A, B$ đối diện trên đường tròn.
+* **Mối quan hệ hình học:**
+  * Trong một hình tròn, độ dài đường kính luôn **gấp 2 lần** độ dài bán kính:
+    $$\text{Đường kính} = 2 \times \text{Bán kính}$$
+  * Sử dụng dụng cụ **com-pa** để vẽ đường tròn có tâm và bán kính xác định.
+
+---
+
+### 2. Bài tập thực hành & Luyện tập
+* **Phần Hoạt động (Trang 53):**
+  * **Bài 1:** Chỉ ra các thành phần của hình tròn:
+    * Hình a) Tâm $O$, các bán kính: $OM, ON, OP$; đường kính: $MN$.
+    * Hình b) Tâm $I$, các bán kính: $IA, IB, IC, ID$; các đường kính: $AB, CD$.
+  * **Bài 2:** Học sinh thực hành dùng com-pa vẽ đường tròn tâm $O$ bán kính tự chọn, vẽ bán kính $OA$, đường kính $CD$.
+* **Phần Luyện tập (Trang 53):**
+  * **Bài 2 (Toán đố con bọ ngựa):** Ba hình tròn bằng nhau cùng có bán kính $7\text{ cm}$ được xếp sát và thẳng hàng nhau với các tâm lần lượt là $B, O, C$. Con bọ ngựa bò từ điểm $A$ trên đường tròn thứ nhất theo đường gấp khúc $ABCD$ đến chỗ vòi voi ở điểm $D$ trên đường tròn thứ ba. Hỏi con bọ ngựa phải bò quãng đường dài bao nhiêu xăng-ti-mét?
+    * *Phân tích hình học:*
+      * Đoạn thẳng $AB$ là bán kính của hình tròn thứ nhất: $AB = 7\text{ cm}$.
+      * Đoạn thẳng $BO$ nối hai tâm của hai hình tròn tiếp xúc nhau: $BO = 7 + 7 = 14\text{ cm}$.
+      * Đoạn thẳng $OC$ nối hai tâm của hai hình tròn tiếp xúc nhau: $OC = 7 + 7 = 14\text{ cm}$.
+      * Đoạn thẳng $CD$ là bán kính của hình tròn thứ ba: $CD = 7\text{ cm}$.
+    * *Bài giải:*
+      Quãng đường con bọ ngựa cần bò (độ dài đường gấp khúc $ABCD$) là:
+      $$\text{Độ dài } ABCD = AB + BO + OC + CD = 7 + 14 + 14 + 7 = 42\text{ (cm)}$$
+      *Đáp số:* $42\text{ cm}$.
+
+---
+
+## Bài 18: Góc, góc vuông, góc không vuông (Trang 54)
+
+### 1. Kiến thức lý thuyết (Khám phá)
+* **Góc:** Được tạo thành bởi hai cạnh thẳng xuất phát từ cùng một điểm gốc gọi là đỉnh của góc.
+* **Các loại góc cơ bản:**
+  * **Góc vuông:** Hai cạnh của góc vuông góc với nhau. Ví dụ: Góc vuông đỉnh $O$; cạnh $OA, OB$.
+  * **Góc không vuông:**
+    * Góc không vuông đỉnh $P$; cạnh $PM, PN$ (nhỏ hơn góc vuông - góc nhọn).
+    * Góc không vuông đỉnh $E$; cạnh $EC, ED$ (lớn hơn góc vuông - góc tù).
+* **Dụng cụ kiểm tra:** Sử dụng chiếc **ê-ke** áp vào góc để xác định góc vuông hay không vuông.
+
+---
+
+### 2. Bài tập thực hành & Luyện tập
+* **Phần Hoạt động (Trang 55):**
+  * **Bài tập (Dùng ê-ke để kiểm tra các góc cho sẵn):**
+    * Các góc vuông là: Góc vuông đỉnh $A$ (cạnh $AB, AC$); Góc vuông đỉnh $G$ (cạnh $GH, GK$).
+    * Các góc không vuông là: Góc đỉnh $M$ (cạnh $MN, MP$); Góc đỉnh $P$ (cạnh $PQ, PR$); Góc đỉnh $I$ (cạnh $IL, IT$); Góc đỉnh $E$ (cạnh $EX, EY$).
+* **Phần Luyện tập (Trang 55):**
+  * **Bài 1:** Học sinh thực hành vẽ một góc vuông bất kỳ lên trang giấy kẻ ô vuông.
+  * **Bài 2 (Hình nào nhiều góc vuông nhất?):**
+    * Hình $A$ (hình tam giác vuông): có $1$ góc vuông.
+    * Hình $B$ (hình cái chai): có $2$ góc vuông nằm ở phần đáy bên dưới.
+    * Hình $C$ (hình ngôi nhà ngũ giác): có $2$ góc vuông nằm ở phần chân tường bên dưới.
+    * Hình $D$ (hình tam giác nhọn cao): có $0$ góc vuông.
+    * *Kết luận:* Hình $B$ và hình $C$ là những hình có nhiều góc vuông nhất (mỗi hình có $2$ góc vuông).
+
+---
+
+## Bài 19: Hình tam giác, hình tứ giác. Hình chữ nhật, hình vuông (Trang 56)
+
+### 1. Kiến thức lý thuyết (Khám phá)
+* **Hình tam giác (ví dụ $ABC$):**
+  * Gồm có: $3$ đỉnh ($A, B, C$), $3$ cạnh ($AB, BC, CA$) và $3$ góc.
+* **Hình tứ giác (ví dụ $MNPQ$):**
+  * Gồm có: $4$ đỉnh ($M, N, P, Q$), $4$ cạnh ($MN, NP, PQ, QM$) và $4$ góc.
+* **Hình chữ nhật (ví dụ $ABCD$):**
+  * Có $4$ đỉnh, $4$ góc vuông.
+  * Có $2$ cạnh dài có độ dài bằng nhau ($AB = CD$, gọi là **chiều dài**).
+  * Có $2$ cạnh ngắn có độ dài bằng nhau ($AD = BC$, gọi là **chiều rộng**).
+* **Hình vuông (ví dụ $MNPQ$):**
+  * Có $4$ đỉnh, $4$ góc vuông.
+  * Có cả $4$ cạnh dài bằng nhau ($MN = NP = PQ = QM$).
+
+---
+
+### 2. Bài tập thực hành & Luyện tập
+* **Phần Hoạt động (Trang 57 - 59):**
+  * **Bài 1 (Đọc tên đỉnh, cạnh):**
+    * Hình tam giác $MNP$: có $3$ đỉnh là $M, N, P$; $3$ cạnh là $MN, NP, PM$.
+    * Hình tam giác $DEG$: có $3$ đỉnh là $D, E, G$; $3$ cạnh là $DE, EG, GD$.
+    * Hình tứ giác $ABCD$: có $4$ đỉnh là $A, B, C, D$; $4$ cạnh là $AB, BC, CD, DA$.
+  * **Bài 2:** Đọc tên các hình tam giác và hình tứ giác trong một hình vẽ ghép phức tạp.
+  * **Bài 3 (Cắt giấy màu tạo hình):** Mai muốn cắt tờ giấy màu hình chữ nhật $ABCD$ theo một đường thẳng để thu được:
+    * a) $2$ hình tứ giác: Mai cần cắt theo đoạn thẳng $MN$ nối cạnh $AB$ và $CD$ (thu được hai hình tứ giác là $AMND$ và $MBCN$).
+    * b) $1$ hình tam giác và $1$ hình tứ giác: Mai cần cắt theo đường chéo từ đỉnh này tới một điểm thuộc cạnh đối diện (ví dụ đoạn $AN$ hoặc $MC$).
+  * **Bài 4:** Thực hành dùng thước đo cm để đo độ dài các cạnh của hình vuông $ABCD$ và hình chữ nhật $MNPQ$.
+  * **Bài 5 (Cắt tờ giấy hỏng):** Để thu được hình vuông $MNPQ$ trọn vẹn từ tờ giấy lượn sóng bị hỏng mép bên phải, Rô-bốt cần cắt theo đoạn thẳng đứng **MN** (Đáp án đúng: **D. Đoạn thẳng MN**).
+
+* **Phần Luyện tập (Trang 60):**
+  * **Bài 1 (Nhà các bạn nhỏ):** Nhà Dế Mèn, Dế Trũi, Châu Chấu Voi và Xén Tóc nằm ở 4 đỉnh của hình chữ nhật $ABCD$ có chiều rộng $BC = 13\text{ dm}$, chiều dài $CD = 20\text{ dm}$.
+    * a) Nhà Dế Mèn cách nhà Xén Tóc bao nhiêu đề-xi-mét?
+      * *Bài giải:* Khoảng cách từ nhà Dế Mèn ($A$) đến nhà Xén Tóc ($D$) chính là độ dài cạnh ngắn $AD$. Vì $ABCD$ là hình chữ nhật nên $AD = BC = 13\text{ dm}$.
+    * b) Nhà Dế Mèn cách nhà Dế Trũi bao nhiêu đề-xi-mét?
+      * *Bài giải:* Khoảng cách từ nhà Dế Mèn ($A$) đến nhà Dế Trũi ($B$) chính là độ dài cạnh dài $AB$. Vì $ABCD$ là hình chữ nhật nên $AB = CD = 20\text{ dm}$.
+  * **Bài 2 (Làm đường tránh CMND hình chữ nhật):** Có đường tránh $CMND$ với chiều rộng $CM = 1\text{ km}$, chiều dài $MN = 2\text{ km}$.
+    * a) Độ dài đoạn đường hỏng $CD$ là bao nhiêu ki-lô-mét?
+      * *Bài giải:* Vì $CMND$ là hình chữ nhật nên cạnh $CD = MN = 2\text{ km}$.
+    * b) Đi từ địa điểm $A$ đến địa điểm $B$ theo đường tránh $CMND$ dài hơn đi theo đường thẳng $CD$ bao nhiêu ki-lô-mét?
+      * *Bài giải:* Quãng đường đi theo đường tránh là: $CM + MN + ND = 1 + 2 + 1 = 4\text{ (km)}$. Quãng đường thẳng cũ là $CD = 2\text{ km}$. Đường tránh dài hơn đường thẳng là: $4 - 2 = 2\text{ (km)}$. (Đáp án đúng: **C. 2 km**).
+  * **Bài 3 (Xếp hình chữ nhật bằng que tính):** Xếp một hình chữ nhật bằng đúng $10$ que tính. Có $2$ phương án xếp:
+    * *Cách 1:* Chiều dài gồm $4$ que tính, chiều rộng gồm $1$ que tính (Chu vi: $(4 + 1) \times 2 = 10$ que).
+    * *Cách 2:* Chiều dài gồm $3$ que tính, chiều rộng gồm $2$ que tính (Chu vi: $(3 + 2) \times 2 = 10$ que).
+
+---
+
+## Bài 20: Thực hành vẽ góc vuông, vẽ đường tròn, hình vuông, hình chữ nhật và vẽ trang trí (Trang 61)
+
+### 1. Nội dung thực hành học tập
+* **Vẽ hình trên giấy ô vuông:** Học sinh thực hành vẽ góc vuông đỉnh $A$ có hai cạnh $AB, AC$ và vẽ đường tròn tâm $I$ trên lưới ô vuông.
+* **Tự chế tạo ê-ke giấy tiện lợi (Trang 61):**
+  * Gấp đôi một tờ giấy ngẫu nhiên theo một đường thẳng sạch sẽ.
+  * Tiếp tục gấp đôi tờ giấy thêm một lần nữa sao cho hai mép giấy vừa khít trùng lên nhau.
+  * Góc nếp gấp giao giữa hai đường gấp chính là một **góc vuông $90^\circ$** tiêu chuẩn dùng để đo đạc và học tập.
+* **Vẽ trang trí hình học nâng cao (Trang 62):**
+  * Bước 1: Vẽ đường tròn tâm $O$.
+  * Bước 2: Vẽ đường tròn thứ hai có tâm nằm trên đường tròn thứ nhất.
+  * Bước 3: Vẽ đường tròn thứ ba tạo thành mẫu hoa văn ba cánh đan xen vô cùng nghệ thuật và thực hành tô màu trang trí bắt mắt.
+
+---
+
+## Bài 21: Khối lập phương, khối hộp chữ nhật (Trang 63)
+
+### 1. Kiến thức lý thuyết (Khám phá)
+* **Đặc tính hình học giống nhau:** 
+  * Cả khối hộp chữ nhật và khối lập phương đều có đầy đủ **$8$ đỉnh, $6$ mặt và $12$ cạnh**.
+* **Đặc tính hình học khác nhau:**
+  * **Khối hộp chữ nhật:** Có cả $6$ mặt đều là các **hình chữ nhật**.
+  * **Khối lập phương:** Có cả $6$ mặt đều là các **hình vuông bằng nhau**.
+
+---
+
+### 2. Bài tập thực hành & Luyện tập
+* **Phần Hoạt động (Trang 64):**
+  * **Bài 1:** Một chiếc khung sắt hình hộp chữ nhật có các thanh cạnh đứng sơn màu xanh và các thanh cạnh nằm ngang sơn màu đỏ.
+    * a) Có $4$ cạnh đứng được sơn màu xanh, và $8$ cạnh nằm ngang được sơn màu đỏ.
+    * b) Một tấm gỗ dán vừa khít mặt trước của khung sắt đó có dạng hình gì? **Hình chữ nhật** (Đáp án đúng: **C**).
+  * **Bài 2:** Chiếc hộp gỗ hình lập phương có $8$ đỉnh. Bác Hà chạm khắc ở mỗi đỉnh đúng $3$ bông hoa trang trí.
+    * Bác Hà đã chạm khắc tất cả số bông hoa là:
+      $$8 \times 3 = 24\text{ (bông hoa)}$$
+      *Đáp số:* $24$ bông hoa.
+
+* **Phần Luyện tập (Trang 64):**
+  * **Bài 2 (Làm đèn lồng lập phương đón Tết):**
+    * a) Mỗi chiếc đèn lồng hình lập phương cần dùng $12$ nan tre tương ứng với $12$ cạnh của nó.
+    * b) Để dán kín $5$ chiếc đèn lồng như vậy, chú Ba cần dùng tất cả số tờ giấy màu là (biết mỗi mặt dán 1 tờ):
+      $$5 \times 6 = 30\text{ (tờ giấy màu)}$$
+      *Đáp số:* $30$ tờ giấy màu.
+
+---
+
+## Bài 22: Luyện tập chung (Trang 65)
+
+### 1. Hệ thống bài tập ôn tập chủ đề
+* **Bài 1 (Hình vẽ đúng của Mai):** Xác định hình vuông vẽ đúng bốn trung điểm nằm chính xác ở giữa các cạnh trên lưới ô vuông (Hình 1 là hình vẽ đúng của Mai vì cạnh hình vuông dài 6 ô, trung điểm nằm đúng ở vạch 3 ô).
+* **Bài 2 (Toán dán giấy hình tròn vào hình vuông):** Một tờ giấy hình tròn có bán kính $2\text{ cm}$ được dán vừa khít vào một tờ giấy hình vuông lớn. Hỏi độ dài cạnh hình vuông bằng bao nhiêu xăng-ti-mét?
+  * *Bài giải:*
+    Vì hình tròn được dán nằm vừa khít bên trong hình vuông nên độ dài cạnh hình vuông sẽ bằng đúng đường kính của hình tròn đó.
+    Độ dài cạnh hình vuông là:
+    $$\text{Cạnh hình vuông} = \text{Đường kính hình tròn} = 2 \times 2 = 4\text{ (cm)}$$
+    *Đáp số:* $4\text{ cm}$.
+* **Bài 3 (Bài toán ao súng của chú Ếch):** Cái ao hình chữ nhật xếp khít các lá súng hình tròn có đường kính đều bằng $1\text{ dm}$. Biết chiều dài ao xếp vừa khít $6$ lá súng, chiều rộng ao xếp vừa khít $4$ lá súng.
+  * a) Chiều dài cái ao là:
+    $$6 \times 1 = 6\text{ (dm)}$$
+  * b) Chiều rộng cái ao là:
+    $$4 \times 1 = 4\text{ (dm)}$$
+    *Đáp số:* a) $6\text{ dm}$; b) $4\text{ dm}$.
+* **Bài 4 (Kiểm tra góc vuông bán kính hình tròn):** Trong hình tròn tâm $O$ có ba bán kính $OA, OB, OC$. Học sinh dùng ê-ke kiểm tra các góc ở tâm $O$: Góc vuông được tạo bởi hai bán kính **OA và OB**.
+* **Bài 5 (Sơn màu khối lập phương lớn ghép từ khối nhỏ):** Ghép $8$ khối lập phương nhỏ cạnh $1\text{ cm}$ để được một khối lập phương lớn. Người ta sơn màu đỏ vào tất cả các mặt bên ngoài của khối lập phương lớn. Hỏi có bao nhiêu mặt của các khối lập phương nhỏ được sơn màu đỏ?
+  * *Bài giải:*
+    Khối lập phương lớn có $6$ mặt phẳng lớn bên ngoài. Khi ghép $8$ khối lập phương nhỏ ($2 \times 2 \times 2$), mỗi mặt phẳng lớn của khối lập phương lớn sẽ được tạo bởi bề mặt của đúng $4$ khối lập phương nhỏ.
+    Do đó, tổng số mặt của các khối lập phương nhỏ được sơn màu đỏ là:
+    $$\text{Số mặt được sơn đỏ} = 6 \text{ mặt lớn} \times 4 \text{ mặt nhỏ/mặt lớn} = 24\text{ (mặt)}$$
+    *Đáp số:* $24$ mặt.
