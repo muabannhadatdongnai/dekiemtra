@@ -5,6 +5,17 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 32 — Soạn Giáo Án môn Tiếng Anh: gắn thẻ Audio + phiên âm IPA
+Theo yêu cầu giáo viên Tiếng Anh, thêm `buildEnglishLessonPlanGuidance()` trong
+`lessonPlanPromptTemplates.js`: (1) bắt buộc chèn `[AUDIO: Track_XX]` ở các bước "tienTrinh" có
+hoạt động Nghe (số thứ tự tăng dần riêng theo bài); (2) bắt buộc kèm phiên âm IPA trong ngoặc vuông
+khi hoạt động "Khám phá" giới thiệu từ vựng mới lần đầu (VD `dolphin /ˈdɒlfɪn/`). CHỈ áp dụng khi
+`subject === "Tieng_Anh"` và không phải Mầm non - **cố ý KHÔNG** thêm vào `subjectProfiles.js` (dùng
+chung với phần ra ĐỀ KIỂM TRA) vì 2 quy tắc này gắn với cấu trúc hoạt động/bước chỉ có ở giáo án.
+Test mới: `test/lessonPlanEnglishAudioIpa.test.js` (4 test, xác nhận có quy tắc ở Tiếng Anh, không
+rò rỉ sang môn khác/Mầm non). Baseline: 328/328 test pass (tăng từ ~289 do các phiên trước + 4 test
+mới).
+
 ## Phiên 31 — Sửa 2 lỗi đề Tiếng Việt (đánh số A/B lặp, thiếu khoảng giấy viết tay) + dứt điểm test flaky
 **Lỗi 1 (đánh số):** 4 khối (Đọc thành tiếng/Đọc thầm/Chính tả/Tập làm văn) trước đây MỖI khối tự
 in tiêu đề CỦA CHÍNH NÓ ("A. ĐỌC THÀNH TIẾNG", "A. ĐỌC THẦM", "B. CHÍNH TẢ", "B. TẬP LÀM VĂN") độc
