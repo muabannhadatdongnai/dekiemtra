@@ -86,6 +86,63 @@ export const SUBJECT_PROFILES = {
 - Với câu hỏi về sức khoẻ/an toàn (VD phòng bệnh, an toàn thực phẩm, an toàn khi dùng điện), đảm
   bảo thông tin ĐÚNG kiến thức y tế/an toàn phổ thông, không đưa lời khuyên y tế chuyên sâu.`,
   },
+  Tu_Nhien_Xa_Hoi: {
+    label: "Tự nhiên và Xã hội",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Tự nhiên và Xã hội bậc Tiểu học (Lớp 1-3) chuẩn " +
+      "chương trình Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn TÍCH HỢP cả mảng tự nhiên (thực vật, động vật, cơ thể người, thời tiết, các mùa)
+  LẪN mảng xã hội (gia đình, trường học, cộng đồng, an toàn giao thông, an toàn ở nhà) - không
+  tách riêng "khoa học" và "xã hội" như 2 môn độc lập vì Lớp 1-3 học chung 1 sách.
+- KHÔNG dùng thuật ngữ trừu tượng của môn Khoa học Lớp 4-5 (VD "chất", "năng lượng", "hỗn hợp",
+  "dung dịch") - nội dung Lớp 1-3 dừng ở mức quan sát, mô tả, kể tên, nhận biết bằng giác quan.
+- Ưu tiên câu hỏi gắn với tranh minh hoạ/tình huống quan sát gần gũi xung quanh học sinh (nhà,
+  lớp học, khu phố) thay vì hỏi lý thuyết. Ngôn ngữ ngắn gọn, phù hợp học sinh Lớp 1-3.
+- Với nội dung an toàn (an toàn giao thông, phòng tránh nguy hiểm), đảm bảo thông tin ĐÚNG kiến
+  thức an toàn phổ thông cho trẻ nhỏ, không đưa hướng dẫn xử lý tình huống nguy hiểm phức tạp.`,
+  },
+  Lich_Su_Dia_Li: {
+    label: "Lịch sử và Địa lí",
+    expertRole:
+      "một chuyên gia ra đề thi môn Lịch sử và Địa lí bậc Tiểu học (Lớp 4-5) chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là 1 môn gộp 2 PHÂN MÔN Lịch sử và Địa lí (SGK Kết nối tri thức in chung 1 cuốn) - trước
+  khi ra câu hỏi, xác định rõ chương/bài thuộc phân môn nào dựa vào tài liệu được cung cấp, KHÔNG
+  trộn lẫn kiến thức 2 phân môn trong cùng 1 câu hỏi trừ khi tài liệu gốc có liên hệ rõ ràng.
+- Phân môn Lịch sử: câu hỏi có mốc thời gian/sự kiện/nhân vật/địa danh lịch sử CỤ THỂ, chính xác
+  theo đúng tài liệu - KHÔNG bịa chi tiết lịch sử không có trong nguồn. Phương án nhiễu (sai) phải
+  là mốc/sự kiện CÓ THẬT nhưng không liên quan trực tiếp câu hỏi, không bịa sự kiện giả.
+- Phân môn Địa lí: câu hỏi về vị trí địa lý, đặc điểm tự nhiên (địa hình, khí hậu, sông ngòi),
+  dân cư, hoạt động kinh tế các vùng miền Việt Nam - CHỈ dùng số liệu/địa danh có trong tài liệu
+  được cung cấp, KHÔNG tự suy diễn hoặc làm tròn số liệu thống kê không có nguồn.
+- Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
+  },
+  Tin_Hoc: {
+    label: "Tin học",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Tin học bậc Tiểu học (Lớp 3-5) chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Nội dung xoay quanh: máy tính và thiết bị số cơ bản, thông tin và xử lý thông tin, sử dụng
+  phần mềm cơ bản (soạn thảo, trình chiếu), an toàn khi dùng máy tính/Internet, và ở Lớp 4-5 có
+  thể có tư duy lập trình trực quan đơn giản (kiểu kéo-thả khối lệnh) - CHỈ theo đúng nội dung có
+  trong tài liệu được cung cấp, KHÔNG tự thêm khái niệm lập trình/thuật toán bậc cao hơn.
+- Ưu tiên câu hỏi gắn với thao tác/tình huống sử dụng máy tính thực tế (nhận biết bộ phận máy
+  tính, các bước thực hiện 1 thao tác, xử lý tình huống an toàn mạng) hơn là hỏi lý thuyết suông.
+- KHÔNG yêu cầu viết mã lệnh/cú pháp lập trình văn bản (Python, Scratch dạng code) - Tiểu học chỉ
+  học tư duy logic trực quan, không học ngôn ngữ lập trình văn bản.`,
+  },
+  Cong_Nghe: {
+    label: "Công nghệ",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Công nghệ bậc Tiểu học (Lớp 3-5) chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Nội dung xoay quanh: công nghệ trong đời sống (đồ dùng, dụng cụ gia đình), thủ công kỹ thuật
+  (lắp ráp mô hình đơn giản, làm đồ thủ công), an toàn khi sử dụng dụng cụ/thiết bị, và ở Lớp 4-5
+  có thể có nội dung về trồng trọt/chăn nuôi cơ bản - CHỈ theo đúng nội dung có trong tài liệu.
+- Ưu tiên câu hỏi về QUY TRÌNH CÁC BƯỚC (thứ tự thực hiện 1 công việc/lắp ráp), công dụng của đồ
+  dùng/dụng cụ, hoặc an toàn khi sử dụng - hơn là hỏi lý thuyết trừu tượng.
+- KHÔNG dùng công thức kỹ thuật/số liệu kỹ thuật phức tạp vượt quá mức Tiểu học.`,
+  },
 };
 
 /** Trả về profile môn học, mặc định về Toán nếu không tìm thấy (an toàn, không bao giờ throw). */
