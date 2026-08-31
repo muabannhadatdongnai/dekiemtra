@@ -5,6 +5,35 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 31 — Sửa 2 lỗi đề Tiếng Việt (đánh số A/B lặp, thiếu khoảng giấy viết tay) + dứt điểm test flaky
+**Lỗi 1 (đánh số):** 4 khối (Đọc thành tiếng/Đọc thầm/Chính tả/Tập làm văn) trước đây MỖI khối tự
+in tiêu đề CỦA CHÍNH NÓ ("A. ĐỌC THÀNH TIẾNG", "A. ĐỌC THẦM", "B. CHÍNH TẢ", "B. TẬP LÀM VĂN") độc
+lập ở 8 chỗ (4 *BlockView.jsx + 4 *Export.js) → in ra đề nhìn như "A."/"B." bị lặp lại 2 lần, sai
+chuẩn sư phạm. Sửa: `vietnameseExamBlocks.js` (danh bạ) giờ là NGUỒN DUY NHẤT giữ `sectionLabel`
+("I. KIỂM TRA ĐỌC"/"II. KIỂM TRA VIẾT") + `subLabel` ("1. Đọc thành tiếng", "2. Đọc hiểu", "1.
+Chính tả", "2. Tập làm văn") - 2 "người điều phối" (`VietnameseExamPreview.jsx` bản xem trước web,
+`vietnameseExamExportService.js` bản xuất Word) chịu trách nhiệm in `sectionLabel` ĐÚNG 1 LẦN khi
+đổi khối lớn, còn `subLabel` truyền xuống cho từng khối tự in - từng khối không còn hard-code
+chuỗi tiêu đề.
+
+**Lỗi 2 (thiếu khoảng giấy viết tay):** câu tự luận cuối phần Đọc hiểu chỉ có 1 dòng chấm ngắn
+(18px) - không đủ viết 2-3 câu. Chính tả/Tập làm văn HOÀN TOÀN không có dòng kẻ nào cho học sinh
+viết - chỉ dừng ở đoạn văn mẫu/đề bài rồi hết trang. Sửa: câu tự luận → 3 dòng chấm (cố định, không
+cần AI tự chèn mã đánh dấu - số dòng là quy tắc trình bày tất định). Chính tả → khung kẻ ngang số
+dòng ước lượng theo ĐỘ DÀI đoạn chính tả (~50 ký tự/dòng, tối thiểu 4 dòng). Tập làm văn → khung kẻ
+ngang cố định theo Lớp (Lớp 1-2: 10-12 dòng, Lớp 3-5: 16-20 dòng). Bản Word dùng `Paragraph`
+rỗng + `border.bottom` (docx hỗ trợ vẽ đường kẻ trực tiếp trên Paragraph) - dòng kẻ THẬT trong file
+Word, không chỉ để khoảng trắng suông như cách làm cũ ở khối Toán.
+
+**Dứt điểm test flaky (`test/worksheetLineArtIcons.test.js`, đã treo từ Phiên 30):** nguyên nhân
+thật là icon "⭐" (U+2B50) nằm trong kho 16 icon đếm hình ngẫu nhiên của "Đếm và viết số" TRÙNG với
+"⭐" cố định ở khối "Tự đánh giá" (footer mọi Phiếu bài tập) - khi random chọn trúng "⭐" để đếm,
+`document.xml` chứa "⭐" 2 lần vì 2 lý do khác nhau khiến test tưởng nhầm là bug. Đổi icon "Tự đánh
+giá" sang "★" (U+2605, khác hẳn) - loại bỏ tận gốc khả năng đụng độ, không phải vá test. Chạy lại
+30 lần liên tục không còn fail.
+
+324/324 test PASS (chạy lặp lại nhiều lần để xác nhận hết flaky). Build production sạch.
+
 ## Phiên 30 — Liên kết SGK Tiếng Việt thật cho tab "Đề Tiếng Việt Tiểu học"
 Thêm khối "Liên kết SGK Tiếng Việt (tuỳ chọn)" vào `VietnameseExamForm.jsx`, tái dùng nguyên
 `/api/chapters` + `/api/lessons` đã có. Khối Đọc thành tiếng/Chính tả có gợi ý Tên bài + hiện mô
