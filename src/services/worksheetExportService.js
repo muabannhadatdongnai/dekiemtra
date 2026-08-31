@@ -1248,6 +1248,17 @@ function buildHeaderParagraphs(title) {
  * dàn 3 cột cạnh nhau vì Word không có CSS grid đáng tin cậy cho khối có border như đã giải
  * thích ở đầu file), thay bằng 3 đoạn nối tiếp có viền riêng, vẫn đủ chỗ để học sinh tự đánh
  * dấu và giáo viên viết tay nhận xét khi in ra giấy.
+ *
+ * ================== FIX (test worksheetLineArtIcons.test.js thất bại ngẫu nhiên) ==================
+ * Nguyên nhân: footer này TRƯỚC ĐÂY dùng emoji "⭐" (U+2B50) cho mục Tự đánh giá - TRÙNG với "⭐"
+ * cũng nằm trong kho 16 icon đếm hình của "Đếm và viết số" (worksheetSchemas.js ICONS). Kho icon
+ * đó được RANDOM chọn mỗi lần sinh phiếu (không seed) - khi "⭐" ngẫu nhiên được chọn làm 1 icon để
+ * đếm, document.xml chứa "⭐" 2 LẦN VÌ 2 LÝ DO KHÁC NHAU: (1) icon đếm hình đã đúng được thay bằng
+ * ẢNH PNG line-art (ĐÚNG như kỳ vọng), (2) NHƯNG footer Tự đánh giá này vẫn in "⭐" dạng TEXT THÔ -
+ * khiến test tưởng nhầm là lỗi (2) chính là bug (1) chưa sửa, dù thực chất 2 chỗ hoàn toàn không
+ * liên quan nhau. Đổi sang "★" (U+2605, khác hẳn "⭐" U+2B50) - không còn trùng với bất kỳ icon nào
+ * trong kho 16 icon đếm hình, loại bỏ tận gốc khả năng đụng độ ngẫu nhiên này (không phải fix theo
+ * kiểu vá test, mà sửa đúng nguyên nhân: 2 tính năng không liên quan không nên dùng chung 1 icon).
  */
 function buildFooterParagraphs() {
   const side = { style: BorderStyle.DASHED, size: 4, color: "94A3B8", space: 6 };
@@ -1257,7 +1268,7 @@ function buildFooterParagraphs() {
     new Paragraph({ text: "", spacing: { before: 200 } }),
     new Paragraph({
       border,
-      children: [new TextRun({ text: "⭐ TỰ ĐÁNH GIÁ:  Học chăm ⭐⭐⭐   Làm tốt ⭐⭐⭐   Cố gắng hơn ⭐⭐⭐", font: FONT, size: 21 })],
+      children: [new TextRun({ text: "★ TỰ ĐÁNH GIÁ:  Học chăm ★★★   Làm tốt ★★★   Cố gắng hơn ★★★", font: FONT, size: 21 })],
       spacing: { before: 80, after: 80 },
     }),
     new Paragraph({

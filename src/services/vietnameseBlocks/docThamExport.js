@@ -6,6 +6,10 @@ import { Paragraph, TextRun, AlignmentType } from "docx";
  * nó" (prompt ở docThamBlock.js, hiển thị ở DocThamBlockView.jsx, xuất Word ở đây). Chỉ trả về
  * mảng `Paragraph` của thư viện `docx` - vietnameseExamExportService.js chỉ nối mảng này vào
  * `children` của Document, không biết bên trong khối viết gì.
+ *
+ * `subLabel` ("2. Đọc hiểu") do vietnameseExamExportService.js truyền vào từ danh bạ
+ * vietnameseExamBlocks.js - xem comment fix đánh số trong file danh bạ đó. Tiêu đề lớn
+ * "I. KIỂM TRA ĐỌC" do vietnameseExamExportService.js tự in riêng, không thuộc khối này.
  */
 
 const FONT = "Times New Roman";
@@ -14,13 +18,30 @@ function textRun(text, opts = {}) {
   return new TextRun({ text: String(text ?? ""), font: FONT, size: 24, ...opts });
 }
 
-export function buildDocThamDocxParagraphs(data) {
+// FIX (khoảng trống câu tự luận): trước đây câu hỏi KHÔNG phải trắc nghiệm chỉ có ĐÚNG 1 dòng chấm
+// - quá ngắn cho câu hỏi vận dụng cuối bài. Đổi sang 3 dòng chấm (đúng khuôn với DocThamBlockView.jsx
+// bản xem trước web) - số dòng cố định theo quy tắc trình bày, không phụ thuộc AI.
+const ESSAY_ANSWER_LINE_COUNT = 3;
+const ESSAY_ANSWER_LINE = "............................................................";
+
+function buildEssayAnswerParagraphs() {
+  return Array.from({ length: ESSAY_ANSWER_LINE_COUNT }).map(
+    (_, i) =>
+      new Paragraph({
+        children: [textRun(ESSAY_ANSWER_LINE)],
+        spacing: { after: i === ESSAY_ANSWER_LINE_COUNT - 1 ? 100 : 60 },
+        indent: { left: 200 },
+      })
+  );
+}
+
+export function buildDocThamDocxParagraphs(data, subLabel) {
   if (!data?.nguLieu) return [];
   const { nguLieu, cauHoi = [] } = data;
 
   const paragraphs = [
     new Paragraph({
-      children: [textRun("A. ĐỌC THẦM", { bold: true, size: 26 })],
+      children: [textRun(subLabel, { bold: true, size: 26 })],
       spacing: { before: 200, after: 100 },
     }),
   ];
@@ -63,13 +84,7 @@ export function buildDocThamDocxParagraphs(data) {
         })
       );
     } else {
-      paragraphs.push(
-        new Paragraph({
-          children: [textRun("............................................................")],
-          spacing: { after: 100 },
-          indent: { left: 200 },
-        })
-      );
+      paragraphs.push(...buildEssayAnswerParagraphs());
     }
   });
 

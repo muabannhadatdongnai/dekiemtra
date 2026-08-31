@@ -1,4 +1,4 @@
-import { Paragraph, TextRun } from "docx";
+import { Paragraph, TextRun, BorderStyle } from "docx";
 
 const FONT = "Times New Roman";
 
@@ -9,13 +9,37 @@ function textRun(text, opts = {}) {
 /**
  * tapLamVanExport.js
  * Builder Word RIÊNG cho khối "Tập làm văn" - đề bài + dàn ý gợi ý ngắn.
+ * `subLabel` ("2. Tập làm văn") do vietnameseExamExportService.js truyền vào từ danh bạ
+ * vietnameseExamBlocks.js. Tiêu đề lớn "II. KIỂM TRA VIẾT" do vietnameseExamExportService.js tự in
+ * riêng, không thuộc khối này.
+ *
+ * FIX (thiếu giấy để viết bài văn): trước đây đề chỉ in đề bài + dàn ý gợi ý rồi hết, không còn chỗ
+ * viết cả bài văn. Thêm dòng kẻ (Paragraph rỗng có `border.bottom`, cùng kỹ thuật với
+ * chinhTaExport.js) - số dòng KHÔNG tính theo độ dài 1 đoạn có sẵn (Tập làm văn không có "đáp án
+ * mẫu" để đo) mà lấy mức cố định theo Lớp, ĐÚNG khớp số dòng dùng ở TapLamVanBlockView.jsx (bản
+ * xem trước web) để bản Word và bản xem trước nhất quán.
  */
-export function buildTapLamVanDocxParagraphs(data) {
+const TAP_LAM_VAN_LINE_COUNT_BY_GRADE = { 1: 10, 2: 12, 3: 16, 4: 18, 5: 20 };
+const DEFAULT_TAP_LAM_VAN_LINE_COUNT = 18;
+
+function buildRuledLineParagraphs(lineCount) {
+  return Array.from({ length: lineCount }).map(
+    (_, i) =>
+      new Paragraph({
+        children: [textRun("")],
+        border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "AAAAAA" } },
+        spacing: { before: 220, after: i === lineCount - 1 ? 160 : 0 },
+      })
+  );
+}
+
+export function buildTapLamVanDocxParagraphs(data, subLabel, grade) {
   if (!data?.deBai) return [];
+  const lineCount = TAP_LAM_VAN_LINE_COUNT_BY_GRADE[Number(grade)] || DEFAULT_TAP_LAM_VAN_LINE_COUNT;
 
   const paragraphs = [
     new Paragraph({
-      children: [textRun(`B. TẬP LÀM VĂN${data.theLoai ? ` (${data.theLoai})` : ""}`, { bold: true, size: 26 })],
+      children: [textRun(`${subLabel}${data.theLoai ? ` (${data.theLoai})` : ""}`, { bold: true, size: 26 })],
       spacing: { before: 200, after: 100 },
     }),
     new Paragraph({
@@ -38,6 +62,8 @@ export function buildTapLamVanDocxParagraphs(data) {
       );
     });
   }
+
+  paragraphs.push(...buildRuledLineParagraphs(lineCount));
 
   return paragraphs;
 }
