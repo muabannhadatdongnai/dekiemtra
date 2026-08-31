@@ -211,6 +211,34 @@ GỢI Ý THIẾT KẾ HỌC LIỆU (BẮT BUỘC với Lớp 1-3 - học sinh l�
 `;
 }
 
+/**
+ * buildEnglishLessonPlanGuidance()
+ * 2 quy tắc riêng cho GIÁO ÁN môn Tiếng Anh, do giáo viên Tiếng Anh yêu cầu:
+ *  1. Gắn thẻ Audio: nhắc giáo viên bật file nghe tại các bước có hoạt động Nghe.
+ *  2. Phiên âm IPA: kèm phiên âm quốc tế khi giới thiệu từ vựng mới ở hoạt động "Khám phá".
+ * CHỈ áp dụng cho GIÁO ÁN (không đụng tới subjectProfiles.js dùng chung với ĐỀ KIỂM TRA), vì
+ * 2 quy tắc này gắn với cấu trúc "hoạt động/bước" (tienTrinh) chỉ có ở giáo án, không có ý nghĩa
+ * với câu hỏi trắc nghiệm/tự luận của đề kiểm tra.
+ */
+function buildEnglishLessonPlanGuidance(subject, preschool, secondActivityLabel) {
+  if (preschool || subject !== "Tieng_Anh") return "";
+
+  return `
+
+QUY TẮC RIÊNG MÔN TIẾNG ANH (áp dụng cho giáo án, viết trực tiếp vào nội dung "hoatDongGVHS" của
+từng bước trong "tienTrinh"):
+- Gắn thẻ Audio: tại BẤT KỲ bước nào yêu cầu học sinh NGHE (nghe hội thoại mẫu, nghe từ vựng phát
+  âm, nghe bài hát/chant, nghe audio SGK...), BẮT BUỘC chèn ký hiệu "[AUDIO: Track_XX]" (XX là số
+  thứ tự 2 chữ số, tăng dần bắt đầu từ 01, đánh số RIÊNG cho từng bước có hoạt động nghe trong toàn
+  bài, không dùng lại số cũ) ngay ở đầu câu mô tả bước đó, để nhắc giáo viên bật đúng file nghe.
+  KHÔNG chèn ký hiệu này vào các bước không có hoạt động nghe (nói/đọc/viết đơn thuần).
+- Phiên âm IPA: ở hoạt động "${secondActivityLabel}", tại các bước giáo viên giới thiệu TỪ VỰNG MỚI
+  (New words/Vocabulary), mỗi từ vựng mới xuất hiện LẦN ĐẦU trong bài PHẢI kèm theo phiên âm quốc
+  tế IPA chuẩn trong ngoặc vuông ngay sau từ đó để hỗ trợ giáo viên phát âm chuẩn xác. Ví dụ:
+  dolphin /ˈdɒlfɪn/, countryside /ˈkʌntrisaɪd/. Không cần lặp lại phiên âm ở các hoạt động sau khi
+  từ đó chỉ được ôn lại/sử dụng lại (chỉ bắt buộc ở lần giới thiệu đầu tiên).`;
+}
+
 export function buildLessonPlanPrompt({
   tenBai,
   grade,
@@ -284,6 +312,7 @@ giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình ph
   const diversityBlock = buildDiversityGuidance(existingOpeningIdeas);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
   const visualHocLieuBlock = buildVisualHocLieuGuidance(grade);
+  const englishGuidanceBlock = buildEnglishLessonPlanGuidance(subject, preschool, secondActivityLabel);
 
   // ⚠️ Trước đây các field do tích hợp thêm vào (VD "mindmap") CHỈ được mô tả bằng lời trong
   // integrationsBlock, KHÔNG xuất hiện trong ví dụ JSON chính bên dưới - khiến AI hay quên trả
@@ -336,7 +365,7 @@ ${stepClarityRule}
   Đây là giáo án dùng để đọc/in trực tiếp (không qua công cụ hiển thị công thức), nên MỌI số liệu
   và công thức phải viết bằng CHỮ SỐ VÀ KÝ HIỆU TOÁN HỌC THÔNG THƯỜNG (VD: viết "504 842" hoặc
   "504.842", KHÔNG viết "$504~842$"; viết "3 + 4 = 7", KHÔNG viết "$3 + 4 = 7$").
-${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
+${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}${englishGuidanceBlock}
 
 ${sourceBlock}
 ${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}${visualHocLieuBlock}
