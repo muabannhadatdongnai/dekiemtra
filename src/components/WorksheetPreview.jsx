@@ -1566,10 +1566,10 @@ function WorksheetFooter({ palette }) {
       }}
     >
       <div style={{ border: `2px dashed ${palette.border}`, borderRadius: 12, padding: "10px 12px", textAlign: "center" }}>
-        <p style={{ fontWeight: 700, color: palette.title, marginBottom: 6 }}>⭐ TỰ ĐÁNH GIÁ</p>
-        <p>Học chăm ⭐⭐⭐</p>
-        <p>Làm tốt ⭐⭐⭐</p>
-        <p>Cố gắng hơn ⭐⭐⭐</p>
+        <p style={{ fontWeight: 700, color: palette.title, marginBottom: 6 }}>★ TỰ ĐÁNH GIÁ</p>
+        <p>Học chăm ★★★</p>
+        <p>Làm tốt ★★★</p>
+        <p>Cố gắng hơn ★★★</p>
       </div>
       <div style={{ border: `2px dashed ${palette.border}`, borderRadius: 12, padding: "10px 12px" }}>
         <p style={{ fontWeight: 700, color: palette.title, marginBottom: 6, textAlign: "center" }}>

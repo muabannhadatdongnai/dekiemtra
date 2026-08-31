@@ -287,7 +287,7 @@ export default function VietnameseExamForm({ onGenerated }) {
                 />
                 <span>
                   <span className="block font-medium text-slate-800">
-                    {b.section} — {b.label} {!b.implemented && <em className="text-slate-400">(sắp có)</em>}
+                    {b.subLabel} {!b.implemented && <em className="text-slate-400">(sắp có)</em>}
                   </span>
                   <span className="block text-xs text-slate-500">{b.description}</span>
                 </span>
