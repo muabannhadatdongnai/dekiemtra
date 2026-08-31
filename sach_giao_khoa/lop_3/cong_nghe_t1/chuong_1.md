@@ -1,0 +1,160 @@
+# CHỦ ĐỀ 1: CÔNG NGHỆ VÀ ĐỜI SỐNG
+
+## Bài 1: Tự nhiên và công nghệ
+- **Mục tiêu học tập:**
+  - Phân biệt được đối tượng tự nhiên và sản phẩm công nghệ.
+  - Nêu được tác dụng của một số sản phẩm công nghệ trong gia đình.
+  - Có ý thức giữ gìn sản phẩm công nghệ trong gia đình.
+- **Khởi động:**
+  - So sánh bóng điện chiếu sáng và Mặt Trời: Bóng điện là sản phẩm công nghệ do con người tạo ra, cần điện để phát sáng. Mặt Trời là đối tượng tự nhiên, tự phát sáng và tỏa nhiệt, không do con người tạo ra.
+- **1. Đối tượng tự nhiên và sản phẩm công nghệ:**
+  - *Đối tượng tự nhiên:* Là những đối tượng có sẵn trong tự nhiên, không do con người làm ra. Ví dụ trong sách: Cây xoài (Hình 1a), Hòn Trống Mái - Vịnh Hạ Long (Hình 1c). Ngoài ra còn có đất, nước, thực vật, động vật...
+  - *Sản phẩm công nghệ:* Là những sản phẩm do con người làm ra để phục vụ cuộc sống. Ví dụ trong sách: Cái nón lá (Hình 1b), Đèn bàn (Hình 1d), Quạt bàn (Hình 1e), Ti vi (Hình 1g).
+- **2. Tác dụng của một số sản phẩm công nghệ trong gia đình:**
+  - Sản phẩm công nghệ giúp phục vụ các nhu cầu ăn, mặc, nghỉ ngơi, học tập và giải trí của con người.
+  - Tác dụng của một số sản phẩm tiêu biểu:
+    - *Ti vi:* Giải trí, xem truyền hình, cập nhật thông tin.
+    - *Tủ lạnh:* Bảo quản thực phẩm tươi ngon.
+    - *Máy thu thanh (Ra-đi-ô):* Nghe tin tức, chương trình ca nhạc, giải trí.
+    - *Quạt điện:* Làm mát căn phòng.
+    - *Bóng đèn điện:* Chiếu sáng căn phòng.
+- **3. Giữ gìn sản phẩm công nghệ trong gia đình:**
+  - *Tại sao cần giữ gìn:* Giúp sản phẩm bền, hoạt động tốt, an toàn và tiết kiệm chi phí cho gia đình.
+  - *Cách giữ gìn:*
+    - Sử dụng đúng cách, nhẹ nhàng.
+    - Không nghịch ngợm, làm đổ vỡ (ví dụ không đá bóng trong nhà làm đổ tivi, quạt - Hình 3).
+    - Vệ sinh, lau chùi định kỳ khi đã tắt và rút nguồn điện (Lau quạt an toàn - Hình 4).
+
+## Bài 2: Sử dụng đèn học
+- **Mục tiêu học tập:**
+  - Nêu được tác dụng và mô tả được các bộ phận chính của đèn học.
+  - Nhận biết một số loại đèn học thông dụng.
+  - Sử dụng đèn học đúng cách và an toàn.
+- **1. Tác dụng của đèn học:**
+  - Cung cấp ánh sáng hỗ trợ học tập, giúp bảo vệ mắt, tránh cận thị. Đèn học có nhiều kiểu dáng và màu sắc đa dạng.
+- **2. Các bộ phận chính của đèn học:**
+  - *Chụp đèn:* Bảo vệ bóng đèn, tập trung ánh sáng và chống mỏi mắt.
+  - *Bóng đèn:* Phát ra ánh sáng.
+  - *Thân đèn:* Điều chỉnh hướng chiếu sáng của đèn.
+  - *Đế đèn:* Giữ cho đèn đứng vững trên mặt bàn.
+  - *Công tắc:* Bật và tắt đèn. Các kiểu công tắc phổ biến: nút nhấn, nút xoay, nút cảm ứng.
+  - *Dây nguồn:* Nối đèn với nguồn điện.
+- **3. Các bước sử dụng đèn học:**
+  - *Bước 1:* Đặt đèn ở vị trí phù hợp (bên trái người viết nếu viết tay phải để không bị che bóng).
+  - *Bước 2:* Bật đèn.
+  - *Bước 3:* Điều chỉnh độ cao, độ sáng và hướng chiếu sáng của đèn cho phù hợp để không bị lóa hay chiếu trực tiếp vào mắt.
+  - *Bước 4:* Tắt đèn khi không sử dụng để tiết kiệm điện và tăng tuổi thọ đèn.
+- **4. Sử dụng đèn học an toàn:**
+  - *Tình huống mất an toàn cần tránh:*
+    - Đặt đèn trên mặt bàn bị ướt (dễ gây rò rỉ điện).
+    - Tắt đèn bằng cách giật mạnh dây nguồn thay vì dùng công tắc.
+    - Sờ tay vào bóng đèn đang sáng (gây bỏng vì bóng đèn tỏa nhiệt).
+    - Để ánh sáng đèn chiếu trực tiếp vào mắt (gây chói, mỏi mắt).
+  - *Lưu ý:* Khi ánh sáng đèn học nhấp nháy hoặc không sáng rõ, cần báo ngay với người lớn để kiểm tra, đảm bảo an toàn.
+
+## Bài 3: Sử dụng quạt điện
+- **Mục tiêu học tập:**
+  - Nêu tác dụng và mô tả bộ phận chính của quạt điện.
+  - Nhận biết các loại quạt điện thông dụng.
+  - Sử dụng quạt điện đúng cách và an toàn.
+- **1. Tác dụng và các loại quạt điện:**
+  - *Tác dụng:* Quạt điện tạo ra gió, giúp lưu thông không khí và làm mát căn phòng.
+  - *Các loại quạt thông dụng:* Quạt trần, quạt treo tường, quạt bàn, quạt hộp... Ngoài ra còn có các mẫu quạt hiện đại như quạt không cánh (sáng chế năm 2009 bởi James Dyson), quạt điều khiển từ xa.
+- **2. Các bộ phận chính của quạt điện:**
+  - *Cánh quạt:* Tạo ra gió khi quay.
+  - *Lồng quạt:* Bảo vệ cánh quạt và đảm bảo an toàn cho người sử dụng.
+  - *Hộp động cơ quạt:* Chứa động cơ bên trong, giúp cánh quạt quay.
+  - *Tuốc năng (bộ phận điều khiển):* Điều chỉnh hướng quay của quạt (quay qua quay lại hoặc đứng yên).
+  - *Thân quạt:* Đỡ hộp động cơ và cánh quạt, có thể điều chỉnh độ cao (ở một số loại quạt).
+  - *Các nút điều khiển:* Bật, tắt và điều chỉnh tốc độ gió của quạt.
+  - *Đế quạt:* Giữ cho quạt đứng vững.
+  - *Dây nguồn:* Nối quạt với nguồn điện.
+- **3. Các bước sử dụng quạt điện:**
+  - *Bước 1:* Đặt quạt điện trên bề mặt bằng phẳng, chắc chắn.
+  - *Bước 2:* Bật quạt và chọn tốc độ quay của cánh quạt phù hợp.
+  - *Bước 3:* Điều chỉnh hướng gió bằng tuốc năng hoặc xoay quạt.
+  - *Bước 4:* Tắt quạt khi không sử dụng.
+- **4. Sử dụng quạt điện an toàn:**
+  - *Tình huống mất an toàn cần tránh:*
+    - Đặt quạt chênh vênh trên ghế cao (dễ rơi, đổ).
+    - Ngồi gần sát vào quạt (gây bạt hơi, không tốt cho hệ hô hấp).
+    - Cho ngón tay hoặc vật cứng vào lồng quạt khi quạt đang hoạt động (cực kỳ nguy hiểm, gây chấn thương).
+    - Tắt quạt bằng cách giật mạnh dây nguồn.
+  - *Lưu ý:* Nếu quạt điện phát ra tiếng kêu lạ hoặc bị rung lắc mạnh khi hoạt động, cần nhanh chóng tắt quạt và báo cho người lớn biết.
+
+## Bài 4: Sử dụng máy thu thanh
+- **Mục tiêu học tập:**
+  - Trình bày tác dụng của máy thu thanh (ra-đi-ô).
+  - Mô tả mối quan hệ giữa đài phát thanh và máy thu thanh.
+  - Nhận biết một số chương trình phát thanh phù hợp và biết cách sử dụng máy thu thanh.
+- **1. Tác dụng của máy thu thanh:**
+  - Máy thu thanh (ra-đi-ô) dùng để thu và phát lại âm thanh của các chương trình phát thanh như tin tức, ca nhạc, giải trí và giáo dục.
+- **2. Mối quan hệ giữa đài phát thanh và máy thu thanh:**
+  - *Đài phát thanh:* Là nơi sản xuất các chương trình phát thanh và phát tín hiệu truyền thanh ra môi trường qua ăng-ten phát.
+  - *Máy thu thanh:* Là thiết bị thu nhận các tín hiệu truyền thanh đó qua ăng-ten thu và phát ra âm thanh thông qua loa.
+  - *Thông tin thêm:* Đài Tiếng nói Việt Nam (VOV) thành lập vào tháng 9 năm 1945, là đài phát thanh quốc gia có trụ sở đặt tại Hà Nội.
+- **3. Một số chương trình phát thanh phổ biến:**
+  - *VOV1:* Bản tin thời sự, Vì an ninh Tổ quốc, nhạc thế giới...
+  - *VOV2:* Sống an toàn, Nhịp sống văn hóa, Ca nhạc thiếu nhi, Đọc truyện dài kỳ, Giáo dục từ xa...
+  - *VOV Giao thông:* Cập nhật tình hình giao thông thời gian thực.
+- **4. Các bước sử dụng máy thu thanh:**
+  - *Bước 1:* Bật công tắc nguồn.
+  - *Bước 2:* Điều chỉnh âm lượng (volume) vừa nghe để không ảnh hưởng đến người khác và bảo vệ thính lực.
+  - *Bước 3:* Chọn kênh phát thanh (chọn dải tần AM hoặc FM, xoay núm dò sóng TUNING đến khi nghe âm thanh rõ nét nhất).
+  - *Bước 4:* Tắt nguồn khi không sử dụng.
+
+## Bài 5: Sử dụng máy thu hình
+- **Mục tiêu học tập:**
+  - Trình bày tác dụng của máy thu hình (ti-vi).
+  - Mô tả mối quan hệ giữa đài truyền hình và ti-vi.
+  - Lựa chọn vị trí ngồi xem an toàn và biết cách sử dụng ti-vi.
+- **1. Tác dụng của máy thu hình:**
+  - Ti-vi dùng để thu và phát lại hình ảnh, âm thanh của các chương trình truyền hình như thời sự, thế giới động vật, phim ảnh, chương trình học tập...
+- **2. Mối quan hệ giữa đài truyền hình và máy thu hình:**
+  - *Đài truyền hình:* Là nơi sản xuất các chương trình truyền hình, phát tín hiệu qua ăng-ten phát hoặc cáp truyền hình.
+  - *Máy thu hình (ti-vi):* Là thiết bị nhận tín hiệu truyền hình, phát hình ảnh lên màn hình và phát âm thanh ra loa.
+  - *Thông tin thêm:* Buổi phát sóng thử nghiệm đầu tiên của Đài Truyền hình Việt Nam (VTV - trước đây gọi là Vô tuyến Truyền hình Việt Nam) diễn ra vào ngày 7 tháng 9 năm 1970.
+- **3. Một số chương trình và kênh truyền hình cho học sinh:**
+  - *VTV1:* Thời sự, chính luận.
+  - *VTV3:* Giải trí, thể thao, trò chơi truyền hình.
+  - *VTV7:* Kênh truyền hình giáo dục quốc gia (các chương trình nổi bật như Học cùng con, Học thông qua chơi...).
+- **4. Các bước sử dụng máy thu hình:**
+  - *Bước 1:* Bật ti-vi (bằng nút nguồn trên máy hoặc nút ON/OFF trên điều khiển từ xa).
+  - *Bước 2:* Điều chỉnh âm lượng vừa nghe.
+  - *Bước 3:* Chọn kênh truyền hình yêu thích và phù hợp với lứa tuổi.
+  - *Bước 4:* Tắt ti-vi khi không sử dụng.
+- **5. Vị trí ngồi xem ti-vi an toàn:**
+  - Cần ngồi chính diện với màn hình ti-vi.
+  - Giữ khoảng cách an toàn từ mắt đến màn hình theo khuyến cáo của nhà sản xuất (khoảng cách phù hợp thường gấp 2.5 đến 3 lần kích thước đường chéo màn hình).
+  - Không xem ti-vi quá lâu và không xem trong phòng tối hoàn toàn.
+
+## Bài 6: An toàn với môi trường công nghệ trong gia đình
+- **Mục tiêu học tập:**
+  - Nhận biết và phòng tránh được các tình huống mất an toàn trong gia đình.
+  - Biết cách báo cho người lớn hoặc xử lý khi gặp sự cố khẩn cấp.
+- **1. Nhận biết một số tình huống không an toàn:**
+  - *Tình huống có thể gây bỏng:*
+    - Để lửa gần bình ga.
+    - Với tay lấy phích nước nóng để trên cao.
+    - Để bàn là đang nóng ở gần người.
+    - Để tay vào hơi nước đang xì mạnh trên nắp nồi hầm.
+  - *Tình huống có thể gây điện giật:*
+    - Dùng vật kim loại (như tua-vít) chọc vào ổ điện.
+    - Chạm vào dây điện bị hở lớp vỏ cách điện khi đang có nguồn điện.
+    - Sử dụng thiết bị điện khi tay đang ướt hoặc đứng trên nền nhà ướt.
+  - *Các nhãn cảnh báo nguy hiểm phổ biến:*
+    - Cảnh báo có điện (hình tia sét trong tam giác vàng).
+    - Cảnh báo vật sắc nhọn (hình dao sắc cứa vào tay).
+    - Cảnh báo khí ga (hình bình ga màu đen trong tam giác vàng).
+- **2. Sử dụng sản phẩm công nghệ an toàn và tiết kiệm:**
+  - Không cắm quá nhiều thiết bị điện công suất lớn vào cùng một ổ cắm điện.
+  - Không dùng điện thoại di động quá lâu trong phòng tối hoặc điều kiện thiếu sáng.
+  - Đóng chặt cửa tủ lạnh ngay sau khi lấy đồ để tránh thất thoát nhiệt.
+  - Điều chỉnh nhiệt độ điều hòa phù hợp (từ 26°C đến 28°C) để tiết kiệm điện.
+  - Không ngồi quá gần ti-vi và không xem liên tục trong thời gian quá dài.
+- **3. Cách xử lý khi có sự cố xảy ra:**
+  - Khi phát hiện sự cố mất an toàn, cần lập tức báo cho người lớn hoặc gọi điện đến các số điện thoại khẩn cấp:
+    - **Sự cố Bỏng:** Rửa vết bỏng bằng nước nguội sạch; dùng bông, băng gạc sạch để băng nhẹ vết bỏng.
+    - **Sự cố Cháy/Khói:** Khi có khói, dùng khăn ẩm che mũi, miệng, cúi khom người di chuyển ra ngoài phòng; gọi điện thoại khẩn cấp đến số **114** (Cứu hỏa).
+    - **Sự cố Điện giật:** Lập tức ngắt nguồn điện (ngắt cầu dao); gọi điện thoại cấp cứu số **115** (Y tế).
+    - **Sự cố Cắt/Đâm (bị thương do vật sắc nhọn):** Dùng bông, băng gạc sạch để băng bó vết thương để cầm máu.
