@@ -1,170 +1,147 @@
-# AI Exam Generator 🎓
+# Đề Kiểm Tra (dekiemtra)
 
-Nền tảng tạo đề kiểm tra tự động bằng AI cho 4 môn (Toán, Tiếng Việt, Tiếng Anh, Lịch sử),
-Lớp 1–12, chi phí duy trì **$0**.
+Trợ lý sư phạm toàn diện, **miễn phí**, chạy bằng AI, dành cho giáo viên Tiểu học Việt Nam (Mầm
+non – Lớp 5), bám sát bộ sách giáo khoa **Kết nối tri thức với cuộc sống**. Mục tiêu vận hành:
+chi phí **$0** (Vercel + Upstash Redis free tier + AI backbone Gemini qua pool nhiều API key).
 
-## Bước 1: Cài đặt & cấu trúc thư mục
+> Tài liệu này mô tả TÍNH NĂNG hiện có. Muốn biết việc gì đang dở dang / cần quyết định, xem
+> [`NEXT_STEPS.md`](./NEXT_STEPS.md). Muốn xem lịch sử phát triển chi tiết theo từng phiên, xem
+> [`PROJECT_SUMMARY.md`](./PROJECT_SUMMARY.md).
+
+## Các tab / mô-đun
+
+| # | Tab | Khối lớp | Mô tả |
+|---|-----|----------|-------|
+| 1 | 📘 Soạn Giáo án | Mầm non – Lớp 5 | Sinh giáo án đầy đủ Mục I-IV theo đúng khuôn Thông tư/Công văn hiện hành, hỗ trợ upload giáo án mẫu (Word/PDF/ảnh) để "bám sát mẫu" hoặc "kết hợp mẫu + SGK", gợi ý Tên bài + tự điền Nội dung cốt lõi theo Sách giáo viên (cần dữ liệu GitHub, xem `NEXT_STEPS.md`), 8 "tích hợp" tuỳ chọn kiểu plugin (Mindmap/Infographic, Củng cố, Phiếu học tập, Tin nhắn Zalo phụ huynh, tích hợp GDQP&AN thông minh không ép buộc, gợi ý thiết kế học liệu hình ảnh cho Lớp 1-3...), 3 phong cách soạn (preset + tự do), checklist đánh giá Năng lực-Phẩm chất, cơ chế chống trùng lặp giữa các lần soạn liên tiếp. |
+| 2 | 🧮 Phiếu Bài Tập | Mầm non – Lớp 5 | Sinh phiếu bài tập Toán + Tiếng Việt bằng generator thuần code (không cần AI cho phần số liệu) theo đúng catalog dạng bài từng khối, xuất Word + xem trước web, chế độ in Màu/Đen trắng. Toán Lớp 3-5 đã đủ catalog theo đúng SGK KNTT (12-14 dạng bài/khối); Tiếng Việt hiện chủ yếu ở Lớp 1 (đang giới hạn 1 dạng bài AI-sinh sau khi phát hiện lỗi vượt cấp, xem `NEXT_STEPS.md`). |
+| 3 | 📖 Đề Tiếng Việt Tiểu học | Lớp 1-5 | Đề kiểm tra Tiếng Việt riêng (không dùng khuôn Ma trận đề chung vì cấu trúc khác hẳn): 4 khối Đọc thành tiếng / Đọc thầm / Chính tả / Tập làm văn, có liên kết SGK Tiếng Việt thật (gợi ý Tên bài + trích ngữ liệu chương làm ngữ cảnh cho AI, KHÔNG tự điền nguyên văn Chính tả để tránh vi phạm bản quyền/bịa nội dung). |
+| 4 | 📝 Đề Cương Ôn Tập | Lớp 1-5 | Sinh đề cương ôn tập theo chương/chủ đề đã chọn, dùng chung kho kiến thức GitHub + `subjectProfiles.js` với 2 tab kia. |
+| 5 | 🧾 Tạo Đề Kiểm Tra | Lớp 1-5 | Đề kiểm tra theo ma trận (số câu/mức độ nhận thức mỗi chương), tính điểm tự động không lỗi làm tròn âm (đã sửa), xuất Word + PDF (`window.print()`). |
+| 6 | 💬 Nhận Xét Học Bạ | Lớp 1-5 | Sinh nhận xét học bạ theo học sinh, lưu lịch sử theo học kỳ qua Upstash Redis. |
+| 7 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
+
+**Chưa kích hoạt** (đã code đủ 4 tầng nhưng chưa nối vào `page.js`, đang chờ Hoan quyết định giữ
+hay xoá): Tô màu (Coloring Page) — xem mục 🔴 trong `NEXT_STEPS.md`.
+
+## Môn học & khối lớp hỗ trợ (tab Soạn Giáo án / Đề Cương Ôn Tập / Tạo Đề Kiểm Tra)
+
+3 tab trên dùng chung 1 danh sách môn (`src/data/config.js`), tự lọc đúng môn theo khối lớp đang
+chọn (không cho chọn nhầm môn không tồn tại ở khối đó), theo đúng Thông tư 32/2018/TT-BGDĐT:
+
+| Môn | Khối dạy |
+|-----|----------|
+| Tiếng Việt | 1-5 |
+| Toán | 1-5 |
+| Đạo đức | 1-5 |
+| Tiếng Anh | 1-5 |
+| Tự nhiên và Xã hội | 1-3 |
+| Lịch sử và Địa lí | 4-5 |
+| Khoa học | 4-5 |
+| Tin học | 3-5 |
+| Công nghệ | 3-5 |
+| Lịch sử *(bậc THCS/THPT)* | 6-12 |
+
+Mỗi môn có 1 profile riêng (`src/data/subjectProfiles.js`) định nghĩa vai trò AI + quy tắc nội
+dung riêng (VD Đạo đức ưu tiên tình huống ứng xử thay vì học thuộc định nghĩa; Khoa học không mở
+rộng sang kiến thức THCS; Lịch sử và Địa lí tách rõ 2 phân môn không trộn lẫn).
+
+Cố ý **chưa** thêm Giáo dục thể chất/Âm nhạc/Mĩ thuật/Hoạt động trải nghiệm — các môn này đánh giá
+bằng nhận xét (không có kiểm tra định kỳ theo ma trận đề) và cấu trúc giáo án khác hẳn dạng
+chương-bài SGK hiện dùng.
+
+## Kiến trúc & quy ước quan trọng
+
+- **Isolation over DRY**: mỗi tính năng/dạng bài/khối lớp có code/data riêng, chấp nhận trùng lặp
+  để dễ sửa lỗi độc lập, không sợ sửa chỗ này vỡ chỗ khác.
+- **4 tầng bắt buộc** cho mỗi dạng bài Phiếu Bài Tập mới: catalog (`worksheetExerciseCatalog.js`)
+  → generator (`worksheetSchemas.js`/`worksheetGenerator.js`) → preview web
+  (`WorksheetPreview.jsx`) → xuất Word (`worksheetExportService.js`). Thiếu 1 tầng = chưa xong.
+- **Chính xác chương trình là điều kiện KHÔNG được đánh đổi**: không suy đoán kiến thức SGK, luôn
+  tra cứu/xác nhận trước khi code (VD: quy tắc Lớp 5 KHÔNG dùng hình trụ/hình cầu tính diện
+  tích-thể tích; Lớp 4 nhận diện góc chỉ bằng ê-ke, không dùng số đo độ; Khoa học chỉ tồn tại từ
+  Lớp 4).
+- **Chống bịa/vi phạm bản quyền SGK**: AI không được tự sinh nguyên văn ngữ liệu SGK (VD khối
+  Chính tả) — chỉ gợi nhớ bằng mô tả ngắn, giáo viên tự gõ nguyên văn.
+- **Ký tự Unicode hiếm không đáng tin trong Word**: mọi hình vẽ minh hoạ (line-art, thanh đo, biểu
+  đồ, hình khối) xuất bằng ẢNH PNG (SVG→PNG rasterize 1 lần, nhúng `ImageRun`), không dùng ký tự
+  Unicode lặp lại vì phụ thuộc font máy người dùng (từng gây lỗi thật, xem Phiên 24 trong
+  `PROJECT_SUMMARY.md`).
+- **Grep trước khi giả định phạm vi**: luôn xác nhận số file/chỗ dùng thật qua code trước khi sửa
+  hoặc xoá, không suy đoán từ tài liệu cũ (tài liệu có thể đã lệch so với code thật).
+
+## Cấu trúc thư mục (rút gọn)
+
+```
+src/
+├── app/
+│   ├── page.js                      # điều phối 7 tab, chỉ 1 tab mount tại 1 thời điểm
+│   └── api/{login,chapters,lessons,generate,generate-worksheet,generate-lesson-plan,
+│            generate-vietnamese-exam,generate-outline,usage,
+│            analyze-sample,analyze-worksheet-sample,analyze-lesson-plan-sample,...}/route.js
+├── components/
+│   ├── ExamMatrixForm.jsx / A4LivePreview.jsx / ExportActions.jsx        (Tạo Đề Kiểm Tra)
+│   ├── WorksheetForm.jsx / WorksheetPreview.jsx                          (Phiếu Bài Tập)
+│   ├── LessonPlanForm.jsx / LessonPlanPreview.jsx                        (Soạn Giáo án)
+│   ├── VietnameseExamForm.jsx / VietnameseExamPreview.jsx / vietnameseBlocks/*  (Đề Tiếng Việt)
+│   ├── OutlineForm.jsx / OutlinePreview.jsx                              (Đề Cương Ôn Tập)
+│   ├── ReportCommentForm.jsx / ReportCommentPreview.jsx                  (Nhận Xét Học Bạ)
+│   └── visuals/{...}                                                    (icon/hình minh hoạ dùng chung)
+├── services/
+│   ├── githubService.js             # đọc chương/bài SGK từ kho GitHub kiến thức (SGK thật)
+│   ├── geminiEngine.js / geminiKeyPool.js / geminiUsageTracker.js
+│   ├── worksheetGenerator.js / worksheetExportService.js
+│   ├── lessonPlanOrchestrator.js / lessonPlanExportService.js
+│   ├── upstashClient.js             # Redis: session counter, lịch sử học bạ, rate limit
+│   └── ...
+└── data/
+    ├── config.js                    # SUBJECTS/GRADES dùng chung 3 tab (nguồn xác thực duy nhất)
+    ├── subjectProfiles.js           # vai trò AI + quy tắc riêng theo môn
+    ├── gradeProfiles.js             # đặc điểm nhận thức theo khối lớp
+    ├── worksheetExerciseCatalog.js / worksheetSchemas.js / worksheetTopicPackages.js
+    ├── lessonPlanTemplates.js / lessonPlanBlueprint.js / lessonPlanPromptTemplates.js
+    ├── outlineBlueprint.js / outlinePromptTemplates.js
+    ├── examBlueprint.js / promptTemplates.js
+    └── ...
+```
+
+## Công nghệ
+
+- **Next.js 14** (App Router), deploy **Vercel**.
+- **AI backbone**: Gemini (`@google/genai`) qua pool nhiều API key để né rate-limit free tier.
+- **Upstash Redis**: đếm phiên online ẩn danh, lịch sử nhận xét học bạ, rate-limit theo giáo viên.
+- **docx** (thư viện `docx`), **JSZip** (kiểm tra file `.docx` trong test), SVG rasterize sang PNG
+  cho mọi hình minh hoạ trong Word.
+- **Kho kiến thức GitHub riêng** (biến môi trường `GITHUB_KNOWLEDGE_REPO`): chứa nội dung SGK thật
+  theo cấu trúc `sach_giao_khoa/lop_{khối}/{môn}_t{tập}/chuong_{n}.md` (+ `chuong_{n}_bai.json`
+  tuỳ chọn cho gợi ý theo Bài) — dữ liệu này do Hoan tự quản lý, KHÔNG nằm trong repo code.
+
+## Chạy dự án
 
 ```bash
 npm install
-cp .env.local.example .env.local
+npm run dev          # http://localhost:3000
+npm run build         # build production
+npm test              # chạy toàn bộ test (node --test)
+npm run test:word-compat   # kiểm tra Word thật bằng LibreOffice headless (cần cài soffice/pdfinfo)
 ```
 
-Mở `.env.local` và điền:
+Cần file `.env.local` (xem `.env.local.example`) với các biến API key Gemini, `GITHUB_KNOWLEDGE_REPO`,
+Upstash Redis, v.v.
 
-```env
-GEMINI_API_KEY=...              # ⚠️ lấy free tại https://aistudio.google.com/app/apikey
-GITHUB_KNOWLEDGE_REPO=USER/REPO # ⚠️ repo chứa kho kiến thức markdown của bạn
-GITHUB_BRANCH=main
-GITHUB_TOKEN=                   # tuỳ chọn, tăng rate-limit khi liệt kê chương
-```
+## Giới hạn / lưu ý đã biết
 
-```bash
-npm run dev
-```
+- Lỗ hổng bảo mật gói `xlsx` (Prototype Pollution/ReDoS) — nhà phát hành chưa có bản vá, KHÔNG mở
+  tính năng nhập Excel cho người dùng ẩn danh/công khai cho tới khi có bản vá.
+- `npm run test:word-compat` dùng LibreOffice làm proxy kiểm tra `.docx` hợp lệ — KHÔNG thay thế
+  hoàn toàn việc mở bằng Microsoft Word thật, đặc biệt sau khi đổi bố cục lớn.
+- Nhiều tính năng gợi ý theo SGK (Bài học, ngữ liệu Tiếng Việt, chương các môn mới Đạo đức/Khoa
+  học/Tự nhiên và Xã hội/Lịch sử và Địa lí/Tin học/Công nghệ) phụ thuộc dữ liệu thật trong kho
+  GitHub kiến thức — thiếu dữ liệu thì dropdown liên quan rỗng (hành vi an toàn có chủ đích, không
+  phải lỗi).
 
-Mở http://localhost:3000, đăng nhập bằng tài khoản mẫu trong `src/data/users.json`
-(`gv.toan01` / `toan123`). **⚠️ Tự thêm tài khoản giáo viên thủ công vào file này.**
+## Tài liệu liên quan
 
-Cấu trúc thư mục:
-
-```text
-src/
-├── components/
-│   ├── Header.jsx
-│   ├── LoginForm.jsx
-│   ├── ExamMatrixForm.jsx     <- Thông tin chung + chọn kiến thức + ma trận stepper
-│   ├── A4LivePreview.jsx      <- Khung A4 + Header chuẩn Bộ GD&ĐT
-│   └── ExportActions.jsx      <- 4 Mã đề, Word, PDF
-├── services/
-│   ├── authService.js         <- verify server-side + session localStorage
-│   ├── githubService.js       <- fetchMarkdownFromGitHub(grade, subject, volume, chapter)
-│   ├── geminiEngine.js        <- routing model + 3 lớp chống trùng
-│   ├── exportService.js       <- LaTeX->OMML, 4 mã đề, Word/PDF
-│   └── latexUtils.js          <- tách đoạn $...$ dùng chung preview/export
-├── data/
-│   ├── users.json
-│   └── promptTemplates.js     <- ma trận prompt + seed chống trùng
-└── app/
-    ├── page.js                <- Split-screen 40/60
-    └── api/{login,generate,chapters}/route.js
-```
-
-## Bước 2: Chuẩn bị kho kiến thức GitHub (RAG)
-
-Repo kiến thức (có thể **public**) phải theo đúng cấu trúc. Mỗi môn có 1 slug riêng
-(tự động suy ra từ giá trị môn học, viết thường, gạch dưới):
-
-| Môn học | Slug thư mục |
-|---|---|
-| Toán | `toan` |
-| Tiếng Việt | `tieng_viet` |
-| Tiếng Anh | `tieng_anh` |
-| Lịch sử | `lich_su` |
-
-```
-sach_giao_khoa/
-  lop_5/
-    toan_t1/
-      chuong_1.md
-      chuong_2.md
-    toan_t2/
-      chuong_1.md
-    tieng_viet_t1/
-      chuong_1.md
-    tieng_anh_t1/
-      chuong_1.md
-    lich_su_t1/
-      chuong_1.md
-  lop_6/
-    ...
-```
-
-→ Tương ứng URL Raw: `https://raw.githubusercontent.com/USER/REPO/main/sach_giao_khoa/lop_5/toan_t2/chuong_3.md`
-
-**Sách nâng cao (dành cho học sinh giỏi):** đặt NGUYÊN VĂN cả cuốn trong 1 file duy nhất,
-KHÔNG chia theo chương, KHÔNG phụ thuộc Tập (dùng chung cả năm học):
-
-```
-sach_giao_khoa/
-  lop_5/
-    toan_nang_cao.md   <- nguyên cả cuốn, không tách chương
-```
-
-Khi file này tồn tại, giao diện sẽ tự hiện thêm 1 lựa chọn riêng "📘 Sách nâng cao (toàn bộ)"
-bên cạnh danh sách chương thường, giáo viên có thể chọn để AI khai thác thêm nguồn nâng cao
-này (đặc biệt hữu ích cho câu Vận dụng cao).
-
-Mỗi file `.md` nên chứa định nghĩa, công thức LaTeX (`$...$`), ví dụ minh hoạ, và (nếu có)
-mục "Vận dụng cao" — Gemini Pro sẽ ưu tiên khai thác mục này cho câu khó/rất khó.
-
-## Bước 3: Luồng sử dụng
-
-1. Đăng nhập (kiểm tra server-side qua `users.json`, trạng thái lưu ở `localStorage`,
-   không dùng JWT).
-2. **Cột trái (40%)**: điền thông tin chung (trường, lớp, thời gian, năm học, tên bài kiểm
-   tra) → chọn Môn → Lớp → Tập → Chương (tự tải qua GitHub API) → chỉnh ma trận 4 mức độ.
-3. Bấm **"🚀 TẠO ĐỀ THI NGAY"** → gọi `/api/generate`:
-   - `githubService.fetchMarkdownFromGitHub` lấy nội dung các chương đã chọn.
-   - `geminiEngine` gọi `gemini-3.5-flash` cho cả 4 mức độ (Google không có gói miễn phí cho
-     bất kỳ model Pro nào hiện tại; 3.5 Flash được Google mô tả là "gần bằng chất lượng Pro"
-     nên vẫn đủ dùng cho câu Vận dụng/Vận dụng cao mà không cần bật billing)
-     song song, với `temperature: 0.75` + seed ngẫu nhiên mỗi lượt + yêu cầu random sampling
-     phân vùng kiến thức → **Lớp chống trùng #1**.
-   - Kết quả được hash + so khớp Jaccard similarity để loại câu trùng → **Lớp chống trùng #2 & #3**.
-   - AI trả về `questions` (đề học sinh) và `teacher_rubric` (đáp án + thang điểm chi tiết).
-4. **Cột phải (60%)**: xem trước khổ A4 thật, Header chuẩn Bộ GD&ĐT (bảng Điểm/Nhận xét 30%
-   + thông tin bài kiểm tra 70%), công thức Toán render bằng KaTeX.
-5. **"Tạo 4 Mã Đề (A, B, C, D)"**: xáo trộn câu hỏi + đáp án từ đề gốc, KHÔNG gọi lại Gemini
-   → tiết kiệm chi phí AI tối đa.
-6. **Tải Word (.docx)**: công thức Toán là Equation OOXML thật (LaTeX → MathML → OMML,
-   chèn trực tiếp vào `document.xml`), trang "Đáp án & Thang điểm" tự ngắt sang trang riêng
-   ở cuối file.
-7. **In / Tải PDF**: `window.print()` trên vùng đã style `@media print` — ẩn toàn bộ UI,
-   ép khổ A4, tự ngắt trang rubric.
-
-## Câu hỏi trực quan (Tiểu học Lớp 1-5)
-
-Hệ thống hỗ trợ 4 dạng câu hỏi trực quan đặc trưng Toán Tiểu học VN, cộng thêm khung kẻ ô nháp:
-
-| Dạng | Ví dụ | File liên quan |
-|---|---|---|
-| Đặt tính rồi tính | `37 + 56` dạng cột dọc | `visualSchemas.js`, `visuals/VerticalArithmetic.jsx` |
-| Cây số / tam giác quan hệ | Tam giác 3 đỉnh, 1 đỉnh ẩn | `visuals/NumberTriangle.jsx` |
-| Sơ đồ đoạn thẳng (so sánh hơn-kém) | "255 bao" chia 2 phần | `visuals/BarModel.jsx` |
-| Hình đếm trực quan (phân số) | Khoanh 1/4 số ngôi sao | `visuals/VisualCounting.jsx` |
-| Khung kẻ ô nháp | Không gian làm bài tay | `visuals/ScratchGrid.jsx` |
-
-**Nguyên tắc cốt lõi**: AI (Gemini) CHỈ sinh ra **số liệu** (vd 2 số cần cộng, 3 đỉnh tam giác),
-KHÔNG bao giờ được yêu cầu "vẽ" hình bằng text. Hệ thống tự vẽ hình từ số liệu đó (SVG cho
-preview/PDF trong `components/visuals/`, Table cho Word trong `services/visualExportBuilders.js`)
-— vừa đáng tin cậy tuyệt đối, vừa không tốn thêm token đáng kể. Toàn bộ `visualData` còn được
-CODE tự kiểm tra tính đúng đắn toán học (`isValidVisualData`) và tự tính đáp án chính xác
-(`computeVisualAnswer`) — không bao giờ tin vào phép tính của AI cho các dạng này.
-
-Bật/tắt qua checkbox "Cho phép câu hỏi trực quan" trong form (mặc định BẬT, phù hợp Lớp 1-5).
-
-## Triển khai miễn phí lên Vercel
-
-```bash
-npm i -g vercel
-vercel
-```
-
-Thêm các biến môi trường (`GEMINI_API_KEY`, `GITHUB_KNOWLEDGE_REPO`, `GITHUB_BRANCH`,
-`GITHUB_TOKEN`) trong Vercel Dashboard → Settings → Environment Variables.
-
-## Giới hạn & hướng nâng cấp tiếp theo
-
-- `mathml2omml` xử lý tốt ký hiệu Toán phổ thông (phân số, căn, luỹ thừa...); ký hiệu quá
-  đặc thù có thể không map 100% chính xác — hệ thống tự fallback về hiển thị `$...$` thô
-  nếu convert lỗi, không làm vỡ file.
-- Lớp chống trùng hash/similarity hiện chỉ hoạt động **trong 1 lần tạo đề**. Muốn chống
-  trùng xuyên nhiều lần tạo đề (nhiều buổi kiểm tra khác nhau), cần lưu ngân hàng câu hỏi
-  bền vững — ví dụ commit ngược danh sách câu đã tạo lên 1 file trong repo GitHub.
-- `users.json` lưu password dạng plaintext, phù hợp vài chục giáo viên nội bộ. Nếu mở rộng
-  quy mô, nên hash bằng bcrypt trước khi so sánh trong `verifyCredentials`.
-- Đăng nhập hiện chỉ verify server-side 1 lần rồi lưu `localStorage`; API `/api/generate`
-  chỉ kiểm tra `username` có tồn tại trong `users.json` (không xác thực lại password) —
-  đủ dùng cho môi trường nội bộ tin cậy, không nên dùng cho hệ thống công khai nhiều người
-  lạ truy cập.
+- [`NEXT_STEPS.md`](./NEXT_STEPS.md) — việc đang dở dang, cần quyết định, nguyên tắc sư phạm bắt
+  buộc phải nhớ khi code tiếp.
+- [`PROJECT_SUMMARY.md`](./PROJECT_SUMMARY.md) — lịch sử phát triển rút gọn theo từng phiên, tra
+  cứu khi cần biết "tại sao code lại làm thế này".
