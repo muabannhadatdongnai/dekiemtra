@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
-import { GRADES, getSubjectsForGrade } from "@/data/config";
+import { GRADES, getSubjectsForGrade, MODULE_KEYS } from "@/data/config";
 import {
   OUTLINE_LEVEL_ORDER,
   OUTLINE_LEVEL_LABELS,
@@ -37,7 +37,7 @@ export default function OutlineForm({ onGenerated }) {
 
   // Đạo đức/Khoa học chỉ dạy 1 số khối (xem minGrade/maxGrade trong config.js) - lọc lại danh
   // sách môn mỗi khi đổi Lớp, tránh chọn nhầm môn không tồn tại ở khối đó.
-  const availableSubjects = getSubjectsForGrade(grade);
+  const availableSubjects = getSubjectsForGrade(grade, MODULE_KEYS.OUTLINE);
   useEffect(() => {
     if (!availableSubjects.some((s) => s.value === subject)) {
       setSubject(availableSubjects[0]?.value || "Toan");

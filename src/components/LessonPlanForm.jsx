@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
-import { getSubjectsForGrade } from "@/data/config";
+import { getSubjectsForGrade, MODULE_KEYS } from "@/data/config";
 import {
   LESSON_PLAN_GRADES,
   COLUMN_MODE_OPTIONS,
@@ -98,7 +98,7 @@ export default function LessonPlanForm({ onGenerated }) {
   // Đạo đức/Khoa học chỉ dạy 1 số khối (xem minGrade/maxGrade trong config.js) - lọc lại danh
   // sách môn mỗi khi đổi Lớp, tránh chọn nhầm môn không tồn tại ở khối đó. Mầm non không chọn
   // môn (preschool ẩn hẳn dropdown Môn học ở dưới) nên không cần lọc/tự sửa subject khi preschool.
-  const availableSubjects = getSubjectsForGrade(grade);
+  const availableSubjects = getSubjectsForGrade(grade, MODULE_KEYS.LESSON_PLAN);
   useEffect(() => {
     if (!preschool && !availableSubjects.some((s) => s.value === subject)) {
       setSubject(availableSubjects[0]?.value || "Toan");

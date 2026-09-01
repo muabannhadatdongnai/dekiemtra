@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Sparkles, Upload, CheckCircle2, XCircle } from "lucide-react";
 import { DIFFICULTY_LEVELS } from "@/data/promptTemplates";
 import { getEffectiveSession } from "@/services/authService";
-import { GRADES, getSubjectLabel, getSubjectsForGrade } from "@/data/config";
+import { GRADES, getSubjectLabel, getSubjectsForGrade, MODULE_KEYS } from "@/data/config";
 import { buildExamBlueprint } from "@/data/examBlueprint";
 import { buildExamResult } from "@/data/examResult";
 import { fetchChaptersRequest, generateExamRequest, analyzeSampleExamRequest } from "@/services/apiClient";
@@ -57,7 +57,7 @@ export default function ExamMatrixForm({ onGenerated }) {
   // Đạo đức/Khoa học chỉ dạy 1 số khối (xem minGrade/maxGrade trong config.js) - danh sách môn
   // hiển thị ở dropdown phải lọc lại mỗi khi đổi Lớp, tránh giáo viên chọn nhầm môn không tồn tại
   // ở khối đó (VD Khoa học không có ở Lớp 1-3).
-  const availableSubjects = getSubjectsForGrade(grade);
+  const availableSubjects = getSubjectsForGrade(grade, MODULE_KEYS.EXAM);
   useEffect(() => {
     if (!availableSubjects.some((s) => s.value === subject)) {
       setSubject(availableSubjects[0]?.value || "Toan");
@@ -92,6 +92,14 @@ export default function ExamMatrixForm({ onGenerated }) {
   // Câu hỏi trực quan (đặt tính, tam giác số, sơ đồ đoạn thẳng, hình đếm) - đặc trưng Tiểu học,
   // mặc định BẬT vì phần lớn giáo viên dùng hệ thống này dạy Lớp 1-5.
   const [useVisualQuestions, setUseVisualQuestions] = useState(true);
+  // ================== GIAI ĐOẠN 32 (mở rộng THCS) ==================
+  // TRƯỚC ĐÂY checkbox này LUÔN hiện, giáo viên phải TỰ NHỚ tắt khi ra đề Lớp 6 trở lên (chỉ có
+  // dòng ghi chú nhắc). Từ khi THCS trở thành lựa chọn Lớp phổ biến (không còn là trường hợp hiếm
+  // gặp), tự động TẮT + ẨN hẳn checkbox khi grade > 5 - không dựa vào giáo viên tự nhớ nữa.
+  useEffect(() => {
+    if (Number(grade) > 5 && useVisualQuestions) setUseVisualQuestions(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grade]);
   // Giai đoạn 1 (mở rộng): "Yêu cầu bổ sung" - dặn dò riêng cho AI (VD: "cần 1 câu liên hệ thực
   // tế"), chèn vào cuối prompt (xem buildExtraRequirementsGuidance trong promptTemplates.js).
   const [extraRequirements, setExtraRequirements] = useState("");
@@ -541,24 +549,26 @@ export default function ExamMatrixForm({ onGenerated }) {
         />
       </Field>
 
-      <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
-        <input
-          type="checkbox"
-          checked={useVisualQuestions}
-          onChange={(e) => setUseVisualQuestions(e.target.checked)}
-          className="mt-0.5"
-        />
-        <span>
-          <span className="block text-sm font-medium text-slate-800">
-            Cho phép câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...)
+      {Number(grade) <= 5 && (
+        <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
+          <input
+            type="checkbox"
+            checked={useVisualQuestions}
+            onChange={(e) => setUseVisualQuestions(e.target.checked)}
+            className="mt-0.5"
+          />
+          <span>
+            <span className="block text-sm font-medium text-slate-800">
+              Cho phép câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...)
+            </span>
+            <span className="block text-xs text-slate-500">
+              Phù hợp Tiểu học (Lớp 1-5): đặt tính rồi tính, cây số/tam giác quan hệ, sơ đồ đoạn thẳng,
+              hình đếm minh hoạ phân số. AI chỉ sinh số liệu, hệ thống tự vẽ hình - không tốn thêm
+              credit đáng kể.
+            </span>
           </span>
-          <span className="block text-xs text-slate-500">
-            Phù hợp Tiểu học (Lớp 1-5): đặt tính rồi tính, cây số/tam giác quan hệ, sơ đồ đoạn thẳng,
-            hình đếm minh hoạ phân số. AI chỉ sinh số liệu, hệ thống tự vẽ hình - không tốn thêm
-            credit đáng kể. Tắt nếu ra đề cho Lớp 6 trở lên.
-          </span>
-        </span>
-      </label>
+        </label>
+      )}
 
       <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-slate-200 px-4 py-3">
         <input
