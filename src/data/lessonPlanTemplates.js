@@ -4,10 +4,11 @@
  * examBlueprint.js/gradeProfiles.js (vốn chỉ phục vụ luồng Đề kiểm tra) để 2 tính năng có thể
  * phát triển/độ vỡ độc lập, đúng yêu cầu "tách module cho tiện chỉnh sửa/mở rộng".
  *
- * ⚠️ PHẠM VI HIỆN TẠI (đã chốt với người dùng): chỉ Mầm non -> Lớp 5. Lớp 6-12 (THCS/THPT,
- * Công văn 5512) để SẴN CHỖ CẮM (xem LESSON_PLAN_CIRCULARS.CV5512, comingSoon:true) nhưng
- * CHƯA implement prompt/export riêng - khi làm tiếp chỉ cần bổ sung entry + template, không
- * đổi kiến trúc.
+ * ⚠️ PHẠM VI HIỆN TẠI (đã chốt với người dùng, cập nhật Giai đoạn 32): Mầm non -> Lớp 9 (Tiểu học
+ * + THCS). Lớp 10-12 (THPT) để SẴN CHỖ CẮM (GRADES ở config.js vẫn 1-12, nhưng SUBJECTS/
+ * LESSON_PLAN_GRADES CHƯA khai báo tới Lớp 10-12) - khi làm tiếp chỉ cần bổ sung entry môn học
+ * (config.js/subjectProfiles.js) + entry khối lớp (LESSON_PLAN_GRADES bên dưới), KHÔNG đổi kiến
+ * trúc (CV5512 đã áp dụng chung cho cả THCS lẫn THPT, xem LESSON_PLAN_CIRCULARS.CV5512).
  *
  * ⚠️ BỘ SÁCH: theo quyết định của người dùng, hệ thống hiện CHỈ dùng 1 bộ sách duy nhất (kho
  * Markdown SGK không phân biệt bộ sách) - trường "Bộ sách" ở UI (nếu có) chỉ mang tính GHI CHÚ
@@ -25,6 +26,11 @@ export const LESSON_PLAN_GRADES = [
   { value: 3, label: "Lớp 3", isPreschool: false },
   { value: 4, label: "Lớp 4", isPreschool: false },
   { value: 5, label: "Lớp 5", isPreschool: false },
+  // ================== THCS (Lớp 6-9) - Giai đoạn 32 ==================
+  { value: 6, label: "Lớp 6", isPreschool: false },
+  { value: 7, label: "Lớp 7", isPreschool: false },
+  { value: 8, label: "Lớp 8", isPreschool: false },
+  { value: 9, label: "Lớp 9", isPreschool: false },
 ];
 
 export function getLessonPlanGradeMeta(grade) {
@@ -35,7 +41,18 @@ export function isPreschoolGrade(grade) {
   return grade === "MAM_NON";
 }
 
-/** 2 công văn mẫu KHBD hiện hành - chọn tự động theo cấp học, giáo viên có thể ghi đè ở UI sau này. */
+/** 2 công văn mẫu KHBD hiện hành - chọn tự động theo cấp học, giáo viên có thể ghi đè ở UI sau này.
+ *
+ * ================== GIAI ĐOẠN 32: kích hoạt CV5512 cho THCS (Lớp 6-9) ==================
+ * TRƯỚC ĐÂY `comingSoon: true` (chưa implement). Giờ `getCircularForGrade()` bên dưới đã chọn
+ * CV5512 cho Lớp 6 trở lên - schema JSON/cấu trúc 4 hoạt động (Khởi động - Hình thành kiến thức
+ * mới - Luyện tập - Vận dụng) DÙNG CHUNG với CV2345 (Mục III của cả 2 công văn cùng chung tinh
+ * thần 4 hoạt động này, KHÔNG cần schema JSON riêng) - chỉ khác ở phần TÊN CÔNG VĂN hiển thị
+ * trong prompt/văn bản xuất ra (đã tự động lấy `circular.label`, xem lessonPlanPromptTemplates.js)
+ * và số phút/tiết (xem getMinutesPerLesson() - THCS/THPT là 45 phút/tiết, khác 35-40' Tiểu học).
+ * THPT (Lớp 10-12) CHƯA kích hoạt đợt này (comingSoon vẫn áp dụng ngầm vì getCircularForGrade chỉ
+ * được gọi khi có Lớp hợp lệ trong LESSON_PLAN_GRADES, và Lớp 10-12 CHƯA có trong danh sách đó).
+ */
 export const LESSON_PLAN_CIRCULARS = {
   CV2345: {
     code: "2345",
@@ -47,14 +64,17 @@ export const LESSON_PLAN_CIRCULARS = {
     code: "5512",
     label: "Công văn 5512/BGDĐT-GDTrH (cấp THCS/THPT)",
     appliesTo: "THCS_THPT",
-    comingSoon: true, // roadmap Lớp 6-12, chưa implement prompt/export
+    comingSoon: false,
   },
 };
 
 /** Mầm non không theo CV2345/5512 (không phải "kế hoạch bài dạy" mà là "kế hoạch hoạt động"),
- *  nên trả về null - lessonPlanPromptTemplates.js sẽ dùng khung riêng đơn giản hơn cho trường hợp này. */
+ *  nên trả về null - lessonPlanPromptTemplates.js sẽ dùng khung riêng đơn giản hơn cho trường hợp
+ *  này. Lớp 6 trở lên áp dụng CV5512 (THCS/THPT), Lớp 1-5 vẫn CV2345 (Tiểu học). */
 export function getCircularForGrade(grade) {
   if (isPreschoolGrade(grade)) return null;
+  const gradeNum = Number(grade);
+  if (Number.isFinite(gradeNum) && gradeNum >= 6) return LESSON_PLAN_CIRCULARS.CV5512;
   return LESSON_PLAN_CIRCULARS.CV2345;
 }
 
@@ -130,11 +150,13 @@ export function getActivityLabels(lessonType, integrations = []) {
   });
 }
 
-/** Số phút/tiết theo cấp học (tham khảo khung giờ phổ biến - giáo viên có thể tự đổi ở UI sau). */
+/** Số phút/tiết theo cấp học (tham khảo khung giờ phổ biến - giáo viên có thể tự đổi ở UI sau).
+ *  THCS/THPT (Lớp 6 trở lên) là 45 phút/tiết theo quy định phổ biến (khác 35-40' Tiểu học). */
 export function getMinutesPerLesson(grade) {
   if (isPreschoolGrade(grade)) return 30;
   if (grade === 1 || grade === 2) return 35;
-  return 40; // Lớp 3-5
+  if (grade === 3 || grade === 4 || grade === 5) return 40;
+  return 45; // Lớp 6-12 (THCS/THPT)
 }
 
 /**

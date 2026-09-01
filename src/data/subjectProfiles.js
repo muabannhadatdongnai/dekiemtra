@@ -104,8 +104,8 @@ export const SUBJECT_PROFILES = {
   Lich_Su_Dia_Li: {
     label: "Lịch sử và Địa lí",
     expertRole:
-      "một chuyên gia ra đề thi môn Lịch sử và Địa lí bậc Tiểu học (Lớp 4-5) chuẩn chương trình " +
-      "Giáo dục phổ thông 2018 của Việt Nam",
+      "một chuyên gia ra đề thi môn Lịch sử và Địa lí chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam (môn gộp xuyên suốt từ Lớp 4 Tiểu học tới hết Lớp 9 THCS)",
     extraRules: `- Đây là 1 môn gộp 2 PHÂN MÔN Lịch sử và Địa lí (SGK Kết nối tri thức in chung 1 cuốn) - trước
   khi ra câu hỏi, xác định rõ chương/bài thuộc phân môn nào dựa vào tài liệu được cung cấp, KHÔNG
   trộn lẫn kiến thức 2 phân môn trong cùng 1 câu hỏi trừ khi tài liệu gốc có liên hệ rõ ràng.
@@ -115,33 +115,140 @@ export const SUBJECT_PROFILES = {
 - Phân môn Địa lí: câu hỏi về vị trí địa lý, đặc điểm tự nhiên (địa hình, khí hậu, sông ngòi),
   dân cư, hoạt động kinh tế các vùng miền Việt Nam - CHỈ dùng số liệu/địa danh có trong tài liệu
   được cung cấp, KHÔNG tự suy diễn hoặc làm tròn số liệu thống kê không có nguồn.
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI (môn này dạy xuyên suốt Lớp 4-9, độ khó tăng dần rõ rệt): Lớp 4-5
+  (Tiểu học) dừng ở mức nhận biết/mô tả cơ bản (tên sự kiện, vị trí trên bản đồ, đặc điểm nổi bật).
+  Lớp 6-9 (THCS) yêu cầu PHÂN TÍCH/GIẢI THÍCH NGUYÊN NHÂN-KẾT QUẢ (VD "vì sao", "tác động của...",
+  so sánh giữa các giai đoạn/vùng miền), có thể dùng thuật ngữ chuyên môn sâu hơn (VD "phong trào",
+  "chế độ", "cơ cấu kinh tế") - KHÔNG viết văn phong/độ khó Lớp 6-9 giống hệt Lớp 4-5 và ngược lại.
 - Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
   },
   Tin_Hoc: {
     label: "Tin học",
     expertRole:
-      "một chuyên gia biên soạn nội dung môn Tin học bậc Tiểu học (Lớp 3-5) chuẩn chương trình " +
-      "Giáo dục phổ thông 2018 của Việt Nam",
-    extraRules: `- Nội dung xoay quanh: máy tính và thiết bị số cơ bản, thông tin và xử lý thông tin, sử dụng
-  phần mềm cơ bản (soạn thảo, trình chiếu), an toàn khi dùng máy tính/Internet, và ở Lớp 4-5 có
-  thể có tư duy lập trình trực quan đơn giản (kiểu kéo-thả khối lệnh) - CHỈ theo đúng nội dung có
-  trong tài liệu được cung cấp, KHÔNG tự thêm khái niệm lập trình/thuật toán bậc cao hơn.
-- Ưu tiên câu hỏi gắn với thao tác/tình huống sử dụng máy tính thực tế (nhận biết bộ phận máy
-  tính, các bước thực hiện 1 thao tác, xử lý tình huống an toàn mạng) hơn là hỏi lý thuyết suông.
-- KHÔNG yêu cầu viết mã lệnh/cú pháp lập trình văn bản (Python, Scratch dạng code) - Tiểu học chỉ
-  học tư duy logic trực quan, không học ngôn ngữ lập trình văn bản.`,
+      "một chuyên gia biên soạn nội dung môn Tin học chuẩn chương trình Giáo dục phổ thông 2018 " +
+      "của Việt Nam (môn dạy xuyên suốt từ Lớp 3 Tiểu học tới hết Lớp 9 THCS)",
+    extraRules: `- Nội dung xoay quanh: máy tính và thiết bị số, thông tin và xử lý thông tin, sử dụng phần mềm
+  (soạn thảo, trình chiếu, bảng tính), an toàn khi dùng máy tính/Internet, tư duy lập trình - CHỈ
+  theo đúng nội dung có trong tài liệu được cung cấp, KHÔNG tự thêm khái niệm vượt quá tài liệu.
+- Ưu tiên câu hỏi gắn với thao tác/tình huống sử dụng máy tính thực tế hơn là hỏi lý thuyết suông.
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI (khác biệt LỚN giữa Tiểu học và THCS): Lớp 3-5 (Tiểu học) CHỈ dùng
+  lập trình trực quan kiểu kéo-thả khối lệnh (Scratch dạng khối, không gõ mã), KHÔNG yêu cầu viết
+  mã lệnh/cú pháp lập trình văn bản. Lớp 6-9 (THCS) được phép có nội dung thuật toán cơ bản, cấu
+  trúc dữ liệu đơn giản, và bắt đầu làm quen lập trình dạng VĂN BẢN (Scratch nâng cao/Python cơ
+  bản) tuỳ đúng nội dung tài liệu cung cấp - KHÔNG áp mức độ Tiểu học cho câu hỏi Lớp 6-9.`,
   },
   Cong_Nghe: {
     label: "Công nghệ",
     expertRole:
-      "một chuyên gia biên soạn nội dung môn Công nghệ bậc Tiểu học (Lớp 3-5) chuẩn chương trình " +
+      "một chuyên gia biên soạn nội dung môn Công nghệ chuẩn chương trình Giáo dục phổ thông 2018 " +
+      "của Việt Nam (môn dạy xuyên suốt từ Lớp 3 Tiểu học tới hết Lớp 9 THCS)",
+    extraRules: `- Nội dung xoay quanh: công nghệ trong đời sống, thủ công kỹ thuật, an toàn khi sử dụng dụng
+  cụ/thiết bị, trồng trọt/chăn nuôi, và ở THCS có thêm công nghệ trong nông-lâm-ngư nghiệp, thiết
+  kế kỹ thuật cơ bản, định hướng nghề nghiệp - CHỈ theo đúng nội dung có trong tài liệu cung cấp.
+- Ưu tiên câu hỏi về QUY TRÌNH CÁC BƯỚC, công dụng của đồ dùng/dụng cụ, hoặc an toàn khi sử dụng -
+  hơn là hỏi lý thuyết trừu tượng.
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI: Lớp 3-5 (Tiểu học) dừng ở mức lắp ráp mô hình đơn giản/đồ thủ
+  công/trồng trọt cơ bản, KHÔNG dùng công thức/số liệu kỹ thuật. Lớp 6-9 (THCS) được phép có bản
+  vẽ kỹ thuật cơ bản, quy trình công nghệ nhiều bước phức tạp hơn, và nội dung định hướng nghề
+  nghiệp (đặc biệt rõ ở Lớp 8-9) - KHÔNG áp mức độ đơn giản của Tiểu học cho câu hỏi Lớp 6-9.`,
+  },
+
+  // ================== THCS (Lớp 6-9) - Giai đoạn 32 ==================
+  Ngu_Van: {
+    label: "Ngữ văn",
+    expertRole: "một chuyên gia ra đề kiểm tra/biên soạn nội dung môn Ngữ văn THCS chuẩn chương trình " +
       "Giáo dục phổ thông 2018 của Việt Nam",
-    extraRules: `- Nội dung xoay quanh: công nghệ trong đời sống (đồ dùng, dụng cụ gia đình), thủ công kỹ thuật
-  (lắp ráp mô hình đơn giản, làm đồ thủ công), an toàn khi sử dụng dụng cụ/thiết bị, và ở Lớp 4-5
-  có thể có nội dung về trồng trọt/chăn nuôi cơ bản - CHỈ theo đúng nội dung có trong tài liệu.
-- Ưu tiên câu hỏi về QUY TRÌNH CÁC BƯỚC (thứ tự thực hiện 1 công việc/lắp ráp), công dụng của đồ
-  dùng/dụng cụ, hoặc an toàn khi sử dụng - hơn là hỏi lý thuyết trừu tượng.
-- KHÔNG dùng công thức kỹ thuật/số liệu kỹ thuật phức tạp vượt quá mức Tiểu học.`,
+    extraRules: `- ⚠️ THEO CÔNG VĂN 3175/BGDĐT-GDTrH (2022, được nhấn mạnh lại ở Công văn 3935/2024): với đề kiểm
+  tra/ngữ liệu Đọc hiểu, TUYỆT ĐỐI KHÔNG dùng lại nguyên văn văn bản/đoạn trích ĐÃ CÓ trong SGK -
+  phải là ngữ liệu MỚI (có thể cùng tác giả/chủ đề/thể loại nhưng KHÔNG PHẢI đoạn học sinh đã học),
+  để đánh giá đúng năng lực đọc hiểu thay vì học thuộc lòng. Đề cương ôn tập được dùng lại ngữ liệu
+  SGK vì mục đích ôn tập/hệ thống hoá kiến thức đã học, KHÔNG áp dụng hạn chế này.
+- Với dạng bài Tập làm văn/Viết đoạn: phân biệt rõ 3 KIỂU BÀI chính theo chương trình - Nghị luận
+  xã hội (bàn về 1 tư tưởng đạo lý/hiện tượng đời sống), Nghị luận văn học (phân tích/cảm nhận tác
+  phẩm), và các kiểu bài tự sự/miêu tả/biểu cảm/thuyết minh ở khối đầu cấp (Lớp 6-7) - không nhầm
+  lẫn yêu cầu giữa các kiểu bài.
+- Với câu hỏi từ vựng/ngữ pháp/Tiếng Việt: bám sát đúng quy tắc chính tả/ngữ pháp tiếng Việt hiện
+  hành và đúng phạm vi kiến thức Tiếng Việt của khối lớp (VD biện pháp tu từ, các loại câu, thành
+  phần câu - độ phức tạp tăng dần Lớp 6 -> Lớp 9).
+- Tránh dùng từ ngữ địa phương/phương ngữ gây khó hiểu, trừ khi bài học yêu cầu.`,
+  },
+  Giao_Duc_Cong_Dan: {
+    label: "Giáo dục công dân",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Giáo dục công dân THCS chuẩn chương trình Giáo dục " +
+      "phổ thông 2018 của Việt Nam",
+    extraRules: `- Khác "Đạo đức" Tiểu học (thuần giáo dục phẩm chất qua tình huống): Giáo dục công dân THCS có
+  THÊM kiến thức pháp luật cơ bản (quyền/nghĩa vụ công dân, phòng chống tệ nạn xã hội, an toàn
+  giao thông, bảo vệ môi trường theo quy định pháp luật) bên cạnh giáo dục đạo đức/kỹ năng sống -
+  KHÔNG chỉ dừng ở mức "tình huống ứng xử" đơn giản như Tiểu học.
+- Với nội dung pháp luật: bám sát ĐÚNG quy định pháp luật Việt Nam hiện hành có trong tài liệu
+  được cung cấp, KHÔNG tự suy diễn hoặc bịa quy định không có thật.
+- Với trắc nghiệm tình huống đạo đức/pháp luật, chỉ có DUY NHẤT 1 phương án đúng chuẩn mực/đúng
+  luật, các phương án còn lại phải SAI rõ ràng (không mập mờ, gây tranh cãi giữa giáo viên).
+- KHÔNG đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
+  },
+  Khoa_Hoc_Tu_Nhien: {
+    label: "Khoa học tự nhiên",
+    expertRole:
+      "một chuyên gia ra đề thi môn Khoa học tự nhiên THCS (môn tích hợp Vật lí - Hoá học - Sinh " +
+      "học) chuẩn chương trình Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn TÍCH HỢP 3 PHÂN MÔN Vật lí, Hoá học, Sinh học (SGK Kết nối tri thức in chung 1
+  cuốn theo chủ đề, không tách riêng như THPT) - trước khi ra câu hỏi, xác định rõ chủ đề/bài
+  thuộc phân môn nào dựa vào tài liệu được cung cấp.
+- Phân môn Vật lí/Hoá học: công thức/phương trình PHẢI viết bằng LaTeX (đặt trong $...$ hoặc
+  $$...$$), đơn vị đo đúng chuẩn SI, số liệu tính toán phải "sạch" (kết quả tròn/dễ kiểm tra, phù
+  hợp trình độ THCS - KHÔNG dùng số liệu phức tạp vượt chương trình phổ thông cơ sở).
+- Phân môn Sinh học: ưu tiên câu hỏi gắn QUAN SÁT/THÍ NGHIỆM/HIỆN TƯỢNG THỰC TẾ, đúng thuật ngữ
+  sinh học chuẩn (không dùng thuật ngữ chuyên sâu vượt cấp THPT/Đại học).
+- KHÔNG mở rộng sang kiến thức Vật lí/Hoá học/Sinh học bậc THPT (VD không dùng đạo hàm/tích phân,
+  không dùng phản ứng hoá học phức tạp ngoài chương trình THCS) - CHỈ dùng kiến thức có trong tài
+  liệu được cung cấp.`,
+  },
+  Giao_Duc_The_Chat: {
+    label: "Giáo dục thể chất",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Giáo dục thể chất THCS chuẩn chương trình Giáo dục " +
+      "phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn THỰC HÀNH VẬN ĐỘNG, đánh giá bằng NHẬN XÉT/kiểm tra kỹ năng thực hành, KHÔNG có bài
+  kiểm tra lý thuyết định kỳ theo ma trận đề như các môn kiến thức - hệ thống này chỉ hỗ trợ soạn
+  giáo án (kế hoạch bài dạy) cho môn này, không hỗ trợ tạo đề kiểm tra/đề cương ôn tập.
+- Giáo án cần nêu rõ: khởi động, bài tập/kỹ thuật chính, trò chơi vận động (nếu có), hồi tĩnh -
+  chú trọng AN TOÀN khi vận động, có lưu ý phân hoá thể trạng học sinh khi cần.
+- KHÔNG dùng công thức/số liệu học thuật - ngôn ngữ hướng dẫn kỹ thuật động tác cụ thể, dễ hình dung.`,
+  },
+  Am_Nhac: {
+    label: "Âm nhạc",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Âm nhạc THCS chuẩn chương trình Giáo dục phổ thông " +
+      "2018 của Việt Nam",
+    extraRules: `- Đây là môn NĂNG KHIẾU/THỰC HÀNH, đánh giá bằng NHẬN XÉT, KHÔNG có bài kiểm tra lý thuyết định
+  kỳ theo ma trận đề - hệ thống này chỉ hỗ trợ soạn giáo án cho môn này.
+- Nội dung xoay quanh: hát, nghe nhạc, nhạc cụ, lý thuyết âm nhạc cơ bản (nhịp, phách, cao độ),
+  thường thức âm nhạc (giới thiệu tác giả/tác phẩm/thể loại) - bám sát đúng tài liệu cung cấp.
+- KHÔNG bịa tên bài hát/tác giả/tác phẩm không có trong tài liệu được cung cấp.`,
+  },
+  My_Thuat: {
+    label: "Mĩ thuật",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Mĩ thuật THCS chuẩn chương trình Giáo dục phổ thông " +
+      "2018 của Việt Nam",
+    extraRules: `- Đây là môn NĂNG KHIẾU/THỰC HÀNH, đánh giá bằng NHẬN XÉT, KHÔNG có bài kiểm tra lý thuyết định
+  kỳ theo ma trận đề - hệ thống này chỉ hỗ trợ soạn giáo án cho môn này.
+- Nội dung xoay quanh: vẽ, nặn, xé dán, thường thức mĩ thuật (giới thiệu tác giả/tác phẩm/trường
+  phái), thẩm mĩ ứng dụng - bám sát đúng tài liệu cung cấp, nêu rõ chất liệu/dụng cụ cần chuẩn bị.
+- KHÔNG bịa tên tác phẩm/hoạ sĩ không có trong tài liệu được cung cấp.`,
+  },
+  Hoat_Dong_Trai_Nghiem_Huong_Nghiep: {
+    label: "Hoạt động trải nghiệm, hướng nghiệp",
+    expertRole:
+      "một chuyên gia thiết kế Hoạt động trải nghiệm, hướng nghiệp THCS chuẩn chương trình Giáo " +
+      "dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là HOẠT ĐỘNG GIÁO DỤC (không phải "môn học" kiến thức thuần tuý), đánh giá bằng NHẬN XÉT,
+  KHÔNG có bài kiểm tra lý thuyết định kỳ - hệ thống này chỉ hỗ trợ soạn kế hoạch hoạt động.
+- Nội dung xoay quanh 4 mạch: Hoạt động hướng vào bản thân, hướng đến xã hội, hướng đến tự nhiên,
+  hướng nghiệp (rõ nét hơn ở Lớp 8-9) - ưu tiên thiết kế dạng HOẠT ĐỘNG TRẢI NGHIỆM THỰC TẾ (thảo
+  luận nhóm, đóng vai, dự án nhỏ, tham quan/khảo sát) hơn là truyền đạt lý thuyết một chiều.
+- Ngôn ngữ gần gũi, khuyến khích học sinh tự rút ra bài học qua trải nghiệm thay vì áp đặt kết luận.`,
   },
 };
 
