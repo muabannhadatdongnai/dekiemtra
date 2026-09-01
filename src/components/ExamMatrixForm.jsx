@@ -280,13 +280,18 @@ export default function ExamMatrixForm({ onGenerated }) {
   const classNameNumber = classNameNumberMatch ? Number(classNameNumberMatch[0]) : null;
   const classGradeMismatch = classNameNumber !== null && classNameNumber !== grade;
 
+  // Phiên 33 (THPT): placeholder "Tên trường" đổi theo cấp học đang chọn, tránh gợi ý sai
+  // "Trường THCS ..." khi giáo viên đang soạn đề cho Lớp 10-12.
+  const schoolNamePlaceholder =
+    grade >= 10 ? "Trường THPT ..." : grade >= 6 ? "Trường THCS ..." : "Trường Tiểu học ...";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* ============ THÔNG TIN CHUNG ============ */}
       <div className="space-y-3 border-b border-slate-100 pb-5">
         <p className="text-sm font-semibold text-slate-800">Thông tin chung</p>
         <Field label="Tên trường">
-          <input value={schoolName} onChange={(e) => setSchoolName(e.target.value)} className={inputClass} placeholder="Trường THCS ..." />
+          <input value={schoolName} onChange={(e) => setSchoolName(e.target.value)} className={inputClass} placeholder={schoolNamePlaceholder} />
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Tên lớp">
