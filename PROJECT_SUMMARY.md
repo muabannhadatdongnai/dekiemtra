@@ -5,16 +5,45 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
-## Phiên 32 — Soạn Giáo Án môn Tiếng Anh: gắn thẻ Audio + phiên âm IPA
-Theo yêu cầu giáo viên Tiếng Anh, thêm `buildEnglishLessonPlanGuidance()` trong
-`lessonPlanPromptTemplates.js`: (1) bắt buộc chèn `[AUDIO: Track_XX]` ở các bước "tienTrinh" có
-hoạt động Nghe (số thứ tự tăng dần riêng theo bài); (2) bắt buộc kèm phiên âm IPA trong ngoặc vuông
-khi hoạt động "Khám phá" giới thiệu từ vựng mới lần đầu (VD `dolphin /ˈdɒlfɪn/`). CHỈ áp dụng khi
-`subject === "Tieng_Anh"` và không phải Mầm non - **cố ý KHÔNG** thêm vào `subjectProfiles.js` (dùng
-chung với phần ra ĐỀ KIỂM TRA) vì 2 quy tắc này gắn với cấu trúc hoạt động/bước chỉ có ở giáo án.
-Test mới: `test/lessonPlanEnglishAudioIpa.test.js` (4 test, xác nhận có quy tắc ở Tiếng Anh, không
-rò rỉ sang môn khác/Mầm non). Baseline: 328/328 test pass (tăng từ ~289 do các phiên trước + 4 test
-mới).
+## Phiên 32 — Mở rộng THCS (Lớp 6-9) cho Soạn giáo án + Đề cương Ôn tập + Đề kiểm tra
+Tra cứu lại đúng Thông tư 32/2018/TT-BGDĐT (Mục 4, sửa đổi bởi Thông tư 13/2022/TT-BGDĐT) để lấy
+CHÍNH XÁC danh sách 10 môn bắt buộc + Hoạt động trải nghiệm-hướng nghiệp cấp THCS, và xác nhận
+Công văn 5512/BGDĐT-GDTrH (2020, vẫn hiệu lực năm học 2025-2026) là khung "Kế hoạch bài dạy" đúng
+cho THCS/THPT - kiến trúc `lessonPlanTemplates.js` HOÁ RA đã dự trù sẵn CV5512 từ trước (stub
+`comingSoon:true`), chỉ cần kích hoạt, không phải viết schema JSON mới (4 hoạt động Khởi động/Hình
+thành kiến thức mới/Luyện tập/Vận dụng dùng CHUNG giữa CV2345 và CV5512).
+
+**`config.js` (nguồn dữ liệu môn học DUY NHẤT):** thêm field `modules` (mảng module được phép:
+lessonPlan/outline/exam, mặc định cả 3) - giải quyết đúng 2 nhóm môn đặc biệt: (1) GDTC/Âm nhạc/Mĩ
+thuật/HĐTN-HN đánh giá bằng nhận xét → chỉ `["lessonPlan"]` (giữ nguyên tắc đã áp dụng cho Tiểu
+học, mở rộng cho THCS thay vì loại hẳn); (2) Ngữ văn THCS theo Công văn 3175/2022 (nhấn mạnh lại ở
+CV3935/2024) cần module đề kiểm tra RIÊNG (Đọc hiểu + NLXH + NLVH, ngữ liệu bắt buộc ngoài SGK) -
+tạm `["lessonPlan","outline"]`, chờ module chuyên biệt ở phiên sau. `getSubjectsForGrade(grade,
+moduleKey)` giờ lọc theo cả 2 trục (khối lớp + module) - Toán/Tiếng Anh/Lịch sử và Địa lí/Tin
+học/Công nghệ MỞ RỘNG xuyên suốt Lớp 4-9 hoặc không giới hạn (tái dùng entry cũ). Sửa luôn 1 lỗi
+dữ liệu cũ: "Lịch sử" đơn lẻ trước đây `minGrade:6` (sai - ở Lớp 6-9 vẫn dùng "Lịch sử và Địa lí"
+gộp, "Lịch sử" tách riêng chỉ có thật từ THPT) → sửa `minGrade:10`.
+
+**`subjectProfiles.js`:** thêm 7 profile mới (Ngữ văn, GDCD, KHTN, GDTC, Âm nhạc, Mĩ thuật, HĐTN-
+HN), mở rộng 3 profile cũ (Lịch sử và Địa lí, Tin học, Công nghệ) với ghi chú ĐỘ SÂU KIẾN THỨC
+khác nhau rõ rệt giữa Tiểu học và THCS (VD Tin học Tiểu học cấm lập trình dạng văn bản, THCS được
+phép Scratch nâng cao/Python cơ bản).
+
+**3 form (`LessonPlanForm.jsx`/`OutlineForm.jsx`/`ExamMatrixForm.jsx`):** truyền đúng `moduleKey`
+tương ứng vào `getSubjectsForGrade()`. `ExamMatrixForm.jsx`: checkbox "câu hỏi trực quan" (đặt
+tính/sơ đồ - đặc trưng Tiểu học) giờ TỰ ĐỘNG tắt + ẨN hẳn khi chọn Lớp 6 trở lên, không còn dựa vào
+giáo viên tự nhớ tắt.
+
+**`lessonPlanTemplates.js`:** `getCircularForGrade()` chọn CV5512 cho Lớp 6+; `getMinutesPerLesson()`
+sửa đúng 45 phút/tiết cho THCS/THPT (trước đây lỡ dùng chung 40 phút với Lớp 3-5 Tiểu học).
+
+**PHẠM VI CHƯA LÀM (đã chốt với Hoan, để phiên sau):** THPT (Lớp 10-12, cơ cấu "8 môn bắt buộc +
+chọn 4/9 môn lựa chọn" khác hẳn kiểu "học đủ mọi môn"); module Đề kiểm tra Ngữ văn THCS/THPT
+riêng (Đọc hiểu + NLXH + NLVH, ngữ liệu ngoài SGK theo CV3175).
+
+324/324 test PASS. Build production sạch. Đã kiểm chứng thủ công: dropdown Lớp 6/8 ra đúng 12 môn
+Soạn giáo án / 8 môn Đề cương / 7 môn Đề kiểm tra (đúng như thiết kế); prompt sinh ra đúng "Công
+văn 5512" + vai trò AI đúng môn cho cả Toán, Ngữ văn, Khoa học tự nhiên Lớp 8.
 
 ## Phiên 31 — Sửa 2 lỗi đề Tiếng Việt (đánh số A/B lặp, thiếu khoảng giấy viết tay) + dứt điểm test flaky
 **Lỗi 1 (đánh số):** 4 khối (Đọc thành tiếng/Đọc thầm/Chính tả/Tập làm văn) trước đây MỖI khối tự

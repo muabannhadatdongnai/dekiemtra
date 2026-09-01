@@ -5,8 +5,10 @@
 > bảng (đừng giữ lại "lịch sử đã xong" ở đây — chuyển 1 dòng tóm tắt sang `PROJECT_SUMMARY.md`).
 
 **Trạng thái tổng quát:** 7 tab đang hoạt động (Soạn Giáo án, Phiếu Bài Tập, Đề Tiếng Việt Tiểu
-học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, Hướng dẫn sử dụng). Toán Lớp 3-5 đã đủ
-catalog Phiếu Bài Tập theo SGK KNTT. Chi tiết đầy đủ từng module xem `README.md`.
+học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, Hướng dẫn sử dụng). Soạn Giáo án/Đề Cương
+Ôn Tập/Tạo Đề Kiểm Tra đã hỗ trợ Mầm non → Lớp 9 (Tiểu học + THCS, xem Phiên 32); THPT (Lớp 10-12)
+CHƯA làm. Toán Lớp 3-5 đã đủ catalog Phiếu Bài Tập theo SGK KNTT. Chi tiết đầy đủ từng module xem
+`README.md`.
 
 ---
 
@@ -25,6 +27,9 @@ catalog Phiếu Bài Tập theo SGK KNTT. Chi tiết đầy đủ từng module 
 | 9 | Chính tả: có nên thêm trường "đoạn trích nguyên văn" vào phụ lục Bài Tiếng Việt? | Hiện chỉ dùng mô tả ngắn để gợi nhớ, giáo viên vẫn tự gõ nguyên văn (đúng nguyên tắc chống bịa/vi phạm bản quyền). Nếu muốn tự động điền nguyên văn, cần Hoan tự thêm nội dung CHÍNH XÁC từ SGK thật vào JSON — không nên để AI tự sinh. |
 | 10 | Nhóm D còn lại (cải tiến hạ tầng nhỏ) | Cảnh báo lệch khối lớp trong `ExamMatrixForm.jsx`, style đậm nhất quán cho tiêu đề chính mọi tab, tách hàm style PDF thân thiện phụ huynh riêng theo từng tính năng. Chưa xác nhận trạng thái mới nhất — kiểm tra lại code thật trước khi báo "đã xong" hay "chưa làm". |
 | 11 | Giữ hay xoá so sánh nhiều học kỳ trong lịch sử học bạ (Nhận Xét Học Bạ) | Giữ = cần thời gian lưu Upstash dài hơn (tốn quota free tier); xoá sau 1 giờ = đơn giản, ít rủi ro quota nhưng mất khả năng so sánh học kỳ trước. |
+| 12 | THPT (Lớp 10-12) - mở rộng tiếp sau THCS (Phiên 32) | Hoan đã chốt làm THCS trước, THPT để phiên sau. Khác biệt LỚN cần thiết kế riêng: cơ cấu "8 môn bắt buộc + chọn 4 trong 9 môn lựa chọn theo định hướng nghề nghiệp" (Vật lí/Hoá học/Sinh học/Địa lí/GDKT&PL - thay "GDCD"/Công nghệ/Tin học/Âm nhạc/Mĩ thuật), khác hẳn kiểu "học đủ mọi môn" của Tiểu học/THCS - dropdown "Môn học" cần thiết kế lại, không thể copy nguyên khuôn THCS. |
+| 13 | Module Đề kiểm tra Ngữ văn THCS/THPT riêng | Ngữ văn hiện CHỈ có ở Soạn giáo án/Đề cương Ôn tập (xem `modules` trong `config.js`), CHƯA có "Đề kiểm tra" vì cấu trúc khác hẳn (Đọc hiểu + Viết đoạn Nghị luận xã hội + Viết bài Nghị luận văn học) và theo Công văn 3175/BGDĐT-GDTrH (2022, nhấn mạnh lại ở CV3935/2024) BẮT BUỘC ngữ liệu Đọc hiểu phải MỚI, không được lấy lại từ SGK - cần thiết kế module riêng kiểu "khối độc lập" giống Đề Tiếng Việt Tiểu học nhưng nội dung khác hẳn, không gộp vào ma trận Tạo Đề Kiểm Tra chung. |
+| 14 | Xác nhận lại "Nghệ thuật" (Âm nhạc + Mĩ thuật) THCS đã tách đúng 2 đầu sách theo bộ Kết nối tri thức | Đã tách theo ĐÚNG tinh thần "Tin học và Công nghệ" ở Tiểu học (tách 2 môn vì SGK in 2 cuốn riêng dù thông tư gọi gộp) - suy luận hợp lý nhưng CHƯA xác nhận trực tiếp với bộ sách thật, Hoan kiểm tra lại nếu có SGK thật trong tay. |
 
 ---
 
