@@ -6,9 +6,25 @@
  * nhau qua file này.
  *
  * 2 "họ" logic (không phải 12 khối riêng):
- *  - Họ A - Mầm non → Lớp 5: có thể có câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...), số liệu
- *    tự sinh/kiểm soát theo phạm vi phù hợp lứa tuổi từng khối.
+ *  - Họ A - Mầm non → Lớp 5: có thể có câu hỏi trực quan (đặt tính, sơ đồ, hình đếm...).
  *  - Họ B - Lớp 6 → Lớp 12: câu hỏi text thuần, không có visual, độ khó theo chương trình THCS/THPT.
+ *
+ * ⚠️ SỬA LỖI PHÁT HIỆN Ở PHIÊN 33 (mở rộng THPT): `buildBaseRules()` ở promptTemplates.js ghép
+ * `gradeProfile.guidance` KHÔNG ĐIỀU KIỆN vào prompt của MỌI môn học, không riêng Toán. Bản CŨ của
+ * `guidance` lại viết theo CHỦ ĐỀ TOÁN cụ thể ("có thể dùng đạo hàm", "tập hợp, lượng giác"...) -
+ * vô hại khi hệ thống mới chỉ có ít môn, nhưng sẽ SAI HẲN khi áp cho Vật lí/Hoá học/Sinh học/Địa
+ * lí/Tiếng Anh/Tiếng Việt/Đạo đức... (VD prompt Sinh học Lớp 11 sẽ bị nhét thêm dòng "có thể dùng
+ * đạo hàm cơ bản" vô nghĩa). ĐÃ SỬA: `guidance` ở đây giờ CHỈ còn phần TRUNG LẬP theo môn (mức độ
+ * nhận thức/độ phức tạp bối cảnh chung phù hợp lứa tuổi khối đó), KHÔNG nhắc chủ đề học thuật cụ
+ * thể của bất kỳ môn nào. Phần "độ sâu kiến thức theo khối" ĐẶC THÙ từng môn (số liệu Toán, công
+ * thức Vật lí, chủ đề Hoá học...) chuyển vào ĐÚNG subjectProfiles.js của môn đó (xem vd Toan/
+ * Vat_Li/Hoa_Hoc/Sinh_Hoc/Lich_Su_Dia_Li/Cong_Nghe/Tin_Hoc trong subjectProfiles.js) - đúng
+ * nguyên tắc "môn nào lo môn nấy", tránh lặp lại lỗi này khi thêm môn mới sau này.
+ *
+ * `numberRange`/`visualTypes`: 2 field THAM KHẢO/MÔ TẢ, hiện KHÔNG được code nào đọc trực tiếp
+ * (chỉ `family`/`allowVisual`/`guidance` được dùng thật - xem promptTemplates.js/examOrchestrator.js)
+ * - giữ lại làm tài liệu tham chiếu nhanh khi cần bật lại visual cho khối nào đó, không xoá để
+ * tránh mất ngữ cảnh, nhưng đừng nhầm tưởng đây là cấu hình đang có hiệu lực.
  *
  * ⚠️ QUAN TRỌNG: file này CHỈ áp dụng cho luồng "Đề kiểm tra" (ExamMatrixForm, grade = số 1-12,
  * xem src/data/config.js -> GRADES). KHÔNG liên quan đến luồng "Phiếu bài tập" (Mầm non/Lớp 1/Lớp 2)
@@ -50,8 +66,9 @@ export const GRADE_PROFILES = {
     // KHÔNG chặn ở tầng UI/API (giáo viên vẫn có thể yêu cầu nếu thực sự cần).
     difficultyLabels: ["Nhận biết", "Thông hiểu"],
     guidance:
-      "Số liệu trong phạm vi 0-20. Ưu tiên phép cộng/trừ không nhớ, đếm số lượng, so sánh số. " +
-      "Câu hỏi PHẢI cực kỳ đơn giản, 1 bước tính duy nhất, không có bối cảnh nhiều lớp thông tin.",
+      "Khối đầu cấp Tiểu học. Câu hỏi PHẢI cực kỳ đơn giản, 1 yêu cầu/1 bước duy nhất, không có " +
+      "bối cảnh nhiều lớp thông tin, câu chữ ngắn gọn, từ ngữ quen thuộc gần gũi với học sinh 6 " +
+      "tuổi. Xem thêm quy tắc riêng theo môn ở trên để biết phạm vi kiến thức/số liệu cụ thể.",
   },
   2: {
     family: "A",
@@ -61,7 +78,9 @@ export const GRADE_PROFILES = {
     visualTypes: ["verticalArithmetic", "numberTriangle", "barModel", "visualCounting"],
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng"],
     guidance:
-      "Số liệu trong phạm vi 0-100. Có thể có phép cộng/trừ có nhớ, bài toán có lời văn 1 bước tính.",
+      "Đầu cấp Tiểu học. Câu hỏi vẫn đơn giản, có thể có 1 bối cảnh ngắn gần gũi đời sống học " +
+      "sinh, câu chữ ngắn gọn, dễ hiểu. Xem thêm quy tắc riêng theo môn ở trên để biết phạm vi " +
+      "kiến thức/số liệu cụ thể.",
   },
   3: {
     family: "A",
@@ -71,8 +90,8 @@ export const GRADE_PROFILES = {
     visualTypes: ["verticalArithmetic", "numberTriangle", "barModel"],
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng"],
     guidance:
-      "Số liệu trong phạm vi 0-1000. Bắt đầu có phép nhân/chia đơn giản (bảng cửu chương), " +
-      "bài toán có lời văn 1-2 bước tính.",
+      "Giữa cấp Tiểu học. Bối cảnh câu hỏi có thể có 1-2 bước suy luận/tính toán liên tiếp. Xem " +
+      "thêm quy tắc riêng theo môn ở trên để biết phạm vi kiến thức/số liệu cụ thể.",
   },
   4: {
     family: "A",
@@ -82,8 +101,9 @@ export const GRADE_PROFILES = {
     visualTypes: ["barModel", "numberTriangle"],
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
     guidance:
-      "Có thể dùng số có nhiều chữ số, phân số đơn giản (cùng mẫu số), phép tính 2-3 bước. " +
-      "Kết quả cuối cùng vẫn phải là số tròn, dễ kiểm tra.",
+      "Cuối cấp Tiểu học (giai đoạn đầu). Bối cảnh câu hỏi phức tạp hơn, có thể có nhiều bước suy " +
+      "luận/tính toán liên tiếp. Xem thêm quy tắc riêng theo môn ở trên để biết phạm vi kiến " +
+      "thức/số liệu cụ thể.",
   },
   5: {
     family: "A",
@@ -93,57 +113,77 @@ export const GRADE_PROFILES = {
     visualTypes: ["barModel"],
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
     guidance:
-      "Có thể dùng phân số khác mẫu số, số thập phân, tỉ số phần trăm, bài toán có lời văn nhiều " +
-      "bước tính. Vẫn tránh số vô tỉ hoặc thập phân vô hạn tuần hoàn.",
+      "Cuối cấp Tiểu học. Bối cảnh câu hỏi có thể nhiều bước, đòi hỏi kết hợp nhiều dữ kiện - đây " +
+      "là khối cuối cùng trước khi chuyển cấp, độ khó nên tiệm cận (nhưng KHÔNG vượt) yêu cầu vào " +
+      "THCS. Xem thêm quy tắc riêng theo môn ở trên để biết phạm vi kiến thức/số liệu cụ thể.",
   },
   6: {
     family: "B",
     label: "Lớp 6",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THCS mới bắt đầu - tránh dùng ký hiệu/khái niệm chưa học ở Lớp 6.",
+    guidance:
+      "Khối đầu cấp THCS - chương trình mới bắt đầu, tránh dùng ký hiệu/khái niệm chưa học ở Lớp " +
+      "6, KHÔNG giả định học sinh đã có nền tảng kiến thức THCS từ trước. Xem thêm quy tắc riêng " +
+      "theo môn ở trên để biết đúng phạm vi kiến thức của khối này.",
   },
   7: {
     family: "B",
     label: "Lớp 7",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THCS - có thể dùng số hữu tỉ, biểu thức đại số đơn giản.",
+    guidance:
+      "Giữa cấp THCS. Xem thêm quy tắc riêng theo môn ở trên để biết đúng phạm vi kiến thức của " +
+      "khối này.",
   },
   8: {
     family: "B",
     label: "Lớp 8",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THCS - có thể dùng hằng đẳng thức, phương trình bậc nhất 1 ẩn.",
+    guidance:
+      "Giữa cấp THCS. Xem thêm quy tắc riêng theo môn ở trên để biết đúng phạm vi kiến thức của " +
+      "khối này.",
   },
   9: {
     family: "B",
     label: "Lớp 9",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THCS (năm cuối) - có thể dùng căn thức, hệ phương trình, hàm số bậc nhất/bậc hai đơn giản.",
+    guidance:
+      "Khối cuối cấp THCS - độ khó nên tiệm cận (nhưng KHÔNG vượt) yêu cầu vào THPT. Xem thêm quy " +
+      "tắc riêng theo môn ở trên để biết đúng phạm vi kiến thức của khối này.",
   },
   10: {
     family: "B",
     label: "Lớp 10",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THPT - có thể dùng tập hợp, hàm số, lượng giác cơ bản, vector.",
+    guidance:
+      "Khối đầu cấp THPT (giai đoạn giáo dục định hướng nghề nghiệp theo Chương trình GDPT 2018) " +
+      "- chương trình các môn lựa chọn (Vật lí/Hoá học/Sinh học/Địa lí/GDKT&PL/Công nghệ/Tin " +
+      "học/Âm nhạc/Mĩ thuật) mới tách riêng từ khối này, tránh giả định học sinh đã có nền tảng " +
+      "kiến thức THPT từ trước. Xem thêm quy tắc riêng theo môn ở trên để biết đúng phạm vi kiến " +
+      "thức của khối này.",
   },
   11: {
     family: "B",
     label: "Lớp 11",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THPT - có thể dùng dãy số, giới hạn, đạo hàm cơ bản, xác suất.",
+    guidance:
+      "Giữa cấp THPT. Xem thêm quy tắc riêng theo môn ở trên để biết đúng phạm vi kiến thức của " +
+      "khối này.",
   },
   12: {
     family: "B",
     label: "Lớp 12",
     allowVisual: false,
     difficultyLabels: ["Nhận biết", "Thông hiểu", "Vận dụng", "Vận dụng cao"],
-    guidance: "Chương trình THPT (năm cuối, ôn thi TN THPT) - có thể dùng nguyên hàm/tích phân, số phức, không gian Oxyz.",
+    guidance:
+      "Khối cuối cấp THPT, học sinh chuẩn bị thi tốt nghiệp THPT - có thể tăng độ phân hoá ở mức " +
+      "\"Vận dụng cao\" (câu hỏi phân loại học sinh giỏi) rõ nét hơn các khối dưới. Xem thêm quy " +
+      "tắc riêng theo môn ở trên để biết đúng phạm vi kiến thức của khối này.",
   },
 };
 

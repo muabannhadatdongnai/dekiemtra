@@ -4,11 +4,11 @@
  * examBlueprint.js/gradeProfiles.js (vốn chỉ phục vụ luồng Đề kiểm tra) để 2 tính năng có thể
  * phát triển/độ vỡ độc lập, đúng yêu cầu "tách module cho tiện chỉnh sửa/mở rộng".
  *
- * ⚠️ PHẠM VI HIỆN TẠI (đã chốt với người dùng, cập nhật Giai đoạn 32): Mầm non -> Lớp 9 (Tiểu học
- * + THCS). Lớp 10-12 (THPT) để SẴN CHỖ CẮM (GRADES ở config.js vẫn 1-12, nhưng SUBJECTS/
- * LESSON_PLAN_GRADES CHƯA khai báo tới Lớp 10-12) - khi làm tiếp chỉ cần bổ sung entry môn học
- * (config.js/subjectProfiles.js) + entry khối lớp (LESSON_PLAN_GRADES bên dưới), KHÔNG đổi kiến
- * trúc (CV5512 đã áp dụng chung cho cả THCS lẫn THPT, xem LESSON_PLAN_CIRCULARS.CV5512).
+ * ⚠️ PHẠM VI HIỆN TẠI (cập nhật Phiên 33): Mầm non -> Lớp 12 (Tiểu học + THCS + THPT) - ĐẦY ĐỦ.
+ * THPT (Lớp 10-12) không cần đổi kiến trúc gì so với THCS: `getCircularForGrade()`/
+ * `getMinutesPerLesson()` bên dưới vốn đã viết theo điều kiện "gradeNum >= 6" (không phải liệt kê
+ * cứng từng khối) nên tự động đúng cho Lớp 10-12 khi chỉ cần thêm entry vào LESSON_PLAN_GRADES
+ * (CV5512 vốn ghi rõ "cấp THCS/THPT" ngay từ đầu, xem LESSON_PLAN_CIRCULARS.CV5512).
  *
  * ⚠️ BỘ SÁCH: theo quyết định của người dùng, hệ thống hiện CHỈ dùng 1 bộ sách duy nhất (kho
  * Markdown SGK không phân biệt bộ sách) - trường "Bộ sách" ở UI (nếu có) chỉ mang tính GHI CHÚ
@@ -31,6 +31,10 @@ export const LESSON_PLAN_GRADES = [
   { value: 7, label: "Lớp 7", isPreschool: false },
   { value: 8, label: "Lớp 8", isPreschool: false },
   { value: 9, label: "Lớp 9", isPreschool: false },
+  // ================== THPT (Lớp 10-12) - Phiên 33 ==================
+  { value: 10, label: "Lớp 10", isPreschool: false },
+  { value: 11, label: "Lớp 11", isPreschool: false },
+  { value: 12, label: "Lớp 12", isPreschool: false },
 ];
 
 export function getLessonPlanGradeMeta(grade) {
@@ -43,15 +47,14 @@ export function isPreschoolGrade(grade) {
 
 /** 2 công văn mẫu KHBD hiện hành - chọn tự động theo cấp học, giáo viên có thể ghi đè ở UI sau này.
  *
- * ================== GIAI ĐOẠN 32: kích hoạt CV5512 cho THCS (Lớp 6-9) ==================
- * TRƯỚC ĐÂY `comingSoon: true` (chưa implement). Giờ `getCircularForGrade()` bên dưới đã chọn
- * CV5512 cho Lớp 6 trở lên - schema JSON/cấu trúc 4 hoạt động (Khởi động - Hình thành kiến thức
- * mới - Luyện tập - Vận dụng) DÙNG CHUNG với CV2345 (Mục III của cả 2 công văn cùng chung tinh
- * thần 4 hoạt động này, KHÔNG cần schema JSON riêng) - chỉ khác ở phần TÊN CÔNG VĂN hiển thị
- * trong prompt/văn bản xuất ra (đã tự động lấy `circular.label`, xem lessonPlanPromptTemplates.js)
- * và số phút/tiết (xem getMinutesPerLesson() - THCS/THPT là 45 phút/tiết, khác 35-40' Tiểu học).
- * THPT (Lớp 10-12) CHƯA kích hoạt đợt này (comingSoon vẫn áp dụng ngầm vì getCircularForGrade chỉ
- * được gọi khi có Lớp hợp lệ trong LESSON_PLAN_GRADES, và Lớp 10-12 CHƯA có trong danh sách đó).
+ * `getCircularForGrade()` bên dưới chọn CV5512 cho MỌI khối Lớp 6 trở lên (gradeNum >= 6, không
+ * liệt kê cứng từng khối) - nên đã tự đúng luôn cho THPT (Lớp 10-12, Phiên 33) khi thêm entry vào
+ * LESSON_PLAN_GRADES ở trên, KHÔNG cần sửa hàm này. Schema JSON/cấu trúc 4 hoạt động (Khởi động -
+ * Hình thành kiến thức mới - Luyện tập - Vận dụng) DÙNG CHUNG cho cả CV2345 lẫn CV5512 (Mục III
+ * của cả 2 công văn cùng chung tinh thần 4 hoạt động này, KHÔNG cần schema JSON riêng theo cấp) -
+ * chỉ khác ở TÊN CÔNG VĂN hiển thị trong prompt/văn bản xuất ra (tự động lấy `circular.label`, xem
+ * lessonPlanPromptTemplates.js) và số phút/tiết (xem getMinutesPerLesson() - THCS/THPT đều 45
+ * phút/tiết, khác 35-40' Tiểu học).
  */
 export const LESSON_PLAN_CIRCULARS = {
   CV2345: {

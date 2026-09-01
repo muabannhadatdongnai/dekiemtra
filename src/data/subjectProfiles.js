@@ -15,11 +15,40 @@ export const SUBJECT_PROFILES = {
   Toan: {
     label: "Toán",
     expertRole: "một chuyên gia ra đề thi môn Toán chuẩn Bộ Giáo dục Việt Nam",
+    // ⚠️ Phiên 33: phần "ĐỘ SÂU KIẾN THỨC THEO KHỐI" theo chủ đề Toán cụ thể (tập hợp, đạo hàm,
+    // số phức...) CHUYỂN VÀO ĐÂY từ gradeProfiles.js - trước đây field `guidance` bên đó tự ý
+    // nhét chủ đề Toán vào prompt của MỌI môn học (kể cả Tiếng Việt/Tiếng Anh/Đạo đức Tiểu học,
+    // và sắp tới là Vật lí/Hoá học/Sinh học/Địa lí... THPT) vì `buildBaseRules()` ở
+    // promptTemplates.js ghép `gradeProfile.guidance` KHÔNG ĐIỀU KIỆN vào mọi prompt bất kể môn
+    // gì. Sửa tại gốc: gradeProfiles.js giờ chỉ giữ phần trung lập theo khối (gợi ý mức độ nhận
+    // thức chung), còn chủ đề Toán cụ thể theo từng khối đặt Ở ĐÂY - đúng nguyên tắc "môn nào lo
+    // môn nấy" đã áp dụng cho Lich_Su_Dia_Li/Cong_Nghe/Tin_Hoc/Vat_Li/Hoa_Hoc/Sinh_Hoc.
     extraRules: `- Công thức Toán học phải viết bằng LaTeX, đặt trong dấu $...$ (inline) hoặc $$...$$ (block).
 - SỐ LIỆU PHẢI "ĐẸP" VÀ PHÙ HỢP LỨA TUỔI: với Lớp 1-5, ưu tiên số nguyên hoặc phân số/thập phân
   hữu hạn, kết quả cuối cùng phải là số tròn, dễ kiểm tra (tránh số vô tỉ, thập phân vô hạn,
   phân số quá phức tạp). Với Lớp 6 trở lên có thể dùng căn thức/số vô tỉ nếu phù hợp chương trình,
-  nhưng vẫn phải đảm bảo có lời giải "sạch", không sai số làm tròn khó chịu.`,
+  nhưng vẫn phải đảm bảo có lời giải "sạch", không sai số làm tròn khó chịu.
+- ⚠️ ĐỘ SÂU KIẾN THỨC/PHẠM VI SỐ LIỆU THEO KHỐI (bám sát đúng chương trình từng lớp, KHÔNG dùng
+  chủ đề/công thức của khối khác nếu tài liệu cung cấp không đề cập tới):
+  + Lớp 1: số liệu 0-20, ưu tiên cộng/trừ không nhớ, đếm số lượng, so sánh số. Câu hỏi cực đơn
+    giản, 1 bước tính duy nhất, không có bối cảnh nhiều lớp thông tin.
+  + Lớp 2: số liệu 0-100, có thể có cộng/trừ có nhớ, bài toán có lời văn 1 bước tính.
+  + Lớp 3: số liệu 0-1000, bắt đầu có nhân/chia đơn giản (bảng cửu chương), bài toán có lời văn
+    1-2 bước tính.
+  + Lớp 4: số có nhiều chữ số (tới hàng trăm nghìn), phân số đơn giản (cùng mẫu số), phép tính
+    2-3 bước, kết quả cuối cùng vẫn phải là số tròn, dễ kiểm tra.
+  + Lớp 5: phân số khác mẫu số, số thập phân, tỉ số phần trăm, bài toán có lời văn nhiều bước
+    tính, vẫn tránh số vô tỉ hoặc thập phân vô hạn tuần hoàn.
+  + Lớp 6-9 (THCS, không dùng visual, câu hỏi text thuần): Lớp 6 mới bắt đầu chương trình THCS,
+    tránh ký hiệu/khái niệm chưa học. Lớp 7 có số hữu tỉ, biểu thức đại số đơn giản. Lớp 8 có hằng
+    đẳng thức, phương trình bậc nhất 1 ẩn. Lớp 9 (cuối cấp) có căn thức, hệ phương trình, hàm số
+    bậc nhất/bậc hai đơn giản.
+  + Lớp 10-12 (THPT, chương trình định hướng nghề nghiệp): Lớp 10 có tập hợp, mệnh đề, hàm số bậc
+    hai, lượng giác cơ bản (góc-cung lượng giác), vector, thống kê-xác suất cơ bản. Lớp 11 có dãy
+    số-cấp số, giới hạn, đạo hàm cơ bản, hàm số lượng giác, xác suất có điều kiện, quan hệ vuông
+    góc trong không gian. Lớp 12 (ôn thi tốt nghiệp THPT, có thể tăng độ phân hoá Vận dụng cao) có
+    nguyên hàm-tích phân, ứng dụng đạo hàm (khảo sát hàm số), số phức, phương pháp toạ độ Oxyz,
+    thống kê-xác suất nâng cao.`,
   },
   Tieng_Viet: {
     label: "Tiếng Việt",
@@ -41,11 +70,20 @@ export const SUBJECT_PROFILES = {
   },
   Lich_Su: {
     label: "Lịch sử",
-    expertRole: "một chuyên gia ra đề thi môn Lịch sử chuẩn Bộ Giáo dục Việt Nam",
-    extraRules: `- Ưu tiên câu hỏi có mốc thời gian, sự kiện, nhân vật, địa danh lịch sử CỤ THỂ, chính xác theo
+    expertRole:
+      "một chuyên gia ra đề thi môn Lịch sử THPT chuẩn Bộ Giáo dục Việt Nam (môn RIÊNG từ Lớp 10, " +
+      "tách khỏi \"Lịch sử và Địa lí\" gộp ở Tiểu học/THCS)",
+    extraRules: `- ⚠️ Theo Thông tư 13/2022/TT-BGDĐT (sửa đổi Thông tư 32/2018), Lịch sử là môn BẮT BUỘC với mọi
+  học sinh THPT (không phải môn lựa chọn) - phần cốt lõi 52 tiết/năm dạy chung cho tất cả, học
+  sinh chọn định hướng Khoa học xã hội có thêm cụm chuyên đề học tập lựa chọn riêng (hệ thống này
+  CHƯA hỗ trợ nội dung chuyên đề, chỉ hỗ trợ phần cốt lõi bắt buộc).
+- Ưu tiên câu hỏi có mốc thời gian, sự kiện, nhân vật, địa danh lịch sử CỤ THỂ, chính xác theo
   đúng tài liệu được cung cấp - KHÔNG bịa thêm chi tiết lịch sử không có trong nguồn.
 - Với câu hỏi trắc nghiệm, các phương án nhiễu (sai) phải là mốc thời gian/sự kiện CÓ THẬT nhưng
   không liên quan trực tiếp đến câu hỏi - không bịa sự kiện giả.
+- ⚠️ Độ khó THPT cao hơn hẳn "Lịch sử và Địa lí" Tiểu học/THCS: ưu tiên câu hỏi PHÂN TÍCH/ĐÁNH GIÁ/
+  SO SÁNH (nguyên nhân-kết quả nhiều tầng, so sánh giữa các giai đoạn/sự kiện/xu hướng lịch sử,
+  nhận xét vai trò/ý nghĩa lịch sử), không dừng ở mức ghi nhớ sự kiện đơn thuần như Tiểu học/THCS.
 - Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
   },
   // ⚠️ Đạo đức và Khoa học chỉ dạy ở Tiểu học (xem giới hạn minGrade/maxGrade trong config.js) -
@@ -126,42 +164,50 @@ export const SUBJECT_PROFILES = {
     label: "Tin học",
     expertRole:
       "một chuyên gia biên soạn nội dung môn Tin học chuẩn chương trình Giáo dục phổ thông 2018 " +
-      "của Việt Nam (môn dạy xuyên suốt từ Lớp 3 Tiểu học tới hết Lớp 9 THCS)",
+      "của Việt Nam (môn dạy xuyên suốt từ Lớp 3 Tiểu học tới hết Lớp 12 THPT)",
     extraRules: `- Nội dung xoay quanh: máy tính và thiết bị số, thông tin và xử lý thông tin, sử dụng phần mềm
-  (soạn thảo, trình chiếu, bảng tính), an toàn khi dùng máy tính/Internet, tư duy lập trình - CHỈ
+  (soạn thảo, trình chiếu, bảng tính), an toàn khi dùng máy tính/Internet, tư duy lập trình, và ở
+  THPT có thêm mạng máy tính/Internet nâng cao, cơ sở dữ liệu, đạo đức-pháp luật-văn hoá số - CHỈ
   theo đúng nội dung có trong tài liệu được cung cấp, KHÔNG tự thêm khái niệm vượt quá tài liệu.
 - Ưu tiên câu hỏi gắn với thao tác/tình huống sử dụng máy tính thực tế hơn là hỏi lý thuyết suông.
-- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI (khác biệt LỚN giữa Tiểu học và THCS): Lớp 3-5 (Tiểu học) CHỈ dùng
-  lập trình trực quan kiểu kéo-thả khối lệnh (Scratch dạng khối, không gõ mã), KHÔNG yêu cầu viết
-  mã lệnh/cú pháp lập trình văn bản. Lớp 6-9 (THCS) được phép có nội dung thuật toán cơ bản, cấu
-  trúc dữ liệu đơn giản, và bắt đầu làm quen lập trình dạng VĂN BẢN (Scratch nâng cao/Python cơ
-  bản) tuỳ đúng nội dung tài liệu cung cấp - KHÔNG áp mức độ Tiểu học cho câu hỏi Lớp 6-9.`,
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI (khác biệt LỚN qua 3 cấp): Lớp 3-5 (Tiểu học) CHỈ dùng lập trình
+  trực quan kiểu kéo-thả khối lệnh (Scratch dạng khối, không gõ mã), KHÔNG yêu cầu viết mã lệnh/cú
+  pháp lập trình văn bản. Lớp 6-9 (THCS) được phép có nội dung thuật toán cơ bản, cấu trúc dữ liệu
+  đơn giản, và bắt đầu làm quen lập trình dạng VĂN BẢN (Scratch nâng cao/Python cơ bản). Lớp 10-12
+  (THPT) chương trình chia 2 định hướng "Tin học ứng dụng" (kỹ năng dùng phần mềm/dữ liệu nâng cao,
+  ít code) và "Khoa học máy tính" (thuật toán/cấu trúc dữ liệu/lập trình Python sâu hơn, có thể có
+  bài tập viết đoạn mã ngắn) - xác định đúng định hướng đang dạy dựa vào tài liệu cung cấp trước
+  khi ra câu hỏi, KHÔNG áp mức độ THCS cho câu hỏi THPT và ngược lại.`,
   },
   Cong_Nghe: {
     label: "Công nghệ",
     expertRole:
       "một chuyên gia biên soạn nội dung môn Công nghệ chuẩn chương trình Giáo dục phổ thông 2018 " +
-      "của Việt Nam (môn dạy xuyên suốt từ Lớp 3 Tiểu học tới hết Lớp 9 THCS)",
+      "của Việt Nam (môn dạy xuyên suốt từ Lớp 3 Tiểu học tới hết Lớp 12 THPT)",
     extraRules: `- Nội dung xoay quanh: công nghệ trong đời sống, thủ công kỹ thuật, an toàn khi sử dụng dụng
-  cụ/thiết bị, trồng trọt/chăn nuôi, và ở THCS có thêm công nghệ trong nông-lâm-ngư nghiệp, thiết
-  kế kỹ thuật cơ bản, định hướng nghề nghiệp - CHỈ theo đúng nội dung có trong tài liệu cung cấp.
+  cụ/thiết bị, trồng trọt/chăn nuôi, và ở THCS/THPT có thêm công nghệ trong nông-lâm-ngư nghiệp,
+  thiết kế kỹ thuật, định hướng nghề nghiệp - CHỈ theo đúng nội dung có trong tài liệu cung cấp.
 - Ưu tiên câu hỏi về QUY TRÌNH CÁC BƯỚC, công dụng của đồ dùng/dụng cụ, hoặc an toàn khi sử dụng -
   hơn là hỏi lý thuyết trừu tượng.
 - ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI: Lớp 3-5 (Tiểu học) dừng ở mức lắp ráp mô hình đơn giản/đồ thủ
   công/trồng trọt cơ bản, KHÔNG dùng công thức/số liệu kỹ thuật. Lớp 6-9 (THCS) được phép có bản
   vẽ kỹ thuật cơ bản, quy trình công nghệ nhiều bước phức tạp hơn, và nội dung định hướng nghề
-  nghiệp (đặc biệt rõ ở Lớp 8-9) - KHÔNG áp mức độ đơn giản của Tiểu học cho câu hỏi Lớp 6-9.`,
+  nghiệp (đặc biệt rõ ở Lớp 8-9). Lớp 10-12 (THPT) chương trình tách 2 định hướng "Công nghệ công
+  nghiệp" (cơ khí, điện-điện tử, tiêu chuẩn kỹ thuật, bản vẽ kỹ thuật đầy đủ) và "Công nghệ nông
+  nghiệp" (trồng trọt/chăn nuôi/thuỷ sản/lâm nghiệp quy mô lớn, quy trình công nghệ sản xuất) - xác
+  định đúng định hướng đang dạy dựa vào tài liệu cung cấp, KHÔNG áp mức độ THCS cho câu hỏi THPT.`,
   },
 
   // ================== THCS (Lớp 6-9) - Giai đoạn 32 ==================
   Ngu_Van: {
     label: "Ngữ văn",
-    expertRole: "một chuyên gia ra đề kiểm tra/biên soạn nội dung môn Ngữ văn THCS chuẩn chương trình " +
-      "Giáo dục phổ thông 2018 của Việt Nam",
+    expertRole: "một chuyên gia ra đề kiểm tra/biên soạn nội dung môn Ngữ văn THCS/THPT chuẩn chương " +
+      "trình Giáo dục phổ thông 2018 của Việt Nam",
     extraRules: `- ⚠️ THEO CÔNG VĂN 3175/BGDĐT-GDTrH (2022, được nhấn mạnh lại ở Công văn 3935/2024): với đề kiểm
   tra/ngữ liệu Đọc hiểu, TUYỆT ĐỐI KHÔNG dùng lại nguyên văn văn bản/đoạn trích ĐÃ CÓ trong SGK -
   phải là ngữ liệu MỚI (có thể cùng tác giả/chủ đề/thể loại nhưng KHÔNG PHẢI đoạn học sinh đã học),
-  để đánh giá đúng năng lực đọc hiểu thay vì học thuộc lòng. Đề cương ôn tập được dùng lại ngữ liệu
+  để đánh giá đúng năng lực đọc hiểu thay vì học thuộc lòng. Áp dụng CHUNG cho cả THCS lẫn THPT
+  (công văn nói "ở trường phổ thông", không tách riêng cấp). Đề cương ôn tập được dùng lại ngữ liệu
   SGK vì mục đích ôn tập/hệ thống hoá kiến thức đã học, KHÔNG áp dụng hạn chế này.
 - Với dạng bài Tập làm văn/Viết đoạn: phân biệt rõ 3 KIỂU BÀI chính theo chương trình - Nghị luận
   xã hội (bàn về 1 tư tưởng đạo lý/hiện tượng đời sống), Nghị luận văn học (phân tích/cảm nhận tác
@@ -170,6 +216,11 @@ export const SUBJECT_PROFILES = {
 - Với câu hỏi từ vựng/ngữ pháp/Tiếng Việt: bám sát đúng quy tắc chính tả/ngữ pháp tiếng Việt hiện
   hành và đúng phạm vi kiến thức Tiếng Việt của khối lớp (VD biện pháp tu từ, các loại câu, thành
   phần câu - độ phức tạp tăng dần Lớp 6 -> Lớp 9).
+- ⚠️ RIÊNG THPT (Lớp 10-12): Nghị luận văn học nâng cao hơn hẳn THCS (phân tích đặc trưng thể
+  loại - truyện thơ, kí, kịch...; so sánh 2 tác phẩm/đoạn trích; đánh giá phong cách tác giả). Nghị
+  luận xã hội có thể yêu cầu bàn về vấn đề tư tưởng-đạo lý PHỨC TẠP hơn hoặc hiện tượng đời sống
+  gắn bối cảnh xã hội rộng hơn (không còn dạng bài tự sự/miêu tả/biểu cảm thuần tuý như đầu THCS).
+  Lớp 12 ôn thi tốt nghiệp THPT nên có thể tăng độ phân hoá (câu hỏi Vận dụng cao rõ nét hơn).
 - Tránh dùng từ ngữ địa phương/phương ngữ gây khó hiểu, trừ khi bài học yêu cầu.`,
   },
   Giao_Duc_Cong_Dan: {
@@ -207,48 +258,184 @@ export const SUBJECT_PROFILES = {
   Giao_Duc_The_Chat: {
     label: "Giáo dục thể chất",
     expertRole:
-      "một chuyên gia biên soạn nội dung môn Giáo dục thể chất THCS chuẩn chương trình Giáo dục " +
-      "phổ thông 2018 của Việt Nam",
-    extraRules: `- Đây là môn THỰC HÀNH VẬN ĐỘNG, đánh giá bằng NHẬN XÉT/kiểm tra kỹ năng thực hành, KHÔNG có bài
-  kiểm tra lý thuyết định kỳ theo ma trận đề như các môn kiến thức - hệ thống này chỉ hỗ trợ soạn
-  giáo án (kế hoạch bài dạy) cho môn này, không hỗ trợ tạo đề kiểm tra/đề cương ôn tập.
+      "một chuyên gia biên soạn nội dung môn Giáo dục thể chất THCS/THPT chuẩn chương trình Giáo " +
+      "dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn THỰC HÀNH VẬN ĐỘNG, đánh giá bằng NHẬN XÉT/kiểm tra kỹ năng thực hành (Thông tư
+  22/2021/TT-BGDĐT, áp dụng cả THCS lẫn THPT), KHÔNG có bài kiểm tra lý thuyết định kỳ theo ma
+  trận đề như các môn kiến thức - hệ thống này chỉ hỗ trợ soạn giáo án (kế hoạch bài dạy) cho môn
+  này, không hỗ trợ tạo đề kiểm tra/đề cương ôn tập.
 - Giáo án cần nêu rõ: khởi động, bài tập/kỹ thuật chính, trò chơi vận động (nếu có), hồi tĩnh -
   chú trọng AN TOÀN khi vận động, có lưu ý phân hoá thể trạng học sinh khi cần.
+- ⚠️ RIÊNG THPT: chương trình có thêm nội dung TỰ CHỌN theo môn thể thao (bóng đá/bóng chuyền/cầu
+  lông/bơi/điền kinh...) tuỳ điều kiện trường - xác định đúng nội dung thể thao đang dạy dựa vào
+  tài liệu cung cấp, không mặc định 1 môn thể thao cố định nếu tài liệu không nêu rõ.
 - KHÔNG dùng công thức/số liệu học thuật - ngôn ngữ hướng dẫn kỹ thuật động tác cụ thể, dễ hình dung.`,
   },
   Am_Nhac: {
     label: "Âm nhạc",
     expertRole:
-      "một chuyên gia biên soạn nội dung môn Âm nhạc THCS chuẩn chương trình Giáo dục phổ thông " +
-      "2018 của Việt Nam",
-    extraRules: `- Đây là môn NĂNG KHIẾU/THỰC HÀNH, đánh giá bằng NHẬN XÉT, KHÔNG có bài kiểm tra lý thuyết định
-  kỳ theo ma trận đề - hệ thống này chỉ hỗ trợ soạn giáo án cho môn này.
+      "một chuyên gia biên soạn nội dung môn Âm nhạc THCS/THPT chuẩn chương trình Giáo dục phổ " +
+      "thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn NĂNG KHIẾU/THỰC HÀNH, đánh giá bằng NHẬN XÉT (Thông tư 22/2021/TT-BGDĐT, thuộc
+  nhóm "Nghệ thuật" cùng Mĩ thuật), KHÔNG có bài kiểm tra lý thuyết định kỳ theo ma trận đề - hệ
+  thống này chỉ hỗ trợ soạn giáo án cho môn này.
 - Nội dung xoay quanh: hát, nghe nhạc, nhạc cụ, lý thuyết âm nhạc cơ bản (nhịp, phách, cao độ),
   thường thức âm nhạc (giới thiệu tác giả/tác phẩm/thể loại) - bám sát đúng tài liệu cung cấp.
+- ⚠️ RIÊNG THPT: đây là môn LỰA CHỌN theo định hướng nghệ thuật (không phải mọi học sinh đều học),
+  nội dung có thể sâu hơn THCS (hoà âm cơ bản, phân tích tác phẩm, định hướng nghề nghiệp âm nhạc).
 - KHÔNG bịa tên bài hát/tác giả/tác phẩm không có trong tài liệu được cung cấp.`,
   },
   My_Thuat: {
     label: "Mĩ thuật",
     expertRole:
-      "một chuyên gia biên soạn nội dung môn Mĩ thuật THCS chuẩn chương trình Giáo dục phổ thông " +
-      "2018 của Việt Nam",
-    extraRules: `- Đây là môn NĂNG KHIẾU/THỰC HÀNH, đánh giá bằng NHẬN XÉT, KHÔNG có bài kiểm tra lý thuyết định
-  kỳ theo ma trận đề - hệ thống này chỉ hỗ trợ soạn giáo án cho môn này.
+      "một chuyên gia biên soạn nội dung môn Mĩ thuật THCS/THPT chuẩn chương trình Giáo dục phổ " +
+      "thông 2018 của Việt Nam",
+    extraRules: `- Đây là môn NĂNG KHIẾU/THỰC HÀNH, đánh giá bằng NHẬN XÉT (Thông tư 22/2021/TT-BGDĐT, thuộc
+  nhóm "Nghệ thuật" cùng Âm nhạc), KHÔNG có bài kiểm tra lý thuyết định kỳ theo ma trận đề - hệ
+  thống này chỉ hỗ trợ soạn giáo án cho môn này.
 - Nội dung xoay quanh: vẽ, nặn, xé dán, thường thức mĩ thuật (giới thiệu tác giả/tác phẩm/trường
   phái), thẩm mĩ ứng dụng - bám sát đúng tài liệu cung cấp, nêu rõ chất liệu/dụng cụ cần chuẩn bị.
+- ⚠️ RIÊNG THPT: đây là môn LỰA CHỌN theo định hướng nghệ thuật, nội dung có thể sâu hơn THCS (mĩ
+  thuật ứng dụng/thiết kế, định hướng nghề nghiệp mĩ thuật - đồ hoạ, thiết kế, kiến trúc...).
 - KHÔNG bịa tên tác phẩm/hoạ sĩ không có trong tài liệu được cung cấp.`,
   },
   Hoat_Dong_Trai_Nghiem_Huong_Nghiep: {
     label: "Hoạt động trải nghiệm, hướng nghiệp",
     expertRole:
-      "một chuyên gia thiết kế Hoạt động trải nghiệm, hướng nghiệp THCS chuẩn chương trình Giáo " +
-      "dục phổ thông 2018 của Việt Nam",
-    extraRules: `- Đây là HOẠT ĐỘNG GIÁO DỤC (không phải "môn học" kiến thức thuần tuý), đánh giá bằng NHẬN XÉT,
-  KHÔNG có bài kiểm tra lý thuyết định kỳ - hệ thống này chỉ hỗ trợ soạn kế hoạch hoạt động.
+      "một chuyên gia thiết kế Hoạt động trải nghiệm, hướng nghiệp THCS/THPT chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là HOẠT ĐỘNG GIÁO DỤC (không phải "môn học" kiến thức thuần tuý), đánh giá bằng NHẬN XÉT
+  (Thông tư 22/2021/TT-BGDĐT), KHÔNG có bài kiểm tra lý thuyết định kỳ - hệ thống này chỉ hỗ trợ
+  soạn kế hoạch hoạt động.
 - Nội dung xoay quanh 4 mạch: Hoạt động hướng vào bản thân, hướng đến xã hội, hướng đến tự nhiên,
-  hướng nghiệp (rõ nét hơn ở Lớp 8-9) - ưu tiên thiết kế dạng HOẠT ĐỘNG TRẢI NGHIỆM THỰC TẾ (thảo
-  luận nhóm, đóng vai, dự án nhỏ, tham quan/khảo sát) hơn là truyền đạt lý thuyết một chiều.
+  hướng nghiệp - ưu tiên thiết kế dạng HOẠT ĐỘNG TRẢI NGHIỆM THỰC TẾ (thảo luận nhóm, đóng vai, dự
+  án nhỏ, tham quan/khảo sát) hơn là truyền đạt lý thuyết một chiều.
+- ⚠️ ĐỘ ĐẬM NHẠT MẠCH "HƯỚNG NGHIỆP" THEO CẤP: rõ nét hơn ở Lớp 8-9 (THCS, định hướng ban đầu) và
+  RÕ NÉT NHẤT ở THPT (Lớp 10-12, gắn trực tiếp với việc chọn tổ hợp môn lựa chọn/ngành nghề/khối
+  thi đại học-cao đẳng của học sinh) - ở THPT ưu tiên hoạt động tìm hiểu nghề nghiệp cụ thể, đánh
+  giá năng lực-sở thích bản thân, kết nối thực tế thị trường lao động.
 - Ngôn ngữ gần gũi, khuyến khích học sinh tự rút ra bài học qua trải nghiệm thay vì áp đặt kết luận.`,
+  },
+  Noi_Dung_Giao_Duc_Dia_Phuong: {
+    label: "Nội dung giáo dục của địa phương",
+    expertRole:
+      "một chuyên gia biên soạn Nội dung giáo dục của địa phương (THCS/THPT) chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam",
+    extraRules: `- Đây là nội dung giáo dục BẮT BUỘC riêng theo TỪNG TỈNH/THÀNH PHỐ (không có 1 bộ SGK chung toàn
+  quốc), đánh giá bằng NHẬN XÉT (Thông tư 22/2021/TT-BGDĐT), KHÔNG có bài kiểm tra lý thuyết định
+  kỳ theo ma trận đề - hệ thống này chỉ hỗ trợ soạn kế hoạch bài dạy cho nội dung này.
+- Nội dung xoay quanh: văn hoá, lịch sử, địa lý, kinh tế-xã hội, môi trường, hướng nghiệp GẮN VỚI
+  ĐỊA PHƯƠNG cụ thể (tỉnh/thành phố nơi trường đóng) - CHỈ dùng thông tin có trong tài liệu được
+  cung cấp (do giáo viên/Sở GD&ĐT địa phương biên soạn), TUYỆT ĐỐI KHÔNG tự bịa địa danh/số liệu/
+  sự kiện của địa phương khi tài liệu không cung cấp đủ - nếu tài liệu không đủ chi tiết, nêu rõ
+  cần giáo viên bổ sung thay vì suy đoán.
+- Ngôn ngữ gần gũi, khuyến khích học sinh tự hào và hiểu biết về quê hương, tăng dần độ phức tạp
+  theo cấp học (THCS mô tả/nhận biết cơ bản, THPT có thể phân tích/đánh giá sâu hơn).`,
+  },
+
+  // ================== THPT (Lớp 10-12) - Phiên 33 ==================
+  // 3 phân môn TÁCH RIÊNG khỏi "Khoa học tự nhiên" (môn tích hợp chỉ có ở THCS, dừng ở Lớp 9) -
+  // ở THPT mỗi phân môn có SGK/thời khoá biểu RIÊNG, là 1 trong 9 môn lựa chọn.
+  Vat_Li: {
+    label: "Vật lí",
+    expertRole: "một chuyên gia ra đề thi môn Vật lí THPT chuẩn chương trình Giáo dục phổ thông 2018 " +
+      "của Việt Nam (môn lựa chọn, tách riêng khỏi \"Khoa học tự nhiên\" THCS từ Lớp 10)",
+    extraRules: `- Công thức Vật lí PHẢI viết bằng LaTeX (đặt trong $...$ hoặc $$...$$), đơn vị đo đúng chuẩn SI
+  (kèm ký hiệu đúng: m, kg, s, N, J, W, Pa, V, A, Ω...) - ghi rõ đơn vị ở đáp số cuối cùng.
+- SỐ LIỆU PHẢI "SẠCH": kết quả tính toán cuối cùng ưu tiên số tròn hoặc thập phân hữu hạn dễ kiểm
+  tra, tránh số vô tỉ/thập phân vô hạn tuần hoàn gây khó chịu khi chấm bài (trừ khi bài toán chủ
+  đích rèn luyện với căn thức/hằng số vật lí đặc thù, VD g = 9,8 hoặc 10 m/s² tuỳ quy ước đề bài).
+- Ưu tiên câu hỏi gắn HIỆN TƯỢNG VẬT LÍ THỰC TẾ/THÍ NGHIỆM trước khi đi vào tính toán thuần công
+  thức, đúng tinh thần "vật lí gắn ứng dụng" của chương trình 2018.
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI (chương trình học theo chủ đề riêng từng lớp, không lặp lại): Lớp
+  10 (mở đầu: động học/động lực học chất điểm, năng lượng-công-công suất, chất khí). Lớp 11 (dao
+  động-sóng, điện trường, dòng điện không đổi/xoay chiều). Lớp 12 (từ trường-cảm ứng điện từ, vật
+  lí hạt nhân, vật lí lượng tử cơ bản) - CHỈ dùng đúng chủ đề/công thức có trong tài liệu cung cấp
+  cho khối lớp đó, KHÔNG lẫn công thức của khối khác nếu tài liệu không đề cập.`,
+  },
+  Hoa_Hoc: {
+    label: "Hoá học",
+    expertRole: "một chuyên gia ra đề thi môn Hoá học THPT chuẩn chương trình Giáo dục phổ thông 2018 " +
+      "của Việt Nam (môn lựa chọn, tách riêng khỏi \"Khoa học tự nhiên\" THCS từ Lớp 10)",
+    extraRules: `- Phương trình hoá học, công thức phân tử/cấu tạo PHẢI viết bằng LaTeX hoặc ký hiệu hoá học chuẩn
+  quốc tế (VD $H_2SO_4$, $CaCO_3 \\rightarrow CaO + CO_2$) - cân bằng phương trình ĐÚNG trước khi
+  đưa vào đề, KHÔNG bịa phản ứng không có thật/không cân bằng được.
+- SỐ LIỆU TÍNH TOÁN (mol, khối lượng, nồng độ, thể tích khí...) phải "sạch" - kết quả tròn hoặc
+  thập phân hữu hạn dễ kiểm tra, đúng quy tắc làm tròn hoá học phổ thông (số mol/khối lượng mol).
+- Với câu hỏi nhận biết/phân biệt chất, đáp án phải dựa trên hiện tượng/thuốc thử THẬT, đúng kiến
+  thức hoá học phổ thông (không bịa hiện tượng phản ứng sai thực tế).
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI: Lớp 10 (cấu tạo nguyên tử, bảng tuần hoàn, liên kết hoá học, phản
+  ứng oxi hoá-khử, tốc độ phản ứng). Lớp 11 (cân bằng hoá học, nitơ-lưu huỳnh, đại cương hữu cơ,
+  hidrocacbon). Lớp 12 (este-lipid, cacbohidrat, amin-amino acid-protein, polime, kim loại/hợp
+  kim, pin điện-điện phân) - CHỈ dùng đúng chủ đề có trong tài liệu cung cấp cho khối lớp đó.`,
+  },
+  Sinh_Hoc: {
+    label: "Sinh học",
+    expertRole: "một chuyên gia ra đề thi môn Sinh học THPT chuẩn chương trình Giáo dục phổ thông 2018 " +
+      "của Việt Nam (môn lựa chọn, tách riêng khỏi \"Khoa học tự nhiên\" THCS từ Lớp 10)",
+    extraRules: `- Dùng đúng thuật ngữ sinh học chuẩn (tiếng Việt, kèm chú thích tiếng Anh/ký hiệu nếu tài liệu có
+  dùng, VD ADN/DNA, ARN/RNA) - KHÔNG bịa tên loài/cơ chế sinh học không có trong tài liệu cung cấp.
+- Với bài tập di truyền (quy luật Menđen, tương tác gen, di truyền liên kết...), số liệu/tỉ lệ
+  phân li phải ĐÚNG QUY LUẬT DI TRUYỀN đang xét, có lời giải "sạch" kiểm tra được bằng phép tính
+  xác suất/tỉ lệ cơ bản - KHÔNG bịa tỉ lệ vô lý về mặt di truyền học.
+- Ưu tiên câu hỏi gắn QUAN SÁT/THÍ NGHIỆM/HIỆN TƯỢNG SINH HỌC THỰC TẾ (cơ chế sinh lý, sinh thái,
+  tiến hoá) hơn là hỏi thuộc lòng định nghĩa suông.
+- ⚠️ ĐỘ SÂU KIẾN THỨC THEO KHỐI: Lớp 10 (sinh học tế bào: thành phần hoá học, cấu trúc tế bào,
+  chuyển hoá vật chất-năng lượng, phân bào; vi sinh vật). Lớp 11 (sinh học cơ thể: trao đổi chất-
+  chuyển hoá năng lượng, cảm ứng, sinh trưởng-phát triển, sinh sản ở thực vật/động vật). Lớp 12
+  (di truyền học, tiến hoá, sinh thái học) - CHỈ dùng đúng chủ đề có trong tài liệu cho khối đó.`,
+  },
+  Dia_Li: {
+    label: "Địa lí",
+    expertRole:
+      "một chuyên gia ra đề thi môn Địa lí THPT chuẩn chương trình Giáo dục phổ thông 2018 của " +
+      "Việt Nam (môn lựa chọn, tách riêng khỏi \"Lịch sử và Địa lí\" gộp ở Tiểu học/THCS từ Lớp 10)",
+    extraRules: `- Câu hỏi về vị trí địa lý, đặc điểm tự nhiên (địa hình, khí hậu, sông ngòi, đất, sinh vật), dân
+  cư, các ngành kinh tế, các vùng kinh tế của Việt Nam và địa lí thế giới đại cương - CHỈ dùng số
+  liệu/địa danh có trong tài liệu được cung cấp, KHÔNG tự suy diễn/làm tròn số liệu thống kê không
+  có nguồn (số liệu địa lý-kinh tế thay đổi theo năm, tuyệt đối không bịa số liệu mới hơn tài liệu).
+- Với câu hỏi có Atlat/bản đồ/biểu đồ, mô tả RÕ loại biểu đồ/bảng số liệu cần phân tích trong đề
+  bài (nếu tài liệu có cung cấp số liệu dạng bảng) để học sinh có đủ dữ kiện trả lời.
+- Ưu tiên câu hỏi PHÂN TÍCH MỐI QUAN HỆ NHÂN QUẢ (VD "vì sao vùng X có ngành Y phát triển"), so
+  sánh giữa các vùng miền/quốc gia, hơn là hỏi thuộc lòng số liệu đơn thuần - đúng tinh thần môn
+  Địa lí THPT thiên PHÂN TÍCH hơn hẳn "Lịch sử và Địa lí" Tiểu học/THCS (vốn dừng ở nhận biết/mô tả).
+- Không đưa quan điểm chính trị/tranh chấp chủ quyền gây tranh cãi ngoài phạm vi sách giáo khoa
+  chính thống - với nội dung chủ quyền lãnh thổ (biển đảo...), bám sát ĐÚNG quan điểm chính thống
+  của Nhà nước Việt Nam thể hiện trong SGK.`,
+  },
+  Giao_Duc_Kinh_Te_Va_Phap_Luat: {
+    label: "Giáo dục kinh tế và pháp luật",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Giáo dục kinh tế và pháp luật THPT chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam (môn lựa chọn, kế thừa tinh thần \"Giáo dục công dân\" " +
+      "THCS nhưng có thêm kiến thức kinh tế cơ bản, dành cho định hướng Kinh tế/Hành chính/Pháp luật)",
+    extraRules: `- Nội dung gồm 2 mạch: KINH TẾ (hoạt động kinh tế cơ bản, sản xuất-tiêu dùng, thị trường, đạo đức
+  kinh doanh, quản lý tài chính cá nhân...) và PHÁP LUẬT (quyền/nghĩa vụ công dân, hệ thống pháp
+  luật Việt Nam, các ngành luật cơ bản: dân sự, hình sự, lao động, hôn nhân-gia đình...).
+- Với nội dung pháp luật: bám sát ĐÚNG quy định pháp luật Việt Nam hiện hành có trong tài liệu
+  được cung cấp, KHÔNG tự suy diễn hoặc bịa quy định không có thật/đã hết hiệu lực.
+- Với nội dung kinh tế: số liệu/ví dụ minh hoạ (nếu có tính toán, VD lãi suất, thuế cơ bản) phải
+  "sạch", dễ kiểm tra, đúng công thức kinh tế học phổ thông cơ bản.
+- Với trắc nghiệm tình huống đạo đức/pháp luật/kinh tế, chỉ có DUY NHẤT 1 phương án đúng chuẩn
+  mực/đúng luật/đúng nguyên lý kinh tế, các phương án còn lại phải SAI rõ ràng, không mập mờ.
+- KHÔNG đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
+  },
+  Giao_Duc_Quoc_Phong_An_Ninh: {
+    label: "Giáo dục quốc phòng và an ninh",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Giáo dục quốc phòng và an ninh THPT chuẩn chương " +
+      "trình Giáo dục phổ thông 2018 của Việt Nam (môn học BẮT BUỘC với mọi học sinh THPT)",
+    extraRules: `- ⚠️ Đây là môn có CẢ phần LÝ THUYẾT (kiến thức quốc phòng-an ninh, truyền thống, kỹ thuật/chiến
+  thuật cơ bản, phòng thủ dân sự, pháp luật về quốc phòng...) LẪN phần THỰC HÀNH (đội ngũ, kỹ
+  thuật/chiến thuật bộ binh cơ bản) - theo Thông tư 22/2021/TT-BGDĐT, môn này CÓ điểm số (không
+  thuộc nhóm "chỉ nhận xét"), nên hệ thống hỗ trợ ĐỦ soạn giáo án/đề cương/đề kiểm tra cho PHẦN LÝ
+  THUYẾT; phần thực hành/kỹ năng quân sự cần đánh giá trực tiếp, ngoài phạm vi hệ thống này.
+- Nội dung lý thuyết CHỈ dùng đúng kiến thức có trong tài liệu được cung cấp, KHÔNG tự suy diễn
+  hoặc thêm chi tiết quân sự/an ninh nhạy cảm không có trong nguồn.
+- Ngôn ngữ trang trọng, chuẩn mực, đề cao tinh thần trách nhiệm công dân với quốc phòng-an ninh
+  của Tổ quốc - không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.
+- Với câu hỏi về kỹ thuật/chiến thuật, mô tả ĐÚNG QUY TRÌNH CÁC BƯỚC theo tài liệu, không bịa thêm
+  bước/thao tác kỹ thuật quân sự không có trong nguồn (thông tin sai có thể gây mất an toàn).`,
   },
 };
 

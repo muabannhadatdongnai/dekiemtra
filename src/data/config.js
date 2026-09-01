@@ -7,14 +7,29 @@
 export const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
 
 /**
- * ================== GIAI ĐOẠN 32: mở rộng THCS (Lớp 6-9) ==================
- * THPT (Lớp 10-12) CỐ Ý CHƯA làm đợt này (đã chốt với Hoan) - lý do THPT có cơ cấu "8 môn bắt
- * buộc + chọn 4 trong 9 môn lựa chọn theo định hướng nghề nghiệp" (khác hẳn kiểu "học đủ mọi môn"
- * của Tiểu học/THCS), cần thiết kế dropdown riêng - để dành cho phiên sau. `GRADES` vẫn giữ 1-12
- * (không đổi) nhưng SUBJECTS bên dưới chỉ khai báo tới Lớp 9 - chọn Lớp 10-12 ở bất kỳ module nào
- * hiện sẽ ra danh sách môn RỖNG (đúng ý, tránh hiện nhầm môn Tiểu học/THCS không tồn tại ở THPT).
+ * ================== PHIÊN 33: mở rộng THPT (Lớp 10-12) ==================
+ * TIẾP THEO Giai đoạn 32 (THCS Lớp 6-9). `GRADES` vẫn giữ 1-12 (không đổi từ đầu), SUBJECTS bên
+ * dưới giờ khai báo ĐỦ Mầm non -> Lớp 12.
  *
- * `modules` (mảng tuỳ chọn) - MỚI thêm trong Giai đoạn 32: khai báo module nào (trong 3 module
+ * ⚠️ ĐIỂM KHÁC BIỆT LỚN của THPT so với Tiểu học/THCS (chương trình GDPT 2018, giai đoạn "định
+ * hướng nghề nghiệp"): không phải "học đủ mọi môn" mà có cơ cấu:
+ *   - 8 môn/HĐGD BẮT BUỘC: Ngữ văn, Toán, Ngoại ngữ 1, Lịch sử, Giáo dục thể chất, Giáo dục quốc
+ *     phòng và an ninh, Hoạt động trải nghiệm - hướng nghiệp, Nội dung giáo dục của địa phương.
+ *   - 9 môn LỰA CHỌN (mỗi trường/học sinh chọn tối thiểu 4/9 theo định hướng nghề nghiệp): Địa lí,
+ *     Giáo dục kinh tế và pháp luật, Vật lí, Hoá học, Sinh học, Công nghệ, Tin học, Âm nhạc, Mĩ thuật.
+ *   - Cụm chuyên đề học tập (3 chuyên đề/môn, chọn trong số các môn lựa chọn hoặc Toán/Ngữ văn/
+ *     Lịch sử) - CHƯA hỗ trợ trong hệ thống này (xem NEXT_STEPS.md, để dành phiên sau vì đây là nội
+ *     dung RIÊNG ngoài SGK đại trà, không đơn thuần "thêm 1 khối lớp").
+ * ⚠️ QUAN TRỌNG: cơ cấu "bắt buộc/lựa chọn" này là chuyện XẾP THỜI KHOÁ BIỂU của nhà trường/học
+ * sinh (môn nào được HỌC), KHÔNG ảnh hưởng tới cách hệ thống này hoạt động - công cụ soạn 1 giáo
+ * án/đề cương/đề kiểm tra tại 1 thời điểm LUÔN theo 1 môn học đã chọn sẵn (giáo viên dạy môn gì thì
+ * chọn đúng môn đó), nên KHÔNG cần dựng UI "chọn tổ hợp 4/9 môn" - chỉ cần khai báo ĐỦ cả 17 môn/
+ * HĐGD (8 bắt buộc + 9 lựa chọn) làm 17 lựa chọn RIÊNG BIỆT trong dropdown "Môn học" ở Lớp 10-12,
+ * đúng như Tiểu học/THCS đang làm (đây chính là quyết định "KHÔNG cần dropdown riêng" đã tính toán
+ * lại so với ghi chú cũ ở `NEXT_STEPS.md` mục #12 - dropdown vẫn dùng chung `getSubjectsForGrade`,
+ * chỉ cần khai báo đủ dữ liệu môn).
+ *
+ * `modules` (mảng tuỳ chọn) - khai báo module nào (trong 3 module
  * Soạn giáo án/Đề cương Ôn tập/Đề kiểm tra) môn học này được phép xuất hiện. KHÔNG khai báo =
  * mặc định CẢ 3 (giữ đúng hành vi cũ, không phá dữ liệu môn Tiểu học đã có từ trước). Lý do cần
  * field này: 2 nhóm môn có quy tắc khác hẳn môn "học thuật" thông thường:
@@ -85,10 +100,48 @@ export const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
  *                              |             |   "Tin học và Công nghệ" ở Tiểu học, để khớp cách
  *                              |             |   giáo viên thực dạy/thực soạn theo từng sách.
  *
- * "Lịch sử" (không kèm "và Địa lí") giữ nguyên cho khối THPT (10-12, môn thật ở cấp đó, tách khỏi
- * "Lịch sử và Địa lí" từ Lớp 10) - minGrade: 10 (SỬA từ 6 - trước đây đặt nhầm 6, đúng ra ở Lớp
- * 6-9 vẫn dùng "Lịch sử và Địa lí" gộp, "Lịch sử" đơn lẻ chỉ có thật từ THPT). THPT chưa làm đợt
- * này nên entry này TẠM CHƯA hiện ở đâu (GRADES dropdown mọi module vẫn dừng dữ liệu ở Lớp 9).
+ * "Lịch sử" (không kèm "và Địa lí") là môn THẬT RIÊNG từ THPT (tách khỏi "Lịch sử và Địa lí" gộp
+ * dùng xuyên suốt Tiểu học->THCS) - minGrade: 10. Theo Thông tư 13/2022/TT-BGDĐT (03/08/2022, sửa
+ * đổi Thông tư 32/2018), Lịch sử chuyển từ môn LỰA CHỌN (nhóm Khoa học xã hội) thành môn BẮT BUỘC
+ * cho mọi học sinh THPT, thời lượng 52 tiết/năm (phần cốt lõi) + có thêm chuyên đề học tập lựa
+ * chọn riêng 35 tiết/năm cho học sinh chọn định hướng KHXH (chuyên đề CHƯA hỗ trợ - xem trên).
+ *
+ * ⚠️ Danh sách môn THPT (Lớp 10-12) chuẩn hoá theo ĐÚNG Thông tư 32/2018/TT-BGDĐT (mục "Giai đoạn
+ * giáo dục định hướng nghề nghiệp"), ĐÃ ÁP DỤNG sửa đổi bởi Thông tư 13/2022/TT-BGDĐT (Lịch sử
+ * thành bắt buộc), và Thông tư 22/2021/TT-BGDĐT (quy định đánh giá - xác định môn nào chỉ chấm
+ * NHẬN XÉT để gán đúng `modules`):
+ *
+ *   Môn (BẮT BUỘC)            | Khối dạy    | Ghi chú
+ *   ------------------------- | ----------- | ------------------------------------------------
+ *   Ngữ văn, Toán, Tiếng Anh   | Lớp 10-12   | TÁI DÙNG entry đã có (mở maxGrade Ngữ văn lên 12,
+ *                              |             |   Toán/Tiếng Anh vốn không giới hạn từ trước).
+ *   Lịch sử                   | Lớp 10-12   | Xem giải thích Thông tư 13/2022 ở trên - môn RIÊNG,
+ *                              |             |   KHÔNG dùng lại "Lịch sử và Địa lí".
+ *   Giáo dục thể chất          | Lớp 10-12   | TÁI DÙNG entry THCS (mở maxGrade lên 12) - vẫn
+ *                              |             |   nhận xét-only theo Thông tư 22 Điều 5 Khoản 3.
+ *   Hoạt động trải nghiệm,     | Lớp 10-12   | TÁI DÙNG entry THCS (mở maxGrade lên 12) - nhận
+ *   hướng nghiệp               |             |   xét-only, nội dung đổi trọng tâm sang hướng nghiệp.
+ *   Giáo dục quốc phòng và an  | Lớp 10-12   | MỚI - ⚠️ theo Thông tư 22 Điều 5 Khoản 3, GDQP&AN
+ *   ninh                       |             |   KHÔNG nằm trong nhóm "chỉ nhận xét" (khác GDTC) -
+ *                              |             |   vẫn có điểm số, nên modules mặc định CẢ 3 (đủ Đề
+ *                              |             |   kiểm tra/Đề cương phần lý thuyết, dù thực hành vẫn
+ *                              |             |   cần đánh giá riêng ngoài hệ thống này).
+ *   Nội dung giáo dục của địa  | Lớp 6-12    | MỚI - nhận xét-only theo Thông tư 22. Áp dụng chung
+ *   phương                     |             |   THCS lẫn THPT (đúng Thông tư 32) - trước đây THCS
+ *                              |             |   (Giai đoạn 32) BỎ SÓT môn này, bổ sung luôn ở đây.
+ *
+ *   Môn (LỰA CHỌN - chọn ≥4/9)| Khối dạy    | Ghi chú
+ *   ------------------------- | ----------- | ------------------------------------------------
+ *   Tin học, Công nghệ         | Lớp 3-12    | MỞ RỘNG maxGrade từ entry đã có (Lớp 3-9) lên 12.
+ *   Âm nhạc, Mĩ thuật          | Lớp 6-12    | MỞ RỘNG maxGrade từ entry đã có (Lớp 6-9) lên 12 -
+ *                              |             |   vẫn nhận xét-only ("Nghệ thuật" theo Thông tư 22).
+ *   Vật lí, Hoá học, Sinh học  | Lớp 10-12   | MỚI - 3 phân môn TÁCH RIÊNG khỏi "Khoa học tự nhiên"
+ *                              |             |   (môn tích hợp chỉ có ở THCS, dừng ở Lớp 9).
+ *   Địa lí                     | Lớp 10-12   | MỚI - tách riêng khỏi "Lịch sử và Địa lí" gộp (môn
+ *                              |             |   gộp dừng ở Lớp 9, xem entry Lich_Su_Dia_Li).
+ *   Giáo dục kinh tế và pháp   | Lớp 10-12   | MỚI - kế thừa tinh thần "Giáo dục công dân" THCS
+ *   luật                       |             |   nhưng có thêm kiến thức kinh tế cơ bản, môn RIÊNG
+ *                              |             |   (không tái dùng Giao_Duc_Cong_Dan, dừng ở Lớp 9).
  *
  * 2 field TUỲ CHỌN `minGrade`/`maxGrade`: không khai báo = áp dụng MỌI khối (Toán/Tiếng Việt/
  * Tiếng Anh không cần giới hạn vì dạy xuyên suốt/tự chọn sớm).
@@ -106,23 +159,46 @@ export const SUBJECTS = [
   { value: "Tu_Nhien_Xa_Hoi", label: "Tự nhiên và Xã hội", minGrade: 1, maxGrade: 3 },
   { value: "Lich_Su_Dia_Li", label: "Lịch sử và Địa lí", minGrade: 4, maxGrade: 9 },
   { value: "Khoa_Hoc", label: "Khoa học", minGrade: 4, maxGrade: 5 },
-  { value: "Tin_Hoc", label: "Tin học", minGrade: 3, maxGrade: 9 },
-  { value: "Cong_Nghe", label: "Công nghệ", minGrade: 3, maxGrade: 9 },
-  { value: "Lich_Su", label: "Lịch sử", minGrade: 10 }, // THPT - chưa làm đợt này, xem comment trên
+  { value: "Tin_Hoc", label: "Tin học", minGrade: 3, maxGrade: 12 },
+  { value: "Cong_Nghe", label: "Công nghệ", minGrade: 3, maxGrade: 12 },
+  { value: "Lich_Su", label: "Lịch sử", minGrade: 10, maxGrade: 12 }, // THPT - bắt buộc, xem comment trên (Thông tư 13/2022)
 
   // ================== THCS (Lớp 6-9) - Giai đoạn 32 ==================
-  { value: "Ngu_Van", label: "Ngữ văn", minGrade: 6, maxGrade: 9, modules: LESSON_PLAN_AND_OUTLINE_ONLY },
+  { value: "Ngu_Van", label: "Ngữ văn", minGrade: 6, maxGrade: 12, modules: LESSON_PLAN_AND_OUTLINE_ONLY },
   { value: "Giao_Duc_Cong_Dan", label: "Giáo dục công dân", minGrade: 6, maxGrade: 9 },
   { value: "Khoa_Hoc_Tu_Nhien", label: "Khoa học tự nhiên", minGrade: 6, maxGrade: 9 },
-  { value: "Giao_Duc_The_Chat", label: "Giáo dục thể chất", minGrade: 6, maxGrade: 9, modules: NO_EXAM_MODULES },
-  { value: "Am_Nhac", label: "Âm nhạc", minGrade: 6, maxGrade: 9, modules: NO_EXAM_MODULES },
-  { value: "My_Thuat", label: "Mĩ thuật", minGrade: 6, maxGrade: 9, modules: NO_EXAM_MODULES },
+  { value: "Giao_Duc_The_Chat", label: "Giáo dục thể chất", minGrade: 6, maxGrade: 12, modules: NO_EXAM_MODULES },
+  { value: "Am_Nhac", label: "Âm nhạc", minGrade: 6, maxGrade: 12, modules: NO_EXAM_MODULES },
+  { value: "My_Thuat", label: "Mĩ thuật", minGrade: 6, maxGrade: 12, modules: NO_EXAM_MODULES },
   {
     value: "Hoat_Dong_Trai_Nghiem_Huong_Nghiep",
     label: "Hoạt động trải nghiệm, hướng nghiệp",
     minGrade: 6,
-    maxGrade: 9,
+    maxGrade: 12,
     modules: NO_EXAM_MODULES,
+  },
+  {
+    value: "Noi_Dung_Giao_Duc_Dia_Phuong",
+    label: "Nội dung giáo dục của địa phương",
+    minGrade: 6,
+    maxGrade: 12,
+    modules: NO_EXAM_MODULES,
+  }, // bổ sung cùng đợt THPT - THCS trước đây bỏ sót (xem comment trên)
+
+  // ================== THPT (Lớp 10-12) - Phiên 33 ==================
+  // 8 môn/HĐGD bắt buộc còn lại (Ngữ văn/Toán/Tiếng Anh/Lịch sử/GDTC/HĐTN-HN/Nội dung GD địa
+  // phương đã tái dùng entry có sẵn ở trên) + 9 môn lựa chọn (Tin học/Công nghệ/Âm nhạc/Mĩ thuật
+  // cũng đã tái dùng ở trên) - 6 entry MỚI dưới đây là phần còn thiếu.
+  { value: "Giao_Duc_Quoc_Phong_An_Ninh", label: "Giáo dục quốc phòng và an ninh", minGrade: 10, maxGrade: 12 },
+  { value: "Vat_Li", label: "Vật lí", minGrade: 10, maxGrade: 12 },
+  { value: "Hoa_Hoc", label: "Hoá học", minGrade: 10, maxGrade: 12 },
+  { value: "Sinh_Hoc", label: "Sinh học", minGrade: 10, maxGrade: 12 },
+  { value: "Dia_Li", label: "Địa lí", minGrade: 10, maxGrade: 12 },
+  {
+    value: "Giao_Duc_Kinh_Te_Va_Phap_Luat",
+    label: "Giáo dục kinh tế và pháp luật",
+    minGrade: 10,
+    maxGrade: 12,
   },
 ];
 
