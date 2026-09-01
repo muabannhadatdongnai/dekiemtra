@@ -1,608 +1,185 @@
-## Page 39
+# UNIT 4: MY NEIGHBOURHOOD (KHU PHỐ CỦA TÔI)
 
-GETTING  STARTED
-Lost in the old town!
-Listen and read.
-Phong:
- Wow! We’re in Hoi An. I’m so 
-excited.
-Nick: Me too. It’s so beautiful. Where 
-shall we go f/idotaccentrst?
-Khang: Let’s go to Chua Cau.
-Phong: Well, but Tan Ky House is 
-nearer. Shall we go there f/idotaccentrst?
-Nick & Khang: OK, sure.
-Phong: First, cross the road, and then 
-turn left.
-Nick: Fine, let’s go.
-Phong: Wait.
-Khang: What’s up, Phong?
-Phong: I think we’re lost.
-Nick: Look, there’s a girl. Let’s ask her.
-1
-THIS UNIT INCLUDES:
-Vocabulary
-Places in a neighbourhood
-Pronunciation 
-Sounds: /
-ǹ/ and / L/
-Grammar
-Comparative adjectives: smaller, 
-more expensive , …
-Skills
- t Reading about a neighbourhood
- t Talking about a neighbourhood
- t Listening about a neighbourhood
- t Writing a paragraph to describe  
-a neighbourhood
-Everyday English   
-Asking for and giving directions
-Phong: Excuse me? Can you tell us 
-the way to Tan Ky House?
-Girl: Sure. Go straight. Take the 
-second turning on the left, and then 
-turn right.
-Phong, Nick & Khang: Thank you.
-23
-Track
-38 Tiếng Anh 6
-MY NEIGHBOURHOODUnit 4
+---
 
-## Page 40
+## I. TỔNG QUAN CHỦ ĐỀ (OVERVIEW)
+* **Chủ điểm chính (Theme):** Our Communities (Cộng đồng của chúng ta) [4]
+* **Từ vựng:** Các địa điểm trong khu dân cư; các tính từ mô tả đặc điểm khu phố [6, 14].
+* **Ngữ âm:** Cách phát âm hai nguyên âm `/ɪ/` (i ngắn) và `/iː/` (i dài) [6, 18].
+* **Ngữ pháp:** Cấu trúc so sánh hơn của tính từ ngắn và tính từ dài (Comparative Adjectives) [6, 14, 44].
+* **Kĩ năng (Skills):**
+  * **Đọc (Reading):** Đọc hiểu thông tin trên trang blog cá nhân mô tả về khu phố ngoại ô [4, 21].
+  * **Nói (Speaking):** Hỏi đáp và thảo luận về những điều yêu thích hoặc không hài lòng về nơi mình sống [22].
+  * **Nghe (Listening):** Nghe thông tin chi tiết về đặc điểm khu phố của bạn Vy [4, 6].
+  * **Viết (Writing):** Viết đoạn văn ngắn khoảng 50 từ để giới thiệu ưu - nhược điểm khu phố của mình [6, 24].
+* **Tiếng Anh giao tiếp hằng ngày (Everyday English):** Hỏi và chỉ đường (Asking for and giving directions) và cách đưa ra gợi ý (Suggestions) [14, 15].
 
-Find in the conversation 
-the sentences used to make 
-suggestions.
- Example:  Let ’s go to Chua Cau.
-We can use shall we and let’s to 
-make suggestions.
-Remember!
-Read the conversation again.  
-Put the actions in order.
-a. The girl shows them the way 
-to Tan Ky House.                 
-b. Nick, Khang and Phong 
-arrive in Hoi An.                                 
-c. Nick, Khang and Phong 
-decide to go to Tan Ky House.         
-d. Nick, Khang and Phong get lost.   
-e.  Phong asks a girl how to get  
-to Tan Ky House.             
-2 Find and underline the 
-following directions in the 
-conversation.
-A.   turn right
-B.   cross the road
-C.   turn left
-D.   go straight
-E.   take the second turning on the left
-Now match these directions 
-with the diagrams below.
- 
-4
-3
-1
-5
-2
-4
-G A M E Find places
-Work in pairs. Give your partner 
-directions to one of the places 
-on the map, and he / she tries to 
-guess. Then swap.
- Example:
-A: Go straight. Take the second   
-turning on the left. It’s on your right.
-B: I s that the gym?
-A: N o, try again.
-5
-3
-39Unit 4 - My Neighbourhood
-Temple Gym
-Railway
-station
-Cinema
-Bus
-stop
-CaféPark
-Bank
-LE LOI STREET
-QUANG TRUNG STREET
-LY THUONG KIET STREET
-LE HOAN STREETYou are here
+---
 
-## Page 41
+## II. CHI TIẾT NỘI DUNG BÀI HỌC (UNIT DETAILS)
 
-A CLOSER LOOK 1
-Vocabulary
-Match the places below with 
-the pictures. Then listen, check 
-and repeat the words.
-1
-Work in groups. Ask and answer 
-about your neighbourhood.  
-You can use the adjectives 
-below.
- noisy crowded peaceful      
-quiet modern beautiful   
-busy boring
- Example:
-A: I s your neighbourhood quiet?
-B: Yes, it is. / No, it’s noisy.  
-Pronunciation
-/ ǹ/ and / L/
-Listen and repeat the words. 
-Pay attention to the sounds  
-/
-ǹ/ and / L/.
- noisy exciting expensive 
-clean peaceful convenient 
-cheap friendly  
-Now, in pairs put the words in 
-the correct column.
-/ ǹ/ / L/
-noisy convenient
-Listen and practise the chant. 
-Notice the sounds /
-ǹ/ and / L/.
-MY NEIGHBOURHOOD
- My city is very noisy.
- T here are lots of trees growing.
- T he people here are busy.
- I t’s a lively place to live in.
-  My village is very pretty.
-  T here are lots of places to see.
-  T he people here are friendly.
-  I t’s a fantastic place to be.
-3
-4
-5
-4.  temple
-Name some other places in your 
-neighbourhood.
-Work in pairs. Ask and answer 
-questions about where you live.
- Example:
-A: I s there a square in your    
-neighbourhood?
- B: Y es, there is. / No, there isn’t.
-2
-24
-Track
-25
-Track
-5.  railway station
-1.  square
-3.  cathedral
-2.  art gallery
-26
-Track
-a
-b
-c
-d
-e
-40 Tiếng Anh 6
+### 1. Getting Started (Khởi động)
+* **Chủ đề cuộc thoại:** *Lost in Hoi An* (Bị lạc ở Hội An) [15].
+* **Nhân vật:** Phong, Nick, Khang và một bạn nữ người địa phương [14, 15].
+* **Nội dung chính:** Ba bạn nhỏ vừa đặt chân đến Hội An và quyết định ghé thăm nhà cổ Tấn Ký [15, 16]. Tuy nhiên, các bạn bị lạc đường và phải chủ động hỏi một bạn nữ bên đường để tìm cách di chuyển [14, 15].
+* **Mẫu câu hỏi & chỉ đường tiêu biểu:**
+  * *\"Excuse me? Can you tell us the way to Tan Ky House?\"* (Xin lỗi bạn? Bạn có thể chỉ cho tụi mình đường tới nhà cổ Tấn Ký được không?) [14, 15]
+  * *\"Sure. Go straight. Take the second turning on the left, and then turn right.\"* (Chắc chắn rồi. Các bạn đi thẳng nhé. Rẽ vào ngã rẽ thứ hai bên tay trái, sau đó rẽ phải.) [15]
+* **Mẫu câu đưa ra ý kiến gợi ý (Suggestions):**
+  * Cấu trúc dùng **Let's** + động từ nguyên thể:
+    * *\"Fine, let's go.\"* (Tuyệt vời, đi thôi nào.) [14]
+    * *\"Look, there's a girl. Let's ask her.\"* (Nhìn kìa, có một bạn nữ đằng đó. Tụi mình hỏi bạn ấy đi.) [14]
+    * *\"Let's go to Chua Cau.\"* (Chúng ta hãy đi Chùa Cầu đi.) [15]
+  * Cấu trúc dùng **Shall we** + động từ nguyên thể:
+    * *\"Shall we go to Tan Ky House first?\"* (Tụi mình đi nhà cổ Tấn Ký trước nhé?) [15]
 
-## Page 42
+---
 
-A CLOSER LOOK 2
-Grammar
-Comparative adjectives
- Examples:  
-– T om is taller than  Mary.
-– A  house in a city is normally more 
-expensive than a house in the 
-countryside.
-We can use comparative adjectives 
-to compare two people or things.
-Remember!
-41Unit 4 - My Neighbourhood
-Complete the following 
-sentences with the comparative 
-form of the adjectives in 
-brackets. Number 
-1 is an 
-example.
-1.  This building is taller than 
-that building. (tall)
-2.  My neighbourhood is _______   
-than your neighbourhood. (noisy)
-1
-100 m
-40 m
-3.  The square in Ha Noi is _______  than 
-the square in Hoi An. (big)
-5.  Is living in a city _______  than living 
-in the countryside? (exciting)
-4.  L iving in the countryside is _______  
-than living in a city. (peaceful)
-20,000 m2
-10,000 m
-2
+### 2. Từ vựng (Vocabulary)
+#### A. Các địa điểm trong khu dân cư (Places in a Neighbourhood) [14, 19]
+* **square** (n) /ˈskweə(r)/: quảng trường
+* **art gallery** (n) /ˈɑːt ɡæləri/: phòng trưng bày nghệ thuật (triển lãm mỹ thuật)
+* **cathedral** (n) /kəˈθiːdrəl/: nhà thờ lớn (thường có quy mô và kiến trúc cổ kính)
+* **temple** (n) /ˈtempl/: đền, đền thờ, điện thờ
+* **railway station** (n) /reɪlweɪ steɪʃn/: ga xe lửa, nhà ga tàu hỏa
+* **suburbs** (n) /ˈsʌbɜːbz/: vùng ngoại ô, ngoại thành (trái nghĩa với trung tâm thành phố - *city centre*) [21, 41]
+* **bus stop** (n) /ˈbʌs stɒp/: trạm dừng xe buýt
+* **cinema** (n) /ˈsɪnəmə/: rạp chiếu phim
+* **café** (n) /ˈkæfeɪ/: quán cà phê
+* **park** (n) /pɑːk/: công viên [21]
+* **bank** (n) /bæŋk/: ngân hàng
+* **gym** (n) /dʒɪm/: phòng tập thể dục, thể hình [16, 17]
 
+#### B. Các tính từ mô tả khu phố (Adjectives for Neighbourhoods) [17, 18]
+* **noisy** (adj) /ˈnɔɪzi/: ồn ào, náo nhiệt
+* **crowded** (adj) /ˈkraʊdɪd/: đông đúc, chật ních người
+* **peaceful** (adj) /ˈpiːsfl/: thanh bình, hòa bình, yên ả
+* **quiet** (adj) /ˈkwaɪət/: yên tĩnh, tĩnh lặng
+* **modern** (adj) /ˈmɒdn/: hiện đại, tân tiến
+* **beautiful** (adj) /ˈbjuːtɪfl/: xinh đẹp, có cảnh quan đẹp
+* **busy** (adj) /ˈbɪzi/: bận rộn, nhộn nhịp, sầm uất
+* **boring** (adj) /ˈbɔːrɪŋ/: tẻ nhạt, buồn chán
+* **exciting** (adj) /ɪkˈsaɪtɪŋ/: thú vị, sôi động, đầy hào hứng
+* **expensive** (adj) /ɪkˈspensɪv/: đắt đỏ, tốn kém
+* **clean** (adj) /kliːn/: sạch sẽ, trong lành
+* **convenient** (adj) /kənˈviːniənt/: tiện lợi, thuận tiện
+* **cheap** (adj) /tʃiːp/: rẻ, giá cả phải chăng
+* **friendly** (adj) /ˈfrendli/: thân thiện, hiếu khách [41]
 
-## Page 43
+---
 
-Use the correct form of the words in brackets to complete the letter.
- D ear Nick,
- H ow are you?
- H a Noi is beautiful but it’s too busy for me. I’m having a great time at Cua Lo Beach 
-now. The weather is (1. hot) hotter than that in Ha Noi. The houses and buildings are 
-(2. small) _______  and (3. old) _______  than those in Ha Noi. 
- T he streets are (4. wide) _______  with less traﬀ/idotaccentc. The seafood here is (5. delicious) 
-_______  and (6. cheap) _______  than the seafood in Ha Noi.
- S ee you soon,
- Vy
-2
-42 Tiếng Anh 6
-Look at the pictures of the two neighbourhoods: Binh Minh and Long Son. 
-Compare two neighbourhoods. You can use the adjectives below.
- noisy       crowded       quiet       peaceful       modern       busy       boring
- Example:  Binh Minh is noisier than Long Son.
-3
-Work in pairs. Ask and answer questions about Binh Minh and Long Son 
-neighbourhoods using the pictures in 
-3.
- Example: 
-A: Is Binh Minh noisier than Long S on?
-B: Yes, it is.
-A: Is Long Son more modern than Binh Minh?
-B: No, it isn’t.
-4
-Binh Minh Long Son
+### 3. Ngữ âm (Pronunciation): `/ɪ/` & `/iː/` [18]
+* **Âm `/ɪ/` (nguyên âm ngắn, phát âm nhanh, dứt khoát, cơ miệng thư giãn):**
+  * *noisy* /ˈnɔɪzi/ (ồn ào) [18]
+  * *exciting* /ɪkˈsaɪtɪŋ/ (sôi động) [18]
+  * *expensive* /ɪkˈspensɪv/ (đắt đỏ) [18]
+  * *busy* /ˈbɪzi/ (nhộn nhịp, bận rộn) [18]
+  * *friendly* /ˈfrendli/ (thân thiện) [18]
+  * *pretty* /ˈprɪti/ (xinh xắn) [18]
+  * *lively* /ˈlaɪvli/ (sống động, hoạt bát) [18]
+  * *city* /ˈsɪti/ (thành phố) [18]
+  * *village* /ˈvɪlɪdʒ/ (ngôi làng) [18]
+* **Âm `/iː/` (nguyên âm dài, kéo dài hơi phát âm, khóe môi hơi mở rộng sang hai bên giống như đang cười):**
+  * *clean* /kliːn/ (sạch sẽ) [18]
+  * *peaceful* /ˈpiːsfl/ (yên bình) [18]
+  * *convenient* /kənˈviːniənt/ (tiện lợi) [18]
+  * *cheap* /tʃiːp/ (rẻ) [18]
+  * *cathedral* /kəˈθiːdrəl/ (nhà thờ lớn) [19, 50]
+  * *street* /striːt/ (con đường, tuyến phố) [18, 40]
+  * *people* /ˈpiːpl/ (con người) [18, 22]
 
-## Page 44
+---
 
-COMMUNICATION
-Everyday English
-Asking for and giving directions
-Listen and read the conversations.
-A: 
-Excuse me. Could you tell me the 
-way to the cinema, please?
-B: Go along this street. It’s on your left.
-A: E xcuse me. Where’s the nearest 
-post oﬀ/idotaccentce, please?
-B: Go out of the station. Take the f/idotaccentrst 
-turning on the right.
-Work in pairs. Make similar 
-conversations to ask for and 
-give directions to places near 
-your school.
-An audio guide to a place
-Nick is listening to an audio 
-guide to Hoi An. Listen and f/idotaccentll 
-the blanks.
- CITY TOU RS!
- L et’s start our tour in Hoi An. We are 
-in Tran Phu Street now. First, go to 
-Ong Pagoda. To get there, go  
-(1) 
-_______  along the street for f/idotaccentve 
-minutes. It’s on your left. Next, go to 
-the Museum of Sa Huynh Culture. 
-Take the (2) 
-_______  turning on your 
-left. Turn (3) _______  and it’s on 
-your right. Finally, go to Hoa Nhap 
-Workshop to buy some presents. 
-Turn left and then right. It’s (4) 
-_______  Tan Ky House.
-1
-2
-3
-Look at the map below and 
-create an audio guide for 
-District 1 of Ho Chi Minh City.
- Remember to:
-– give directions to at least three 
-diﬀerent places;
-– use f/idotaccentrst , then, after that  and f/idotaccentnally  to 
-link your directions.
- L et’s start our tour in Ho Chi Minh 
-City. We are in Hai Ba Trung Street 
-now. First, go to 
-______________
- ___________________________
- ___________________________
- ___________________________
-4
-Now present your audio guide to 
-your class.
-5
-27
-Track
-28
-Track
-Ly Tu Trong St.
-Le Thanh T
-on St.
-Dong Khoi St.
-Dong Khoi St.
-Hai Ba T
-rung St.
-Nguy
-en Hue S
-t.
-Nguy
-en Hue S
-t.
-Hai Ba T
-rung St.
-Thi Sach St.
-Thi Sach St.
-Le Thanh Ton St.
-Le Loi St.
-Cao Ba Q
-uat St.Nguyen Sieu S
-t.
-Le Loi St.
-Nguy
-en Du St.
-Nguy
-en Du St. Han T
-huyen St.
-Le Duan S
-t.
-Nguyen Du St.
-Ly Tu Trong S
-t.
-Ton Duc Thang St.
-Thong Nhat
-Palace
-Ho Chi Minh City
-Museum
-People’ s Committee
-of Ho Chi Minh City
-Saigon
-Notre Dame
-Cathedral
-Sai Gon
-Opera House
-Ton Duc Thang
-Museum
-You are here
-43Unit 4 - My Neighbourhood
+### 4. Ngữ pháp (Grammar): Tính từ so sánh hơn (Comparative Adjectives) [14, 39]
+So sánh hơn được sử dụng khi chúng ta muốn so sánh sự khác biệt về đặc điểm, tính chất giữa hai người, hai vật hoặc hai địa điểm khác nhau [25, 45].
 
-## Page 45
+#### A. Tính từ ngắn (Short Adjectives)
+Tính từ ngắn là những tính từ chỉ có một âm tiết (ví dụ: *fast, cheap, hot*) hoặc một số tính từ có hai âm tiết nhưng kết thúc bằng đuôi `-y` (ví dụ: *noisy, busy, dirty*) [44].
+* **Cấu trúc:** 
+  $$\mathbf{S_1 + be + Adj\text{-}er + than + S_2}$$
+* **Quy tắc thêm đuôi \"-er\":**
+  * Thông thường chỉ cần thêm *-er* trực tiếp vào sau tính từ: 
+    * *cheap -> cheaper* (rẻ hơn) [20, 44]
+    * *fast -> faster* (nhanh hơn) [44]
+  * Nếu tính từ kết thúc bằng đuôi `-e`, chỉ cần thêm `-r`:
+    * *large -> larger* (rộng lớn hơn) [44]
+    * *wide -> wider* (rộng rãi hơn) [20]
+  * Nếu tính từ có cấu trúc 1 nguyên âm đứng giữa 2 phụ âm cuối (CVC), ta nhân đôi phụ âm cuối trước khi thêm `-er`:
+    * *hot -> hotter* (nóng hơn) [44]
+    * *big -> bigger* (to hơn)
+  * Đối với các tính từ hai âm tiết kết thúc bằng chữ `-y`, chuyển `-y` thành `-i` ngắn rồi thêm `-er`:
+    * *noisy -> noisier* (ồn ào hơn) [20, 44]
+    * *busy -> busier* (nhộn nhịp hơn)
+    * *dirty -> dirtier* (bẩn hơn)
+* *Ví dụ: Binh Minh is noisier than Long Son.* (Khu phố Bình Minh thì ồn ào hơn khu phố Long Sơn.) [20]
 
-SKILLS 1
-Reading
-Read Khang’s blog. Look at the 
-words in the box, then f/idotaccentnd them 
-in the text and underline them. 
-What do they mean?
- suburbs           dislike           outdoor
-1
-Read Khang’s blog again and f/idotaccentll 
-the table with the information.
-LIKES DISLIKES
-Ţ beautiful 
-parks
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Read Khang’s blog again. Then 
-answer the questions.
-1.  W here is Khang’s neighbourhood?
-2.   Why is his neighbourhood great for 
-outdoor activities?
-3.   What are the people in his 
-neighbourhood like?
-4.   How are the streets in his 
-neighbourhood?
-Speaking
-Make notes about your 
-neighbourhood. Think about 
-what you like / dislike about it.
-LIKES DISLIKES
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Ţ ___________
-Work in pairs. Ask and answer 
-about what you like and dislike 
-about your neighbourhood.
- Example:
-A: W here do you live?
-B: I  live in the suburbs of Da Nang City.
-A: W hat do you like about it?
-B: T he weather is f/idotaccentne. The people are     
- friendly and the food is good.
-A: W hat do you dislike about it?
-B: T he streets are busy and crowded.
-2
-3
-4
-KHANG'S BLOG
-Friday, December 23rd ...
- MY NEIGHBOURHOOD
- I  live in the suburbs of Da Nang 
-City. There are many things I like 
-about my neighbourhood.
- I t’s great for outdoor activities 
-because it has beautiful parks, 
-sandy beaches and f/idotaccentne weather. 
-There’s almost everything I need 
-here: shops, restaurants, and 
-markets. The people here are 
-friendlier, and the food is better 
-than in other places.
- H owever, there are two things  
-I dislike about it: there are many 
-modern buildings and oﬀ/idotaccentces; and 
-the streets are busy and crowded.
-  Posted by Khang at 4:55 PM
-http:/ /www.myblog.com.vn/Khang
-5
-44 Tiếng Anh 6
+#### B. Tính từ dài (Long Adjectives)
+Tính từ dài là những tính từ có từ ba âm tiết trở lên, hoặc tính từ có hai âm tiết nhưng không tận cùng bằng các đuôi đặc biệt như `-y` [44].
+* **Cấu trúc:**
+  $$\mathbf{S_1 + be + more + Adj + than + S_2}$$
+* *Ví dụ:*
+  * *The seafood here is more delicious than the seafood in Ha Noi.* (Hải sản ở đây thì ngon hơn hải sản ở Hà Nội.) [20]
+  * *Life in the countryside is more peaceful than life in the city.* (Cuộc sống ở nông thôn thì yên bình hơn cuộc sống ở thành phố.) [25, 45]
 
-## Page 46
+#### C. Các trường hợp so sánh bất quy tắc (Irregular Adjectives)
+Một số tính từ không tuân theo quy tắc thêm đuôi *-er* hay dùng chữ *more*, mà biến đổi hoàn toàn sang một dạng từ mới:
+* **good / well** -> **better** (tốt hơn)
+* **bad** -> **worse** (tệ hơn, xấu hơn)
+* **far** -> **farther / further** (xa hơn)
+* **many / much** -> **more** (nhiều hơn) [51]
+* **little** -> **less** (ít hơn) [20]
 
-SKILLS 2
-Listening
-Listen to the conversation 
-between Khang and Vy and tick 
-( 9) T (True) or F (False).
-T F
-1.  Vy lives in the centre of 
-Ho Chi Minh City.
-2.   There is a big market 
-near her house.
-3.  The streets are narrow.
-4.  The schools are faraway.
-5.  There are some factories 
-near her neighbourhood.
-Listen to the conversation 
-again and f/idotaccentll the blanks.
-What Vy likes
-– many shops, restaurants, and 
-   (1) 
-_______   in her neighbourhood 
-– (2) _______  streets
-– helpful and (3) _______  people
-What Vy dislikes
-– too (4) _______  school
-– dirty air
-– noisy and (5) 
-_______  streets
-2
-Writing
-Tick ( 9) what you like or dislike 
-about a neighbourhood.
-Likes Dislikes
-1.  sandy beaches 9
-2.   heavy traﬀ/idotaccentc
-3.  many modern 
-buildings and 
-oﬀ/idotaccentces
-4.  peaceful streets
-5.  good restaurants 
-and cafés
-6.  sunny weather
-7.  helpful and 
-friendly people
-8.  many shops and 
-markets
-Write a paragraph of 
-about 50 words about your 
-neighbourhood saying what 
-you like and dislike about it. 
-Use Khang’s blog as a model. 
- I live in _______ . There are 
-many / some things I like 
-about my neighbourhood. 
-_________________________
- _________________________
- _________________________
- _________________________
- H owever, there are some / many 
-/ one thing(s) I dislike about it. 
-_________________________
- _________________________
- _________________________
- _________________________
-  
-1
-3
-4
-29
-Track
-30
-Track
-45Unit 4 - My Neighbourhood
+---
 
-## Page 47
+### 5. Kĩ năng học tập (Skills Development)
 
-LOOKING BACK
-Vocabulary
-Write the name for each picture.
- 
-     
-       1.  _______           2.  _______
- 
-    
-    
-       3.  _______           4.  _______
-  
-                    5.  _______
-Grammar
-Put the following adjectives in 
-the correct column.
- fast   noisy   expensive 
-heavy     large   beautiful 
-hot     quiet   exciting
-One syllable Two 
-syllables
-Three 
-or more 
-syllables
-2
-Now write their comparative 
-forms in the table below.
-Adjectives Comparative form
-fast
-beautiful
-noisy
-expensive
-hot
-exciting
-quiet
-heavy
-large
-faster
-___________
-___________
-___________
-___________
-___________
-___________
-___________
-___________
-Complete the sentences 
-comparing the pictures. Use 
-the comparative forms of the 
-adjectives below.
-       expensive             modern 
-      noisy             peaceful
-3
-4
-1
-1.  T his street is _______  than that one.
-2.  A  city house is _______  than a country 
-house.
-3.  Things at a corner shop are _______ 
-than things at a village market.
-4.  Life in the countryside is _______  
-than life in the city.
-46 Tiếng Anh 6
+#### A. Đọc (Reading)
+* **Nội dung đọc:** Đọc hiểu trang blog cá nhân của Khang giới thiệu về cuộc sống ở vùng ngoại ô dã ngoại [21].
+* **Các từ vựng nổi bật cần lưu ý:**
+  * *suburbs* (n): vùng ngoại ô (rìa trung tâm) [21]
+  * *outdoor* (adj): ngoài trời (như các hoạt động thể thao, dã ngoại) [21]
+  * *dislike* (v): không thích, ghét [21]
+* **Thông tin khai thác từ blog của Khang:**
+  * **Những điều Khang thích (Likes):** Công viên đẹp (*beautiful parks*), không khí trong lành phù hợp cho hoạt động ngoài trời, người dân vô cùng thân thiện, đồ ăn ngon và rẻ [21, 22].
+  * **Những điều Khang ghét (Dislikes):** Đường phố chật hẹp, giao thông giờ cao điểm quá đông đúc và ùn tắc (*heavy traffic*) [23].
 
-## Page 48
+#### B. Nói (Speaking)
+* Luyện tập kỹ năng làm việc nhóm để trao đổi và lên danh sách về các điểm yêu thích hoặc không thích đối với khu phố nơi mình đang sinh sống [22].
+* *Mẫu hội thoại thực hành hỏi đáp:*
+  * **A:** *Where do you live?* (Bạn sống ở đâu vậy?) [22]
+  * **B:** *I live in the suburbs of Da Nang City.* (Mình sống ở khu vực ngoại ô của thành phố Đà Nẵng.) [22]
+  * **A:** *What do you like about it?* (Bạn thích điều gì ở đó?) [22]
+  * **B:** *The weather is fine. The people are friendly and the food is good.* (Thời tiết rất dễ chịu. Người dân vô cùng thân thiện và đồ ăn thì rất ngon.) [22]
 
-PROJECT
-Now I can ... 9 99 999
-Ţ use the words to name places in a neighbourhood.
-Ţ pronounce the sounds / ǹ/ and / L/ correctly.
-Ţ compare two people or things using comparative 
-adjectives.
-Ţ ask for and give directions.
-Ţ read about a neighbourhood.
-Ţ talk about a neighbourhood.
-Ţ listen about a neighbourhood.
-Ţ write a paragraph to describe a neighbourhood.
-MYMAP
-Draw a map of a neighbourhood. 
-Write names of at least f/idotaccentve places 
-on your map.
-Work in pairs. Take turns to ask for 
-and give directions to the places on 
-the map.
-1
-2
-47Unit 4 - My Neighbourhood
+#### C. Nghe (Listening)
+* Học sinh lắng nghe cuộc trò chuyện của bạn Vy chia sẻ những thông tin khách quan về khu phố của bạn ấy [23, 42].
+* **Những điều Vy thích (Likes):** Có nhiều cửa hàng, nhà hàng sầm uất, có phòng triển lãm nghệ thuật (*art galleries*), đường phố rộng rãi thông thoáng và người dân cực kỳ hữu ích, thân thiện [42].
+* **Những điều Vy không thích (Dislikes):** Trường học của Vy nằm ở vị trí quá xa nhà (*too far school*), bầu không khí bị ô nhiễm khói bụi (*dirty air*), và một số con phố quá ồn ào và đông đúc xe cộ [42].
 
+#### D. Viết (Writing)
+* Học sinh thực hành viết một đoạn văn ngắn khoảng 50 từ giới thiệu về khu phố của mình dựa trên cấu trúc mô hình blog của bạn Khang [24].
+* **Dàn ý đoạn văn gợi ý:**
+  * *I live in [Tên nơi ở]. There are many / some things I like about my neighbourhood. First, ... Second, ... [Liệt kê các điều thích]* (Tôi sống ở... Có nhiều thứ tôi thích về khu dân cư của mình. Đầu tiên là... Thứ hai là...) [24]
+  * *However, there are some / many / one thing(s) I dislike about it. For example, ...* (Tuy nhiên, có một số điều tôi không thích về nơi này. Ví dụ như...) [24]
+
+---
+
+### 6. Everyday English: Hỏi và chỉ đường (Asking and Giving Directions) [14]
+
+#### A. Cách hỏi đường (Asking for Directions)
+* *\"Excuse me. Can you tell us the way to [place], please?\"* [14, 15]
+* *\"Excuse me. Where's the nearest [place], please?\"* [15]
+
+#### B. Cách chỉ đường (Giving Directions) [15, 16]
+* **Go straight** (Đi thẳng) [15, 16]
+* **Go along this street** (Đi dọc theo con phố này)
+* **Turn left / Turn right** (Rẽ trái / Rẽ phải) [15, 16]
+* **Take the second turning on the left / right** (Rẽ ở ngã rẽ thứ hai bên trái / phải) [15, 16]
+* **Cross the road** (Băng qua bên kia đường) [16]
+* **It's on your left / right** (Nó nằm ở phía bên tay trái / tay phải của bạn)
+
+---
+
+### 7. Dự án học tập cuối bài (Project): My Map (Bản đồ của em) [25, 45]
+* **Nhiệm vụ học tập:** Vẽ một tấm bản đồ đơn giản mô tả khu dân cư em tự thiết kế, đặt tên cho ít nhất 5 địa điểm công cộng trên bản đồ (như trường học, công viên, rạp phim, hiệu sách, ngân hàng) [25, 45].
+* **Hoạt động thực hành:** Làm việc theo cặp, đóng vai một người khách du lịch và một người dân địa phương để hỏi và chỉ đường đi đến các địa điểm trên bản đồ vừa vẽ [25, 45].

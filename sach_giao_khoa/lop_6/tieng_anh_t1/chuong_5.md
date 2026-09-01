@@ -1,589 +1,170 @@
-## Page 49
+# UNIT 5: NATURAL WONDERS OF VIET NAM (CÁC KỲ QUAN THIÊN NHIÊN CỦA VIỆT NAM)
 
-GETTING  STARTED
-Geography Club
-Listen and read.
-Alice:
- Hello, welcome to our Geography Club. 
-(Knock at door)
-Alice: Come in, Elena. We’re just starting now. 
-But remember you must always be on time.
-Elena: Sure. Sorry.
-Alice: Today I’m going to talk about some 
-natural wonders of Viet Nam. 
-Nick: Great! What’s that in the f/idotaccentrst picture? 
-Alice: It’s Ganh Da Dia in Phu Yen.
-Elena: Wow. It looks amazing! 
-Nick: Is picture 2 Ha Long Bay?
-Alice: Right. What do you know about it?
-Nick: It has many islands. 
-Alice: Yeah! The scenery is wonderful.  
-This picture shows Tuan Chau, 
-a large island.
-Tommy: How about picture 3?
- ...
-1
- 31
-Track
-THIS UNIT INCLUDES:
-Vocabulary
- t Things in nature
- t Travel items
-Pronunciation
-Sounds: /t/ and /d/
-Grammar
- t Countable and uncountable nouns
- t Modal verb: 
-must / mustn’t
-Skills
- t Reading about natural wonders 
- t Talking about famous places, and 
-what you must / mustn’t do there
- t Listening about a natural wonder
- t Writing a paragraph about a 
-natural wonder 
-Everyday English   
-Making and accepting appointments
-48 Tiếng Anh 6
-NATURAL WONDERS
-OF VIET NAMUnit 5
+---
 
-## Page 50
+## I. TỔNG QUAN CHỦ ĐỀ (OVERVIEW)
+* **Chủ điểm chính (Theme):** Our World (Thế giới của chúng ta) [42, 60]
+* **Từ vựng:** Các thực thể, cảnh quan trong tự nhiên và các vật dụng cần thiết khi đi du lịch, dã ngoại [42, 60].
+* **Ngữ âm:** Cách phát âm và phân biệt hai phụ âm `/t/` và `/d/` [42, 60, 65].
+* **Ngữ pháp:** 
+  * Danh từ đếm được (Countable nouns) và danh từ không đếm được (Uncountable nouns) [42, 60, 64].
+  * Động từ khuyết thiếu **Must** và **Mustn't** để chỉ sự cần thiết hoặc cấm đoán [42, 60, 67, 68].
+* **Kĩ năng (Skills Development):**
+  * **Đọc (Reading):** Đọc hiểu thông tin chung và chi tiết về các kỳ quan thiên nhiên nổi tiếng của Việt Nam (Vịnh Hạ Long, Mũi Né) [39, 42, 60, 69, 70].
+  * **Nói (Speaking):** Đóng vai hướng dẫn viên du lịch để giới thiệu địa danh nổi tiếng và thảo luận về các quy định nên/không nên làm tại đó [40, 60, 72].
+  * **Nghe (Nghe):** Nghe thông tin chi tiết về đảo Phú Quốc [42, 60, 73].
+  * **Viết (Writing):** Viết một đoạn văn ngắn khoảng 50 từ giới thiệu về một địa danh du lịch nổi tiếng dựa trên sơ đồ tư duy gợi ý [42, 60, 74].
+* **Tiếng Anh giao tiếp hằng ngày (Everyday English):** Lập và chấp nhận cuộc hẹn (Making and accepting appointments) [42, 60, 68].
 
-Complete the following 
-sentences with the words from 
-the box.
- scenery natural        wonders          
-amazing islands
-1.  People didn’t make Ganh Da Dia.  
-They are _______  rocks.
-2.  Ha Long Bay has thousands of big and 
-small _______ .
-3.  Ha Long Bay is charming and the 
-_______  is wonderful. 
-4.   Ganh Da Dia has _______ rock columns 
-of diﬀerent shapes and sizes.
-5.   There are many natural and man-made 
-_______  in Viet Nam.
-2
-Listen and repeat the words, 
-then label the pictures.
-  1. mountain 2.  river 3. waterfall  
-4.  forest 5.  cave 6.  desert   
-7.  beach 8.  island
-  a. _______       b. _______
-3
-32
-Track
- 
-  c. _______        d. _______
- 
-  e. _______       f. _______
- 
-  g. _______         h. _______
-Q U I Z
-Work in groups. Choose the 
-correct answer to each of the 
-questions.
-1.  Which is an island in Viet Nam?
- A. Con Dao   B. Son Doong  
-2.  Where is Mount Fansipan?
- A. In Lao Cai   B. In Quang Binh
-3.  Which of the following is a national 
-park?
- A. Thong Nhat Park
- B. Cat Tien Park
-4.   Which of the following wonders is a 
-cave?
- A. Cuc Phuong B. Phong Nha 
-5.  Which waterfall is in Cao Bang?
- A. Giang Dien Waterfall    
- B. Ban Gioc Waterfall 
-4
-Unit 5 - Natural Wonders of Viet Nam49
+---
 
-## Page 51
+## II. CHI TIẾT NỘI DUNG BÀI HỌC (UNIT DETAILS)
 
-A CLOSER LOOK 1
-Vocabulary
-Write a word under each picture. Practise saying the words.
-plaster sleeping bag backpack compass suncream scissors
-1
-1. _______
-4.  _______ 5.  _______ 6.  _______
-2.  _______ 3. _______
-Complete the following 
-sentences. Use the words in 
-1.
-1.  We’re lost. Please give me the _______ .
-2.   It’s so sunny today. I need to put on  
-some _______ .
-3.  A _______  is very useful when you go 
-camping overnight.
-4.  I’ve f/idotaccentnished packing. All my things 
-are in my _______ .
-5.  My foot hurts. I need to put a _______  
-on my foot.
-2 Now put the items in order of 
-usefulness. Number 
-1 is the 
-most useful, number 6  is the 
-least useful on holiday.
- plaster compass sleeping bag
- scissors backpack suncream 
-1.  ______________________________
-2.  ______________________________
-3.  ______________________________
-4.  ______________________________
-5.  ______________________________
-6.  ______________________________
-3
-50 Tiếng Anh 6
+### 1. Getting Started (Khởi động)
+* **Chủ đề cuộc thoại:** *Geography Club* (Câu lạc bộ Địa lý) [59].
+* **Nhân vật:** Alice (chủ nhiệm câu lạc bộ), Nick, Elena và Tommy [59, 60].
+* **Nội dung chính:** Các thành viên trong Câu lạc bộ Địa lý bắt đầu buổi sinh hoạt để tìm hiểu về các kỳ quan thiên nhiên của Việt Nam [59]. Alice nhắc nhở Elena về việc đi học đúng giờ [59]. Sau đó, cả nhóm cùng quan sát và thảo luận sôi nổi về các bức ảnh chụp địa danh kỳ vĩ: Gành Đá Đĩa (Phú Yên) và Vịnh Hạ Long (Quảng Ninh) với đảo Tuần Châu [59, 60].
+* **Một số mẫu câu và từ vựng xuất hiện:**
+  * *\"Come in, Elena. We’re just starting now. But remember you must always be on time.\"* (Vào đi Elena. Tụi mình vừa mới bắt đầu thôi. Nhưng nhớ là cậu lúc nào cũng phải đúng giờ nhé.) [59]
+  * *\"It’s Ganh Da Dia in Phu Yen.\"* (Đó là Gành Đá Đĩa ở Phú Yên.) [59]
+  * *\"Wow. It looks amazing!\"* (Oa. Trông thật tuyệt vời/kinh ngạc!) [59]
+  * *\"The scenery is wonderful.\"* (Phong cảnh ở đây thật tuyệt diệu.) [60]
 
-## Page 52
+---
 
-A CLOSER LOOK 2
-Grammar
-Countable and uncountable nouns
- 
-Is the underlined noun countable or uncountable? Write C (countable)  
-or U (uncountable).
-1.  The children are very tired after a day of fun.  _______
-2.  Be careful! The water is deep.  _______
-3.  My mother uses real butter in the cakes she bakes.  _______
-4.  Remember to bring the necessary travel items. _______
-5.   – How about meeting in the canteen for some tea?  _______
-     – Sure. What time? 
-1
-Pronunciation
-/ t/ and / d/  
-Listen and repeat the words.
-/t/ /d/
-mountain 
-waterfall   
-desert
-plaster
- wonder 
-island 
-guide  
- holiday
-4
- 33
-Track
-Listen and repeat. Pay attention 
-to the bold-typed parts of the 
-words. 
-1.  – Where’s my ha t?
-     – Oh, it’s on your hea d.
-2.   Where do they stay on their holi day?
-3.  I nee d some mea t for my ca t.  
-4.  The Sahara is a very ho t deser t.
-5.   I wan t to explore the islan d by boat.
-5
-34
-Track
-51Unit 5 - Natural Wonders of Viet Nam
-– We use some, many, a few  with countable nouns. 
-– We use some, much, a little  with uncountable nouns.
-Remember!
-– Countable nouns are for the people and things we can count using numbers.  
- Countable nouns can be singular: 
-a rock, an island  ..., or plural: rocks, islands ...
-– Uncountable nouns are for the things that we cannot count with numbers.  
- They usually do not have a plural form:
- cream, chocolate ... 
+### 2. Từ vựng (Vocabulary)
 
-## Page 53
+#### A. Các thực thể, cảnh quan tự nhiên (Things in Nature) [42, 60, 61, 62]
+* **mountain** (n) /ˈmaʊntən/: ngọn núi, núi [62]
+* **river** (n) /ˈrɪvə(r)/: con sông [62]
+* **waterfall** (n) /ˈwɔːtəfɔːl/: thác nước [62]
+* **forest** (n) /ˈfɒrɪst/: khu rừng [62]
+* **cave** (n) /keɪv/: hang động [62]
+* **desert** (n) /ˈdezət/: sa mạc [62]
+* **beach** (n) /biːtʃ/: bãi biển [62]
+* **island** (n) /ˈaɪlənd/: hòn đảo [62]
+* **scenery** (n) /ˈsiːnəri/: phong cảnh, cảnh quan [61]
+* **natural wonder** (n) /ˌnætʃrəl ˈwʌndə(r)/: kỳ quan thiên nhiên [61, 87]
+* **landscape** (n) /ˈlændskeɪp/: phong cảnh, cảnh đẹp [70, 87]
 
-Choose the correct option for 
-each sentence. 
-1. I have _______  questions to ask you.
- A. a few   B. a little  
-2.   Australia is very nice. It has _______   
-natural wonders.
- A. much   B. many
-3.  This is a diﬀ/idotaccentcult lesson, so only 
-_______  students can understand it. 
- A. a few   B. many
-4.   It is a very dry area. There isn’t 
-_______  rain in summer. 
- A. a little   B. much 
-5.  We’ve got very _______  time before 
-our train leaves. We must hurry up!
- A. little  B. much  
-Fill each blank with a,  any,  
-some,  much or many.
-1.  How _______  books are there in your 
-bag?
-2.   There isn’t _______  milk in the fridge. 
-It’s empty.
-3. How _______  sugar do you need for 
-your tea, Mum?
-4.  We need to buy _______  new 
-furniture for the house. 
-5.   There is _______  big cave in this area. 
-2
-3
-Modal verb: must /  mustn’t
-I / you
-musthe / she / it
-you / we / they
-I / you
-mustn’the / she / it
-you / we / they
- 
-Fill each blank with must or 
-mustn’t.
-1.  You _______  leave the hotel room  
-before 12 o’clock.
-2.  You _______  make lots of noise in  
-the museum.
-3.  My mum says you _______  always 
-tell the truth.
-4.  You know you _______  go to bed 
-with your shoes on.
-5.  I want to speak English better.  
-I _______  practise more.
-Read the classroom rules below. 
-Write some more rules for you 
-and your classmates. 
-1.  We must arrive on time.
-2.  We mustn’t pick ﬂowers in the school 
-garden.
-3.  We must  ______________________ .
-4.  We mustn’t  ____________________ .
-5.  ______________________________ .
-4
-5
-52 Tiếng Anh 6
-We use must to say that 
-something is very necessary or 
-very important. 
-We use 
-mustn’t to say that 
-doing something is not allowed.
-Remember!
+#### B. Vật dụng du lịch, dã ngoại (Travel Items) [42, 60, 63]
+* **plaster** (n) /ˈplɑːstə(r)/: băng cá nhân (băng gạc y tế dùng để dán vết thương nhỏ) [63, 87]
+* **sleeping bag** (n) /ˈsliːpɪŋ bæɡ/: túi ngủ [63]
+* **backpack** (n) /ˈbækpæk/: ba-lô đeo vai [63, 87]
+* **compass** (n) /ˈkʌmpəs/: la bàn (chỉ phương hướng khi đi lạc) [63, 87] *(Lưu ý: trong Unit 1, compass còn có nghĩa là com-pa vẽ hình tròn)*
+* **suncream** (n) /ˈsʌnkriːm/: kem chống nắng [63, 87]
+* **scissors** (n) /ˈsɪzəz/: cái kéo [63]
 
-## Page 54
+#### C. Sự kết hợp danh lam thắng cảnh và loại hình thực tế (Looking Back) [74, 75]
+Học sinh cần nắm được sự tương thích giữa tên riêng các địa danh và các danh từ địa lý đi kèm:
+* **Fansipan** -> **mount** (ngọn núi Fansipan) [75]
+* **Ban Gioc** -> **waterfall** (thác nước Bản Giốc) [75]
+* **Ha Long** -> **bay** (vịnh Hạ Long) [75]
+* **Cuc Phuong** -> **forest** (rừng Cúc Phương) [75]
+* **The Sahara** -> **desert** (sa mạc Sahara) [75]
+* **Con Dao** -> **island** (hòn đảo Côn Đảo) [75]
 
-COMMUNICATION
-Everyday English
-Making and accepting 
-appointments 
-Listen and read the short 
-conversation below, paying 
-attention to the highlighted 
-parts. 
-Steven: 
-Duong, let’s go for a picnic  
-this Sunday.
-Duong: That’s f/idotaccentne. What time can  
-we meet?
-Steven: How about 9 o’clock?
-Duong: Sure. I’ll meet you at that 
-time.
-Work in pairs. Make a short 
-conversation, following the 
-example in 
-1.
-A travel guide
-Read the travel guide entry.
-1
-2
-3
-Now make a list of the things  
-you must bring to the 
-Himalayas. Then add things you 
-mustn’t bring.
-MUST MUSTN’T
-____________ ____________
-____________ ____________
-____________ ____________
-____________ ____________
-     
-Role-play being a tour guide 
-and a tourist. Tell your partner 
-what to prepare for their trip 
-to the Himalayas, and give 
-reasons.
- Example:
-A:   I’d like to go to the Himalayas next 
-month.
-B:   OK. I think you must bring a 
-waterproof coat. It’s cold and rainy 
-there!
-A:  Yes. Anything else?
-B: You must ..., and you mustn’t ... 
-4
-5
-bicyclecompass
-GLO B A L T R A VEL GU I D ES 
-35
-Track
-The Himalayas is a mountain range. 
-It’s very special. It has the world’s 
-highest mountain – Mount Everest.  
-When visiting the Himalayas, remember to 
-follow these rules.
-Ţ :PVNVTUBTLCFGPSFZPVWJTJUUIFBSFB
-Ţ :PVNVTUOśUUSBWFMBMPOF"MXBZTHPJOBHSPVQ
-Ţ :PVNVTUOśUMJUUFS
-Ţ :PVNVTUCSJOHPOMZUIFOFDFTTBSZUIJOHT
-Ţ :PVNVTUCSJOHUIFSJHIUDMPUIFTUPP%POśUCSJOH
-shorts or T-shirts!
-53Unit 5 - Natural Wonders of Viet Nam
+---
 
-## Page 55
+### 3. Ngữ âm (Pronunciation): `/t/` & `/d/` [60, 65]
 
-SKILLS 1
-Reading
-Before you read, look at 
-the pictures below. Make 
-predictions about the reading. 
-Then read and check your ideas.
-1.  What is the reading about?
-2.   What do you know about these 
-places?
- Ha Long B ay is in Quang Ninh. It has  
-many islands and caves. Tuan Chau,  
-with its beautiful beaches, is a popular 
-tourist attraction in Ha Long Bay. 
-There you can enjoy great seafood. 
-And you can join in exciting activities. 
-Ha Long Bay is Viet Nam’s best natural 
-wonder.
- Mui Ne  is popular for its amazing 
-landscapes. The sand has diﬀerent 
-colours: white, yellow, red ... It’s like a 
-desert here. You can ride a bike down 
-the slopes. You can also ﬂy kites, or 
-have a picnic by the beach. The best 
-time to visit the Mui Ne Sand Dunes 
-is early morning or late afternoon. 
-Remember to wear suncream and 
-bring water.
-Complete the sentences, using 
-the words from the box.
- desert wonder
- visit islands remember
-1.  Ha Long Bay is famous for its beautiful 
-_______ .
-2.  Ha Long Bay is the number one 
-natural _______  in Viet Nam.
-2
-1
-3.  A _______  is a large area of land 
-with very little water.
-4.  _______  to bring an umbrella, as it 
-often rains there.
-5.  A lot of people _______  Ly Son 
-Island in the summer.
-Read the text again. Answer the 
-following questions.
-1.  Where is Ha Long Bay?
-2.  What can you do at Ha Long Bay?
-3. Is there a desert in Mui Ne?
-4.  Where can you have a picnic in Mui Ne?
-5.  What is the best time to visit the 
-Mui Ne Sand Dunes?
-Speaking
-Work in pairs. Make notes about 
-one of the places in the reading. 
-You can add your own ideas.
-Ha Long B ay Mui Ne
-–  interesting   
- islands      
-_____________
-–  a beautiful 
-place
-____________
-Then tell your partner about the 
-place.
- Example: 
- Ha Long Bay has a lot of interesting 
-islands. It ...
-Some foreign visitors are visiting 
-your city / town / area. You are 
-their tour guide. Tell them some 
-interesting things about the 
-place as well as what they must 
-and mustn’t do there.
- Example: 
- –  You must follow all the rules.
- –   You mustn’t take photos when you 
-are in the City Museum.
-3
-4
-5
-54 Tiếng Anh 6
+* **Âm `/t/` (Phụ âm vô thanh - voiceless consonant, đầu lưỡi chạm vào chân răng trên rồi bật hơi mạnh ra ngoài, dây thanh quản không rung):**
+  * *mountain* /ˈmaʊntən/ (núi) [65]
+  * *waterfall* /ˈwɔːtəfɔːl/ (thác nước) [65]
+  * *desert* /ˈdezət/ (sa mạc) [65]
+  * *plaster* /ˈplɑːstə(r)/ (băng dán vết thương) [65]
+  * *hat* /hæt/ (cái mũ) [65]
+  * *cat* /kæt/ (con mèo) [65]
+  * *meat* /miːt/ (thịt) [65]
+  * *hot* /hɒt/ (nóng) [65]
+  * *boat* /bəʊt/ (con thuyền) [65]
+* **Âm `/d/` (Phụ âm hữu thanh - voiced consonant, vị trí đặt lưỡi giống âm /t/ nhưng không bật hơi mạnh mà làm rung dây thanh quản ở cổ họng):**
+  * *wonder* /ˈwʌndə(r)/ (kỳ quan) [65]
+  * *island* /ˈaɪlənd/ (hòn đảo) [65]
+  * *guide* /ɡaɪd/ (người hướng dẫn) [65]
+  * *holiday* /ˈhɒlədeɪ/ (ngày nghỉ, kỳ nghỉ) [65]
+  * *head* /hed/ (cái đầu) [65]
 
-## Page 56
+---
 
-SKILLS 2
-Listening
-Work in groups. Discuss the 
-question.
- What do you know about Phu Quoc 
-Island?
-Listen to the talk and check 
-your answers.  
-Listen again and tick ( 9) T (True) 
-or F (False).
-T F
-1. Phu Quoc is a very beautiful 
-island in Viet Nam. 
-2.   There are no green forests 
-in Phu Quoc.
-3.  Tourists can visit f/idotaccentshing 
-villages and national parks 
-there.     
-4.  You cannot play water 
-sports in Phu Quoc.  
-5.  People sell interesting 
-things at the markets.
-1
-36
-Track
-2
-37
-Track
-Writing
-Fill each blank in the network 
-with the information about a 
-travel attraction you know.
-Use the notes in 
-3 to write a 
-paragraph of about 50 words.
-Y ou can begin your paragraph 
-with:  
-3
-4
-I am writing about 
-It is in
-(2) Where is it? 
-_______
-(5)  What can 
-you do there? 
-_______
-(3)  How can you 
-go there? 
-_______
-(4)  What is 
-special 
-about it? 
-_______
-(1)  Name of the 
-attraction 
-_______
-55Unit 5 - Natural Wonders of Viet Nam
+### 4. Ngữ pháp (Grammar)
 
-## Page 57
+#### A. Danh từ đếm được và không đếm được (Countable and Uncountable Nouns) [18, 64]
+* **Danh từ đếm được (Countable Nouns):** Là những danh từ chỉ những sự vật, hiện tượng cụ thể mà chúng ta có thể đếm trực tiếp bằng số lượng (1, 2, 3...) [64]. Chúng có cả dạng số ít (thường dùng kèm *a/an*) và dạng số nhiều (thường thêm đuôi *-s/es*) [64, 65].
+  * *Ví dụ: a book, two islands, children, travel items, candles, students* [64, 65, 75].
+* **Danh từ không đếm được (Uncountable Nouns):** Là những danh từ chỉ chất liệu, chất lỏng, các khái niệm trừu tượng hoặc các sự vật không thể tách rời để đếm bằng số lượng trực tiếp [64]. Chúng không thể đi kèm trực tiếp với các số đếm hoặc từ hạn định *a/an*, và thường chỉ tồn tại ở dạng số ít [64].
+  * *Ví dụ: water (nước), butter (bơ), milk (sữa), snow (tuyết), tea (trà), sugar (đường), luggage (hành lý)* [64, 75, 76].
+* **Từ chỉ số lượng đi kèm (Quantifiers):**
+  * Đi với **Danh từ đếm được**: *some, many, a few* [65].
+    * *Ví dụ: many islands, a few students* [65, 66].
+  * Đi với **Danh từ không đếm được**: *some, much, a little* [65, 66].
+    * *Ví dụ: some milk, much snow, a little rain* [66, 75, 85].
+  * **Cách dùng Some / Any:**
+    * **Some (một vài, một ít):** Thường dùng trong câu khẳng định [82]. *(Ví dụ: There are some cucumbers in the fridge).*
+    * **Any (nào, bất cứ):** Thường dùng trong câu phủ định hoặc câu nghi vấn [81, 82]. *(Ví dụ: There isn't any milk left in the fridge. Do you have any English songs?)* [66, 81, 85]
 
-3
-4
-5
-LOOKING BACK
-Vocabulary
-Write the name for each picture.
- 
-         
-  1. _______   2.  _______  
- 
-            
-  3. _______   4.  _______  
- 
-            
-  5.  _______   6.  _______  
-Match the name of a natural 
-wonder in column A with a word  
-indicating it in column B. 
-1 is an 
-example.
-A B
-1.  Fansipan
-2.  Ban Gioc
-3. Ha Long 
-4.  Cuc Phuong
-5.  The Sahara
-6.  Con Dao
-a.  bay
-b.  island
-c.  waterfall
-d.  mount
-e.  forest
-f.   desert
-1
-2
-Write the words.
- 
-  
-1. _______       2.  _______         3. _______
-       
-       4.  _______         5.  _______
-Grammar
-Find the mistake in each 
-sentence and correct it.
- Example:  
- There is some wonderful camping sites 
-in our area.
- is  o are
-1. How many candles is on that birthday cake?
- ______________________________
-2.   There are so much snow on the road.
- ______________________________
-3. Michael can play diﬀerent musical 
-instrument. 
- ______________________________
-4.   There are not much milk left in the 
-fridge.
- ______________________________
-5.  Don’t take too much luggages on your 
-trip. 
- ______________________________
-Complete the dialogue, using 
-must or mustn’t.
-A: It’s dangerous to go hiking there. You  
-(1) _______  tell someone where you are 
-going.
-B:  Yes. And I (2) _______  take a warm coat.  
-It’s very cold there.
-A:  Right. But you (3) _______  bring any 
-heavy or unnecessary things with you. 
-B: OK, and I (4) _______  take a mobile 
-phone. It’s very important.
-A: And you (5) _______  forget to bring a 
-compass.
-56 Tiếng Anh 6
+#### B. Động từ khuyết thiếu: Must / Mustn't (Modal verb: Must / Mustn't) [18, 67, 68]
+* **Cấu trúc chung:** 
+  $$\mathbf{S + must / mustn’t + V(nguyên\ thể)}$$
+* **MUST (phải):** Dùng để diễn tả một hành động cực kỳ cần thiết, bắt buộc hoặc vô cùng quan trọng phải thực hiện [68].
+  * *Ví dụ: You must leave the hotel room before 12 o'clock.* (Bạn phải trả phòng khách sạn trước 12 giờ.) [67]
+  * *Ví dụ: My mum says you must always tell the truth.* (Mẹ tôi nói bạn phải luôn luôn nói thật.) [67]
+  * *Ví dụ: I want to speak English better. I must practise more.* (Tôi muốn nói tiếng Anh tốt hơn. Tôi phải luyện tập nhiều hơn.) [67, 68]
+* **MUSTN'T (không được phép):** Dùng để diễn tả một hành động bị cấm đoán, không được phép làm vì trái quy định hoặc quy luật [68].
+  * *Ví dụ: You mustn't make lots of noise in the museum.* (Bạn không được làm ồn trong bảo tàng.) [67]
+  * *Ví dụ: You mustn't go to bed with your shoes on.* (Bạn không được mang cả giày đi ngủ.) [67]
+  * *Ví dụ: We mustn't pick flowers in the school garden.* (Chúng ta không được hái hoa trong vườn trường.) [68]
 
-## Page 58
+---
 
-PROJECT
-1
-2
-In groups, make a poster about a natural wonder you would like to 
-visit. In the poster, draw / print a picture of the place. Then give some 
-information about the place:
-– what the natural wonder is
-– where it is
-– how you can go there 
-– what it is special about
-– what you can do there
- ...
-DREAM ISLAND DESTINATION
-JOIN US NOW!
-Introduce the attraction 
-to your class.
-DREAM DESTINATIONDREAM DESTINATION
-Now I can ... 9 99 999
-Ţ use the words related to things in nature and travel items.
-Ţ pronounce the sounds / t/ and / d/ correctly.
-Ţ use countable and uncountable nouns.  
-Ţ use the modal verb must  / mustn’t . 
-Ţ make and accept appointments.
-Ţ read about natural wonders. 
-Ţ talk about famous places, and what you must / mustn’t 
-do there. 
-Ţ listen about a natural wonder.
-Ţ write a paragraph about a natural wonder.
-57Unit 5 - Natural Wonders of Viet Nam
+### 5. Kĩ năng học tập (Skills Development)
 
+#### A. Đọc (Reading): Khám phá Vịnh Hạ Long & Mũi Né [69, 70]
+* **Vịnh Hạ Long (Ha Long Bay) - Quảng Ninh:**
+  * Địa điểm nằm ở tỉnh Quảng Ninh, là kỳ quan thiên nhiên tuyệt vời nhất Việt Nam [69].
+  * Có hàng ngàn hòn đảo đá vôi (*islands*) và hang động kỳ vĩ (*caves*) [69].
+  * Đảo Tuần Châu (*Tuan Chau*) nổi tiếng với các bãi biển đẹp, hải sản tươi ngon và nhiều hoạt động vui chơi giải trí ngoài trời sôi động [60, 69].
+* **Mũi Né (Mui Ne) - Bình Thuận:**
+  * Nổi tiếng với cảnh quan thiên nhiên tuyệt mỹ, đặc biệt là những đồi cát di động (*Mui Ne Sand Dunes*) có nhiều màu sắc phong phú: trắng, vàng, đỏ... trông giống như một sa mạc (*desert*) thu nhỏ [70].
+  * Các hoạt động thú vị tại đây bao gồm: đạp xe leo đồi cát (*ride a bike down the slopes*), thả diều (*fly kites*), hoặc tổ chức dã ngoại cắm trại ngay bên bờ biển (*have a picnic by the beach*) [70].
+  * Lời khuyên du lịch: Nên tham quan vào lúc sáng sớm hoặc chiều muộn; nhớ mang theo nước uống và bôi kem chống nắng đầy đủ [70].
+
+#### B. Nói (Speaking): Đóng vai hướng dẫn viên du lịch [72]
+* Học sinh đóng vai trò là một hướng dẫn viên du lịch để giới thiệu cho du khách nước ngoài các địa điểm đẹp trong vùng của mình, đồng thời nhắc nhở các quy định an toàn bằng cấu trúc *must* và *mustn't* [72].
+* *Mẫu câu giao tiếp:*
+  * *\"Welcome to our city! First, you must follow all the rules.\"* (Chào mừng các bạn đến với thành phố của chúng tôi! Đầu tiên, các bạn phải tuân thủ tất cả các quy định.) [72]
+  * *\"You mustn't take photos when you are in the City Museum.\"* (Bạn không được phép chụp ảnh khi đang ở trong Bảo tàng Thành phố.) [72]
+
+#### C. Nghe (Listening): Tìm hiểu về đảo Phú Quốc [73]
+* Nội dung bài nghe chia sẻ các thông tin thực tế về đảo Phú Quốc:
+  * Phú Quốc là một hòn đảo vô cùng xinh đẹp ở Việt Nam (Đúng) [73].
+  * Nơi đây có thảm thực vật phong phú và những khu rừng xanh bạt ngàn (Đúng - khẳng định trong bài tập là "không có rừng xanh" -> Sai) [73].
+  * Du khách có thể ghé thăm các làng chài ven biển (*fishing villages*) và vườn quốc gia (*national parks*) hoang dã [73].
+  * Du khách có thể tham gia các trò chơi thể thao dưới nước (*water sports*) và mua sắm những món quà lưu niệm độc đáo tại chợ địa phương (*markets*) [73].
+
+#### D. Viết (Writing): Viết đoạn văn giới thiệu địa điểm du lịch [74]
+* Học sinh thực hành hoàn thành sơ đồ mạng lưới thông tin (Network) gồm 5 câu hỏi trọng tâm [74]:
+  1. *Name of the attraction?* (Tên địa điểm thu hút du lịch là gì?) [74]
+  2. *Where is it?* (Địa điểm đó nằm ở đâu?) [74]
+  3. *How can you go there?* (Bạn có thể di chuyển đến đó bằng phương tiện gì?) [74]
+  4. *What is special about it?* (Nơi đó có điều gì đặc biệt?) [74]
+  5. *What can you do there?* (Bạn có thể tham gia các hoạt động gì tại đó?) [74]
+* Dựa trên sơ đồ đã hoàn thành, học sinh viết một đoạn văn ngắn khoảng 50 từ mô tả địa điểm thu hút du lịch đó [74].
+
+---
+
+### 6. Everyday English: Cách hẹn gặp và đồng ý cuộc hẹn (Making and Accepting Appointments) [42, 60, 68]
+
+* **Cách đưa ra lời hẹn gặp (Making Appointments):**
+  * *\"How about meeting in the canteen for some tea?\"* (Chúng mình hẹn gặp nhau ở căng-tin uống trà nhé?) [64, 65]
+  * *\"Shall we meet this weekend?\"* (Cuối tuần này chúng ta gặp nhau nhé?)
+* **Cách phản hồi đồng ý cuộc hẹn (Accepting Appointments):**
+  * *\"Sure. What time?\"* (Chắc chắn rồi. Mấy giờ nhỉ?) [65]
+  * *\"Great! See you then.\"* (Tuyệt vời! Hẹn gặp bạn lúc đó nhé.)
+
+---
+
+### 7. Dự án học tập cuối bài (Project): Điểm đến mơ ước (Dream Destination) [90]
+* **Nhiệm vụ:** Hoạt động nhóm thiết kế một tấm áp phích (Poster) giới thiệu về một kỳ quan thiên nhiên hoặc một địa điểm du lịch mà nhóm em mơ ước được ghé thăm một lần [90].
+* **Nội dung áp phích cần có:** Vẽ hoặc dán ảnh chụp địa danh đó; ghi rõ các thông tin cơ bản: tên địa danh, vị trí địa lý, cách thức di chuyển, điểm đặc biệt nổi bật nhất và các hoạt động vui chơi dã ngoại có thể trải nghiệm [90].
+* **Thực hành:** Đại diện nhóm thuyết trình giới thiệu tấm áp phích của nhóm mình trước toàn thể lớp học [90].
