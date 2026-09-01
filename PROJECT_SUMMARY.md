@@ -5,6 +5,60 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 33 — Mở rộng THPT (Lớp 10-12) cho Soạn giáo án + Đề cương Ôn tập + Đề kiểm tra
+Tiếp nối Phiên 32 (THCS). Tra cứu lại Thông tư 32/2018 (Mục "Giai đoạn định hướng nghề nghiệp"),
+Thông tư 13/2022 (Lịch sử chuyển thành môn BẮT BUỘC, không còn là môn lựa chọn KHXH), và Thông tư
+22/2021 Điều 5 (xác nhận GDQP&AN CÓ điểm số, KHÔNG thuộc nhóm "chỉ nhận xét" - khác GDTC/Nghệ
+thuật/HĐTN-HN/Nội dung GD địa phương).
+
+**Quyết định kiến trúc quan trọng nhất:** THPT có cơ cấu "8 môn/HĐGD bắt buộc + chọn tối thiểu 4
+trong 9 môn lựa chọn theo định hướng nghề nghiệp" — nhưng cơ cấu này chỉ ảnh hưởng THỜI KHOÁ BIỂU
+nhà trường/học sinh (môn nào ĐƯỢC HỌC), KHÔNG ảnh hưởng luồng công cụ (giáo viên soạn 1 môn/1 lúc).
+Vì vậy KHÔNG cần dựng UI "chọn tổ hợp 4/9 môn" như ghi chú cũ ở `NEXT_STEPS.md` #12 dự tính — chỉ
+cần khai báo đủ cả 17 môn/HĐGD (8 + 9) làm 17 lựa chọn riêng trong dropdown "Môn học" y hệt Tiểu
+học/THCS đang làm, dùng lại đúng `getSubjectsForGrade()` sẵn có.
+
+**`config.js`:** thêm 6 môn hoàn toàn mới (Vật lí, Hoá học, Sinh học, Địa lí, Giáo dục kinh tế và
+pháp luật, Giáo dục quốc phòng và an ninh - đều `minGrade:10, maxGrade:12`) + mở rộng `maxGrade`
+lên 12 cho 7 môn tái dùng được từ THCS (Tin học, Công nghệ, Âm nhạc, Mĩ thuật, Ngữ văn, Giáo dục
+thể chất, Hoạt động trải nghiệm-hướng nghiệp). Bổ sung "Nội dung giáo dục của địa phương"
+(`minGrade:6, maxGrade:12`, nhận xét-only) - phát hiện THCS (Phiên 32) bị BỎ SÓT môn này dù Thông
+tư 32 yêu cầu bắt buộc cả 2 cấp, tiện sửa luôn. Kết quả: `getSubjectsForGrade(10-12, LESSON_PLAN)`
+trả về đúng 17 môn/HĐGD (8 bắt buộc + 9 lựa chọn), `getSubjectsForGrade(10-12, EXAM)` trả về 11
+môn có điểm số (loại 6 môn nhận xét-only).
+
+**`subjectProfiles.js`:** thêm 6 profile mới cho môn THPT, mở rộng ghi chú "ĐỘ SÂU KIẾN THỨC THEO
+KHỐI" cho 7 profile tái dùng (VD Tin học THPT tách 2 định hướng "Tin học ứng dụng"/"Khoa học máy
+tính", Công nghệ THPT tách "Công nghệ công nghiệp"/"Công nghệ nông nghiệp").
+
+**Sửa lỗi rò rỉ dữ liệu phát hiện khi mở rộng (`gradeProfiles.js`):** `buildBaseRules()` ở
+`promptTemplates.js` ghép field `guidance` của `gradeProfiles.js` KHÔNG ĐIỀU KIỆN vào prompt của
+MỌI môn học khi tạo đề kiểm tra — bản cũ của `guidance` lại viết theo CHỦ ĐỀ TOÁN cụ thể ("có thể
+dùng đạo hàm", "tập hợp, lượng giác"...). Vô hại khi hệ thống ít môn, nhưng sẽ SAI HẲN khi thêm 6
+môn THPT mới (VD đề Sinh học Lớp 11 sẽ bị nhét nhầm dòng "có thể dùng đạo hàm cơ bản"). Sửa tại
+gốc: chuyển toàn bộ ghi chú độ sâu Toán theo khối (Lớp 1-12) vào ĐÚNG `subjectProfiles.js` (đúng
+nguyên tắc "môn nào lo môn nấy" đã áp dụng cho các môn khác), `gradeProfiles.js` giờ chỉ giữ phần
+TRUNG LẬP theo khối (mức độ nhận thức/độ phức tạp bối cảnh chung, không nhắc chủ đề học thuật cụ
+thể của bất kỳ môn nào).
+
+**`lessonPlanTemplates.js`:** thêm 3 entry Lớp 10-12 vào `LESSON_PLAN_GRADES` - `getCircularForGrade()`/
+`getMinutesPerLesson()` không cần sửa (đã viết tổng quát theo điều kiện `gradeNum >= 6` từ Phiên
+32, tự động đúng cho THPT).
+
+**`ExamMatrixForm.jsx`:** placeholder ô "Tên trường" giờ đổi theo cấp học đang chọn ("Trường THPT
+..." / "Trường THCS ..." / "Trường Tiểu học ...") thay vì cố định "Trường THCS ..." trước đây.
+
+**Test:** thêm `test/thptSubjects.test.js` (28 test case mới) khoá lại: đủ 17 môn/HĐGD mỗi khối
+10-12, đúng 11 môn hỗ trợ Đề kiểm tra, GDQP&AN CÓ hỗ trợ Đề kiểm tra (khác GDTC), Ngữ văn vẫn CHỈ
+hỗ trợ Soạn giáo án/Đề cương, mọi môn đều có subjectProfile đầy đủ, `gradeProfiles.js` không còn rò
+rỉ từ khoá Toán sang môn khác, CV5512/45 phút/tiết áp dụng đúng cho Lớp 10-12. Kết quả: 354/356 pass
+(2 fail còn lại có sẵn từ trước, không liên quan - tính năng Audio/IPA Tiếng Anh, xem Phiên 32).
+`npm run build` (Next.js 16, Turbopack) compile sạch, không lỗi TypeScript/route.
+
+**PHẠM VI CHƯA LÀM (để phiên sau, xem `NEXT_STEPS.md` #12-15):** dữ liệu SGK thật (kho GitHub kiến
+thức) cho 6 môn THPT mới; module Đề kiểm tra Ngữ văn riêng (áp dụng chung THCS/THPT); cụm chuyên đề
+học tập THPT (3 chuyên đề/môn, 105 tiết/năm - nội dung riêng ngoài chương trình cốt lõi đại trà).
+
 ## Phiên 32 — Mở rộng THCS (Lớp 6-9) cho Soạn giáo án + Đề cương Ôn tập + Đề kiểm tra
 Tra cứu lại đúng Thông tư 32/2018/TT-BGDĐT (Mục 4, sửa đổi bởi Thông tư 13/2022/TT-BGDĐT) để lấy
 CHÍNH XÁC danh sách 10 môn bắt buộc + Hoạt động trải nghiệm-hướng nghiệp cấp THCS, và xác nhận
