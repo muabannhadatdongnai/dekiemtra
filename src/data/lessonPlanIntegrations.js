@@ -229,6 +229,10 @@ export const LESSON_PLAN_INTEGRATIONS = {
     isAiGenerated: true,
     jsonField: "tinNhanPhuHuynh",
     buildPromptFragment: () =>
+      `- ⚠️ DÙ giáo án này thuộc môn ngoại ngữ (VD Tiếng Anh) và các phần khác PHẢI viết bằng ngôn ngữ\n` +
+      `  đó, riêng trường "tinNhanPhuHuynh" LUÔN LUÔN viết bằng TIẾNG VIỆT (phụ huynh đọc trực tiếp,\n` +
+      `  không phải ngữ liệu học thuật) - KHÔNG dịch trường này sang ngôn ngữ khác trong bất kỳ\n` +
+      `  trường hợp nào.\n` +
       `- Soạn thêm 1 "Tin nhắn gửi phụ huynh" đính kèm cuối giáo án, giáo viên chỉ việc COPY-PASTE\n` +
       `  nguyên văn vào Zalo nhóm lớp, KHÔNG cần chỉnh sửa gì thêm. Nội dung gồm ĐỦ 3 phần, viết liền\n` +
       `  mạch như 1 tin nhắn thật (không đánh số 1/2/3, không dùng đầu mục):\n` +

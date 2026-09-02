@@ -26,6 +26,7 @@
 
 import { getSubjectProfile } from "./subjectProfiles";
 import { OUTLINE_LEVELS, OUTLINE_LEVEL_LABELS, OUTLINE_LEVEL_ORDER } from "./outlineTemplates";
+import { buildForeignLanguageOutputDirective } from "./foreignLanguageSubjects";
 
 export const OUTLINE_MODEL = "gemini-3.5-flash"; // đồng bộ LESSON_PLAN_MODEL (lessonPlanPromptTemplates.js)
 
@@ -174,6 +175,7 @@ QUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: phần dư
 KIỂM TRA - khi soạn ĐỀ CƯƠNG vẫn áp dụng quy tắc nội dung/số liệu nhưng BỎ QUA hoàn toàn yêu cầu
 dùng LaTeX, luôn viết bằng ký hiệu thông thường như quy tắc bắt buộc ở trên):
 ${subjectProfile.extraRules}
+${buildForeignLanguageOutputDirective(subject)}
 
 ${sourceBlock}
 ${extraBlock}

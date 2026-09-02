@@ -28,6 +28,7 @@
 import { VISUAL_TYPE_PROMPT_GUIDE } from "./visualSchemas";
 import { getSubjectProfile } from "./subjectProfiles";
 import { getGradeProfile } from "./gradeProfiles";
+import { buildForeignLanguageOutputDirective } from "./foreignLanguageSubjects";
 
 export const FREE_TIER_MODEL = "gemini-3.5-flash";
 
@@ -67,7 +68,7 @@ export function generateAntiDuplicationSeed() {
   return `Seed_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function buildBaseRules(subjectProfile, gradeProfile) {
+function buildBaseRules(subjectProfile, gradeProfile, subject) {
   return `
 BẠN LÀ ${subjectProfile.expertRole.toUpperCase()}.
 
@@ -95,6 +96,7 @@ QUY TẮC BẮT BUỘC:
 
 QUY TẮC RIÊNG CHO MÔN ${subjectProfile.label.toUpperCase()}:
 ${subjectProfile.extraRules}
+${buildForeignLanguageOutputDirective(subject)}
 
 QUY TẮC RIÊNG CHO KHỐI (Họ ${gradeProfile.family} - ${gradeProfile.label}):
 ${gradeProfile.guidance}
@@ -268,7 +270,7 @@ ${c.markdown}
     .join("\n\n");
 
   return `
-${buildBaseRules(subjectProfile, gradeProfile)}
+${buildBaseRules(subjectProfile, gradeProfile, subject)}
 
 SEED: ${seed}
 

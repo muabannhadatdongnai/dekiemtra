@@ -17,9 +17,14 @@ import {
   getActivityLabels,
   computeMultiPeriodTimeline,
 } from "./lessonPlanTemplates";
-import { buildIntegrationsPromptBlock, collectIntegrationSchemaExamples } from "./lessonPlanIntegrations";
+import {
+  buildIntegrationsPromptBlock,
+  collectIntegrationSchemaExamples,
+  INTEGRATION_KEYS,
+} from "./lessonPlanIntegrations";
 import { buildLessonPlanStylePromptFragment } from "./lessonPlanStyles";
 import { generateAntiDuplicationSeed } from "./promptTemplates";
+import { buildForeignLanguageOutputDirective } from "./foreignLanguageSubjects";
 
 export const LESSON_PLAN_MODEL = "gemini-3.5-flash"; // đồng bộ FREE_TIER_MODEL bên promptTemplates.js
 
@@ -336,7 +341,7 @@ ${stepClarityRule}
   Đây là giáo án dùng để đọc/in trực tiếp (không qua công cụ hiển thị công thức), nên MỌI số liệu
   và công thức phải viết bằng CHỮ SỐ VÀ KÝ HIỆU TOÁN HỌC THÔNG THƯỜNG (VD: viết "504 842" hoặc
   "504.842", KHÔNG viết "$504~842$"; viết "3 + 4 = 7", KHÔNG viết "$3 + 4 = 7$").
-${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}` : ""}
+${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}\n${buildForeignLanguageOutputDirective(subject, { exemptJsonFields: [INTEGRATION_KEYS.TIN_NHAN_PHU_HUYNH] })}` : ""}
 
 ${sourceBlock}
 ${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}${visualHocLieuBlock}
