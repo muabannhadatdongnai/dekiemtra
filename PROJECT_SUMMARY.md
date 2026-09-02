@@ -5,6 +5,51 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 34 — "Bản ngoại ngữ" (Tiếng Anh) cho Soạn Giáo Án + Đề Cương Ôn Tập + Đề Kiểm tra
+
+Thêm nút "🇬🇧 Bản tiếng Anh" (Word + PDF, HOÀN TOÀN bằng tiếng Anh) ở 3 tab, chỉ hiện khi môn học
+đang chọn là Tiếng Anh — song song, KHÔNG thay thế bản Word/PDF tiếng Việt gốc (giữ nguyên vẹn,
+không sửa 1 dòng nào ở `lessonPlanExportService.js`/`outlineExportService.js`/`exportService.js`).
+
+**Quyết định kiến trúc:** dịch NGUYÊN KHỐI JSON nội dung đã tạo sẵn bằng tiếng Việt sang tiếng Anh
+(qua Gemini, giữ nguyên cấu trúc/khoá) thay vì sinh lại nội dung từ đầu bằng 1 lượt AI riêng — đảm
+bảo bản Anh/Việt khớp 1-1 nội dung, và không phải viết lại 3 prompt sinh nội dung vốn đã gắn chặt
+Thông tư/Công văn tiếng Việt. 1 route API dùng chung (`/api/translate-foreign-language`) + 1 prompt
+dịch dùng chung (`foreignLanguagePromptTemplates.js`) cho cả 3 tab.
+
+**Thiết kế MỞ RỘNG được (yêu cầu gốc: "còn có Tiếng Trung, Tiếng Pháp..."):** toàn bộ hệ thống đọc
+cấu hình ngôn ngữ từ 1 danh bạ DUY NHẤT `src/data/foreignLanguageSubjects.js` — thêm ngôn ngữ mới
+sau này CHỈ cần thêm 1 entry vào danh bạ, không sửa service/component nào khác (translation engine,
+prompt, doc builder đều tổng quát theo `languageNameEn`, không hard-code "English"/"tiếng Anh").
+
+**PDF không dùng chung `#print-area`:** mỗi trang Preview tiếng Việt (Lesson Plan/Outline/Exam) đã
+tự chiếm `id="print-area"` cho bản xem trước đang hiển thị — không thể gắn thêm 1 khung ẩn thứ 2
+cùng id (sẽ hiện cả 2 khi in, đúng vấn đề ReportCommentPdfView.jsx từng tránh bằng cách KHÔNG gắn
+`#print-area` lên preview chính). Giải pháp: "Bản ngoại ngữ" tự mở 1 CỬA SỔ TRÌNH DUYỆT MỚI với
+HTML/CSS in ấn độc lập rồi tự `window.print()` trong cửa sổ đó (`printHtmlDocument()` trong
+`foreignLanguageDocBuilder.js`) — tách biệt hoàn toàn, không đụng luồng PDF tiếng Việt hiện có.
+
+**File mới:** `foreignLanguageSubjects.js` (danh bạ), `foreignLanguagePromptTemplates.js` (prompt
+dịch dùng chung), `foreignLanguageTranslationEngine.js` (gọi Gemini, retry theo khuôn
+`lessonPlanEngine.js`), `foreignLanguageOrchestrator.js`, `api/translate-foreign-language/route.js`,
+`foreignLanguageDocBuilder.js` (helper docx/PDF dùng chung), `englishLessonPlanExportService.js`,
+`englishOutlineExportService.js`, `englishExamExportService.js`, `ForeignLanguageExportButton.jsx`
+(nút dùng chung, tự ẩn nếu môn không hỗ trợ). Nối vào `LessonPlanExportActions.jsx`/
+`OutlineExportActions.jsx`/`ExportActions.jsx` + thêm `translateForeignLanguageRequest()` vào
+`apiClient.js`.
+
+**Kiểm thử:** `test/foreignLanguageExport.test.js` (11 test: danh bạ tra cứu theo cả giá trị thô
+lẫn nhãn hiển thị — vì Soạn Giáo Án/Đề Cương lưu `meta.subject` khác định dạng với Đề Kiểm tra; nội
+dung prompt dịch; 3 hàm dựng .docx đọc lại XML thật qua JSZip, xác nhận đủ mọi mục + tiêu đề tiếng
+Anh + phân biệt đúng bản Học sinh/Giáo viên ở Đề Kiểm tra). `npm test`: 365/367 pass (2 fail còn
+lại thuộc `lessonPlanEnglishAudioIpa.test.js`, KHÔNG liên quan — đã tồn tại từ trước, không đụng
+tới ở phiên này). `npm run build`: sạch, exit 0, route `/api/translate-foreign-language` lên đúng.
+
+**Chưa làm (xem `NEXT_STEPS.md` #16):** chưa test thật với Gemini API key thật (sandbox không có
+`GEMINI_API_KEYS`) và chưa test thật hành vi mở popup cửa sổ PDF trên trình duyệt thật.
+
+---
+
 ## Phiên 33 — Mở rộng THPT (Lớp 10-12) cho Soạn giáo án + Đề cương Ôn tập + Đề kiểm tra
 Tiếp nối Phiên 32 (THCS). Tra cứu lại Thông tư 32/2018 (Mục "Giai đoạn định hướng nghề nghiệp"),
 Thông tư 13/2022 (Lịch sử chuyển thành môn BẮT BUỘC, không còn là môn lựa chọn KHXH), và Thông tư

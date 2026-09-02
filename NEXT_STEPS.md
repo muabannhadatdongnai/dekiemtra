@@ -9,7 +9,10 @@ học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, 
 Ôn Tập/Tạo Đề Kiểm Tra đã hỗ trợ ĐỦ Mầm non → Lớp 12 (Tiểu học + THCS + THPT, xem Phiên 33 - THPT
 khai báo đủ 17 môn/HĐGD: 8 bắt buộc + 9 lựa chọn theo Thông tư 32/2018 sửa đổi Thông tư 13/2022,
 KHÔNG cần dropdown "chọn tổ hợp" riêng vì công cụ soạn theo 1 môn/1 lúc). Toán Lớp 3-5 đã đủ
-catalog Phiếu Bài Tập theo SGK KNTT. Chi tiết đầy đủ từng module xem `README.md`.
+catalog Phiếu Bài Tập theo SGK KNTT. Môn Tiếng Anh ở 3 tab Soạn Giáo Án/Đề Cương Ôn Tập/Tạo Đề
+Kiểm Tra có thêm nút "🇬🇧 Bản tiếng Anh" xuất Word/PDF HOÀN TOÀN bằng tiếng Anh song song bản
+tiếng Việt gốc (xem `src/data/foreignLanguageSubjects.js` — kiến trúc dễ mở rộng Tiếng Trung/Tiếng
+Pháp sau này). Chi tiết đầy đủ từng module xem `README.md`.
 
 ---
 
@@ -32,6 +35,7 @@ catalog Phiếu Bài Tập theo SGK KNTT. Chi tiết đầy đủ từng module 
 | 13 | Module Đề kiểm tra Ngữ văn THCS/THPT riêng | Ngữ văn hiện CHỈ có ở Soạn giáo án/Đề cương Ôn tập (xem `modules` trong `config.js`), CHƯA có "Đề kiểm tra" vì cấu trúc khác hẳn (Đọc hiểu + Viết đoạn Nghị luận xã hội + Viết bài Nghị luận văn học) và theo Công văn 3175/BGDĐT-GDTrH (2022, nhấn mạnh lại ở CV3935/2024) BẮT BUỘC ngữ liệu Đọc hiểu phải MỚI, không được lấy lại từ SGK - cần thiết kế module riêng kiểu "khối độc lập" giống Đề Tiếng Việt Tiểu học nhưng nội dung khác hẳn, không gộp vào ma trận Tạo Đề Kiểm Tra chung. Áp dụng CHUNG cho cả THCS lẫn THPT (đã xác nhận Công văn 3175 không tách riêng cấp). |
 | 14 | Xác nhận lại "Nghệ thuật" (Âm nhạc + Mĩ thuật) THCS/THPT đã tách đúng 2 đầu sách theo bộ Kết nối tri thức | Đã tách theo ĐÚNG tinh thần "Tin học và Công nghệ" ở Tiểu học (tách 2 môn vì SGK in 2 cuốn riêng dù thông tư gọi gộp) - suy luận hợp lý nhưng CHƯA xác nhận trực tiếp với bộ sách thật, Hoan kiểm tra lại nếu có SGK thật trong tay. |
 | 15 | Cụm chuyên đề học tập THPT (3 chuyên đề/môn, 105 tiết/năm) | CỐ Ý CHƯA làm ở Phiên 33 — đây là nội dung RIÊNG ngoài chương trình cốt lõi đại trà (học sinh chọn 3 trong số các môn lựa chọn hoặc Toán/Ngữ văn/Lịch sử để học chuyên đề sâu hơn theo định hướng nghề nghiệp), không có SGK dùng chung dễ tái sử dụng cấu trúc hiện tại — cần thiết kế riêng nếu Hoan muốn làm tiếp. |
+| 16 | Kiểm tra thật trên trình duyệt nút "🇬🇧 Bản tiếng Anh" (Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra, môn Tiếng Anh) | Code + test docx (`test/foreignLanguageExport.test.js`) đã chạy pass, build sạch, nhưng CHƯA test thật với Gemini API key thật (sandbox không có `GEMINI_API_KEYS`) + CHƯA test thật hành vi mở PDF ở cửa sổ mới trên trình duyệt thật (`printHtmlDocument` trong `foreignLanguageDocBuilder.js` dùng `window.open` — cần xác nhận trình duyệt/Vercel không chặn popup, và giáo viên có thể cần bấm "Cho phép popup" 1 lần). |
 
 ---
 
