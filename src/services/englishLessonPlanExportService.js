@@ -7,6 +7,7 @@ import {
   cell,
   twoColumnTable,
   textRun,
+  multilineTextRuns,
   saveDocx,
   buildDocxBlob,
   printHtmlDocument,
@@ -17,11 +18,23 @@ import {
 
 /**
  * englishLessonPlanExportService.js
- * Xuất Word/PDF bằng TIẾNG ANH cho "Kế hoạch bài dạy" (Soạn Giáo Án) môn Tiếng Anh - nhận đúng
- * object `lessonPlan` ĐÃ ĐƯỢC DỊCH (cùng khoá với bản gốc lessonPlanExportService.js: tenBai,
- * yeuCauCanDat, doDungDayHoc, hoatDong, goiYHocLieuHinhAnh - xem lessonPlanPromptTemplates.js) -
- * KHÔNG đụng tới/không tái dùng lessonPlanExportService.js (bản tiếng Việt gốc giữ NGUYÊN VẸN,
- * đúng yêu cầu "chức năng cũ vẫn giữ nguyên").
+ * Xuất Word/PDF HOÀN TOÀN bằng TIẾNG ANH cho "Kế hoạch bài dạy" (Soạn Giáo Án) môn Tiếng Anh - từ
+ * Phiên 35, nhận THẲNG object `lessonPlan` đã được AI SINH TRỰC TIẾP bằng tiếng Anh (cùng khoá với
+ * bản gốc lessonPlanExportService.js: tenBai, yeuCauCanDat, doDungDayHoc, hoatDong,
+ * goiYHocLieuHinhAnh - xem lessonPlanPromptTemplates.js), KHÔNG còn bước dịch lại như trước (xem
+ * lịch sử ở PROJECT_SUMMARY.md Phiên 34). KHÔNG đụng tới/không tái dùng lessonPlanExportService.js
+ * (bản tiếng Việt gốc giữ NGUYÊN VẸN, dùng cho mọi môn học khác).
+ *
+ * ⚠️ Phụ lục "Tin nhắn gửi phụ huynh" (`lessonPlan.tinNhanPhuHuynh`) LUÔN được AI viết bằng TIẾNG
+ * VIỆT dù giáo án còn lại bằng tiếng Anh (xem exemptJsonFields ở buildForeignLanguageOutputDirective
+ * - foreignLanguageSubjects.js) - nên render Ở ĐÂY vẫn giữ tiêu đề tiếng Việt, không dịch.
+ *
+ * ⚠️ GIỚI HẠN ĐÃ BIẾT (chưa mở rộng ở Phiên 35): các tích hợp/phụ lục KHÁC (Checklist NL-PC,
+ * STEM, Timeline, Bài tập phân hoá, Phiếu học tập, Lời dẫn, Slide Outline...) CHƯA có bản render
+ * tiếng Anh - nếu giáo viên bật các tích hợp này khi soạn giáo án môn Tiếng Anh, phần đó sẽ KHÔNG
+ * xuất hiện trong file Word/PDF tiếng Anh (im lặng bỏ qua, không lỗi). Đây là giới hạn KẾ THỪA từ
+ * kiến trúc dịch cũ (bản dịch trước Phiên 35 cũng chỉ xử lý các trường lõi, không xử lý tích hợp)
+ * - xem mục "cần Hoan quyết định" #17 trong NEXT_STEPS.md nếu muốn mở rộng.
  */
 
 function metaLine(meta) {
@@ -111,6 +124,19 @@ function buildDocxSections(lessonPlan, meta) {
     children.push(...bulletList(lessonPlan.goiYHocLieuHinhAnh));
   }
 
+  // ⚠️ Tin nhắn gửi phụ huynh LUÔN bằng tiếng Việt (xem docstring đầu file) - tiêu đề giữ nguyên
+  // tiếng Việt để giáo viên nhận ra ngay đây là phần COPY-PASTE cho phụ huynh, không phải lỗi
+  // thiếu dịch.
+  if (lessonPlan?.tinNhanPhuHuynh) {
+    children.push(heading("PHỤ LỤC: Tin nhắn gửi phụ huynh (Zalo)"));
+    children.push(
+      new Paragraph({
+        children: multilineTextRuns(lessonPlan.tinNhanPhuHuynh),
+        spacing: { after: 120 },
+      })
+    );
+  }
+
   return children;
 }
 
@@ -170,6 +196,11 @@ function buildHtmlBody(lessonPlan, meta) {
   if (lessonPlan?.goiYHocLieuHinhAnh?.length) {
     html += htmlHeading("Appendix: Suggested Visual Material Prompts");
     html += htmlBulletList(lessonPlan.goiYHocLieuHinhAnh);
+  }
+
+  if (lessonPlan?.tinNhanPhuHuynh) {
+    html += htmlHeading("PHỤ LỤC: Tin nhắn gửi phụ huynh (Zalo)");
+    html += htmlParagraph(lessonPlan.tinNhanPhuHuynh.replace(/\n/g, "<br/>"));
   }
 
   return html;

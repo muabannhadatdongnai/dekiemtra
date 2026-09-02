@@ -10,13 +10,21 @@ import {
   htmlHeading,
   htmlParagraph,
 } from "./foreignLanguageDocBuilder";
+import { computeExamMatrix } from "./specificationBuilder";
+import { computeSpecificationRowsEn } from "./englishSpecificationBuilder";
+import {
+  buildEnglishSectionTitleParagraph,
+  buildEnglishMatrixTable,
+  buildEnglishSpecificationTable,
+} from "./englishSpecificationExportBuilders";
 
 /**
  * englishExamExportService.js
- * Xuất Word/PDF bằng TIẾNG ANH cho "Đề Kiểm tra" môn Tiếng Anh - nhận `translatedContent`
- * ĐÃ ĐƯỢC DỊCH, giữ nguyên cấu trúc { questions: [...], teacherRubric: [...] } như bản gốc
- * (xem promptTemplates.js) - ghép theo VỊ TRÍ (positional pairing), đúng nguyên tắc đã áp dụng ở
- * geminiEngine.js (pairAndFilterDuplicates). Bản gốc tiếng Việt (exportService.js) giữ NGUYÊN VẸN.
+ * Xuất Word/PDF HOÀN TOÀN bằng TIẾNG ANH cho "Đề Kiểm tra" môn Tiếng Anh - từ Phiên 35, nhận
+ * THẲNG `content` ({ questions, teacherRubric }) đã được AI SINH TRỰC TIẾP bằng tiếng Anh (xem
+ * chỉ thị buildForeignLanguageOutputDirective() - foreignLanguageSubjects.js), KHÔNG còn bước dịch
+ * lại như trước (xem lịch sử ở PROJECT_SUMMARY.md Phiên 34). Bản gốc tiếng Việt (exportService.js)
+ * giữ NGUYÊN VẸN, không đổi - dùng cho mọi môn học khác.
  */
 
 function metaLines(meta) {
@@ -53,10 +61,41 @@ function buildQuestionParagraphs({ questions, teacherRubric, includeAnswers }) {
   return children;
 }
 
-function buildDocxSections(examMeta, translatedContent, { includeAnswers }) {
+// Đúng khuôn Giai đoạn 2 (exportService.js): Ma trận + Bản đặc tả đứng THÀNH TRANG RIÊNG, TRƯỚC đề
+// - chỉ khác nhãn tiếng Anh (buildEnglishMatrixTable/buildEnglishSpecificationTable).
+function buildFrontMatterElements({ questions, chaptersInfo, typeByLevel, includeMatrixAndSpec }) {
+  const elements = [];
+  if (!includeMatrixAndSpec || !chaptersInfo?.length) return elements;
+
+  const matrix = computeExamMatrix(questions, chaptersInfo, typeByLevel);
+  const specRows = computeSpecificationRowsEn(questions, chaptersInfo, typeByLevel);
+
+  if (matrix.rows.length > 0) {
+    elements.push(buildEnglishSectionTitleParagraph("EXAM MATRIX"));
+    elements.push(buildEnglishMatrixTable(matrix));
+  }
+  if (specRows.length > 0) {
+    elements.push(new Paragraph({ text: "", pageBreakBefore: true }));
+    elements.push(buildEnglishSectionTitleParagraph("TEST SPECIFICATION"));
+    elements.push(buildEnglishSpecificationTable(specRows));
+  }
+  return elements;
+}
+
+function buildDocxSections(examMeta, translatedContent, { includeAnswers, chaptersInfo, typeByLevel, includeMatrixAndSpec }) {
+  const frontMatterElements = buildFrontMatterElements({
+    questions: translatedContent?.questions,
+    chaptersInfo,
+    typeByLevel,
+    includeMatrixAndSpec,
+  });
+  const hasFrontMatter = frontMatterElements.length > 0;
+
   const children = [
+    ...frontMatterElements,
     new Paragraph({
       alignment: AlignmentType.CENTER,
+      pageBreakBefore: hasFrontMatter,
       children: [textRun(examMeta?.title || "ENGLISH TEST", { bold: true, size: 30 })],
       spacing: { after: 60 },
     }),
@@ -87,9 +126,11 @@ function buildDocxSections(examMeta, translatedContent, { includeAnswers }) {
   return children;
 }
 
-export function buildEnglishExamDocument(examMeta, translatedContent, { includeAnswers = false } = {}) {
+export function buildEnglishExamDocument(examMeta, translatedContent, { includeAnswers = false, ...rest } = {}) {
   return new Document({
-    sections: [{ properties: pageProperties, children: buildDocxSections(examMeta, translatedContent, { includeAnswers }) }],
+    sections: [
+      { properties: pageProperties, children: buildDocxSections(examMeta, translatedContent, { includeAnswers, ...rest }) },
+    ],
   });
 }
 
@@ -106,25 +147,82 @@ function fileBaseFor(examMeta) {
  * (bản Học sinh sạch + bản Giáo viên có đáp án); nếu không có rubric (includeAnswers=false lúc
  * tạo đề) thì chỉ xuất 1 file câu hỏi.
  */
-export async function exportEnglishExamToWord(examMeta, translatedContent) {
+export async function exportEnglishExamToWord(
+  examMeta,
+  translatedContent,
+  { chaptersInfo = [], typeByLevel = {}, includeMatrixAndSpec = true } = {}
+) {
   const fileBase = fileBaseFor(examMeta);
   const hasRubric = translatedContent?.teacherRubric?.length > 0;
 
+  // Ma trận/Bản đặc tả chỉ có ý nghĩa với giáo viên - CHỈ chèn vào bản Giáo viên (đúng khuôn
+  // exportBothVersions() bản tiếng Việt: bản Học sinh luôn "sạch"), nếu không có rubric thì bản
+  // Học sinh (file duy nhất) mới kèm theo.
   await saveDocx(
-    buildEnglishExamDocument(examMeta, translatedContent, { includeAnswers: false }),
+    buildEnglishExamDocument(examMeta, translatedContent, {
+      includeAnswers: false,
+      chaptersInfo,
+      typeByLevel,
+      includeMatrixAndSpec: includeMatrixAndSpec && !hasRubric,
+    }),
     `${fileBase}-EN-Student.docx`
   );
 
   if (hasRubric) {
     await saveDocx(
-      buildEnglishExamDocument(examMeta, translatedContent, { includeAnswers: true }),
+      buildEnglishExamDocument(examMeta, translatedContent, {
+        includeAnswers: true,
+        chaptersInfo,
+        typeByLevel,
+        includeMatrixAndSpec,
+      }),
       `${fileBase}-EN-Teacher.docx`
     );
   }
 }
 
-function buildHtmlBody(examMeta, translatedContent, { includeAnswers }) {
-  let html = `<h1>${examMeta?.title || "ENGLISH TEST"}</h1>`;
+function buildHtmlFrontMatter({ questions, chaptersInfo, typeByLevel, includeMatrixAndSpec }) {
+  if (!includeMatrixAndSpec || !chaptersInfo?.length) return "";
+  const matrix = computeExamMatrix(questions, chaptersInfo, typeByLevel);
+  const specRows = computeSpecificationRowsEn(questions, chaptersInfo, typeByLevel);
+  let html = "";
+  if (matrix.rows.length > 0) {
+    html += htmlHeading("Exam Matrix");
+    html += `<table><thead><tr><th>Chapter/Topic</th>${matrix.levelKeys
+      .map((lvl) => `<th>${lvl}</th>`)
+      .join("")}<th>Total</th><th>Points</th></tr></thead><tbody>`;
+    html += matrix.rows
+      .map(
+        (r) =>
+          `<tr><td>${r.label}</td>${matrix.levelKeys
+            .map((lvl) => `<td>${r.counts[lvl] || ""}</td>`)
+            .join("")}<td>${r.rowCount}</td><td>${r.rowPoints}</td></tr>`
+      )
+      .join("");
+    html += `</tbody></table>`;
+  }
+  if (specRows.length > 0) {
+    html += htmlHeading("Test Specification");
+    html += `<table><thead><tr><th>No.</th><th>Chapter/Topic</th><th>Level</th><th>Type</th><th>Learning Outcome</th><th>Count</th><th>Question No.</th></tr></thead><tbody>`;
+    html += specRows
+      .map(
+        (row) =>
+          `<tr><td>${row.stt}</td><td>${row.chapterLabel}</td><td>${row.levelLabel}</td><td>${row.typeLabel}</td><td>${row.requirement}</td><td>${row.count}</td><td>${row.questionNumbers}</td></tr>`
+      )
+      .join("");
+    html += `</tbody></table>`;
+  }
+  return html;
+}
+
+function buildHtmlBody(examMeta, translatedContent, { includeAnswers, chaptersInfo, typeByLevel, includeMatrixAndSpec }) {
+  let html = buildHtmlFrontMatter({
+    questions: translatedContent?.questions,
+    chaptersInfo,
+    typeByLevel,
+    includeMatrixAndSpec,
+  });
+  html += `<h1>${examMeta?.title || "ENGLISH TEST"}</h1>`;
   html += `<p class="doc-meta">${metaLines(examMeta).join("<br/>")}</p>`;
   if (examMeta?.objective) html += htmlParagraph(`Objective: ${examMeta.objective}`);
   html += htmlHeading(includeAnswers ? "Answer Key" : "Questions");
@@ -145,10 +243,19 @@ function buildHtmlBody(examMeta, translatedContent, { includeAnswers }) {
   return html;
 }
 
-export function printEnglishExam(examMeta, translatedContent) {
+export function printEnglishExam(
+  examMeta,
+  translatedContent,
+  { chaptersInfo = [], typeByLevel = {}, includeMatrixAndSpec = true } = {}
+) {
   const includeAnswers = translatedContent?.teacherRubric?.length > 0;
   printHtmlDocument({
     title: examMeta?.title || "English Test",
-    bodyHtml: buildHtmlBody(examMeta, translatedContent, { includeAnswers }),
+    bodyHtml: buildHtmlBody(examMeta, translatedContent, {
+      includeAnswers,
+      chaptersInfo,
+      typeByLevel,
+      includeMatrixAndSpec,
+    }),
   });
 }

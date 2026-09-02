@@ -198,20 +198,6 @@ export async function generateOutlineRequest(blueprint) {
   return handleResponse(res);
 }
 
-/**
- * TÍNH NĂNG "Bản ngoại ngữ" (Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra môn Tiếng Anh, xem
- * foreignLanguageSubjects.js) - 1 hàm DÙNG CHUNG cho cả 3 tab, gọi /api/translate-foreign-language.
- * @param payload { subject, contentKindLabel, data }
- */
-export async function translateForeignLanguageRequest(payload) {
-  const res = await fetch("/api/translate-foreign-language", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify(payload),
-  });
-  return handleResponse(res);
-}
-
 /** Thống kê mức dùng Gemini API hôm nay - xem UsageWidget.jsx */
 export async function fetchUsageSummaryRequest() {
   const res = await fetch("/api/usage", { headers: authHeaders() });
