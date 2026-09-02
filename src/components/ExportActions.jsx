@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { FileDown, Printer, Shuffle } from "lucide-react";
 import { exportToWord, exportBothVersions, exportToPDF, generateFourExamVariants } from "@/services/exportService";
-import ForeignLanguageExportButton from "./ForeignLanguageExportButton";
 import { exportEnglishExamToWord, printEnglishExam } from "@/services/englishExamExportService";
+import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 
 export default function ExportActions({
   examMeta,
@@ -21,6 +21,7 @@ export default function ExportActions({
   // Giai đoạn 2: mặc định BẬT kèm Ma trận + Bản đặc tả khi xuất Word (chuẩn Thông tư 22).
   // Giáo viên có thể tắt nếu chỉ cần in nhanh đề cho học sinh.
   const [includeMatrixAndSpec, setIncludeMatrixAndSpec] = useState(true);
+  const foreignLanguageConfig = findForeignLanguageConfig(examMeta?.subject);
 
   function handleGenerateVariants() {
     const originalQuestions = variants?.length ? variants[activeVariantIndex].questions : questions;
@@ -28,7 +29,35 @@ export default function ExportActions({
     onVariantsGenerated(newVariants);
   }
 
+  function activeQuestions() {
+    return variants?.length ? variants[activeVariantIndex].questions : questions;
+  }
+
+  // ⚠️ Phiên 35: BỎ nút "🇬🇧 Bản tiếng Anh" riêng (ForeignLanguageExportButton.jsx - đã xoá) - khi
+  // môn học nằm trong danh bạ foreignLanguageSubjects.js, nút "Tải Word"/"In PDF" DUY NHẤT bên
+  // dưới tự động xuất bằng đúng ngôn ngữ đó (AI đã sinh câu hỏi/đáp án trực tiếp bằng ngôn ngữ này
+  // từ promptTemplates.js, không cần dịch lại) - kể cả Ma trận đề + Bản đặc tả, xem
+  // englishExamExportService.js.
   function handleWord() {
+    if (foreignLanguageConfig) {
+      const meta = {
+        title: examMeta?.title,
+        schoolName: examMeta?.schoolName,
+        className: examMeta?.className,
+        grade: examMeta?.grade,
+        duration: examMeta?.duration,
+        academicYear: examMeta?.academicYear,
+        objective: examMeta?.objective,
+        subjectLabelEn: foreignLanguageConfig.languageNameEn,
+      };
+      exportEnglishExamToWord(
+        meta,
+        { questions: activeQuestions(), teacherRubric },
+        { chaptersInfo, typeByLevel, includeMatrixAndSpec }
+      );
+      return;
+    }
+
     const active = variants?.length ? variants[activeVariantIndex] : { examCode: examMeta?.examCode, questions };
     const params = {
       title: examMeta?.title,
@@ -56,6 +85,27 @@ export default function ExportActions({
     }
   }
 
+  function handlePdf() {
+    if (foreignLanguageConfig) {
+      printEnglishExam(
+        {
+          title: examMeta?.title,
+          schoolName: examMeta?.schoolName,
+          className: examMeta?.className,
+          grade: examMeta?.grade,
+          duration: examMeta?.duration,
+          academicYear: examMeta?.academicYear,
+          objective: examMeta?.objective,
+          subjectLabelEn: foreignLanguageConfig.languageNameEn,
+        },
+        { questions: activeQuestions(), teacherRubric },
+        { chaptersInfo, typeByLevel, includeMatrixAndSpec }
+      );
+      return;
+    }
+    exportToPDF();
+  }
+
   const hasRubric = teacherRubric?.length > 0;
 
   return (
@@ -77,7 +127,7 @@ export default function ExportActions({
           {hasRubric ? "Tải Word (2 file: Học sinh + Giáo viên)" : "Tải Word (.docx)"}
         </button>
         <button
-          onClick={exportToPDF}
+          onClick={handlePdf}
           disabled={disabled}
           className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
@@ -95,48 +145,6 @@ export default function ExportActions({
           Kèm Ma trận đề thi + Bản đặc tả khi tải Word (chuẩn Thông tư 22)
         </label>
       )}
-
-      {/* "Bản ngoại ngữ" (hiện chỉ Tiếng Anh) - TỰ ẨN nếu môn học không hỗ trợ, xem
-          foreignLanguageSubjects.js. Bản Word/PDF tiếng Việt ở trên giữ NGUYÊN VẸN, không đổi. */}
-      <ForeignLanguageExportButton
-        subject={examMeta?.subject}
-        contentKindLabel="an exam (đề kiểm tra)"
-        getData={() => {
-          const active = variants?.length ? variants[activeVariantIndex].questions : questions;
-          return { questions: active, teacherRubric };
-        }}
-        disabled={disabled}
-        onWord={(translated, languageConfig) =>
-          exportEnglishExamToWord(
-            {
-              title: examMeta?.title,
-              schoolName: examMeta?.schoolName,
-              className: examMeta?.className,
-              grade: examMeta?.grade,
-              duration: examMeta?.duration,
-              academicYear: examMeta?.academicYear,
-              objective: examMeta?.objective,
-              subjectLabelEn: languageConfig.languageNameEn,
-            },
-            translated
-          )
-        }
-        onPdf={(translated, languageConfig) =>
-          printEnglishExam(
-            {
-              title: examMeta?.title,
-              schoolName: examMeta?.schoolName,
-              className: examMeta?.className,
-              grade: examMeta?.grade,
-              duration: examMeta?.duration,
-              academicYear: examMeta?.academicYear,
-              objective: examMeta?.objective,
-              subjectLabelEn: languageConfig.languageNameEn,
-            },
-            translated
-          )
-        }
-      />
 
       {variants?.length > 0 && (
         <div className="flex items-center gap-2">

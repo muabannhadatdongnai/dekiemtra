@@ -4,26 +4,54 @@ import { useState } from "react";
 import { FileDown, Printer } from "lucide-react";
 import { exportLessonPlanToWord } from "@/services/lessonPlanExportService";
 import { exportToPDF } from "@/services/exportService";
-import ForeignLanguageExportButton from "./ForeignLanguageExportButton";
 import { exportEnglishLessonPlanToWord, printEnglishLessonPlan } from "@/services/englishLessonPlanExportService";
+import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 
 // GIAI ĐOẠN 10, Việc 6/7 - "cờ ẩn-hiện" phụ lục Lời dẫn khi xuất Word (KE_HOACH_GIAI_DOAN_10.md
 // mục 2, đề xuất #2): mặc định TẮT (unchecked) để nút "Tải Word" luôn xuất ra "Bản nộp chuẩn"
 // KHÔNG có phụ lục lời dẫn - đúng tinh thần AN TOÀN khi nộp Ban Giám hiệu (giáo viên phải CHỦ
 // ĐỘNG tick mới có "Bản đầy đủ có lời dẫn"). Chỉ hiển thị checkbox này khi giáo án THẬT SỰ có dữ
 // liệu "loiDan" (tích hợp "Lời dẫn" đã được bật lúc soạn) - không làm rối giao diện khi không có.
+//
+// ⚠️ Phiên 35: BỎ nút "🇬🇧 Bản tiếng Anh" riêng (ForeignLanguageExportButton.jsx - đã xoá) - khi
+// môn học nằm trong danh bạ foreignLanguageSubjects.js, nút "Tải Word"/"In PDF" DUY NHẤT ở dưới tự
+// động xuất bằng đúng ngôn ngữ đó (AI đã sinh nội dung trực tiếp bằng ngôn ngữ này từ
+// lessonPlanPromptTemplates.js, không cần dịch lại) - xem PROJECT_SUMMARY.md Phiên 35.
 export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) {
   const [includeTeacherScript, setIncludeTeacherScript] = useState(false);
   const disabled = !lessonPlan;
   const hasTeacherScript = Boolean(lessonPlan?.loiDan?.length);
+  const foreignLanguageConfig = findForeignLanguageConfig(meta?.subject);
 
   function handleWord() {
+    if (foreignLanguageConfig) {
+      exportEnglishLessonPlanToWord(lessonPlan, {
+        tenBai: meta?.tenBai,
+        grade: meta?.grade,
+        soTiet: meta?.soTiet,
+        subjectLabelEn: foreignLanguageConfig.languageNameEn,
+      });
+      return;
+    }
     exportLessonPlanToWord({ lessonPlan, timeline, meta, includeTeacherScript });
+  }
+
+  function handlePdf() {
+    if (foreignLanguageConfig) {
+      printEnglishLessonPlan(lessonPlan, {
+        tenBai: meta?.tenBai,
+        grade: meta?.grade,
+        soTiet: meta?.soTiet,
+        subjectLabelEn: foreignLanguageConfig.languageNameEn,
+      });
+      return;
+    }
+    exportToPDF();
   }
 
   return (
     <div className="no-print flex flex-col gap-2">
-      {hasTeacherScript && (
+      {hasTeacherScript && !foreignLanguageConfig && (
         <label className="flex w-fit cursor-pointer items-center gap-2 text-sm text-slate-600">
           <input
             type="checkbox"
@@ -43,38 +71,13 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
           <FileDown size={15} /> Tải Word
         </button>
         <button
-          onClick={exportToPDF}
+          onClick={handlePdf}
           disabled={disabled}
           className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
           <Printer size={15} /> In / Tải PDF
         </button>
       </div>
-
-      {/* "Bản ngoại ngữ" (hiện chỉ Tiếng Anh) - TỰ ẨN nếu môn học không hỗ trợ, xem
-          foreignLanguageSubjects.js. Bản Word/PDF tiếng Việt ở trên giữ NGUYÊN VẸN, không đổi. */}
-      <ForeignLanguageExportButton
-        subject={meta?.subject}
-        contentKindLabel="a lesson plan (kế hoạch bài dạy)"
-        getData={() => lessonPlan}
-        disabled={disabled}
-        onWord={(translated, languageConfig) =>
-          exportEnglishLessonPlanToWord(translated, {
-            tenBai: meta?.tenBai,
-            grade: meta?.grade,
-            soTiet: meta?.soTiet,
-            subjectLabelEn: languageConfig.languageNameEn,
-          })
-        }
-        onPdf={(translated, languageConfig) =>
-          printEnglishLessonPlan(translated, {
-            tenBai: meta?.tenBai,
-            grade: meta?.grade,
-            soTiet: meta?.soTiet,
-            subjectLabelEn: languageConfig.languageNameEn,
-          })
-        }
-      />
     </div>
   );
 }
