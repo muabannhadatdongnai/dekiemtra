@@ -5,6 +5,48 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 35 — Đổi kiến trúc "Bản ngoại ngữ": sinh THẲNG bằng ngôn ngữ đích, bỏ bước dịch
+
+**Yêu cầu Hoan:** môn Tiếng Anh phải MẶC ĐỊNH xuất bằng tiếng Anh (không cần bấm nút riêng), trừ
+phụ lục "Tin nhắn gửi phụ huynh (Zalo)" LUÔN giữ tiếng Việt; bỏ hẳn khái niệm "dịch qua lại" - đây
+là cấu trúc nền cho các môn ngoại ngữ khác (Tiếng Trung, Tiếng Pháp...) sau này.
+
+**Đổi kiến trúc so với Phiên 34:** thay vì sinh tiếng Việt trước rồi dịch lại (route API riêng
+`/api/translate-foreign-language`), giờ chèn 1 "chỉ thị ngôn ngữ" (`buildForeignLanguageOutputDirective()`
+- `foreignLanguageSubjects.js`) THẲNG vào prompt sinh nội dung chính (`promptTemplates.js`/
+`outlinePromptTemplates.js`/`lessonPlanPromptTemplates.js`) khi môn học nằm trong danh bạ
+`FOREIGN_LANGUAGE_SUBJECTS` - AI trả JSON đã đúng ngôn ngữ đích ngay từ lượt gọi ĐẦU TIÊN, không
+tốn thêm lượt gọi Gemini nào (tiết kiệm quota free tier so với kiến trúc cũ). Hỗ trợ ngoại lệ
+`exemptJsonFields` (field JSON nào LUÔN giữ tiếng Việt bất kể phần còn lại) - dùng cho
+`tinNhanPhuHuynh`, nhắc lại 2 lớp (chỉ thị chung + ngay trong `lessonPlanIntegrations.js`).
+
+**Đã XOÁ HẲN kiến trúc dịch cũ:** `ForeignLanguageExportButton.jsx`, `foreignLanguageOrchestrator.js`,
+`foreignLanguageTranslationEngine.js`, `foreignLanguagePromptTemplates.js`,
+`api/translate-foreign-language/route.js`, hàm `translateForeignLanguageRequest()` trong
+`apiClient.js`. `LessonPlanExportActions.jsx`/`OutlineExportActions.jsx`/`ExportActions.jsx`: bỏ
+nút "Bản ngoại ngữ" riêng, nút "Tải Word"/"In PDF" DUY NHẤT tự route sang
+`english*ExportService.js` khi `findForeignLanguageConfig(subject)` khớp.
+
+**Ma trận đề + Bản đặc tả (Đề Kiểm tra) cũng chuyển tiếng Anh** (theo quyết định Hoan, khác Phiên
+34 - trước đây 2 bảng này KHÔNG có trong bản tiếng Anh): thêm `englishSpecificationBuilder.js`
+(tính `computeSpecificationRowsEn()`, nhãn mức độ `ENGLISH_DIFFICULTY_LABELS`) +
+`englishSpecificationExportBuilders.js` (vẽ bảng docx tiếng Anh) - tái dùng nguyên
+`computeExamMatrix()` gốc (đã trung lập ngôn ngữ), chỉ viết lại phần có nhãn/mẫu câu tiếng Việt
+cứng. Nối vào `englishExamExportService.js` (cả Word lẫn in PDF/HTML).
+
+**`englishLessonPlanExportService.js`:** thêm render phụ lục "Tin nhắn gửi phụ huynh" (tiêu đề +
+nội dung tiếng Việt, không dịch). Giới hạn CÒN LẠI (kế thừa từ kiến trúc cũ, chưa mở rộng): các
+tích hợp khác (Checklist NL-PC, STEM, Timeline, Bài tập phân hoá, Phiếu học tập, Lời dẫn, Slide
+Outline) chưa có bản render tiếng Anh - xem `NEXT_STEPS.md` #18.
+
+**Phát hiện phụ (KHÔNG liên quan Phiên 35):** `npm test` lộ ra `test/lessonPlanEnglishAudioIpa.test.js`
+(2 test) đang FAIL từ trước - tính năng "gắn thẻ Audio + phiên âm IPA" cho giáo án Tiếng Anh có
+test nhưng CHƯA từng được cài đặt trong code. Xem `NEXT_STEPS.md` #17 - cần Hoan quyết định.
+
+**Kết quả:** 371 test (369 pass, 2 fail - đúng 2 test Audio/IPA nói trên, không phải do Phiên 35),
+`npm run build` sạch (route `/api/translate-foreign-language` đã biến mất khỏi danh sách route,
+đúng như mong đợi sau khi xoá).
+
 ## Phiên 34 — "Bản ngoại ngữ" (Tiếng Anh) cho Soạn Giáo Án + Đề Cương Ôn Tập + Đề Kiểm tra
 
 Thêm nút "🇬🇧 Bản tiếng Anh" (Word + PDF, HOÀN TOÀN bằng tiếng Anh) ở 3 tab, chỉ hiện khi môn học
