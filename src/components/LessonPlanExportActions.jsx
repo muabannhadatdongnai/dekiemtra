@@ -4,6 +4,8 @@ import { useState } from "react";
 import { FileDown, Printer } from "lucide-react";
 import { exportLessonPlanToWord } from "@/services/lessonPlanExportService";
 import { exportToPDF } from "@/services/exportService";
+import ForeignLanguageExportButton from "./ForeignLanguageExportButton";
+import { exportEnglishLessonPlanToWord, printEnglishLessonPlan } from "@/services/englishLessonPlanExportService";
 
 // GIAI ĐOẠN 10, Việc 6/7 - "cờ ẩn-hiện" phụ lục Lời dẫn khi xuất Word (KE_HOACH_GIAI_DOAN_10.md
 // mục 2, đề xuất #2): mặc định TẮT (unchecked) để nút "Tải Word" luôn xuất ra "Bản nộp chuẩn"
@@ -48,6 +50,31 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
           <Printer size={15} /> In / Tải PDF
         </button>
       </div>
+
+      {/* "Bản ngoại ngữ" (hiện chỉ Tiếng Anh) - TỰ ẨN nếu môn học không hỗ trợ, xem
+          foreignLanguageSubjects.js. Bản Word/PDF tiếng Việt ở trên giữ NGUYÊN VẸN, không đổi. */}
+      <ForeignLanguageExportButton
+        subject={meta?.subject}
+        contentKindLabel="a lesson plan (kế hoạch bài dạy)"
+        getData={() => lessonPlan}
+        disabled={disabled}
+        onWord={(translated, languageConfig) =>
+          exportEnglishLessonPlanToWord(translated, {
+            tenBai: meta?.tenBai,
+            grade: meta?.grade,
+            soTiet: meta?.soTiet,
+            subjectLabelEn: languageConfig.languageNameEn,
+          })
+        }
+        onPdf={(translated, languageConfig) =>
+          printEnglishLessonPlan(translated, {
+            tenBai: meta?.tenBai,
+            grade: meta?.grade,
+            soTiet: meta?.soTiet,
+            subjectLabelEn: languageConfig.languageNameEn,
+          })
+        }
+      />
     </div>
   );
 }

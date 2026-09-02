@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { FileDown, Printer, Shuffle } from "lucide-react";
 import { exportToWord, exportBothVersions, exportToPDF, generateFourExamVariants } from "@/services/exportService";
+import ForeignLanguageExportButton from "./ForeignLanguageExportButton";
+import { exportEnglishExamToWord, printEnglishExam } from "@/services/englishExamExportService";
 
 export default function ExportActions({
   examMeta,
@@ -93,6 +95,48 @@ export default function ExportActions({
           Kèm Ma trận đề thi + Bản đặc tả khi tải Word (chuẩn Thông tư 22)
         </label>
       )}
+
+      {/* "Bản ngoại ngữ" (hiện chỉ Tiếng Anh) - TỰ ẨN nếu môn học không hỗ trợ, xem
+          foreignLanguageSubjects.js. Bản Word/PDF tiếng Việt ở trên giữ NGUYÊN VẸN, không đổi. */}
+      <ForeignLanguageExportButton
+        subject={examMeta?.subject}
+        contentKindLabel="an exam (đề kiểm tra)"
+        getData={() => {
+          const active = variants?.length ? variants[activeVariantIndex].questions : questions;
+          return { questions: active, teacherRubric };
+        }}
+        disabled={disabled}
+        onWord={(translated, languageConfig) =>
+          exportEnglishExamToWord(
+            {
+              title: examMeta?.title,
+              schoolName: examMeta?.schoolName,
+              className: examMeta?.className,
+              grade: examMeta?.grade,
+              duration: examMeta?.duration,
+              academicYear: examMeta?.academicYear,
+              objective: examMeta?.objective,
+              subjectLabelEn: languageConfig.languageNameEn,
+            },
+            translated
+          )
+        }
+        onPdf={(translated, languageConfig) =>
+          printEnglishExam(
+            {
+              title: examMeta?.title,
+              schoolName: examMeta?.schoolName,
+              className: examMeta?.className,
+              grade: examMeta?.grade,
+              duration: examMeta?.duration,
+              academicYear: examMeta?.academicYear,
+              objective: examMeta?.objective,
+              subjectLabelEn: languageConfig.languageNameEn,
+            },
+            translated
+          )
+        }
+      />
 
       {variants?.length > 0 && (
         <div className="flex items-center gap-2">
