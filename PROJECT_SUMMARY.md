@@ -5,6 +5,71 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 36 — Hoàn thiện giáo án Tiếng Anh: sửa "hạt sạn tiếng Việt" trong tên hoạt động + render đủ 7 tích hợp còn thiếu + sửa nút In/Tải PDF
+
+**Yêu cầu Hoan:** (1) hoàn thiện các tích hợp còn thiếu bản tiếng Anh (Checklist NL-PC, STEM,
+Timeline, Bài tập phân hoá, Phiếu học tập, Lời dẫn, Slide Outline - tồn đọng từ Phiên 35); (2) sửa
+"hạt sạn tiếng Việt" còn sót trong tiêu đề hoạt động/các bước, cả trên Word lẫn trình duyệt web;
+(3) sửa nút "In/Tải PDF" không bấm được cho giáo án Tiếng Anh.
+
+**Root cause #1 - "hạt sạn tiếng Việt" trong tên hoạt động:** `getActivityLabels()`
+(`lessonPlanTemplates.js`) LUÔN trả về nhãn tiếng Việt ("Khởi động", "Luyện tập"...) bất kể môn
+học, và các nhãn này được dùng làm GIÁ TRỊ VÍ DỤ CỤ THỂ (không phải placeholder) trong schema JSON
+gửi cho AI (`buildActivitySchemaBlock` - `lessonPlanPromptTemplates.js`) - đúng nguyên tắc đã ghi ở
+mục "Key learnings": ví dụ cụ thể "neo" hành vi AI mạnh hơn chỉ thị chung chung, nên AI vẫn trả về
+tên hoạt động tiếng Việt dù `buildForeignLanguageOutputDirective()` đã yêu cầu tiếng Anh. Nặng hơn:
+tích hợp STEM (`lessonPlanIntegrations.js`) còn CHỈ THỊ TRỰC TIẾP AI dùng đúng chuỗi cứng
+`"[Vận dụng - Tích hợp STEM]"` cho trường "ten" - xung đột thẳng với chỉ thị ngôn ngữ.
+
+**Fix:** thêm `ACTIVITY_LABELS_BY_LANGUAGE`/`STEM_VAN_DUNG_LABEL_BY_LANGUAGE`
+(`lessonPlanTemplates.js`), `getActivityLabels(lessonType, integrations, languageCode='vi')` nhận
+thêm tham số `languageCode` (mặc định "vi" - KHÔNG phá hành vi cũ cho các môn khác).
+`buildLessonPlanPrompt()` tính `languageCode` từ `findForeignLanguageConfig(subject)` ngay đầu hàm,
+dùng nó cho MỌI nơi từng hardcode tên hoạt động tiếng Việt (structureRule, stepClarityRule,
+buildMultiPeriodGuidance, lessonTypeNote). `TICH_HOP_STEM.buildPromptFragment()` đổi sang dùng
+`ctx.vanDungLabel` (được `buildLessonPlanPrompt()` truyền vào, đã tính đúng ngôn ngữ) thay vì
+hardcode - môn Toán/các môn khác vẫn nhận đúng chuỗi tiếng Việt cũ (test riêng xác nhận không đổi
+hành vi). `computeMultiPeriodTimeline()`/`computeActivityTimeline()` cũng nhận thêm `languageCode`
+(mặc định "vi") để đồng bộ - `lessonPlanOrchestrator.js` truyền `languageCode` của môn ngoại ngữ vào
+khi tính Timeline.
+
+**Root cause #2 - nút "In/Tải PDF" không bấm được:** `foreignLanguageDocBuilder.js`'s
+`printHtmlDocument()` gọi `window.open("", "_blank", "noopener,noreferrer")`. Theo đặc tả trình
+duyệt (MDN), khi feature "noopener" (hoặc "noreferrer" - tự kèm "noopener") được truyền, trình
+duyệt LUÔN trả về `null` cho `window.open()` NGAY CẢ KHI cửa sổ mở thành công - khiến điều kiện
+`if (!printWindow) throw ...` luôn đúng, báo lỗi "trình duyệt đã chặn popup" dù popup KHÔNG hề bị
+chặn, và không có tham chiếu để ghi HTML/gọi `print()`. **Fix:** bỏ "noopener,noreferrer" khỏi lời
+gọi `window.open()`, giữ hiệu quả bảo mật tương đương bằng cách gán `printWindow.opener = null`
+ngay sau khi có tham chiếu (không mất tham chiếu như truyền thẳng "noopener").
+
+**`englishLessonPlanExportService.js` (Word + in/PDF) - mở rộng đủ 7 tích hợp còn thiếu:** Checklist
+NL-PC (bảng 4 cột Criteria/Good/Satisfactory/Needs Improvement), STEM Guide, Timeline nhiều tiết
+(dòng "Suggested time allocation by period"), Bài tập phân hoá 3 mức (Support/On-level/Advanced),
+Phiếu học tập (Student Worksheet), Lời dẫn (Teacher Script - có cờ `includeTeacherScript` ẩn/hiện
+giống bản tiếng Việt, mặc định KHÔNG kèm), Dàn ý Slide (Slide Outline). Thêm hỗ trợ ranh giới "Hết
+Tiết..." (Period boundary tiếng Anh) trong bảng/đoạn văn hoạt động khi bài dạy nhiều tiết, và hỗ
+trợ cả 2 chế độ 1 cột/2 cột (`columnMode`) - trước đây bản tiếng Anh luôn cứng 2 cột, không đồng bộ
+với lựa chọn của giáo viên. "Tin nhắn gửi phụ huynh" vẫn giữ nguyên tiêu đề + nội dung tiếng Việt.
+`LessonPlanExportActions.jsx`: hiện checkbox "Kèm phụ lục Lời dẫn" cho CẢ môn ngoại ngữ (trước đây
+bị ẩn hẳn), truyền `includeTeacherScript`/`timeline`/`columnMode`/`lessonType` xuống đúng như luồng
+tiếng Việt.
+
+**`LessonPlanPreview.jsx` (bản xem trước web) - viết lại hoàn toàn:** trước đây 100% nhãn/tiêu đề
+TĨNH (không phải nội dung do AI sinh, VD "I. YÊU CẦU CẦN ĐẠT", "Bước 1:", tiêu đề bảng 2 cột...)
+hardcode tiếng Việt bất kể môn học - đây là nguồn "hạt sạn tiếng Việt" chính trên trình duyệt. Giờ
+mọi nhãn tĩnh lấy từ `LABELS_VI`/`LABELS_EN`, chọn theo `findForeignLanguageConfig(meta?.subject)`
+(ngôn ngữ chưa có bản dịch tự rơi về `LABELS_VI` an toàn - dễ mở rộng thêm ngôn ngữ khác sau này).
+"Tin nhắn gửi phụ huynh" vẫn giữ tiêu đề tiếng Việt cố định (đúng thiết kế, không phải sót dịch).
+Diff xác nhận file mới tham chiếu ĐÚNG BỘ field `lessonPlan.*` như file cũ (không rớt tính năng nào
+trong lúc viết lại).
+
+**Test:** thêm `test/lessonPlanPhien36.test.js` (12 test: nhãn hoạt động theo ngôn ngữ, prompt
+không còn hardcode tên tiếng Việt cho môn ngoại ngữ, nhãn STEM động, môn khác không đổi hành vi,
+render đủ 7 tích hợp trong Word tiếng Anh, cờ `includeTeacherScript`, `window.open()` không còn
+"noopener"/"noreferrer", báo lỗi rõ ràng khi popup thực sự bị chặn). **Kết quả:** 383 test, 381
+pass, đúng 2 fail tồn đọng cũ (`lessonPlanEnglishAudioIpa.test.js` - KHÔNG liên quan Phiên 36, xem
+`NEXT_STEPS.md`). `npm run build` sạch.
+
 ## Phiên 35 — Đổi kiến trúc "Bản ngoại ngữ": sinh THẲNG bằng ngôn ngữ đích, bỏ bước dịch
 
 **Yêu cầu Hoan:** môn Tiếng Anh phải MẶC ĐỊNH xuất bằng tiếng Anh (không cần bấm nút riêng), trừ
