@@ -17,6 +17,12 @@ import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 // môn học nằm trong danh bạ foreignLanguageSubjects.js, nút "Tải Word"/"In PDF" DUY NHẤT ở dưới tự
 // động xuất bằng đúng ngôn ngữ đó (AI đã sinh nội dung trực tiếp bằng ngôn ngữ này từ
 // lessonPlanPromptTemplates.js, không cần dịch lại) - xem PROJECT_SUMMARY.md Phiên 35.
+//
+// ⚠️ Phiên 36: englishLessonPlanExportService.js giờ hỗ trợ ĐỦ các tích hợp (Checklist NL-PC,
+// STEM, Timeline, Bài tập phân hoá, Phiếu học tập, Lời dẫn, Slide Outline) - nên checkbox "Kèm phụ
+// lục Lời dẫn" giờ hiển thị cho CẢ môn ngoại ngữ (trước đây bị ẩn hẳn qua điều kiện
+// `!foreignLanguageConfig`), và `includeTeacherScript` được truyền xuống
+// exportEnglishLessonPlanToWord()/printEnglishLessonPlan() giống hệt luồng tiếng Việt.
 export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) {
   const [includeTeacherScript, setIncludeTeacherScript] = useState(false);
   const disabled = !lessonPlan;
@@ -25,12 +31,19 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
 
   function handleWord() {
     if (foreignLanguageConfig) {
-      exportEnglishLessonPlanToWord(lessonPlan, {
-        tenBai: meta?.tenBai,
-        grade: meta?.grade,
-        soTiet: meta?.soTiet,
-        subjectLabelEn: foreignLanguageConfig.languageNameEn,
-      });
+      exportEnglishLessonPlanToWord(
+        lessonPlan,
+        {
+          tenBai: meta?.tenBai,
+          grade: meta?.grade,
+          soTiet: meta?.soTiet,
+          subjectLabelEn: foreignLanguageConfig.languageNameEn,
+          columnMode: meta?.columnMode,
+          lessonType: meta?.lessonType,
+          timeline,
+        },
+        { includeTeacherScript }
+      );
       return;
     }
     exportLessonPlanToWord({ lessonPlan, timeline, meta, includeTeacherScript });
@@ -38,12 +51,19 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
 
   function handlePdf() {
     if (foreignLanguageConfig) {
-      printEnglishLessonPlan(lessonPlan, {
-        tenBai: meta?.tenBai,
-        grade: meta?.grade,
-        soTiet: meta?.soTiet,
-        subjectLabelEn: foreignLanguageConfig.languageNameEn,
-      });
+      printEnglishLessonPlan(
+        lessonPlan,
+        {
+          tenBai: meta?.tenBai,
+          grade: meta?.grade,
+          soTiet: meta?.soTiet,
+          subjectLabelEn: foreignLanguageConfig.languageNameEn,
+          columnMode: meta?.columnMode,
+          lessonType: meta?.lessonType,
+          timeline,
+        },
+        { includeTeacherScript }
+      );
       return;
     }
     exportToPDF();
@@ -51,7 +71,7 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
 
   return (
     <div className="no-print flex flex-col gap-2">
-      {hasTeacherScript && !foreignLanguageConfig && (
+      {hasTeacherScript && (
         <label className="flex w-fit cursor-pointer items-center gap-2 text-sm text-slate-600">
           <input
             type="checkbox"
