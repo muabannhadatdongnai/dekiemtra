@@ -143,13 +143,35 @@ export function htmlHeading(text, level = 2) {
  * Mở 1 cửa sổ mới, ghi HTML in ấn (khổ A4, font Times New Roman) rồi tự gọi window.print() ngay
  * khi tải xong - "PDF" ở đây LÀ bản in trình duyệt, đúng nguyên tắc "không thêm thư viện PDF nào"
  * đã áp dụng cho toàn hệ thống (xem exportService.js:exportToPDF).
+ *
+ * ⚠️ FIX (Phiên 36) - lỗi "Không thể bấm chọn in/tải PDF": trước đây gọi
+ * `window.open("", "_blank", "noopener,noreferrer")`. Theo đặc tả (MDN): khi feature "noopener"
+ * (hoặc "noreferrer" - tự động bật kèm "noopener") được truyền vào, trình duyệt LUÔN trả về `null`
+ * cho `window.open()` NGAY CẢ KHI cửa sổ đã mở thành công (đây là cơ chế an toàn có chủ đích của
+ * trình duyệt, không phải bị chặn popup) - khiến điều kiện `if (!printWindow) throw ...` bên dưới
+ * LUÔN đúng, báo lỗi "trình duyệt đã chặn popup" ngay cả khi popup KHÔNG hề bị chặn, và vì không
+ * giữ được tham chiếu `printWindow` nên cũng KHÔNG thể ghi HTML/gọi print() vào cửa sổ đó - nút
+ * "In/Tải PDF" vì vậy không bao giờ hoạt động được cho môn ngoại ngữ. Sửa: bỏ hẳn cặp
+ * "noopener,noreferrer" khỏi lời gọi `window.open()` để LẤY LẠI được tham chiếu cửa sổ thật (bắt
+ * buộc phải có tham chiếu này để ghi HTML in ấn vào). Rủi ro bảo mật "noopener" vốn nhằm ngăn
+ * KHÔNG cho trang MỚI MỞ RA truy cập lại `window.opener` trỏ về trang gốc - áp dụng "vá tay" tương
+ * đương bằng cách gán `printWindow.opener = null` NGAY SAU khi có tham chiếu, vẫn giữ được hiệu
+ * quả bảo mật tương tự "noopener" mà KHÔNG mất tham chiếu cần thiết để ghi nội dung.
  */
 export function printHtmlDocument({ title, bodyHtml }) {
-  const printWindow = window.open("", "_blank", "noopener,noreferrer");
+  const printWindow = window.open("", "_blank");
   if (!printWindow) {
     throw new Error(
       "Trình duyệt đã chặn cửa sổ bật lên (popup) - vui lòng cho phép popup cho trang này rồi thử lại."
     );
+  }
+  try {
+    // Tương đương hiệu quả bảo mật của "noopener" (ngăn cửa sổ mới thao tác ngược lại trang gốc
+    // qua window.opener) nhưng KHÔNG làm mất tham chiếu printWindow như truyền thẳng "noopener"
+    // vào window.open() (xem giải thích đầy đủ ở JSDoc phía trên).
+    printWindow.opener = null;
+  } catch {
+    // Một số trình duyệt cũ có thể chặn gán thuộc tính này - bỏ qua, không ảnh hưởng luồng in.
   }
 
   const html = `<!DOCTYPE html>

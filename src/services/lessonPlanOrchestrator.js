@@ -1,6 +1,7 @@
 import { fetchMarkdownFromGitHub, fetchAdvancedBook } from "./githubService";
 import { generateLessonPlanContent } from "./lessonPlanEngine";
 import { isPreschoolGrade, computeActivityTimeline } from "@/data/lessonPlanTemplates";
+import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 import { ADVANCED_BOOK_MARKER } from "@/data/constants";
 import { getIntegration } from "@/data/lessonPlanIntegrations";
 import { isUsableLessonPlanSampleSpec } from "@/data/lessonPlanSampleSchema";
@@ -151,7 +152,13 @@ export async function orchestrateLessonPlanGeneration({
     }
   }
 
-  const timeline = integrations.includes("timeline") ? computeActivityTimeline(soTiet, grade, lessonType) : [];
+  // ⚠️ Phiên 36: truyền languageCode của môn ngoại ngữ (nếu có) để nhãn hoạt động trong Timeline
+  // (VD "Khởi động"/"Warm-up") khớp đúng ngôn ngữ nội dung giáo án - xem getActivityLabels()
+  // trong lessonPlanTemplates.js.
+  const timelineLanguageCode = findForeignLanguageConfig(subject)?.languageCode || "vi";
+  const timeline = integrations.includes("timeline")
+    ? computeActivityTimeline(soTiet, grade, lessonType, timelineLanguageCode)
+    : [];
 
   // GIAI ĐOẠN 10, Việc 3/7: sau khi sinh thành công - (a) nếu ý tưởng mở bài VẪN khá giống 1 ý
   // tưởng đã lưu trước đó (dù đã gợi ý AI tránh trong prompt) thì CẢNH BÁO cho giáo viên tự quyết
