@@ -106,6 +106,26 @@ export const STANDARD_ACTIVITIES = [
 ];
 
 /**
+ * ⚠️ Phiên 36 - nhãn tiếng Anh cho 4 hoạt động chuẩn, DÙNG CHUNG key với STANDARD_ACTIVITIES ở
+ * trên - áp dụng khi môn học nằm trong danh bạ foreignLanguageSubjects.js (hiện chỉ "en", nhưng
+ * đặt tên theo languageCode để dễ mở rộng thêm "zh"/"fr" sau này mà không phải sửa getActivityLabels()).
+ * LÝ DO CẦN TỒN TẠI: trước Phiên 36, getActivityLabels() luôn trả về nhãn TIẾNG VIỆT bất kể môn
+ * học - prompt schema (buildActivitySchemaBlock() trong lessonPlanPromptTemplates.js) dùng CHÍNH
+ * các nhãn này làm GIÁ TRỊ VÍ DỤ CỤ THỂ (không phải placeholder "...") cho trường "ten" của mỗi
+ * hoạt động -> AI bị \"neo\" theo ví dụ cụ thể này và tiếp tục trả về tên hoạt động bằng tiếng Việt
+ * (VD \"Khởi động\") dù buildForeignLanguageOutputDirective() đã yêu cầu viết bằng tiếng Anh -> đây
+ * là nguồn \"hạt sạn tiếng Việt\" chính trong tiêu đề hoạt động của giáo án Tiếng Anh.
+ */
+const ACTIVITY_LABELS_BY_LANGUAGE = {
+  en: {
+    khoi_dong: "Warm-up",
+    kham_pha: "Presentation (New Knowledge)",
+    luyen_tap: "Practice",
+    van_dung: "Application",
+  },
+};
+
+/**
  * "Loại bài" - giáo viên chọn để hoạt động thứ 2 (mặc định "Khám phá - Hình thành kiến thức mới")
  * đổi tên đúng bản chất sư phạm khi bài dạy KHÔNG hình thành kiến thức mới (VD "Ôn tập số tự
  * nhiên" ở Toán lớp 5 - kiến thức các em đã học từ lớp 4). Trước đây hệ thống LUÔN gắn cứng tên
@@ -118,20 +138,31 @@ export const LESSON_TYPES = [
     label: "Bài mới",
     hint: "Hình thành kiến thức mới",
     activityLabel: "Khám phá (Hình thành kiến thức mới)",
+    activityLabelByLanguage: { en: "Presentation (New Knowledge)" },
   },
   {
     value: "on_tap",
     label: "Ôn tập / Luyện tập",
     hint: "Hệ thống hoá kiến thức đã học",
     activityLabel: "Hệ thống hoá kiến thức",
+    activityLabelByLanguage: { en: "Knowledge Consolidation" },
   },
   {
     value: "thuc_hanh",
     label: "Thực hành / Trải nghiệm",
     hint: "Vận dụng thực tế, ít lý thuyết mới",
     activityLabel: "Thực hành - Luyện tập",
+    activityLabelByLanguage: { en: "Practice - Application" },
   },
 ];
+
+// Nhãn tiếng Anh cho hoạt động "Vận dụng" khi tích hợp STEM bật - đi cùng cặp với chuỗi tiếng Việt
+// "[Vận dụng - Tích hợp STEM]" cũ (xem ACTIVITY_LABELS_BY_LANGUAGE ở trên) - tách hằng số riêng vì
+// TICH_HOP_STEM trong lessonPlanIntegrations.js cũng cần đúng chuỗi này cho buildPromptFragment().
+export const STEM_VAN_DUNG_LABEL_BY_LANGUAGE = {
+  vi: "[Vận dụng - Tích hợp STEM]",
+  en: "[Application - STEM Integration]",
+};
 
 export function getLessonTypeMeta(lessonType) {
   return LESSON_TYPES.find((t) => t.value === lessonType) || LESSON_TYPES[0];
@@ -142,14 +173,27 @@ export function getLessonTypeMeta(lessonType) {
  * đổi tên hoạt động "van_dung" thành "[Vận dụng - Tích hợp STEM]" nếu tích hợp STEM đang được bật
  * (integrations: string[] các INTEGRATION_KEYS đang chọn - mặc định [] để KHÔNG phá vỡ các nơi gọi
  * hàm này mà không liên quan tới tích hợp, ví dụ computeMultiPeriodTimeline/computeActivityTimeline).
+ *
+ * languageCode (Phiên 36): "vi" (mặc định) | "en"... - khi môn học nằm trong danh bạ
+ * foreignLanguageSubjects.js, TRUYỀN ĐÚNG `languageCode` của môn đó vào đây để 4 nhãn hoạt động
+ * (kể cả biến thể theo "loại bài"/STEM) trả về bằng CHÍNH NGÔN NGỮ ĐÍCH thay vì tiếng Việt - xem
+ * giải thích đầy đủ lý do cần thiết ở JSDoc của ACTIVITY_LABELS_BY_LANGUAGE phía trên. Ngôn ngữ
+ * chưa có bản dịch (chưa thêm entry vào ACTIVITY_LABELS_BY_LANGUAGE) tự rơi về tiếng Việt an toàn.
  */
-export function getActivityLabels(lessonType, integrations = []) {
+export function getActivityLabels(lessonType, integrations = [], languageCode = "vi") {
   const meta = getLessonTypeMeta(lessonType);
   const stemOn = integrations.includes(INTEGRATION_KEYS.TICH_HOP_STEM);
+  const langLabels = ACTIVITY_LABELS_BY_LANGUAGE[languageCode] || null;
   return STANDARD_ACTIVITIES.map((a) => {
-    if (a.key === "kham_pha") return { ...a, label: meta.activityLabel };
-    if (a.key === "van_dung" && stemOn) return { ...a, label: "[Vận dụng - Tích hợp STEM]" };
-    return a;
+    const baseLabel = langLabels?.[a.key] || a.label;
+    if (a.key === "kham_pha") {
+      const label = languageCode === "vi" ? meta.activityLabel : meta.activityLabelByLanguage?.[languageCode] || meta.activityLabel;
+      return { ...a, label };
+    }
+    if (a.key === "van_dung" && stemOn) {
+      return { ...a, label: STEM_VAN_DUNG_LABEL_BY_LANGUAGE[languageCode] || STEM_VAN_DUNG_LABEL_BY_LANGUAGE.vi };
+    }
+    return { ...a, label: baseLabel };
   });
 }
 
@@ -203,8 +247,8 @@ function distributeMinutesExact(totalMinutes, items) {
  *
  * @returns {Array<{period:number, totalMinutes:number, segments:Array<{key,label,minutes}>}>}
  */
-export function computeMultiPeriodTimeline(soTiet = 1, grade, lessonType = "bai_moi") {
-  const activities = getActivityLabels(lessonType);
+export function computeMultiPeriodTimeline(soTiet = 1, grade, lessonType = "bai_moi", languageCode = "vi") {
+  const activities = getActivityLabels(lessonType, [], languageCode);
   const labelByKey = Object.fromEntries(activities.map((a) => [a.key, a.label]));
   const capByKey = Object.fromEntries(activities.map((a) => [a.key, a.maxMinutes || null]));
   const minutesPerPeriod = getMinutesPerLesson(grade);
@@ -216,7 +260,15 @@ export function computeMultiPeriodTimeline(soTiet = 1, grade, lessonType = "bai_
     const isLast = period === totalPeriods;
 
     const parts = [
-      { key: "khoi_dong", weight: isFirst ? 5 : 3, label: isFirst ? labelByKey.khoi_dong : "Khởi động lại" },
+      {
+        key: "khoi_dong",
+        weight: isFirst ? 5 : 3,
+        label: isFirst
+          ? labelByKey.khoi_dong
+          : languageCode === "en"
+          ? "Warm-up (recap)"
+          : "Khởi động lại",
+      },
       { key: "luyen_tap", weight: 10, label: labelByKey.luyen_tap },
     ];
     if (isFirst) parts.push({ key: "kham_pha", weight: 12, label: labelByKey.kham_pha });
@@ -261,13 +313,13 @@ export function computeMultiPeriodTimeline(soTiet = 1, grade, lessonType = "bai_
  * Cộng dồn từ computeMultiPeriodTimeline() nên TỔNG LUÔN KHỚP CHÍNH XÁC số tiết x số phút/tiết
  * khai báo - đây chính là lỗi giáo viên phản ánh (79 phút thay vì 80 phút) đã được sửa tại đây.
  */
-export function computeActivityTimeline(soTiet = 1, grade, lessonType = "bai_moi") {
-  const periods = computeMultiPeriodTimeline(soTiet, grade, lessonType);
+export function computeActivityTimeline(soTiet = 1, grade, lessonType = "bai_moi", languageCode = "vi") {
+  const periods = computeMultiPeriodTimeline(soTiet, grade, lessonType, languageCode);
   const totals = {};
   periods.forEach((p) => p.segments.forEach((s) => {
     totals[s.key] = (totals[s.key] || 0) + s.minutes;
   }));
-  const activities = getActivityLabels(lessonType);
+  const activities = getActivityLabels(lessonType, [], languageCode);
   return activities.filter((a) => a.key in totals).map((a) => ({ key: a.key, label: a.label, minutes: totals[a.key] }));
 }
 

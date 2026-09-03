@@ -375,7 +375,17 @@ export const LESSON_PLAN_INTEGRATIONS = {
     // nhau (xem groupByGradeForStem() bên dưới). Cần biết "grade" nên buildPromptFragment() nhận
     // ctx={grade} - xem buildIntegrationsPromptBlock() (đã sửa để truyền ctx qua) và lời gọi tại
     // buildLessonPlanPrompt() (lessonPlanPromptTemplates.js).
-    buildPromptFragment: (ctx = {}) =>
+    //
+    // ⚠️ Phiên 36: `ctx.vanDungLabel` (nếu có) là nhãn "ten" ĐÃ ĐÚNG NGÔN NGỮ mà buildLessonPlanPrompt()
+    // tính sẵn qua getActivityLabels(...,languageCode) - PHẢI dùng biến này thay vì hardcode chuỗi
+    // "[Vận dụng - Tích hợp STEM]" như trước đây: bản cứng tiếng Việt từng khiến giáo án môn Tiếng
+    // Anh vẫn bị chèn đúng cụm tiếng Việt này vào trường "ten" (hạt sạn tiếng Việt trong tiêu đề
+    // hoạt động) dù chỉ thị ngôn ngữ (buildForeignLanguageOutputDirective) đã yêu cầu viết tiếng Anh -
+    // ví dụ CỤ THỂ trong hướng dẫn luôn "neo" hành vi AI mạnh hơn quy tắc chung chung (xem JSDoc đầu
+    // file). Fallback về đúng chuỗi tiếng Việt cũ nếu ctx không truyền (an toàn cho lời gọi cũ).
+    buildPromptFragment: (ctx = {}) => {
+      const vanDungLabel = ctx.vanDungLabel || "[Vận dụng - Tích hợp STEM]";
+      return (
       `- Hoạt động "Vận dụng" PHẢI đổi hẳn bản chất: KHÔNG giao bài tập làm trên giấy như thông\n` +
       `  thường, mà giao 1 nhiệm vụ theo định hướng GIÁO DỤC STEM - yêu cầu học sinh dùng ĐÚNG kiến\n` +
       `  thức vừa học trong bài này để tạo ra sản phẩm - sản phẩm PHẢI thể hiện rõ kiến thức bài\n` +
@@ -386,14 +396,16 @@ export const LESSON_PLAN_INTEGRATIONS = {
       `  dài thêm) - TUYỆT ĐỐI KHÔNG để học sinh làm sản phẩm hoàn chỉnh ngay tại lớp. Bước cuối của\n` +
       `  "tienTrinh" hoạt động này PHẢI ghi rõ: học sinh HOÀN THIỆN sản phẩm Ở NHÀ (có thể nhờ phụ\n` +
       `  huynh hỗ trợ) và mang nộp/trình bày/trưng bày vào buổi học sau.\n` +
-      `  Đổi trường "ten" của hoạt động này thành đúng "[Vận dụng - Tích hợp STEM]" (đã thể hiện\n` +
-      `  trong ví dụ schema JSON bên dưới).\n` +
+      `  Đổi trường "ten" của hoạt động này thành ĐÚNG "${vanDungLabel}" (đã thể hiện trong ví dụ\n` +
+      `  schema JSON bên dưới).\n` +
       `  Trả về thêm nội dung CỤ THỂ trong trường JSON "stemActivity" (giáo viên in/gửi phụ huynh\n` +
       `  hướng dẫn con làm NGAY, không phải tự soạn thêm): { "tenSanPham": "...", "vatLieu": ["...",\n` +
       `  "..."], "cacBuoc": ["...", "..."], "tieuChiDanhGia": ["...", "..."] } - "vatLieu" là vật liệu\n` +
       `  dễ tìm/rẻ tiền cần chuẩn bị; "cacBuoc" là các bước thực hiện NGẮN GỌN theo đúng thứ tự (không\n` +
       `  tự đánh số trong chuỗi, hệ thống tự đánh số khi hiển thị); "tieuChiDanhGia" là 2-4 tiêu chí\n` +
-      `  đơn giản để giáo viên/học sinh tự đánh giá sản phẩm khi nộp.`,
+      `  đơn giản để giáo viên/học sinh tự đánh giá sản phẩm khi nộp.`
+      );
+    },
     schemaExample:
       `"stemActivity": { "tenSanPham": "...", "vatLieu": ["...", "..."], "cacBuoc": ["...", "..."], "tieuChiDanhGia": ["...", "..."] }`,
   },

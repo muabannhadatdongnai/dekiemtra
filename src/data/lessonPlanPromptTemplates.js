@@ -24,7 +24,7 @@ import {
 } from "./lessonPlanIntegrations";
 import { buildLessonPlanStylePromptFragment } from "./lessonPlanStyles";
 import { generateAntiDuplicationSeed } from "./promptTemplates";
-import { buildForeignLanguageOutputDirective } from "./foreignLanguageSubjects";
+import { buildForeignLanguageOutputDirective, findForeignLanguageConfig } from "./foreignLanguageSubjects";
 
 export const LESSON_PLAN_MODEL = "gemini-3.5-flash"; // đồng bộ FREE_TIER_MODEL bên promptTemplates.js
 
@@ -112,10 +112,19 @@ ${priorityNote}${referenceBlock}
  * 1. Hoạt động "Khởi động" quá dài (11 phút) do trước đây không có trần thời lượng hợp lý.
  * 2. Bài dạy nhiều tiết bị gộp thành 1 mạch, không rõ điểm dừng giữa các tiết.
  */
-function buildMultiPeriodGuidance(soTiet, grade, lessonType) {
-  const periods = computeMultiPeriodTimeline(soTiet, grade, lessonType);
+function buildMultiPeriodGuidance(soTiet, grade, lessonType, languageCode = "vi") {
+  const periods = computeMultiPeriodTimeline(soTiet, grade, lessonType, languageCode);
   const multiPeriod = periods.length > 1;
-  const secondActivityLabel = getActivityLabels(lessonType).find((a) => a.key === "kham_pha")?.label || "Khám phá";
+  const activityLabelsForGuidance = getActivityLabels(lessonType, [], languageCode);
+  const secondActivityLabel = activityLabelsForGuidance.find((a) => a.key === "kham_pha")?.label || "Khám phá";
+  // ⚠️ Phiên 36: trước đây "Khởi động"/"Luyện tập"/"Vận dụng" bên dưới bị VIẾT CỨNG bằng tiếng
+  // Việt trong câu hướng dẫn - vô hại khi soạn giáo án tiếng Việt, nhưng với môn ngoại ngữ (giáo
+  // án Tiếng Anh) cụm chữ tiếng Việt này lặp lại nhiều lần trong prompt có thể góp phần khiến AI
+  // "quen" dùng tên hoạt động tiếng Việt cho trường "ten" - đổi sang biến lấy từ
+  // getActivityLabels(...,languageCode) để LUÔN khớp đúng ngôn ngữ đích, giống secondActivityLabel.
+  const khoiDongLabel = activityLabelsForGuidance.find((a) => a.key === "khoi_dong")?.label || "Khởi động";
+  const luyenTapLabel = activityLabelsForGuidance.find((a) => a.key === "luyen_tap")?.label || "Luyện tập";
+  const vanDungLabelForGuidance = activityLabelsForGuidance.find((a) => a.key === "van_dung")?.label || "Vận dụng";
   const lines = periods.map(
     (p) =>
       `  Tiết ${p.period} (${p.totalMinutes} phút): ` +
@@ -126,7 +135,7 @@ function buildMultiPeriodGuidance(soTiet, grade, lessonType) {
     return {
       multiPeriod: false,
       text: `- Gợi ý phân bổ thời lượng cho tiết học (KHÔNG bắt buộc viết số phút vào nội dung, nhưng nội
-  dung từng hoạt động PHẢI vừa đủ trong khoảng thời gian này, đặc biệt KHÔNG thiết kế "Khởi động"
+  dung từng hoạt động PHẢI vừa đủ trong khoảng thời gian này, đặc biệt KHÔNG thiết kế "${khoiDongLabel}"
   dài quá 7 phút dù là trò chơi hấp dẫn thế nào):
 ${lines.join("\n")}`,
     };
@@ -139,22 +148,22 @@ ${lines.join("\n")}`,
   (nội dung viết ra phải vừa đủ trong khoảng thời gian này):
 ${lines.join("\n")}
 - Mỗi bước trong mảng "tienTrinh" của MỌI hoạt động PHẢI có thêm trường số nguyên "tiet" (1..${periods.length})
-  cho biết bước đó diễn ra ở tiết thứ mấy - dựa theo gợi ý phân bổ ở trên (VD nếu "Luyện tập" được
-  gợi ý vừa có ở Tiết 1 vừa có ở Tiết 2, hãy tách "tienTrinh" của hoạt động "Luyện tập" thành các
+  cho biết bước đó diễn ra ở tiết thứ mấy - dựa theo gợi ý phân bổ ở trên (VD nếu "${luyenTapLabel}" được
+  gợi ý vừa có ở Tiết 1 vừa có ở Tiết 2, hãy tách "tienTrinh" của hoạt động "${luyenTapLabel}" thành các
   bước có "tiet":1 (bài tập dễ/khởi đầu) và các bước có "tiet":2 (bài tập khó hơn/tổng hợp) - KHÔNG
   để tất cả các bước cùng dồn vào 1 tiết).
-- "Khởi động" ở Tiết 1 là khởi động CHÍNH (đầy đủ, tạo hứng thú vào bài). "Khởi động" ở các tiết
-  SAU đó (nếu "tienTrinh" của hoạt động "Khởi động" có bước với "tiet" > 1) PHẢI là "khởi động lại"
+- "${khoiDongLabel}" ở Tiết 1 là khởi động CHÍNH (đầy đủ, tạo hứng thú vào bài). "${khoiDongLabel}" ở các tiết
+  SAU đó (nếu "tienTrinh" của hoạt động "${khoiDongLabel}" có bước với "tiet" > 1) PHẢI là "khởi động lại"
   RẤT NGẮN GỌN (trò chơi nhỏ/câu hỏi nhanh nhắc lại tiết trước), TUYỆT ĐỐI KHÔNG lặp lại y hệt nội
   dung khởi động của Tiết 1.
-- Hoạt động "Vận dụng" CHỈ đặt ở tiết cuối cùng (tienTrinh chỉ có "tiet": ${periods.length}).
+- Hoạt động "${vanDungLabelForGuidance}" CHỈ đặt ở tiết cuối cùng (tienTrinh chỉ có "tiet": ${periods.length}).
 - ⚠️ QUAN TRỌNG NHẤT - "tiet" PHẢI TĂNG DẦN (KHÔNG BAO GIỜ GIẢM) khi đọc TUẦN TỰ từ bước đầu tiên
-  của hoạt động "Khởi động" tới bước cuối cùng của hoạt động "Vận dụng" (đúng thứ tự 4 khối hoạt
-  động sẽ hiển thị trong văn bản: Khởi động → ${secondActivityLabel} → Luyện tập → Vận dụng). Hãy
+  của hoạt động "${khoiDongLabel}" tới bước cuối cùng của hoạt động "${vanDungLabelForGuidance}" (đúng thứ tự 4 khối hoạt
+  động sẽ hiển thị trong văn bản: ${khoiDongLabel} → ${secondActivityLabel} → ${luyenTapLabel} → ${vanDungLabelForGuidance}). Hãy
   hình dung TOÀN BỘ ${periods.length} tiết như 1 DÒNG THỜI GIAN DUY NHẤT chảy xuyên suốt cả 4 hoạt
   động, KHÔNG PHẢI 4 dòng thời gian riêng của từng hoạt động: nếu hoạt động đứng TRƯỚC (vd
   ${secondActivityLabel}) đã có bước với "tiet": 2, thì MỌI bước của hoạt động đứng NGAY SAU nó
-  (vd Luyện tập) PHẢI có "tiet" ≥ 2, TUYỆT ĐỐI KHÔNG được quay lại "tiet": 1 (lỗi này khiến văn
+  (vd ${luyenTapLabel}) PHẢI có "tiet" ≥ 2, TUYỆT ĐỐI KHÔNG được quay lại "tiet": 1 (lỗi này khiến văn
   bản xuất ra bị chèn lặp dòng "Hết Tiết 1" nhiều lần dù Tiết 1 chỉ kết thúc 1 lần duy nhất, làm
   giáo viên đọc không hiểu mạch bài dạy).`,
   };
@@ -236,10 +245,20 @@ export function buildLessonPlanPrompt({
   const circular = getCircularForGrade(grade);
   const subjectProfile = preschool ? null : getSubjectProfile(subject);
   const gradeLabel = preschool ? "Mầm non" : `Lớp ${grade}`;
-  const activities = getActivityLabels(lessonType, integrations);
+  // ⚠️ Phiên 36: lấy languageCode của môn ngoại ngữ (nếu có) NGAY TỪ ĐẦU HÀM - dùng xuyên suốt để
+  // mọi nhãn hoạt động (activities/secondActivityLabel/vanDungLabel...) trả về ĐÚNG NGÔN NGỮ ĐÍCH
+  // thay vì luôn cố định tiếng Việt như trước đây (xem giải thích đầy đủ ở ACTIVITY_LABELS_BY_LANGUAGE
+  // trong lessonPlanTemplates.js) - đây là nguồn gốc chính của "hạt sạn tiếng Việt" trong tiêu đề
+  // hoạt động/các bước của giáo án môn Tiếng Anh dù buildForeignLanguageOutputDirective() đã yêu
+  // cầu viết tiếng Anh (ví dụ CỤ THỂ trong schema luôn thắng thế mô tả chung chung).
+  const foreignLanguageConfig = findForeignLanguageConfig(subject);
+  const languageCode = foreignLanguageConfig?.languageCode || "vi";
+  const activities = getActivityLabels(lessonType, integrations, languageCode);
   const secondActivityLabel = activities.find((a) => a.key === "kham_pha")?.label || "Khám phá";
+  const khoiDongLabel = activities.find((a) => a.key === "khoi_dong")?.label || "Khởi động";
+  const luyenTapLabel = activities.find((a) => a.key === "luyen_tap")?.label || "Luyện tập";
   const vanDungLabel = activities.find((a) => a.key === "van_dung")?.label || "Vận dụng";
-  const multiPeriodGuidance = buildMultiPeriodGuidance(soTiet, grade, lessonType);
+  const multiPeriodGuidance = buildMultiPeriodGuidance(soTiet, grade, lessonType, languageCode);
 
   const roleLine = preschool
     ? "BẠN LÀ MỘT CHUYÊN GIA THIẾT KẾ HOẠT ĐỘNG GIÁO DỤC MẦM NON GIÀU KINH NGHIỆM."
@@ -259,8 +278,10 @@ export function buildLessonPlanPrompt({
   (Ổn định - gây hứng thú / Hoạt động trọng tâm / Kết thúc - nhận xét, tuyên dương), sử dụng cùng
   cấu trúc "hoatDong" như schema bên dưới (đặt tên hoạt động phù hợp Mầm non thay vì 4 tên chuẩn
   Tiểu học).`
-    : `- Kế hoạch bài dạy PHẢI có đủ 4 hoạt động chuẩn theo Mục III của ${circular.label}: Khởi động,
-  ${secondActivityLabel}, Luyện tập, ${vanDungLabel} - đúng tên gọi, đúng thứ tự, không gộp hay bỏ bớt
+    : `- Kế hoạch bài dạy PHẢI có đủ 4 hoạt động chuẩn theo Mục III của ${circular.label}: ${khoiDongLabel},
+  ${secondActivityLabel}, ${luyenTapLabel}, ${vanDungLabel} - đúng tên gọi (nguyên văn ${
+        languageCode === "vi" ? "TIẾNG VIỆT" : "bằng đúng ngôn ngữ đích"
+      } như đã liệt kê ở trên, KHÔNG dịch ngược lại tiếng Việt), đúng thứ tự, không gộp hay bỏ bớt
   hoạt động nào.
 ${lessonTypeNote}
 - Mục "Yêu cầu cần đạt" PHẢI tách rõ 3 nhóm: Kiến thức, Năng lực (năng lực chung + năng lực đặc thù
@@ -268,10 +289,10 @@ ${lessonTypeNote}
 
   const stepClarityRule = `- Mỗi hoạt động PHẢI chia thành NHIỀU BƯỚC RÕ RÀNG trong mảng "tienTrinh" (hệ thống sẽ tự đánh
   số "Bước 1", "Bước 2"... khi hiển thị/xuất - AI KHÔNG cần tự viết chữ "Bước..." vào đầu
-  "hoatDongGVHS", chỉ cần tách đúng ranh giới từng bước). Với hoạt động "${secondActivityLabel}"/"Luyện
-  tập", nên chia theo đúng tinh thần 4 bước quen thuộc: (1) Giao nhiệm vụ, (2) Thực hiện nhiệm vụ,
+  "hoatDongGVHS", chỉ cần tách đúng ranh giới từng bước). Với hoạt động "${secondActivityLabel}"/"${luyenTapLabel}",
+  nên chia theo đúng tinh thần 4 bước quen thuộc: (1) Giao nhiệm vụ, (2) Thực hiện nhiệm vụ,
   (3) Báo cáo - thảo luận, (4) Kết luận - nhận định (có thể gộp bớt với hoạt động ngắn như
-  "Khởi động"/"Vận dụng", không bắt buộc đủ 4 bước ở mọi hoạt động).
+  "${khoiDongLabel}"/"${vanDungLabel}", không bắt buộc đủ 4 bước ở mọi hoạt động).
 - Trong nội dung "hoatDongGVHS" của 1 bước, nếu có NHIỀU Ý/THAO TÁC khác nhau (VD giáo viên vừa
   chiếu hình ảnh, vừa đặt câu hỏi, vừa yêu cầu học sinh làm việc nhóm), hãy viết rõ từng ý bằng
   gạch đầu dòng "- " ở đầu mỗi câu (xuống dòng bằng \\n giữa các ý) thay vì viết dồn thành 1 đoạn
@@ -284,7 +305,11 @@ ${multiPeriodGuidance.text}`;
     : `⚠️ Không có tài liệu SGK cụ thể được cung cấp cho lượt soạn này - hãy dựa vào "Nội dung cốt lõi"
 giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình phổ thông Việt Nam hiện hành.`;
 
-  const integrationsBlock = buildIntegrationsPromptBlock(integrations, { grade });
+  // ⚠️ Phiên 36: truyền thêm "vanDungLabel" (đã tính ĐÚNG NGÔN NGỮ ở trên) vào ctx - TICH_HOP_STEM
+  // (lessonPlanIntegrations.js) dùng biến này thay vì hardcode chuỗi tiếng Việt cho trường "ten"
+  // của hoạt động Vận dụng khi tích hợp STEM bật, xem giải thích đầy đủ tại buildPromptFragment()
+  // của entry đó.
+  const integrationsBlock = buildIntegrationsPromptBlock(integrations, { grade, vanDungLabel });
   const styleBlock = buildLessonPlanStylePromptFragment(lessonPlanStyle);
   const diversityBlock = buildDiversityGuidance(existingOpeningIdeas);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
