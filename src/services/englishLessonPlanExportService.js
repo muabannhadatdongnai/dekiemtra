@@ -87,21 +87,27 @@ function periodBoundaryParagraphEn(tiet) {
   });
 }
 
+// ⚠️ FIX (Phiên 37) - lỗi "Word experienced an error trying to open the file" khi tải file Word
+// tiếng Anh tab Soạn Giáo Án (bài dạy nhiều tiết): cell() (foreignLanguageDocBuilder.js) LUÔN tự
+// bọc `opts.children` trong ĐÚNG 1 `new Paragraph({...})` - tức opts.children phải là mảng các
+// TextRun, KHÔNG PHẢI một Paragraph. Trước đây hàm này truyền `children: [new Paragraph({...})]`
+// khiến cell() lồng nguyên object Paragraph đó vào bên trong Paragraph bọc ngoài, sinh ra XML
+// `<w:p><w:p>...</w:p></w:p>` (một paragraph lồng trong paragraph) - VI PHẠM schema OOXML thật sự.
+// Lỗi này vẫn là XML "well-formed" (thẻ đóng/mở khớp nhau) nên các công cụ khoan dung như
+// LibreOffice/python-docx mở được bình thường và không phát hiện ra, nhưng MS Word kiểm tra schema
+// nghiêm ngặt hơn nên từ chối mở file. Sửa: truyền thẳng mảng TextRun + dùng `alignment` có sẵn của
+// cell() thay vì bọc thêm 1 Paragraph nữa.
 function periodBoundaryTableRowEn(tiet) {
   return new TableRow({
     children: [
       cell(null, 100, {
         columnSpan: 2,
+        alignment: AlignmentType.CENTER,
         children: [
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [
-              textRun(`── End of Period ${tiet - 1} (break) — Move to Period ${tiet} ──`, {
-                bold: true,
-                size: 20,
-                color: "9A3412",
-              }),
-            ],
+          textRun(`── End of Period ${tiet - 1} (break) — Move to Period ${tiet} ──`, {
+            bold: true,
+            size: 20,
+            color: "9A3412",
           }),
         ],
       }),

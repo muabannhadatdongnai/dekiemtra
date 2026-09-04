@@ -21,6 +21,11 @@ import {
  * thuNgoPhuHuynh - xem outlinePromptTemplates.js). Bản gốc tiếng Việt (outlineExportService.js)
  * giữ NGUYÊN VẸN, không đụng tới.
  *
+ * ⚠️ Phụ lục "Thư ngỏ gửi Phụ huynh" (`outline.thuNgoPhuHuynh`) LUÔN được AI viết bằng TIẾNG VIỆT
+ * dù đề cương còn lại bằng tiếng Anh (xem exemptJsonFields ở buildForeignLanguageOutputDirective -
+ * outlinePromptTemplates.js) - đúng khuôn "Tin nhắn gửi phụ huynh" đã áp dụng cho Soạn Giáo Án, vì
+ * phụ huynh là người đọc trực tiếp phần này, không phải nội dung học thuật cho học sinh.
+ *
  * ⚠️ Khác 1 điểm có chủ đích so với bản tiếng Việt gốc: bản tiếng Anh xuất GỘP 1 FILE DUY NHẤT
  * (không tách 2 bản Học sinh/GV-PH) vì đây là bản "đọc/đối chiếu song ngữ" phụ, giáo viên vẫn dùng
  * 2 bản tiếng Việt gốc để phát cho học sinh/phụ huynh như trước - phù hợp đúng yêu cầu "toàn bộ
