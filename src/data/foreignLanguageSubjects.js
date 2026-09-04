@@ -81,11 +81,13 @@ export function supportsForeignLanguageExport(subjectValueOrLabel) {
  * lại. Trả về chuỗi RỖNG nếu môn học không phải ngoại ngữ - gọi an toàn ở MỌI prompt mà không cần
  * kiểm tra điều kiện trước (đúng khuôn buildForeignLanguageOutputDirective(subject) không cần if).
  *
- * @param exemptJsonFields - mảng tên field JSON (khớp đúng `jsonField` trong
- *   lessonPlanIntegrations.js, VD "tinNhanPhuHuynh") vẫn PHẢI giữ nguyên tiếng Việt dù cả tài liệu
- *   còn lại bằng ngoại ngữ - vì field đó dành cho người đọc tiếng Việt (phụ huynh), không phải học
- *   sinh/nội dung học thuật. Soạn Giáo Án truyền field này vào, Đề Cương Ôn Tập/Đề Kiểm tra không
- *   có phụ lục kiểu này nên truyền mảng rỗng.
+ * @param exemptJsonFields - mảng tên field JSON (VD "tinNhanPhuHuynh" - lessonPlanIntegrations.js,
+ *   "thuNgoPhuHuynh" - outlinePromptTemplates.js) vẫn PHẢI giữ nguyên tiếng Việt dù cả tài liệu còn
+ *   lại bằng ngoại ngữ - vì field đó dành cho người đọc tiếng Việt (phụ huynh), không phải học
+ *   sinh/nội dung học thuật. Soạn Giáo Án ("tinNhanPhuHuynh") và Đề Cương Ôn Tập ("thuNgoPhuHuynh")
+ *   đều truyền field tương ứng vào (⚠️ sửa Phiên 37: trước đây Đề Cương Ôn Tập truyền mảng rỗng dù
+ *   CŨNG có phụ lục "Thư ngỏ gửi Phụ huynh" y hệt về bản chất - khiến thư ngỏ bị dịch sang tiếng Anh
+ *   nhầm, phụ huynh không đọc được). Đề Kiểm tra không có phụ lục kiểu này nên vẫn truyền mảng rỗng.
  */
 export function buildForeignLanguageOutputDirective(subjectValueOrLabel, { exemptJsonFields = [] } = {}) {
   const cfg = findForeignLanguageConfig(subjectValueOrLabel);

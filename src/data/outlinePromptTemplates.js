@@ -150,7 +150,9 @@ ${buildExerciseCountsBlock(exerciseCounts)}
    (không phải văn phong hành chính) - giải thích ngắn gọn phạm vi con đang ôn tập, gợi ý CỤ THỂ
    cách phụ huynh có thể đồng hành tại nhà (VD: mỗi ngày cùng con làm 1-2 bài mức Cơ bản trước,
    kiểm tra qua đáp án, khuyến khích con thử sức mức Nâng cao/Vận dụng cao khi đã vững). KHÔNG
-   nhắc lại nguyên văn nội dung kiến thức/bài tập ở trên, chỉ là lời nhắn đồng hành.
+   nhắc lại nguyên văn nội dung kiến thức/bài tập ở trên, chỉ là lời nhắn đồng hành. ⚠️ Trường này
+   LUÔN viết bằng TIẾNG VIỆT dù môn học là ngoại ngữ (xem ngoại lệ ở buildForeignLanguageOutputDirective
+   bên dưới) - phụ huynh đọc trực tiếp, không phải nội dung học thuật cho học sinh.
 
 QUY TẮC CHUNG:
 - Ngôn ngữ: Tiếng Việt chuẩn mực, phù hợp lứa tuổi ${gradeLabel}.
@@ -175,7 +177,7 @@ QUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: phần dư
 KIỂM TRA - khi soạn ĐỀ CƯƠNG vẫn áp dụng quy tắc nội dung/số liệu nhưng BỎ QUA hoàn toàn yêu cầu
 dùng LaTeX, luôn viết bằng ký hiệu thông thường như quy tắc bắt buộc ở trên):
 ${subjectProfile.extraRules}
-${buildForeignLanguageOutputDirective(subject)}
+${buildForeignLanguageOutputDirective(subject, { exemptJsonFields: ["thuNgoPhuHuynh"] })}
 
 ${sourceBlock}
 ${extraBlock}
