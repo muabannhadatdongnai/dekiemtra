@@ -5,6 +5,44 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 38 — Bắt đầu Ngoại ngữ 2 (Tiếng Trung/Nhật/Pháp, Lớp 6-12): tầng cấu hình + prompt XONG, tầng xuất file CHƯA LÀM
+
+**Yêu cầu Hoan:** SGK Kết nối tri thức đã có Tiếng Trung/Tiếng Nhật/Tiếng Pháp làm "Ngoại ngữ 2"
+cho THCS+THPT → thêm vào 3 tab Soạn Giáo Án/Đề Cương Ôn Tập/Tạo Đề Kiểm tra, giữ nguyên tắc chia
+luồng riêng theo môn/khối, AI sinh nội dung bằng đúng ngôn ngữ riêng từng môn.
+
+**Đã xác minh qua tìm kiếm:** Nhà xuất bản Giáo dục Việt Nam đã biên soạn SGK Kết nối tri thức
+Tiếng Trung/Tiếng Pháp (Lớp 3-10), Tiếng Nhật (Lớp 3-9) làm Ngoại ngữ 2; Ngoại ngữ 2 triển khai
+chính khoá THCS từ năm học 2022-2023. Quyết định phạm vi: `minGrade: 6, maxGrade: 12` (không áp
+dụng Tiểu học, khác Tiếng Anh là Ngoại ngữ 1 dạy từ Lớp 1).
+
+**Việc đã làm (kiểm chứng bằng script Node dựng thật từ code trong `src/`, không chỉ đọc code):**
+1. `config.js` — thêm 3 entry `Tieng_Trung`/`Tieng_Nhat`/`Tieng_Phap` (`minGrade: 6, maxGrade: 12`,
+   không giới hạn `modules` → hiện ở cả 3 tab).
+2. `foreignLanguageSubjects.js` — thêm 3 entry vào `FOREIGN_LANGUAGE_SUBJECTS` (`languageCode`
+   `zh`/`ja`/`fr`). Xác nhận `buildForeignLanguageOutputDirective()` được gọi KHÔNG ĐIỀU KIỆN ở cả
+   3 file prompt nên KHÔNG cần sửa `promptTemplates.js`/`outlinePromptTemplates.js`/
+   `lessonPlanPromptTemplates.js` — chỉ thêm entry là đủ để AI nhận đúng chỉ thị ngôn ngữ.
+3. `subjectProfiles.js` — thêm 3 profile với `extraRules` nghiên cứu riêng đặc thù chữ viết/ngữ âm
+   từng tiếng (Trung: giản thể + pinyin có thanh điệu, thang HSK; Nhật: hiragana/katakana ưu tiên +
+   furigana cho Kanji + rômaji, thang JLPT; Pháp: đủ dấu phụ, hoà hợp giống-số, thì theo trình độ).
+4. Script kiểm thử `harness2.mjs` (bundle bằng esbuild, import thẳng file thật trong `src/`) xác
+   nhận: dropdown Lớp 6-12 có đủ 4 ngôn ngữ, Lớp 1-5 KHÔNG có 3 môn mới,
+   `getSubjectProfile()`/`findForeignLanguageConfig()`/`buildForeignLanguageOutputDirective()` trả
+   đúng dữ liệu.
+
+**CHƯA LÀM (cố ý, tránh vội):** phần XUẤT FILE Word/PDF (9 file export service tương tự
+`english*ExportService.js`, routing ở 3 component ExportActions, dịch nhãn tĩnh) — xem kế hoạch
+chi tiết + 2 hướng kiến trúc đề xuất (nhân bản như Tiếng Anh vs. tách dictionary nhãn dùng chung để
+giảm rủi ro lặp bug schema Word như Phiên 37) ở `NEXT_STEPS.md` mục "🟡 Ngoại ngữ 2". Chưa chạy
+`npm run build`/`npm test` thật (đã kiểm bằng bundler độc lập, chưa chạy trong chính repo).
+
+**Ngoài lề (chưa giải quyết):** Hoan gửi lại 1 file Word "mới" báo vẫn lỗi `<w:p>` lồng `<w:p>` y
+hệt Phiên 37 — build lại đúng code Phiên 37 bằng docx.js thật xác nhận code KHÔNG còn lỗi, kết luận
+file đó vẫn do bản CHƯA deploy Phiên 37 tạo ra — xem `NEXT_STEPS.md` mục 🔴 #18.
+
+---
+
 ## Phiên 37 — Sửa file Word Tiếng Anh Soạn Giáo Án không mở được (`<w:p>` lồng `<w:p>`) + Thư ngỏ gửi Phụ huynh (Đề Cương) bị dịch nhầm sang tiếng Anh
 
 **Báo lỗi Hoan:** (1) tải file Word tab Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra môn Tiếng Anh mở
