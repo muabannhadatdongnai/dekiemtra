@@ -13,8 +13,9 @@ catalog Phiếu Bài Tập theo SGK KNTT. Môn Tiếng Anh ở 3 tab Soạn Giá
 Kiểm Tra: từ Phiên 35, AI sinh nội dung TRỰC TIẾP bằng tiếng Anh ngay từ đầu (không còn sinh tiếng
 Việt rồi dịch lại) - nút "Tải Word"/"In PDF" DUY NHẤT tự động xuất bằng tiếng Anh khi môn học nằm
 trong danh bạ `src/data/foreignLanguageSubjects.js` (kiến trúc dễ mở rộng Tiếng Trung/Tiếng Pháp
-sau này - xem docstring đầu file). Riêng phụ lục "Tin nhắn gửi phụ huynh (Zalo)" ở Soạn Giáo Án
-LUÔN giữ tiếng Việt. Chi tiết đầy đủ từng module xem `README.md`.
+sau này - xem docstring đầu file). Riêng phụ lục "Tin nhắn gửi phụ huynh (Zalo)" ở Soạn Giáo Án và
+"Thư ngỏ gửi Phụ huynh" ở Đề Cương Ôn Tập (từ Phiên 37) LUÔN giữ tiếng Việt. Chi tiết đầy đủ từng
+module xem `README.md`.
 
 ---
 
@@ -37,7 +38,7 @@ LUÔN giữ tiếng Việt. Chi tiết đầy đủ từng module xem `README.md
 | 13 | Module Đề kiểm tra Ngữ văn THCS/THPT riêng | Ngữ văn hiện CHỈ có ở Soạn giáo án/Đề cương Ôn tập (xem `modules` trong `config.js`), CHƯA có "Đề kiểm tra" vì cấu trúc khác hẳn (Đọc hiểu + Viết đoạn Nghị luận xã hội + Viết bài Nghị luận văn học) và theo Công văn 3175/BGDĐT-GDTrH (2022, nhấn mạnh lại ở CV3935/2024) BẮT BUỘC ngữ liệu Đọc hiểu phải MỚI, không được lấy lại từ SGK - cần thiết kế module riêng kiểu "khối độc lập" giống Đề Tiếng Việt Tiểu học nhưng nội dung khác hẳn, không gộp vào ma trận Tạo Đề Kiểm Tra chung. Áp dụng CHUNG cho cả THCS lẫn THPT (đã xác nhận Công văn 3175 không tách riêng cấp). |
 | 14 | Xác nhận lại "Nghệ thuật" (Âm nhạc + Mĩ thuật) THCS/THPT đã tách đúng 2 đầu sách theo bộ Kết nối tri thức | Đã tách theo ĐÚNG tinh thần "Tin học và Công nghệ" ở Tiểu học (tách 2 môn vì SGK in 2 cuốn riêng dù thông tư gọi gộp) - suy luận hợp lý nhưng CHƯA xác nhận trực tiếp với bộ sách thật, Hoan kiểm tra lại nếu có SGK thật trong tay. |
 | 15 | Cụm chuyên đề học tập THPT (3 chuyên đề/môn, 105 tiết/năm) | CỐ Ý CHƯA làm ở Phiên 33 — đây là nội dung RIÊNG ngoài chương trình cốt lõi đại trà (học sinh chọn 3 trong số các môn lựa chọn hoặc Toán/Ngữ văn/Lịch sử để học chuyên đề sâu hơn theo định hướng nghề nghiệp), không có SGK dùng chung dễ tái sử dụng cấu trúc hiện tại — cần thiết kế riêng nếu Hoan muốn làm tiếp. |
-| 16 | Kiểm tra thật trên trình duyệt việc AI sinh trực tiếp tiếng Anh (Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra, môn Tiếng Anh) | Phiên 35: đã đổi kiến trúc (sinh thẳng tiếng Anh, bỏ bước dịch); Phiên 36: đã tìm và SỬA 2 lỗi phát hiện qua test thật của Hoan (hạt sạn tiếng Việt trong tên hoạt động - xem PROJECT_SUMMARY.md Phiên 36; nút In/Tải PDF luôn báo lỗi do `window.open()` dùng "noopener,noreferrer"). Code + test (`test/foreignLanguageExport.test.js`, `test/lessonPlanPhien36.test.js`) đã chạy pass, build sạch, nhưng VẪN CHƯA test thật với Gemini API key thật (sandbox không có `GEMINI_API_KEYS`) để xác nhận AI TUÂN THỦ chỉ thị `buildForeignLanguageOutputDirective()` với nội dung bài học thật (không chỉ cấu trúc/tên hoạt động) - Hoan click-through lại 1 lượt để xác nhận triệt để trước khi coi là xong hẳn.
+| 16 | Kiểm tra thật trên trình duyệt việc AI sinh trực tiếp tiếng Anh (Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra, môn Tiếng Anh) | Phiên 35: đã đổi kiến trúc (sinh thẳng tiếng Anh, bỏ bước dịch); Phiên 36: đã SỬA 2 lỗi (hạt sạn tiếng Việt trong tên hoạt động; nút In/Tải PDF báo lỗi popup); Phiên 37: đã SỬA 2 lỗi tiếp theo phát hiện qua file `.docx` lỗi thật Hoan gửi - xem PROJECT_SUMMARY.md Phiên 37 (file Word tiếng Anh Soạn Giáo Án không mở được do `<w:p>` lồng `<w:p>` ở bảng "Hết Tiết"; "Thư ngỏ gửi Phụ huynh" Đề Cương Ôn Tập bị dịch nhầm sang tiếng Anh). Code + test (`test/foreignLanguageExport.test.js`, `test/lessonPlanPhien36.test.js`, `test/lessonPlanPhien37.test.js`, `test/wordSchemaAssertions.js`) + `npm run test:word-compat` (nay có 3 kịch bản tiếng Anh) đều pass, build sạch, nhưng VẪN CHƯA test thật với Gemini API key thật (sandbox không có `GEMINI_API_KEYS`) để xác nhận AI TUÂN THỦ chỉ thị `buildForeignLanguageOutputDirective()` với nội dung bài học thật (không chỉ cấu trúc/tên hoạt động) - Hoan click-through lại 1 lượt, kèm MỞ THẬT file Word bằng Microsoft Word (không chỉ xem trước/PDF) để xác nhận triệt để trước khi coi là xong hẳn.
 | 17 | Test có sẵn `test/lessonPlanEnglishAudioIpa.test.js` đang FAIL (2/2 test) - tính năng chưa từng được cài đặt | Phát hiện khi chạy `npm test` ở Phiên 35 (KHÔNG liên quan tới thay đổi Phiên 35/36) - test kỳ vọng giáo án Tiếng Anh có gắn thẻ `[AUDIO: Track_XX]` + phiên âm IPA, nhưng không tìm thấy logic này ở bất kỳ đâu trong `src/` - có thể là tính năng đã lên kế hoạch (viết test trước) nhưng chưa merge phần cài đặt. Cần Hoan quyết định: cài đặt tính năng thật, hay xoá test nếu không còn cần. |
 
 ---
@@ -60,6 +61,17 @@ khoảng cách rõ, tránh nhìn nhầm thành số thập phân (học sinh L�
 (┆▬▭▪■⬭⬠⬡⏢...) phụ thuộc font máy người dùng, có thể hiện TRỐNG trong Word dù PDF vẫn ổn (PDF qua
 trình duyệt tự fallback font, Word mở trực tiếp thì không). Luôn rasterize SVG → PNG rồi nhúng
 `ImageRun`, không lặp ký tự đặc biệt.
+
+**Xuất Word — "well-formed XML" KHÔNG đồng nghĩa "Word mở được" (bài học Phiên 37):** `JSZip` +
+`ElementTree`/`python-docx` + LibreOffice (kể cả `npm run test:word-compat`) đều CHỈ kiểm tra XML
+khớp thẻ mở/đóng, KHÔNG kiểm tra đúng schema WordprocessingML (VD: `<w:p>` chứa `<w:p>` con vẫn là
+XML "well-formed" nhưng MS Word từ chối mở với lỗi chung chung "Word experienced an error trying
+to open the file" — không có gợi ý nào chỉ đúng chỗ sai). Khi viết helper docx MỚI (`cell()`,
+`paragraph()`...), LUÔN gọi `assertValidParagraphNesting()` (`test/wordSchemaAssertions.js`) trên
+`document.xml` thật trong test — đặc biệt khi 1 hàm helper tự động bọc `Paragraph` quanh
+`opts.children`: `opts.children` PHẢI là mảng `TextRun`, KHÔNG BAO GIỜ được truyền nguyên 1
+`Paragraph` khác vào đó (lỗi gốc Phiên 37 - xem `periodBoundaryTableRowEn()` trong
+`englishLessonPlanExportService.js`).
 
 **Chính tả (Đề Tiếng Việt):** KHÔNG để AI tự sinh nguyên văn ngữ liệu SGK — chỉ gợi nhớ bằng mô tả
 ngắn (`noiDungCotLoi`), giáo viên tự gõ nguyên văn. Đọc thầm thì AI được viết ngữ liệu MỚI (không

@@ -5,6 +5,59 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 37 — Sửa file Word Tiếng Anh Soạn Giáo Án không mở được (`<w:p>` lồng `<w:p>`) + Thư ngỏ gửi Phụ huynh (Đề Cương) bị dịch nhầm sang tiếng Anh
+
+**Báo lỗi Hoan:** (1) tải file Word tab Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra môn Tiếng Anh mở
+lên Microsoft Word báo lỗi chung chung "Word experienced an error trying to open the file" (kèm
+ảnh chụp màn hình + 1 file `.docx` lỗi thật - giáo án "Unit 1: Hobbies"); (2) "Thư ngỏ gửi Phụ
+huynh" ở tab Đề Cương Ôn Tập phải dùng tiếng Việt (đang bị dịch sang tiếng Anh).
+
+**Root cause #1 - file Word không mở được (chỉ ảnh hưởng Soạn Giáo Án, bài dạy NHIỀU TIẾT + chế độ
+bảng 2 cột):** file `.docx` lỗi Hoan gửi VẪN LÀ zip hợp lệ (CRC đúng, không có byte thừa sau EOCD)
+và VẪN LÀ XML "well-formed" (khớp thẻ mở/đóng đầy đủ) - `ElementTree`/`python-docx`/LibreOffice đều
+mở được bình thường, ban đầu không phát hiện ra gì bất thường. Soi kỹ `word/document.xml` mới thấy
+`<w:p><w:p>...</w:p></w:p>` tại đúng bảng "Hết Tiết" (period boundary) - một `<w:p>` (paragraph)
+LỒNG bên trong `<w:p>` khác, VI PHẠM schema `CT_P` của WordprocessingML (paragraph không được chứa
+paragraph con) dù vẫn "well-formed" theo nghĩa XML thuần. MS Word kiểm tra schema nghiêm ngặt hơn
+hẳn 3 công cụ trên nên từ chối mở, không có gợi ý cụ thể. Nguồn gốc: `cell()`
+(`foreignLanguageDocBuilder.js`) LUÔN tự bọc `opts.children` trong ĐÚNG 1 `new Paragraph({...})`
+(kỳ vọng `opts.children` là mảng `TextRun`), nhưng `periodBoundaryTableRowEn()`
+(`englishLessonPlanExportService.js`) lại truyền THẲNG 1 `new Paragraph({...})` làm `opts.children`
+- khiến `cell()` lồng nguyên object `Paragraph` đó vào bên trong `Paragraph` bọc ngoài của chính nó.
+Đã rà TOÀN BỘ codebase bằng script tự động (duyệt AST đơn giản mọi lời gọi `cell(...)`/mọi
+`new Paragraph(...)` lồng nhau) - xác nhận đây là DUY NHẤT 1 chỗ bị lỗi, không lặp lại ở Đề Cương
+Ôn Tập/Đề Kiểm tra (2 tab đó không dùng `cell()`/bảng qua đường này).
+
+**Fix #1:** `periodBoundaryTableRowEn()` đổi sang truyền mảng `TextRun` trực tiếp + dùng
+`opts.alignment` sẵn có của `cell()`, bỏ hẳn `new Paragraph` bọc thêm. Đã xác nhận bằng thực nghiệm:
+build lại file `.docx` tối giản tái hiện đúng cấu trúc cũ/mới, so sánh `word/document.xml` - bản cũ
+có `<w:p><w:p>`, bản mới không còn.
+
+**Root cause #2 - Thư ngỏ gửi Phụ huynh bị dịch sang tiếng Anh:** `outlinePromptTemplates.js` gọi
+`buildForeignLanguageOutputDirective(subject)` KHÔNG truyền `exemptJsonFields` (docstring cũ ghi
+sai rằng Đề Cương Ôn Tập "không có phụ lục kiểu này" - thực ra trường `thuNgoPhuHuynh` giống hệt
+bản chất với `tinNhanPhuHuynh` đã được ngoại lệ ở Soạn Giáo Án, chỉ là đặt tên khác). **Fix:** thêm
+`exemptJsonFields: ["thuNgoPhuHuynh"]`, cập nhật docstring `buildForeignLanguageOutputDirective()`
+(`foreignLanguageSubjects.js`) + mục 5 schema trong `outlinePromptTemplates.js` + comment đầu file
+`englishOutlineExportService.js` cho khớp thực tế mới.
+
+**Công cụ mới - `test/wordSchemaAssertions.js`:** phát hiện đúng LỚP LỖI "XML well-formed nhưng vi
+phạm schema WordprocessingML" mà JSZip/ElementTree/python-docx/LibreOffice (kể cả
+`test:word-compat`) đều khoan dung - dò cây thẻ XML bằng ngăn xếp, báo lỗi khi `<w:p>`/`<w:tbl>` bị
+lồng bên trong 1 `<w:p>` chưa đóng. `assertValidParagraphNesting(xml)` dùng trong test cho MỌI file
+`.docx` build ra (không riêng tính năng gây lỗi lần này) - lớp bảo vệ chung, không cần Word thật.
+
+**Test:** `test/lessonPlanPhien37.test.js` (6 test: bảng "Hết Tiết" không còn lồng `<w:p>`, tự kiểm
+tra hàm dò lỗi, prompt Đề Cương có đúng ngoại lệ `thuNgoPhuHuynh`, nội dung thư ngỏ tiếng Việt giữ
+nguyên trong Word tiếng Anh, + lớp bảo vệ chung cho Đề Kiểm tra tiếng Anh). `npm run test:word-compat`
+(LibreOffice headless) thêm 3 kịch bản tiếng Anh (`giao-an-tieng-anh-nhieu-tiet`,
+`de-cuong-tieng-anh`, `de-thi-tieng-anh` - trước đây script này không có kịch bản tiếng Anh nào, dù
+đây chính là lỗ hổng khiến bug #1 không bị bắt sớm hơn - LƯU Ý: LibreOffice VẪN khoan dung với lỗi
+lồng `<w:p>`, các kịch bản này chỉ bổ sung lớp "mở được bằng OOXML engine khác", không thay thế
+`wordSchemaAssertions.js`). Kết quả: `npm test` 388 test, 386 pass (2 fail còn lại là
+`lessonPlanEnglishAudioIpa.test.js` đã biết từ trước, KHÔNG liên quan); `npm run build` sạch;
+`npm run test:word-compat` 9/9 kịch bản OK.
+
 ## Phiên 36 — Hoàn thiện giáo án Tiếng Anh: sửa "hạt sạn tiếng Việt" trong tên hoạt động + render đủ 7 tích hợp còn thiếu + sửa nút In/Tải PDF
 
 **Yêu cầu Hoan:** (1) hoàn thiện các tích hợp còn thiếu bản tiếng Anh (Checklist NL-PC, STEM,

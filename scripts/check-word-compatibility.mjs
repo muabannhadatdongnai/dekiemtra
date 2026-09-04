@@ -46,6 +46,10 @@ import { exportLessonPlanToWord } from "../src/services/lessonPlanExportService.
 import { exportVietnameseExamToWord } from "../src/services/vietnameseExamExportService.js";
 import { buildOutlineDocxBlob } from "../src/services/outlineExportService.js";
 import { exportReportCommentsToWord } from "../src/services/reportCommentExportService.js";
+import { buildEnglishLessonPlanDocxBlob } from "../src/services/englishLessonPlanExportService.js";
+import { buildEnglishOutlineDocxBlob } from "../src/services/englishOutlineExportService.js";
+import { buildEnglishExamDocxBlob } from "../src/services/englishExamExportService.js";
+import { LESSON_PLAN_COLUMN_MODES } from "../src/data/lessonPlanTemplates.js";
 
 import {
   generateDoDaiSoSanh,
@@ -168,6 +172,65 @@ async function makeReportCommentScenario() {
   return exportReportCommentsToWord({ results, cap: "tieu_hoc" });
 }
 
+// -------------------- Bản NGOẠI NGỮ (thêm Phiên 37) --------------------
+// Trước Phiên 37, script này KHÔNG có kịch bản nào cho 3 tab tiếng Anh - đúng lỗ hổng khiến bug
+// "Word experienced an error trying to open the file" (paragraph lồng paragraph ở bảng "Hết Tiết"
+// khi bài dạy NHIỀU TIẾT + chế độ bảng 2 cột) không bị bắt bởi lớp test tự động nào trước khi
+// Khoa tự mở file Word thật và báo lại. ⚠️ LƯU Ý TRUNG THỰC: LibreOffice (dùng ở script này) KHOAN
+// DUNG với lỗi lồng thẻ kiểu "<w:p><w:p>" (đã xác nhận thực nghiệm ở Phiên 37) nên các kịch bản
+// dưới đây KHÔNG thay thế được test/wordSchemaAssertions.js (test/lessonPlanPhien37.test.js) - chỉ
+// bổ sung lớp kiểm tra "mở/convert được bằng 1 bộ xử lý OOXML độc lập" như các kịch bản Việt khác.
+function makeEnglishLessonPlanScenario() {
+  const lessonPlan = {
+    tenBai: "Unit 1: Hobbies",
+    yeuCauCanDat: { kienThuc: ["Distinguish target sounds."] },
+    doDungDayHoc: { giaoVien: ["Audio"], hocSinh: ["Textbook"] },
+    hoatDong: [
+      {
+        ten: "Warm-up",
+        mucTieu: "Engage students.",
+        tienTrinh: [{ tiet: 1, hoatDongGVHS: "Greet students.", sanPhamDuKien: "Students engaged." }],
+      },
+      {
+        ten: "Presentation",
+        mucTieu: "New vocabulary.",
+        // Cố tình bắc qua 2 tiết TRONG CÙNG 1 hoạt động ở chế độ bảng 2 cột - đúng kịch bản thật
+        // đã gây lỗi "Word experienced an error trying to open the file" (periodBoundaryTableRowEn).
+        tienTrinh: [
+          { tiet: 1, hoatDongGVHS: "Introduce sounds.", sanPhamDuKien: "Students repeat." },
+          { tiet: 2, hoatDongGVHS: "Review + new vocabulary.", sanPhamDuKien: "Students note vocabulary." },
+        ],
+      },
+      { ten: "Practice", mucTieu: "Practice.", tienTrinh: [{ tiet: 2, hoatDongGVHS: "Do Worksheet 1.", sanPhamDuKien: "Completed worksheet." }] },
+    ],
+  };
+  return buildEnglishLessonPlanDocxBlob(lessonPlan, {
+    tenBai: lessonPlan.tenBai,
+    grade: 6,
+    soTiet: 2,
+    subjectLabelEn: "English",
+    columnMode: LESSON_PLAN_COLUMN_MODES.TWO_COLUMN,
+  });
+}
+
+function makeEnglishOutlineScenario() {
+  const outline = {
+    tenDeCuong: "Study Outline - Unit 3",
+    kienThucCotLoi: [{ tieuMuc: "Vocabulary", noiDung: "Words about hobbies." }],
+    dangBai: [{ tenDang: "Type 1", baiMauDe: "What is your hobby?", baiMauLoiGiai: "My hobby is reading." }],
+    thuNgoPhuHuynh: "Kính gửi quý phụ huynh, đây là đề cương ôn tập giúp con nắm vững từ vựng về sở thích.",
+  };
+  return buildEnglishOutlineDocxBlob(outline, { subjectLabelEn: "English", grade: 5 });
+}
+
+function makeEnglishExamScenario() {
+  const examMeta = { title: "English Test - Word Compat", grade: 5 };
+  const translatedContent = {
+    questions: [{ content: "Choose the correct answer.", options: ["A. cat", "B. dog"], correctAnswer: "A" }],
+  };
+  return buildEnglishExamDocxBlob(examMeta, translatedContent, { includeMatrixAndSpec: false });
+}
+
 const SCENARIOS = [
   { name: "de-thi-toan-cong-thuc", build: makeExamScenario },
   { name: "phieu-bai-tap-anh-nhung", build: makeWorksheetScenario },
@@ -175,6 +238,9 @@ const SCENARIOS = [
   { name: "de-tieng-viet", build: makeVietnameseExamScenario },
   { name: "de-cuong-on-tap", build: makeOutlineScenario },
   { name: "nhan-xet-hoc-ba", build: makeReportCommentScenario },
+  { name: "giao-an-tieng-anh-nhieu-tiet", build: makeEnglishLessonPlanScenario },
+  { name: "de-cuong-tieng-anh", build: makeEnglishOutlineScenario },
+  { name: "de-thi-tieng-anh", build: makeEnglishExamScenario },
 ];
 
 // --------------------------------------------------------------------------------------------
