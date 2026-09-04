@@ -156,6 +156,18 @@ export const SUBJECTS = [
   { value: "Toan", label: "Toán" },
   { value: "Dao_Duc", label: "Đạo đức", minGrade: 1, maxGrade: 5 },
   { value: "Tieng_Anh", label: "Tiếng Anh" },
+
+  // ================== Ngoại ngữ 2 (Lớp 6-12) - Phiên 38 ==================
+  // Theo bộ Kết nối tri thức: Tiếng Trung/Tiếng Pháp/Tiếng Nhật được biên soạn làm "Ngoại ngữ 2"
+  // (môn tự chọn, khác Tiếng Anh - "Ngoại ngữ 1" bắt buộc) - triển khai chính khoá từ Lớp 6 (THCS)
+  // theo chủ trương chung "Ngoại ngữ 2" (Thông tư 32/2018, áp dụng từ năm học 2022-2023), kéo dài
+  // xuyên suốt THPT. minGrade: 6 - KHÔNG áp dụng Tiểu học (khác Tieng_Anh vốn là Ngoại ngữ 1 dạy từ
+  // Lớp 1/bắt buộc từ Lớp 3). modules: không khai báo = mặc định CẢ 3 (Soạn Giáo án/Đề cương Ôn
+  // tập/Tạo Đề Kiểm tra), giống Tieng_Anh - AI sinh nội dung TRỰC TIẾP bằng đúng ngôn ngữ đó ngay
+  // từ đầu (xem foreignLanguageSubjects.js, cùng kiến trúc Phiên 35 áp dụng cho Tiếng Anh).
+  { value: "Tieng_Trung", label: "Tiếng Trung", minGrade: 6, maxGrade: 12 },
+  { value: "Tieng_Nhat", label: "Tiếng Nhật", minGrade: 6, maxGrade: 12 },
+  { value: "Tieng_Phap", label: "Tiếng Pháp", minGrade: 6, maxGrade: 12 },
   { value: "Tu_Nhien_Xa_Hoi", label: "Tự nhiên và Xã hội", minGrade: 1, maxGrade: 3 },
   { value: "Lich_Su_Dia_Li", label: "Lịch sử và Địa lí", minGrade: 4, maxGrade: 9 },
   { value: "Khoa_Hoc", label: "Khoa học", minGrade: 4, maxGrade: 5 },

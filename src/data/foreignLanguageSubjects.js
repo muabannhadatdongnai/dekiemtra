@@ -42,15 +42,39 @@ export const FOREIGN_LANGUAGE_SUBJECTS = [
     docLabel: "ENGLISH VERSION",
     buttonLabel: "🇬🇧 Bản tiếng Anh",
   },
-  // Chỗ mở rộng sau này, VD:
-  // {
-  //   subjectValue: "Tieng_Trung",
-  //   subjectLabelVi: "Tiếng Trung",
-  //   languageCode: "zh",
-  //   languageNameEn: "Chinese (Simplified)",
-  //   docLabel: "中文版本",
-  //   buttonLabel: "🇨🇳 Bản tiếng Trung",
-  // },
+  // ⚠️ Phiên 38 - THÊM Ngoại ngữ 2 (Lớp 6-12, xem config.js): entry ở đây CHỈ khai báo cấu hình
+  // ngôn ngữ cho PROMPT (buildForeignLanguageOutputDirective bên dưới đã tự động áp dụng, không
+  // cần sửa gì thêm - xem outlinePromptTemplates.js/lessonPlanPromptTemplates.js/promptTemplates.js).
+  // PHẦN XUẤT FILE (Word/PDF) CHƯA XONG - routing ở LessonPlanExportActions.jsx/
+  // OutlineExportActions.jsx/ExportActions.jsx hiện CHỈ gọi cứng englishLessonPlanExportService.js/
+  // englishOutlineExportService.js/englishExamExportService.js bất kể `languageCode` gì (viết từ
+  // Phiên 35 khi mới có 1 ngôn ngữ) - PHẢI sửa lại theo `languageCode` trước khi 3 môn dưới đây
+  // dùng được thật (nếu không, bấm "Tải Word" cho Tiếng Trung/Nhật/Pháp sẽ xuất NHẦM sang khuôn
+  // tiếng Anh) - xem việc cần làm chi tiết ở NEXT_STEPS.md mục "Ngoại ngữ 2".
+  {
+    subjectValue: "Tieng_Trung",
+    subjectLabelVi: "Tiếng Trung",
+    languageCode: "zh",
+    languageNameEn: "Chinese (Simplified)",
+    docLabel: "中文版本",
+    buttonLabel: "🇨🇳 Bản tiếng Trung",
+  },
+  {
+    subjectValue: "Tieng_Nhat",
+    subjectLabelVi: "Tiếng Nhật",
+    languageCode: "ja",
+    languageNameEn: "Japanese",
+    docLabel: "日本語版",
+    buttonLabel: "🇯🇵 Bản tiếng Nhật",
+  },
+  {
+    subjectValue: "Tieng_Phap",
+    subjectLabelVi: "Tiếng Pháp",
+    languageCode: "fr",
+    languageNameEn: "French",
+    docLabel: "VERSION FRANÇAISE",
+    buttonLabel: "🇫🇷 Bản tiếng Pháp",
+  },
 ];
 
 /**

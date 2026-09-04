@@ -68,6 +68,72 @@ export const SUBJECT_PROFILES = {
   không dùng từ/thì phức tạp vượt chương trình.
 - Với câu hỏi ngữ pháp, chỉ có DUY NHẤT 1 đáp án đúng chuẩn ngữ pháp.`,
   },
+  // ⚠️ Phiên 38 - Ngoại ngữ 2 (Lớp 6-12, xem config.js): 3 profile dưới đây dùng chung khuôn với
+  // Tieng_Anh (expertRole + extraRules riêng theo đặc thù CHỮ VIẾT/NGỮ ÂM từng tiếng) - khi môn học
+  // nằm trong danh bạ foreignLanguageSubjects.js, buildForeignLanguageOutputDirective() sẽ ghi đè
+  // "Ngôn ngữ: Tiếng Việt" ở buildBaseRules() và ép AI viết TOÀN BỘ nội dung bằng đúng ngôn ngữ này
+  // - extraRules ở đây vẫn giữ NGUYÊN TIẾNG VIỆT (là chỉ thị/hướng dẫn cho AI, không phải nội dung
+  // xuất ra), chỉ nêu quy tắc riêng về CHỮ VIẾT/NGỮ PHÁP đặc thù của từng tiếng.
+  Tieng_Trung: {
+    label: "Tiếng Trung",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Tiếng Trung (Ngoại ngữ 2, Lớp 6-12) chuẩn chương " +
+      "trình Giáo dục phổ thông 2018 của Việt Nam, trình độ phù hợp khung năng lực ngoại ngữ 6 bậc " +
+      "dùng cho Việt Nam (tương ứng thang tham chiếu HSK cấp độ thấp ở giai đoạn đầu)",
+    extraRules: `- CHỮ HÁN: dùng CHỮ GIẢN THỂ (简体字) - đây là chuẩn dạy trong SGK Kết nối tri thức, KHÔNG dùng
+  phồn thể (繁體字) trừ khi bài học yêu cầu so sánh/giới thiệu.
+- MỌI từ vựng/câu tiếng Trung PHẢI kèm PINYIN (bính âm có đủ dấu thanh điệu, VD "nǐ hǎo") ngay sau
+  hoặc bên dưới chữ Hán, để học sinh mới học phát âm được - không được chỉ viết chữ Hán trơn.
+- Từ vựng/mẫu câu/số lượng chữ Hán mới phải phù hợp ĐÚNG trình độ khối lớp: Lớp 6-7 chỉ dùng chữ/
+  cấu trúc câu CƠ BẢN NHẤT (chào hỏi, số đếm, gia đình, màu sắc, đồ vật quen thuộc - tương đương
+  HSK 1), Lớp 8-9 mở rộng dần (tương đương HSK 1-2), Lớp 10-12 có thể phức tạp hơn (HSK 2-3) nhưng
+  KHÔNG dùng chữ Hán/ngữ pháp vượt xa trình độ phổ thông.
+- Với câu hỏi trắc nghiệm chọn nghĩa/phát âm, các phương án nhiễu phải là chữ Hán/pinyin GẦN GIỐNG
+  (dễ nhầm) nhưng rõ ràng sai, không bịa chữ Hán không tồn tại.
+- Nếu có phần dịch Việt-Trung/Trung-Việt, bản dịch phải tự nhiên, đúng ngữ pháp tiếng Trung (thứ tự
+  Chủ ngữ - Vị ngữ - Tân ngữ, lượng từ đi kèm danh từ...), không dịch word-by-word theo cấu trúc câu
+  tiếng Việt.`,
+  },
+  Tieng_Nhat: {
+    label: "Tiếng Nhật",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Tiếng Nhật (Ngoại ngữ 2, Lớp 6-12) chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam, trình độ phù hợp khung năng lực ngoại ngữ 6 bậc dùng " +
+      "cho Việt Nam (tương ứng thang tham chiếu JLPT cấp độ thấp ở giai đoạn đầu)",
+    extraRules: `- CHỮ VIẾT: Lớp 6-7 ưu tiên HIRAGANA/KATAKANA (viết đủ dấu trường âm/xúc âm đúng chuẩn), CHỈ
+  dùng KANJI cơ bản nhất khi bài học đã dạy - mọi Kanji dùng phải có FURIGANA (đọc hiragana nhỏ bên
+  trên/cạnh) để học sinh mới học đọc được, không dùng Kanji trơn không có furigana ở giai đoạn đầu.
+  Lớp 8 trở lên có thể tăng dần lượng Kanji theo đúng tiến độ bài học được cung cấp.
+- MỌI từ vựng/câu tiếng Nhật PHẢI kèm PHIÊN ÂM RÔMAJI (Latin hoá kiểu Hepburn, VD "konnichiwa") bên
+  cạnh, để hỗ trợ học sinh chưa đọc thạo hiragana/katakana.
+- Cấu trúc ngữ pháp phải phù hợp ĐÚNG trình độ khối lớp, ưu tiên mẫu câu CƠ BẢN (thể lịch sự
+  です/ます ở giai đoạn đầu, chưa dùng thể thông thường/kính ngữ phức tạp) - tương đương JLPT N5 cho
+  Lớp 6-9, có thể tiệm cận N4 ở Lớp 10-12 nhưng không vượt quá.
+- Với câu hỏi trắc nghiệm chọn từ/mẫu câu, các phương án nhiễu phải là từ/cách viết GẦN GIỐNG (dễ
+  nhầm hiragana/katakana hoặc nghĩa gần) nhưng rõ ràng sai, không bịa từ không tồn tại.
+- Trợ từ (は/が/を/に/で...) phải dùng ĐÚNG NGỮ PHÁP tiếng Nhật chuẩn, không được sai/thiếu trợ từ dù
+  chỉ là ngữ liệu minh hoạ.`,
+  },
+  Tieng_Phap: {
+    label: "Tiếng Pháp",
+    expertRole:
+      "một chuyên gia biên soạn nội dung môn Tiếng Pháp (Ngoại ngữ 2, Lớp 6-12) chuẩn chương trình " +
+      "Giáo dục phổ thông 2018 của Việt Nam, trình độ phù hợp khung năng lực ngoại ngữ 6 bậc dùng " +
+      "cho Việt Nam (tương ứng thang tham chiếu CEFR cấp độ thấp ở giai đoạn đầu, VD A1-A2)",
+    extraRules: `- Viết ĐẦY ĐỦ, CHÍNH XÁC mọi dấu phụ tiếng Pháp (accent aigu é, accent grave è/à/ù, accent
+  circonflexe ê/â/î/ô/û, tréma ë/ï/ü, cédille ç...) - thiếu dấu là SAI CHÍNH TẢ tiếng Pháp, không
+  được bỏ qua vì lý do trình bày.
+- TUÂN THỦ quy tắc GIỐNG (giống đực/giống cái của danh từ) và SỰ HOÀ HỢP (tính từ/mạo từ phải hoà
+  hợp giống-số với danh từ đi kèm) - đây là lỗi phổ biến nhất cần tránh khi AI tự sinh câu tiếng Pháp.
+- Thì/chia động từ phải phù hợp ĐÚNG trình độ khối lớp: Lớp 6-7 chỉ dùng thì hiện tại đơn (présent)
+  với động từ nhóm 1/2/3 cơ bản và các động từ bất quy tắc thông dụng nhất (être, avoir, aller,
+  faire), Lớp 8-9 có thể thêm passé composé/futur proche, Lớp 10-12 mở rộng dần thêm imparfait/
+  futur simple nhưng vẫn ưu tiên cấu trúc phổ thông, không dùng thì/thức phức tạp (subjonctif,
+  conditionnel...) trừ khi tài liệu bài học yêu cầu.
+- Với câu hỏi trắc nghiệm ngữ pháp (chia động từ, chọn mạo từ/tính từ đúng giống-số...), CHỈ có DUY
+  NHẤT 1 đáp án đúng chuẩn ngữ pháp tiếng Pháp, các phương án nhiễu phải sai rõ ràng (sai giống/số/
+  chia động từ) chứ không mập mờ.`,
+  },
   Lich_Su: {
     label: "Lịch sử",
     expertRole:
