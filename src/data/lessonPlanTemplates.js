@@ -115,6 +115,12 @@ export const STANDARD_ACTIVITIES = [
  * hoạt động -> AI bị \"neo\" theo ví dụ cụ thể này và tiếp tục trả về tên hoạt động bằng tiếng Việt
  * (VD \"Khởi động\") dù buildForeignLanguageOutputDirective() đã yêu cầu viết bằng tiếng Anh -> đây
  * là nguồn \"hạt sạn tiếng Việt\" chính trong tiêu đề hoạt động của giáo án Tiếng Anh.
+ *
+ * ⚠️ Phiên 38 - THÊM "zh"/"ja"/"fr" (Tiếng Trung/Nhật/Pháp - Ngoại ngữ 2, xem foreignLanguageSubjects.js):
+ * trước khi thêm, 3 môn này rơi vào nhánh `ACTIVITY_LABELS_BY_LANGUAGE[languageCode] || null` ->
+ * `null` -> getActivityLabels() TỰ RƠI VỀ TIẾNG VIỆT (an toàn nhưng SAI ý đồ) - đây chính là nguồn
+ * "hạt sạn tiếng Việt" giáo viên phản ánh trong bản xem trước (LessonPlanPreview.jsx cũng bị ảnh
+ * hưởng tương tự - xem LABELS_ZH/LABELS_JA/LABELS_FR ở đó).
  */
 const ACTIVITY_LABELS_BY_LANGUAGE = {
   en: {
@@ -123,6 +129,35 @@ const ACTIVITY_LABELS_BY_LANGUAGE = {
     luyen_tap: "Practice",
     van_dung: "Application",
   },
+  zh: {
+    khoi_dong: "热身",
+    kham_pha: "探索（形成新知识）",
+    luyen_tap: "练习",
+    van_dung: "应用",
+  },
+  ja: {
+    khoi_dong: "ウォームアップ",
+    kham_pha: "導入（新しい知識の提示）",
+    luyen_tap: "練習",
+    van_dung: "応用",
+  },
+  fr: {
+    khoi_dong: "Mise en train",
+    kham_pha: "Découverte (Formation de nouvelles connaissances)",
+    luyen_tap: "Entraînement",
+    van_dung: "Application",
+  },
+};
+
+// ⚠️ Phiên 38 - nhãn "Khởi động lại" (dùng ở TIẾT SAU tiết đầu tiên trong bài nhiều tiết - xem
+// computeMultiPeriodTimeline() bên dưới) TÁCH RIÊNG khỏi ACTIVITY_LABELS_BY_LANGUAGE vì đây KHÔNG
+// phải 1 trong 4 khoá hoạt động chuẩn (chỉ là biến thể hiển thị của "khoi_dong") - trước Phiên 38
+// chỉ xử lý rẽ nhánh cứng cho "en", khiến "zh"/"ja"/"fr" bị rơi về "Khởi động lại" tiếng Việt.
+const WARMUP_RECAP_LABEL_BY_LANGUAGE = {
+  en: "Warm-up (recap)",
+  zh: "热身（复习）",
+  ja: "ウォームアップ（復習）",
+  fr: "Mise en train (rappel)",
 };
 
 /**
@@ -138,21 +173,36 @@ export const LESSON_TYPES = [
     label: "Bài mới",
     hint: "Hình thành kiến thức mới",
     activityLabel: "Khám phá (Hình thành kiến thức mới)",
-    activityLabelByLanguage: { en: "Presentation (New Knowledge)" },
+    activityLabelByLanguage: {
+      en: "Presentation (New Knowledge)",
+      zh: "探索（形成新知识）",
+      ja: "導入（新しい知識の提示）",
+      fr: "Découverte (Formation de nouvelles connaissances)",
+    },
   },
   {
     value: "on_tap",
     label: "Ôn tập / Luyện tập",
     hint: "Hệ thống hoá kiến thức đã học",
     activityLabel: "Hệ thống hoá kiến thức",
-    activityLabelByLanguage: { en: "Knowledge Consolidation" },
+    activityLabelByLanguage: {
+      en: "Knowledge Consolidation",
+      zh: "知识系统化",
+      ja: "知識の体系化",
+      fr: "Systématisation des connaissances",
+    },
   },
   {
     value: "thuc_hanh",
     label: "Thực hành / Trải nghiệm",
     hint: "Vận dụng thực tế, ít lý thuyết mới",
     activityLabel: "Thực hành - Luyện tập",
-    activityLabelByLanguage: { en: "Practice - Application" },
+    activityLabelByLanguage: {
+      en: "Practice - Application",
+      zh: "实践与练习",
+      ja: "実践・練習",
+      fr: "Pratique - Application",
+    },
   },
 ];
 
@@ -162,6 +212,9 @@ export const LESSON_TYPES = [
 export const STEM_VAN_DUNG_LABEL_BY_LANGUAGE = {
   vi: "[Vận dụng - Tích hợp STEM]",
   en: "[Application - STEM Integration]",
+  zh: "[应用 - STEM 融合]",
+  ja: "[応用 - STEM統合]",
+  fr: "[Application - Intégration STEM]",
 };
 
 export function getLessonTypeMeta(lessonType) {
@@ -265,9 +318,7 @@ export function computeMultiPeriodTimeline(soTiet = 1, grade, lessonType = "bai_
         weight: isFirst ? 5 : 3,
         label: isFirst
           ? labelByKey.khoi_dong
-          : languageCode === "en"
-          ? "Warm-up (recap)"
-          : "Khởi động lại",
+          : WARMUP_RECAP_LABEL_BY_LANGUAGE[languageCode] || "Khởi động lại",
       },
       { key: "luyen_tap", weight: 10, label: labelByKey.luyen_tap },
     ];
