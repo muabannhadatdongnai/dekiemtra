@@ -5,6 +5,66 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 39 — Sửa regression 3 test THPT (Phiên 38) + hạt sạn tiếng Việt trong bản xem trước Soạn Giáo Án môn Ngoại ngữ 2
+
+**Bối cảnh:** Đầu phiên, kiểm tra lại bằng cách tự chạy `npm install && npm test && npm run build`
+thật trong repo (Phiên 38 tự ghi nhận CHƯA làm bước này, chỉ kiểm bằng bundler độc lập bên ngoài) -
+phát hiện 3 test `thptSubjects.test.js` bị fail do thêm Ngoại ngữ 2. Hoan sau đó gửi ảnh chụp bản
+xem trước Soạn Giáo Án môn Tiếng Trung Lớp 6: mọi khung/nhãn tĩnh xung quanh (tiêu đề mục, "Bước",
+"Khởi động", bảng "Hoạt động của giáo viên và học sinh"...) vẫn hiển thị tiếng Việt dù nội dung bài
+học AI sinh đã đúng tiếng Trung.
+
+**Root cause #1 - regression 3 test THPT:** `config.js` thêm `Tieng_Trung`/`Tieng_Nhat`/`Tieng_Phap`
+(`minGrade: 6, maxGrade: 12`, không giới hạn `modules`) khiến Lớp 10-12 có 20 môn thay vì đúng 17
+môn/HĐGD chính thức (8 bắt buộc + 9 lựa chọn theo Thông tư 32/2018/TT13-2022) mà
+`thptSubjects.test.js` khoá cứng. Ngoại ngữ 2 đúng là môn tự chọn THÊM, nằm NGOÀI cơ cấu chính thức
+này (không phải lỗi thiết kế) → cập nhật lại test để phản ánh đúng ý đồ: 17 (chính thức) + 3 (Ngoại
+ngữ 2) = 20 môn hợp lệ ở Lớp 10-12, thay vì coi việc thêm Ngoại ngữ 2 là phá vỡ cơ cấu.
+
+**Root cause #2 - hạt sạn tiếng Việt trong bản xem trước:** `LessonPlanPreview.jsx` (từ Phiên 36)
+chỉ có `LABELS_VI`/`LABELS_EN`, chọn theo `languageCode` của môn qua `pickLabels()` — môn có
+`languageCode` chưa có bản dịch (`zh`/`ja`/`fr`) TỰ RƠI VỀ `LABELS_VI` (an toàn nhưng sai ý đồ, đúng
+lỗi trong ảnh). Cùng nguyên nhân ở `lessonPlanTemplates.js`: `ACTIVITY_LABELS_BY_LANGUAGE` (4 nhãn
+hoạt động chuẩn), `LESSON_TYPES[].activityLabelByLanguage`, `STEM_VAN_DUNG_LABEL_BY_LANGUAGE`, và
+nhãn "Khởi động lại" (`computeMultiPeriodTimeline`, trước đây hardcode rẽ nhánh CHỈ cho `"en"`) đều
+chưa có entry `zh`/`ja`/`fr`.
+
+**Đã sửa:**
+1. `test/thptSubjects.test.js` — cập nhật kỳ vọng 17 → 20 môn cho Lớp 10-12 (thêm nhóm
+   `NGOAI_NGU_2`), giữ nguyên mọi test khác không đổi.
+2. `lessonPlanTemplates.js` — thêm entry `zh`/`ja`/`fr` cho `ACTIVITY_LABELS_BY_LANGUAGE`,
+   `LESSON_TYPES[].activityLabelByLanguage`, `STEM_VAN_DUNG_LABEL_BY_LANGUAGE`; tách hằng số
+   `WARMUP_RECAP_LABEL_BY_LANGUAGE` thay cho rẽ nhánh hardcode `languageCode === "en"`.
+3. **Tách `LessonPlanPreview.jsx` → `src/data/lessonPlanPreviewLabels.js`** (file `.js` thuần,
+   không còn nằm trong component `.jsx`): thêm `LABELS_ZH`/`LABELS_JA`/`LABELS_FR` đầy đủ tất cả
+   khoá như `LABELS_VI`/`LABELS_EN`. Lý do tách: `LessonPlanPreview.jsx` chứa JSX nên KHÔNG
+   `import` được thẳng trong bộ test `node --test` thuần (không qua bundler/Babel) — tách ra để có
+   thể viết test bảo vệ trực tiếp, tránh lặp lại lỗi "hạt sạn tiếng Việt" tương tự khi thêm ngôn
+   ngữ mới sau này (đúng nguyên tắc Single source of truth đã áp dụng cho
+   `ACTIVITY_LABELS_BY_LANGUAGE`).
+4. **`tinNhanTitle` (PHỤ LỤC: Tin nhắn gửi phụ huynh - Zalo) CỐ Ý giữ nguyên tiếng Việt** ở cả
+   `LABELS_ZH`/`LABELS_JA`/`LABELS_FR` (giống `LABELS_EN` từ Phiên 36) — phụ huynh học sinh Việt Nam
+   đọc trực tiếp, không dịch. Nội dung do AI sinh cho phụ lục này ĐÃ tự động giữ tiếng Việt cho mọi
+   ngôn ngữ từ trước (cơ chế `exemptJsonFields` trong `buildForeignLanguageOutputDirective()` gọi
+   không điều kiện theo mọi `languageCode`, không cần sửa gì thêm) — chỉ tiêu đề tĩnh ở bản xem
+   trước là còn thiếu, nay đã bổ sung.
+5. Test mới `test/lessonPlanForeignLanguage2Labels.test.js` (24 test): khoá lại CẢ 2 chiều - mọi
+   nhãn tĩnh của `zh`/`ja`/`fr` phải KHÁC tiếng Việt, ngoại trừ đúng 2 nhãn cố ý giữ nguyên
+   (`tinNhanTitle`, `noDataHint`); đồng thời khoá `LABELS_ZH`/`LABELS_JA`/`LABELS_FR` có ĐỦ mọi khoá
+   như `LABELS_VI` (không thiếu field khi thêm ngôn ngữ mới sau này).
+
+**Kết quả kiểm thử:** `npm test` — 412 tests, 410 pass, 2 fail (2 fail còn lại là mục #17 AUDIO/IPA
+Tiếng Anh đã biết từ trước, ngoài phạm vi phiên này). `npm run build` sạch, không lỗi TypeScript.
+
+**Ngoài phạm vi (đã ghi nhận, chưa sửa):** Đề Cương Ôn Tập (`OutlinePreview.jsx`) và Đề Kiểm Tra
+(`VietnameseExamPreview.jsx`) KHÔNG có xử lý theo `languageCode` ở bản xem trước — kể cả môn Tiếng
+Anh (Phiên 35-36) cũng hiển thị nhãn tĩnh tiếng Việt ở 2 tab này. Đây là khoảng trống có SẴN TỪ
+TRƯỚC Phiên 38 (không phải lỗi riêng của Ngoại ngữ 2), Hoan chưa yêu cầu sửa lần này — xem
+`NEXT_STEPS.md`. Phần XUẤT FILE Word/PDF cho Ngoại ngữ 2 (mục 🟡 ở `NEXT_STEPS.md`) vẫn CHƯA LÀM,
+chờ Hoan chọn hướng kiến trúc.
+
+---
+
 ## Phiên 38 — Bắt đầu Ngoại ngữ 2 (Tiếng Trung/Nhật/Pháp, Lớp 6-12): tầng cấu hình + prompt XONG, tầng xuất file CHƯA LÀM
 
 **Yêu cầu Hoan:** SGK Kết nối tri thức đã có Tiếng Trung/Tiếng Nhật/Tiếng Pháp làm "Ngoại ngữ 2"

@@ -14,10 +14,14 @@ Kiểm Tra: từ Phiên 35, AI sinh nội dung TRỰC TIẾP bằng tiếng Anh 
 Việt rồi dịch lại) - nút "Tải Word"/"In PDF" DUY NHẤT tự động xuất bằng tiếng Anh khi môn học nằm
 trong danh bạ `src/data/foreignLanguageSubjects.js`. Phiên 38: đã thêm CẤU HÌNH (chưa xong XUẤT
 FILE Word/PDF) cho 3 môn Ngoại ngữ 2 mới - Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12 (THCS+THPT,
-theo bộ Kết nối tri thức) - xem mục "🟡 Ngoại ngữ 2" bên dưới để biết chính xác phần nào xong/chưa
-xong. Riêng phụ lục "Tin nhắn gửi phụ huynh (Zalo)" ở Soạn Giáo Án và
-"Thư ngỏ gửi Phụ huynh" ở Đề Cương Ôn Tập (từ Phiên 37) LUÔN giữ tiếng Việt. Chi tiết đầy đủ từng
-module xem `README.md`.
+theo bộ Kết nối tri thức). Phiên 39: sửa regression 3 test THPT do Ngoại ngữ 2 gây ra (đã cập nhật
+`thptSubjects.test.js`: 17 → 20 môn hợp lệ ở Lớp 10-12), và sửa "hạt sạn tiếng Việt" ở BẢN XEM
+TRƯỚC WEB (Soạn Giáo Án) cho 3 môn này (`LABELS_ZH`/`LABELS_JA`/`LABELS_FR` mới - xem
+`src/data/lessonPlanPreviewLabels.js`) - xem mục "🟡 Ngoại ngữ 2" bên dưới để biết chính xác phần
+nào xong/chưa xong (XUẤT FILE Word/PDF vẫn CHƯA LÀM). Riêng phụ lục "Tin nhắn gửi phụ huynh (Zalo)"
+ở Soạn Giáo Án và "Thư ngỏ gửi Phụ huynh" ở Đề Cương Ôn Tập (từ Phiên 37) LUÔN giữ tiếng Việt - đã
+xác nhận áp dụng đúng cho CẢ Ngoại ngữ 2 (tiêu đề tĩnh ở Phiên 39, nội dung AI sinh vốn đã đúng từ
+Phiên 37 nhờ cơ chế `exemptJsonFields` generic). Chi tiết đầy đủ từng module xem `README.md`.
 
 ---
 
@@ -28,7 +32,7 @@ module xem `README.md`.
 | 1 | Kích hoạt hay xoá tab "Tô màu" (Coloring Page) | Code đã đủ 4 tầng nhưng chưa nối vào `page.js` — đang "chết" trong kho. Xoá thì xoá luôn 6 file liên quan + biến môi trường `COLORING_GEMINI_API_KEYS` trên Vercel cho gọn. |
 | 2 | Tạo file `chuong_{n}_bai.json` cho tính năng "gợi ý Bài theo SGK" (Soạn giáo án) | Tính năng đã code xong nhưng KHÔNG hoạt động tới khi có dữ liệu thật trong kho GitHub kiến thức. Xem cấu trúc tại `docs/vi-du-phu-luc-bai-hoc.example.js`. Làm dần theo Chương, không cần làm hết ngay. |
 | 3 | Tạo dữ liệu SGK thật cho 4 môn mới thêm gần đây: Tự nhiên và Xã hội (Lớp 1-3), Lịch sử và Địa lí (Lớp 4-5), Tin học (Lớp 3-5), Công nghệ (Lớp 3-5) | Code (`config.js`/`subjectProfiles.js`/3 form) đã sẵn sàng, nhưng dropdown "Chương" ở Soạn giáo án/Đề Cương Ôn Tập/Tạo Đề Kiểm Tra sẽ RỖNG cho tới khi có file `chuong_{n}.md` trong kho GitHub kiến thức theo đúng cấu trúc đang dùng cho Toán/Tiếng Việt. |
-| 4 | Chạy `npm run build` + `npm test` thật sau khi merge patch chuẩn hoá môn học (Lớp 1-5) | Patch được viết/kiểm tra cú pháp trong sandbox không có `node_modules`/test đầy đủ của repo — cần Hoan xác nhận build/test thật không vỡ trước khi deploy. |
+| 4 | ~~Chạy `npm run build` + `npm test` thật sau khi merge patch chuẩn hoá môn học (Lớp 1-5)~~ | ĐÃ CHẠY THẬT (Phiên 39) — `npm test`: 412 tests, 410 pass (2 fail còn lại là mục #17 đã biết trước), `npm run build` sạch. |
 | 5 | ~~Xác nhận có muốn thêm Giáo dục thể chất/Âm nhạc/Mĩ thuật/Hoạt động trải nghiệm~~ | ĐÃ THÊM (Phiên 32 THCS, Phiên 33 mở rộng THPT) — dùng `modules: NO_EXAM_MODULES` (chỉ Soạn Giáo án, không có Đề kiểm tra/Đề cương) đúng tinh thần "nhận xét-only" của Thông tư 22/2021. |
 | 6 | Lỗ hổng bảo mật gói `xlsx` (Prototype Pollution/ReDoS) | Nhà phát hành chưa có bản vá — chỉ cần biết để KHÔNG mở tính năng nhập Excel cho người dùng ẩn danh/công khai; chưa cần hành động ngay. |
 | 7 | Icon line-art (Phiếu Bài Tập, Bài 3) chưa qua mắt giáo viên/học sinh thật | Đã có sẵn `lineart-icon-review-sheet.html` để in/gửi thu thập phản hồi. Sửa trực tiếp `scripts/lineArtIconDefs.js` rồi chạy lại `scripts/render-line-art-icons.js` khi có phản hồi. |
@@ -46,7 +50,7 @@ module xem `README.md`.
 
 ---
 
-## 🟡 Ngoại ngữ 2 (Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12) — bắt đầu ở Phiên 38, CHƯA XONG
+## 🟡 Ngoại ngữ 2 (Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12) — bắt đầu Phiên 38, tầng cấu hình + bản xem trước web ĐÃ XONG (Phiên 39), tầng XUẤT FILE CHƯA XONG
 
 **Yêu cầu Hoan (Phiên 38):** SGK Kết nối tri thức đã có Tiếng Trung/Tiếng Nhật/Tiếng Pháp làm
 "Ngoại ngữ 2" cho THCS+THPT → thêm vào cả 3 tab Soạn Giáo Án/Đề Cương Ôn Tập/Tạo Đề Kiểm tra, giữ
@@ -75,8 +79,31 @@ ngữ riêng của từng môn (giống kiến trúc Tiếng Anh từ Phiên 35 
   cầu chỉ THCS+THPT), `getSubjectProfile()`/`findForeignLanguageConfig()`/
   `buildForeignLanguageOutputDirective()` đều trả đúng dữ liệu cho cả 3 môn mới.
 
-**❌ CHƯA LÀM ở Phiên 38 (phần XUẤT FILE Word/PDF - việc lớn nhất, cố ý CHƯA làm vội để tránh lặp
-lại đúng lỗi schema `<w:p>` lồng `<w:p>` như Phiên 37 nếu làm ẩu/vội cho 3 ngôn ngữ cùng lúc):**
+**✅ ĐÃ XONG ở Phiên 39 (2 lỗi phát sinh từ việc thêm Ngoại ngữ 2 ở Phiên 38, phát hiện qua tự chạy
+`npm test` thật trong repo + ảnh chụp màn hình Hoan gửi):**
+- Regression 3 test `thptSubjects.test.js` (Lớp 10-12 có 20 môn thay vì 17 do Ngoại ngữ 2 không
+  giới hạn `modules`) — đã cập nhật lại kỳ vọng test cho đúng ý đồ (17 chính thức + 3 Ngoại ngữ 2).
+- Hạt sạn tiếng Việt ở BẢN XEM TRƯỚC WEB (Soạn Giáo Án) - `LessonPlanPreview.jsx` chỉ có
+  `LABELS_VI`/`LABELS_EN`, 3 môn mới rơi về `LABELS_VI` — đã thêm `LABELS_ZH`/`LABELS_JA`/`LABELS_FR`
+  (tách sang file mới `src/data/lessonPlanPreviewLabels.js` để test được bằng `node --test` thuần,
+  không qua JSX) + đồng bộ nhãn hoạt động/nhãn "Khởi động lại"/nhãn STEM trong
+  `lessonPlanTemplates.js`. Tiêu đề "PHỤ LỤC: Tin nhắn gửi phụ huynh (Zalo)" cố ý giữ tiếng Việt ở
+  cả 3 ngôn ngữ mới, đúng như English. Xem test bảo vệ mới
+  `test/lessonPlanForeignLanguage2Labels.test.js` (24 test, pass).
+- **CHƯA rà bởi người bản ngữ** — bản dịch tiếng Trung/Nhật/Pháp cho các nhãn này do Claude dịch,
+  cùng mức độ tin cậy như phần dịch nhãn Word ở mục 2 bên dưới (cần Hoan nhờ người biết tiếng kiểm
+  tra lại khi có dịp, không phải việc phải chặn triển khai vì đây chỉ là nhãn khung/tiêu đề, không
+  phải nội dung sư phạm do AI sinh).
+- **Phát hiện thêm, GHI NHẬN chứ CHƯA sửa** (Hoan chưa yêu cầu, ngoài phạm vi Phiên 39): Đề Cương
+  Ôn Tập (`OutlinePreview.jsx`) và Đề Kiểm Tra (`VietnameseExamPreview.jsx`) hoàn toàn KHÔNG có xử
+  lý theo `languageCode` ở bản xem trước - hiển thị nhãn tĩnh tiếng Việt cho MỌI môn kể cả Tiếng
+  Anh (khoảng trống có sẵn từ Phiên 35-36, không phải lỗi riêng của Ngoại ngữ 2). Nếu Hoan muốn sửa
+  đồng bộ cho cả 2 tab này (áp dụng cho cả Tiếng Anh lẫn Ngoại ngữ 2), cần làm ở phiên riêng vì khối
+  lượng tương đương lần sửa `LessonPlanPreview.jsx` này nhân đôi (2 component, có thể còn nhiều nhãn
+  tĩnh hơn do cấu trúc đề cương/đề kiểm tra phức tạp hơn giáo án).
+
+**❌ CHƯA LÀM (phần XUẤT FILE Word/PDF - việc lớn nhất, cố ý CHƯA làm vội để tránh lặp lại đúng lỗi
+schema `<w:p>` lồng `<w:p>` như Phiên 37 nếu làm ẩu/vội cho 3 ngôn ngữ cùng lúc):**
 
 1. **Quyết định kiến trúc trước khi viết code (Hoan chọn 1 trong 2 hướng dưới, hoặc để Claude đề
    xuất ở phiên sau sau khi cân nhắc thêm):**

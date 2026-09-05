@@ -11,10 +11,11 @@ import {
 import { getGradeProfile, GRADE_PROFILES } from "../src/data/gradeProfiles.js";
 
 /**
- * thptSubjects.test.js (Phiên 33)
+ * thptSubjects.test.js (Phiên 33, cập nhật Phiên 38)
  * Khoá lại phần mở rộng THPT (Lớp 10-12) cho 3 luồng: Soạn Giáo án, Đề Cương Ôn Tập, Đề kiểm tra.
  * Cơ cấu chuẩn theo Thông tư 32/2018 (sửa đổi bởi Thông tư 13/2022) - 8 môn/HĐGD bắt buộc + 9 môn
- * lựa chọn = 17 môn/HĐGD hợp lệ cho mỗi khối Lớp 10-12.
+ * lựa chọn = 17 môn/HĐGD hợp lệ cho mỗi khối Lớp 10-12, CỘNG THÊM 3 môn Ngoại ngữ 2 (Tiếng Trung/
+ * Nhật/Pháp - Phiên 38) nằm NGOÀI cơ cấu chính thức này -> tổng 20 môn hợp lệ ở dropdown Lớp 10-12.
  */
 
 const THPT_BAT_BUOC = [
@@ -40,17 +41,28 @@ const THPT_LUA_CHON = [
   "My_Thuat",
 ];
 
+// ⚠️ Phiên 38 - Ngoại ngữ 2 (Tiếng Trung/Nhật/Pháp, Lớp 6-12) KHÔNG nằm trong cơ cấu chính thức
+// "8 bắt buộc + 9 lựa chọn" của Thông tư 32/2018/TT13-2022 (đây là môn tự chọn THÊM, ngoài khung
+// 17 môn/HĐGD chính thức) - nhưng VẪN cần xuất hiện trong dropdown "Môn học" ở Lớp 10-12 (xem
+// config.js). Test dưới đây trước Phiên 38 khoá cứng "đúng 17 môn" - nay cập nhật thành 17 (chính
+// thức) + 3 (Ngoại ngữ 2) = 20, để không coi việc thêm Ngoại ngữ 2 là lỗi phá vỡ cơ cấu chính thức.
+const NGOAI_NGU_2 = ["Tieng_Trung", "Tieng_Nhat", "Tieng_Phap"];
+
 test("config.js: GRADES vẫn đủ 1-12 (không đổi từ trước)", () => {
   assert.deepEqual(GRADES, Array.from({ length: 12 }, (_, i) => i + 1));
 });
 
 for (const grade of [10, 11, 12]) {
-  test(`config.js: Lớp ${grade} - getSubjectsForGrade(LESSON_PLAN) trả về đủ 17 môn/HĐGD (8 bắt buộc + 9 lựa chọn)`, () => {
+  test(`config.js: Lớp ${grade} - getSubjectsForGrade(LESSON_PLAN) trả về đủ 17 môn/HĐGD chính thức (8 bắt buộc + 9 lựa chọn) + 3 môn Ngoại ngữ 2`, () => {
     const subjects = getSubjectsForGrade(grade, MODULE_KEYS.LESSON_PLAN).map((s) => s.value);
-    const expected = [...THPT_BAT_BUOC, ...THPT_LUA_CHON];
-    assert.equal(subjects.length, 17, `Lớp ${grade} phải có đúng 17 môn/HĐGD, hiện có: ${subjects.join(", ")}`);
+    const expected = [...THPT_BAT_BUOC, ...THPT_LUA_CHON, ...NGOAI_NGU_2];
+    assert.equal(
+      subjects.length,
+      20,
+      `Lớp ${grade} phải có đúng 20 môn/HĐGD (17 chính thức + 3 Ngoại ngữ 2), hiện có: ${subjects.join(", ")}`
+    );
     for (const value of expected) {
-      assert.ok(subjects.includes(value), `Thiếu môn/HĐGD bắt buộc phải có ở Lớp ${grade}: ${value}`);
+      assert.ok(subjects.includes(value), `Thiếu môn/HĐGD phải có ở Lớp ${grade}: ${value}`);
     }
   });
 
