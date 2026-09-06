@@ -312,8 +312,24 @@ ${bodyHtml}
 
   // Chờ trình duyệt render xong (ảnh/font) trước khi gọi print(), tránh in ra trang trắng do gọi
   // quá sớm - cùng vấn đề đã gặp với window.print() ở luồng chính (xem A4LivePreview.jsx).
-  printWindow.onload = () => {
-    printWindow.focus();
-    printWindow.print();
-  };
+  //
+  // ⚠️ FIX (Phiên 41) - `onload` có thể KHÔNG bắn lại một cách ổn định trên mọi trình duyệt sau
+  // `document.write()` gọi trên 1 cửa sổ vốn đã "rỗng" từ đầu (đặc biệt Safari, và một số phiên bản
+  // Chrome/Firefox cũ) - nếu điều đó xảy ra, cửa sổ mở ra nhưng KHÔNG tự in, và không có gì báo lỗi
+  // cho giáo viên (đúng kiểu lỗi "khó phát hiện tới khi có phản hồi thật" như bài học Phiên 36-37).
+  // Thêm `setTimeout` dự phòng: nếu `onload` chưa bắn sau 400ms, tự gọi print() luôn - dùng cờ
+  // `printed` để đảm bảo CHỈ gọi `print()` đúng 1 LẦN dù cả 2 đường (onload/timeout) cùng bắn.
+  let printed = false;
+  function triggerPrintOnce() {
+    if (printed) return;
+    printed = true;
+    try {
+      printWindow.focus();
+      printWindow.print();
+    } catch {
+      // Cửa sổ có thể đã bị người dùng đóng trước khi kịp in - bỏ qua, không có gì thêm để làm.
+    }
+  }
+  printWindow.onload = triggerPrintOnce;
+  setTimeout(triggerPrintOnce, 400);
 }
