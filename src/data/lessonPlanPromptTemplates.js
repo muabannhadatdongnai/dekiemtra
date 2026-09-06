@@ -225,6 +225,42 @@ GỢI Ý THIẾT KẾ HỌC LIỆU (BẮT BUỘC với Lớp 1-3 - học sinh l�
 `;
 }
 
+/**
+ * buildEnglishAudioIpaGuidance(languageCode, preschool) — Item #17 NEXT_STEPS.md (Phiên 41).
+ * Test `test/lessonPlanEnglishAudioIpa.test.js` đã có sẵn từ trước (viết test trước, chưa từng cài
+ * đặt) - yêu cầu thực tế của giáo viên Tiếng Anh:
+ * a) Gắn thẻ "[AUDIO: Track_XX]" tại MỌI bước có hoạt động Nghe (Listening), để giáo viên biết
+ *    chính xác cần chuẩn bị/mở file âm thanh nào - công cụ KHÔNG tự sinh âm thanh thật, chỉ đánh
+ *    dấu ĐÚNG VỊ TRÍ cần audio trong giáo án.
+ * b) Kèm phiên âm quốc tế IPA ngay sau MỖI từ vựng mới giới thiệu ở hoạt động "Khám phá" (Explore),
+ *    giúp giáo viên phát âm chuẩn khi dạy trực tiếp trên lớp.
+ *
+ * CHỈ áp dụng: môn Tiếng Anh (`languageCode === "en"`) VÀ không phải Mầm non (`!preschool`) - giáo
+ * án Tiếng Anh Mầm non dạy qua lời nói/hình ảnh trực tiếp, chưa cần thẻ kỹ thuật kiểu này. KHÔNG áp
+ * dụng cho Tiếng Trung/Nhật/Pháp (Ngoại ngữ 2): đây là yêu cầu RIÊNG của giáo viên Tiếng Anh, và IPA
+ * là hệ phiên âm dành riêng cho tiếng Anh (không phải Pinyin/Furigana/API phiên âm tiếng Pháp) - nếu
+ * sau này Ngoại ngữ 2 cần tính năng tương tự, PHẢI thiết kế riêng theo đúng hệ phiên âm của từng
+ * ngôn ngữ, không tái dùng nguyên khối này (đúng nguyên tắc Isolation over DRY của dự án).
+ *
+ * Đặt SAU bước tính `languageCode`/`preschool` ở buildLessonPlanPrompt() nên nhận thẳng 2 giá trị
+ * đó làm tham số, không tự tính lại (tránh sai lệch nếu 1 trong 2 chỗ đổi cách tính sau này).
+ */
+function buildEnglishAudioIpaGuidance(languageCode, preschool) {
+  if (languageCode !== "en" || preschool) return "";
+  return `
+QUY TẮC RIÊNG GIÁO ÁN TIẾNG ANH - THẺ AUDIO & PHIÊN ÂM IPA:
+- Ở MỌI bước trong "hoatDongGVHS" có yêu cầu học sinh NGHE (Listening) - nghe băng/audio mẫu, nghe
+  giáo viên đọc mẫu, nghe hội thoại... - PHẢI chèn thẻ đúng định dạng "[AUDIO: Track_XX]" (XX là số
+  thứ tự 2 chữ số tăng dần theo đúng thứ tự xuất hiện trong bài, ví dụ "[AUDIO: Track_01]",
+  "[AUDIO: Track_02]"...) ngay trước phần mô tả nội dung cần nghe, để giáo viên biết chính xác cần
+  chuẩn bị/mở file âm thanh nào ở bước đó (công cụ KHÔNG tự sinh file âm thanh thật, chỉ đánh dấu
+  đúng vị trí cần audio).
+- Khi giới thiệu TỪ VỰNG MỚI ở hoạt động "Khám phá" (Explore), PHẢI kèm phiên âm quốc tế IPA ngay
+  sau mỗi từ, đặt trong dấu gạch chéo, ví dụ: "dolphin /ˈdɒlfɪn/" - giúp giáo viên phát âm chuẩn khi
+  dạy trực tiếp trên lớp.
+`;
+}
+
 export function buildLessonPlanPrompt({
   tenBai,
   grade,
@@ -314,6 +350,8 @@ giáo viên cung cấp bên dưới và kiến thức chuẩn chương trình ph
   const diversityBlock = buildDiversityGuidance(existingOpeningIdeas);
   const sampleGuidanceBlock = buildLessonPlanSampleGuidance(sampleMode, sampleSpec, sampleReferenceText);
   const visualHocLieuBlock = buildVisualHocLieuGuidance(grade);
+  // Item #17 NEXT_STEPS.md (Phiên 41) - xem docstring buildEnglishAudioIpaGuidance() phía trên.
+  const englishAudioIpaBlock = buildEnglishAudioIpaGuidance(languageCode, preschool);
 
   // ⚠️ Trước đây các field do tích hợp thêm vào (VD "mindmap") CHỈ được mô tả bằng lời trong
   // integrationsBlock, KHÔNG xuất hiện trong ví dụ JSON chính bên dưới - khiến AI hay quên trả
@@ -369,7 +407,7 @@ ${stepClarityRule}
 ${!preschool && subjectProfile ? `\nQUY TẮC RIÊNG MÔN ${subjectProfile.label.toUpperCase()} (LƯU Ý: mục dưới đây có thể nhắc tới LaTeX vì\nvốn được viết cho phần ra ĐỀ KIỂM TRA - khi soạn GIÁO ÁN vẫn áp dụng các quy tắc nội dung/số liệu\nbên dưới nhưng BỎ QUA hoàn toàn phần yêu cầu dùng LaTeX, luôn viết số liệu/công thức bằng ký hiệu\nthông thường như quy tắc bắt buộc ở trên):\n${subjectProfile.extraRules}\n${buildForeignLanguageOutputDirective(subject, { exemptJsonFields: [INTEGRATION_KEYS.TIN_NHAN_PHU_HUYNH] })}` : ""}
 
 ${sourceBlock}
-${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}${visualHocLieuBlock}
+${diversityBlock}${integrationsBlock}${styleBlock}${sampleGuidanceBlock}${visualHocLieuBlock}${englishAudioIpaBlock}
 Hãy trả về JSON theo đúng schema sau (không thêm trường nào khác ngoài schema và các trường tích
 hợp đã liệt kê ở trên nếu có):
 ${outputSchema}
