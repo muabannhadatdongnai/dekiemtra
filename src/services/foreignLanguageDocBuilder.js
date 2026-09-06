@@ -106,6 +106,94 @@ export function twoColumnTable(rows) {
   });
 }
 
+/**
+ * createLanguageHelpers(font) — Phiên 40 (Ngoại ngữ 2).
+ * `textRun()`/`paragraph()`/`heading()`/`bulletList()`/`cell()` ở trên LUÔN dùng CỨNG
+ * FONT = "Times New Roman" - đủ cho tiếng Anh/tiếng Pháp (bảng chữ Latinh, kể cả có dấu phụ) nhưng
+ * KHÔNG đủ cho tiếng Trung/tiếng Nhật: "Times New Roman" không có glyph chữ Hán/Kana - Microsoft
+ * Word có thể fallback sang font khác NHƯNG không đảm bảo (có trường hợp hiện ô vuông trống "tofu"
+ * dù file mở được bình thường, không phải lỗi "well-formed" nên các phép kiểm schema hiện có
+ * (assertValidParagraphNesting) không bắt được lỗi kiểu này - cùng bài học "PDF ổn nhưng Word thiếu
+ * chữ" đã gặp ở Phiên 24-25 với hình vẽ Unicode, chỉ khác nguyên nhân).
+ *
+ * Hàm này trả về 1 bộ helper GIỐNG HỆT chữ ký (textRun/paragraph/heading/bulletList/cell) nhưng
+ * gắn thêm `eastAsia` (đọc bởi Word khi ký tự thuộc dải Unicode CJK) bên cạnh `ascii`/`hAnsi`/`cs`
+ * gốc (Word vẫn dùng Times New Roman cho phần chữ số/dấu câu Latinh xen kẽ, chỉ chữ Hán/Kana/
+ * Hiragana/Katakana mới đọc font `eastAsia`) - dùng cho chineseLessonPlanExportService.js/
+ * japaneseLessonPlanExportService.js (và Outline/Exam tương ứng). Tiếng Anh/Pháp KHÔNG cần gọi hàm
+ * này, tiếp tục dùng thẳng textRun/paragraph/heading/bulletList/cell ở trên (Times New Roman đủ).
+ *
+ * ⚠️ LƯU Ý QUAN TRỌNG về shape của `font` truyền vào createLanguageHelpers(): docx@9 định nghĩa
+ * `TextRun.font` là `string | { name, hint } | { ascii, hAnsi, cs, eastAsia, hint }` (xem
+ * `IFontAttributesProperties` trong node_modules/docx/dist/index.d.ts) - KHÔNG có field `name` khi
+ * muốn set `eastAsia` cùng lúc (nếu truyền `{ name, eastAsia }`, docx coi đây là `IFontOptions` và
+ * ÂM THẦM BỎ QUA `eastAsia`, dẫn tới toàn bộ chữ Hán/Kana vẫn đọc "Times New Roman" - lỗi ĐÃ xảy ra
+ * thật trong lúc phát triển Phiên 40 trước khi phát hiện qua kiểm tra XML thực tế, xem
+ * foreignLanguageFontRendering.test.js). PHẢI truyền đủ `{ ascii: "Times New Roman", hAnsi: "Times
+ * New Roman", cs: "Times New Roman", eastAsia: "SimSun" }` (hoặc "MS Mincho") thay vì `{ name, eastAsia }`.
+ *
+ * Không đổi các hàm export gốc phía trên để KHÔNG ảnh hưởng ngược lại englishLessonPlanExportService.js/
+ * englishOutlineExportService.js/englishExamExportService.js đang chạy ổn định (đúng nguyên tắc
+ * Isolation over DRY của dự án).
+ */
+export function createLanguageHelpers(font) {
+  function textRunL(text, opts = {}) {
+    return new TextRun({ text: String(text ?? ""), font, size: 24, ...opts });
+  }
+
+  function multilineTextRunsL(text, opts = {}) {
+    const lines = String(text ?? "").split("\n");
+    return lines.flatMap((line, i) => (i === 0 ? [textRunL(line, opts)] : [textRunL(line, { ...opts, break: 1 })]));
+  }
+
+  function paragraphL(text, opts = {}) {
+    return new Paragraph({ children: multilineTextRunsL(text, opts.run), spacing: { after: 100 }, ...opts.paragraph });
+  }
+
+  function headingL(text, level = 1) {
+    return new Paragraph({
+      children: [textRunL(text, { bold: true, size: level === 1 ? 28 : 24 })],
+      spacing: { before: 220, after: 120 },
+    });
+  }
+
+  function bulletListL(items) {
+    return (items || []).map(
+      (it) =>
+        new Paragraph({
+          bullet: { level: 0 },
+          children: multilineTextRunsL(it),
+          spacing: { after: 40 },
+        })
+    );
+  }
+
+  function cellL(text, widthPercent, opts = {}) {
+    return new TableCell({
+      width: { size: widthPercent, type: WidthType.PERCENTAGE },
+      borders: ALL_BORDERS,
+      verticalAlign: VerticalAlign.TOP,
+      columnSpan: opts.columnSpan,
+      shading: opts.shading,
+      children: [
+        new Paragraph({
+          alignment: opts.alignment,
+          children: opts.children || multilineTextRunsL(text, { bold: opts.bold }),
+        }),
+      ],
+    });
+  }
+
+  return {
+    textRun: textRunL,
+    multilineTextRuns: multilineTextRunsL,
+    paragraph: paragraphL,
+    heading: headingL,
+    bulletList: bulletListL,
+    cell: cellL,
+  };
+}
+
 export async function saveDocx(doc, filename) {
   const blob = await Packer.toBlob(doc);
   saveAs(blob, filename);
@@ -158,7 +246,13 @@ export function htmlHeading(text, level = 2) {
  * đương bằng cách gán `printWindow.opener = null` NGAY SAU khi có tham chiếu, vẫn giữ được hiệu
  * quả bảo mật tương tự "noopener" mà KHÔNG mất tham chiếu cần thiết để ghi nội dung.
  */
-export function printHtmlDocument({ title, bodyHtml }) {
+// Font mặc định (tiếng Anh/tiếng Pháp - Latinh) - Phiên 40: cho phép truyền `fontFamily` riêng khi
+// gọi từ chineseLessonPlanExportService.js/japaneseLessonPlanExportService.js (và Outline/Exam
+// tương ứng), vì "Times New Roman" không có glyph chữ Hán/Kana (xem createLanguageHelpers() ở
+// trên - cùng vấn đề, áp dụng cho nhánh in HTML/PDF thay vì Word).
+const DEFAULT_PRINT_FONT_FAMILY = '"Times New Roman", Times, serif';
+
+export function printHtmlDocument({ title, bodyHtml, fontFamily = DEFAULT_PRINT_FONT_FAMILY }) {
   const printWindow = window.open("", "_blank");
   if (!printWindow) {
     throw new Error(
@@ -183,7 +277,7 @@ export function printHtmlDocument({ title, bodyHtml }) {
   @page { size: A4; margin: 20mm 18mm; }
   * { box-sizing: border-box; }
   body {
-    font-family: "Times New Roman", Times, serif;
+    font-family: ${fontFamily};
     font-size: 13pt;
     line-height: 1.5;
     color: #1f2933;
