@@ -43,7 +43,6 @@ Việt - đã xác nhận áp dụng đúng cho CẢ bản xem trước web lẫ
 | 14 | Xác nhận lại "Nghệ thuật" (Âm nhạc + Mĩ thuật) THCS/THPT đã tách đúng 2 đầu sách theo bộ Kết nối tri thức | Đã tách theo ĐÚNG tinh thần "Tin học và Công nghệ" ở Tiểu học (tách 2 môn vì SGK in 2 cuốn riêng dù thông tư gọi gộp) - suy luận hợp lý nhưng CHƯA xác nhận trực tiếp với bộ sách thật, Hoan kiểm tra lại nếu có SGK thật trong tay. |
 | 15 | Cụm chuyên đề học tập THPT (3 chuyên đề/môn, 105 tiết/năm) | CỐ Ý CHƯA làm ở Phiên 33 — đây là nội dung RIÊNG ngoài chương trình cốt lõi đại trà (học sinh chọn 3 trong số các môn lựa chọn hoặc Toán/Ngữ văn/Lịch sử để học chuyên đề sâu hơn theo định hướng nghề nghiệp), không có SGK dùng chung dễ tái sử dụng cấu trúc hiện tại — cần thiết kế riêng nếu Hoan muốn làm tiếp. |
 | 16 | Kiểm tra thật trên trình duyệt việc AI sinh trực tiếp tiếng Anh (Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra, môn Tiếng Anh) | Phiên 35: đã đổi kiến trúc (sinh thẳng tiếng Anh, bỏ bước dịch); Phiên 36: đã SỬA 2 lỗi (hạt sạn tiếng Việt trong tên hoạt động; nút In/Tải PDF báo lỗi popup); Phiên 37: đã SỬA 2 lỗi tiếp theo phát hiện qua file `.docx` lỗi thật Hoan gửi - xem PROJECT_SUMMARY.md Phiên 37 (file Word tiếng Anh Soạn Giáo Án không mở được do `<w:p>` lồng `<w:p>` ở bảng "Hết Tiết"; "Thư ngỏ gửi Phụ huynh" Đề Cương Ôn Tập bị dịch nhầm sang tiếng Anh). Code + test (`test/foreignLanguageExport.test.js`, `test/lessonPlanPhien36.test.js`, `test/lessonPlanPhien37.test.js`, `test/wordSchemaAssertions.js`) + `npm run test:word-compat` (nay có 3 kịch bản tiếng Anh) đều pass, build sạch, nhưng VẪN CHƯA test thật với Gemini API key thật (sandbox không có `GEMINI_API_KEYS`) để xác nhận AI TUÂN THỦ chỉ thị `buildForeignLanguageOutputDirective()` với nội dung bài học thật (không chỉ cấu trúc/tên hoạt động) - Hoan click-through lại 1 lượt, kèm MỞ THẬT file Word bằng Microsoft Word (không chỉ xem trước/PDF) để xác nhận triệt để trước khi coi là xong hẳn.
-| 17 | Test có sẵn `test/lessonPlanEnglishAudioIpa.test.js` đang FAIL (2/2 test) - tính năng chưa từng được cài đặt | Phát hiện khi chạy `npm test` ở Phiên 35 (KHÔNG liên quan tới thay đổi Phiên 35/36) - test kỳ vọng giáo án Tiếng Anh có gắn thẻ `[AUDIO: Track_XX]` + phiên âm IPA, nhưng không tìm thấy logic này ở bất kỳ đâu trong `src/` - có thể là tính năng đã lên kế hoạch (viết test trước) nhưng chưa merge phần cài đặt. Cần Hoan quyết định: cài đặt tính năng thật, hay xoá test nếu không còn cần. |
 | 18 | Xác nhận lại việc sửa `<w:p>` lồng `<w:p>` (Phiên 37) đã LÊN THẬT trên Vercel chưa | Hoan gửi 1 file `.docx` "mới" (Lesson-Plan-EN-Lesson-1...) sau khi Claude báo đã sửa xong, nhưng validate lại vẫn thấy ĐÚNG lỗi cũ, ĐÚNG vị trí (bảng "Hết Tiết"). Claude đã build lại chính xác `englishLessonPlanExportService.js`/`foreignLanguageDocBuilder.js` TRONG zip Phiên 37 bằng docx.js thật + validate schema → xác nhận code trong zip KHÔNG còn lỗi. Kết luận: file Word đó vẫn được tạo bởi bản CHƯA deploy code Phiên 37. Hoan cần kiểm tra deployment trên Vercel (đúng commit/thư mục chứa comment `// ⚠️ FIX (Phiên 37)` ở dòng ~90 file đó chưa) rồi tạo lại file Word MỚI để test lại. |
 
 ---
@@ -96,8 +95,9 @@ gộp chung 1 việc cần làm.
      convert PDF thành công.
   3. Xem TRỰC QUAN bằng mắt: xuất 1 file `.docx` tiếng Trung → PDF → PNG - chữ Hán hiện đúng,
      không ô vuông trống. (Tiếng Nhật CHƯA tự xem ảnh riêng, xem mục còn lại bên dưới.)
-  - `npm test`: 436 tests, 434 pass (2 fail còn lại vẫn là mục #17 - không liên quan). `npm run
-    build`: sạch.
+  - `npm test`: 436 tests, 434 pass (2 fail còn lại vẫn là mục #17 lúc đó - không liên quan). `npm
+    run build`: sạch. (Mục #17 đã được cài đặt ở Phiên 41, xem PROJECT_SUMMARY.md - `npm test` hiện
+    tại là 436/436 PASS, không còn fail nào.)
 
 **❌ CÒN LẠI (không thuộc phạm vi Phiên 40, không chặn triển khai):**
 1. **Rà bởi người bản ngữ** - toàn bộ nhãn tĩnh tiếng Trung/Nhật/Pháp (cả bản xem trước web Phiên

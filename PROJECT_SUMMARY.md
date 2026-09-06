@@ -5,6 +5,29 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 41 — Sửa 2 lỗ hổng phát hiện lúc rà soát chủ động + cài đặt Item #17 (Audio/IPA)
+Rà soát chủ động code Phiên 40 (không chờ báo lỗi), phát hiện 2 vấn đề thật:
+1. **Fallback âm thầm khi thiếu entry registry**: cả 3 component (`LessonPlanExportActions.jsx`/
+   `OutlineExportActions.jsx`/`ExportActions.jsx`) trước đây, nếu `foreignLanguageConfig` tồn tại
+   nhưng `getForeignLanguageExporters()` trả `null` (lỗi cấu hình - quên thêm entry vào
+   `foreignLanguageExportRegistry.js` khi thêm ngôn ngữ mới, 2 file tách biệt dễ quên đồng bộ), sẽ
+   ÂM THẦM rơi về luồng xuất tiếng Việt - giáo viên nhận nhầm file khuôn tiếng Việt cho nội dung đã
+   sinh bằng ngoại ngữ, KHÔNG có cảnh báo gì. Đã sửa: thêm biến `exporterMisconfigured`, vô hiệu hoá
+   nút "Tải Word"/"In PDF" + hiện cảnh báo đỏ trên UI + `window.alert()` khi cố bấm, KHÔNG fallback
+   êm xuôi nữa.
+2. **`printHtmlDocument()` phụ thuộc hoàn toàn vào sự kiện `onload`**: sau `document.write()` trên
+   cửa sổ popup, `onload` có thể không bắn ổn định trên mọi trình duyệt (đặc biệt Safari) - khiến
+   cửa sổ mở ra nhưng không tự in, không cảnh báo gì. Đã thêm `setTimeout` dự phòng 400ms (dùng cờ
+   `printed` đảm bảo chỉ gọi `print()` đúng 1 lần dù `onload`/timeout cùng bắn).
+
+**Item #17 (Audio/IPA) - cài đặt thật**: thêm `buildEnglishAudioIpaGuidance()` trong
+`lessonPlanPromptTemplates.js` - chèn quy tắc bắt buộc gắn thẻ `[AUDIO: Track_XX]` tại bước có hoạt
+động Nghe + phiên âm IPA khi giới thiệu từ vựng mới ở hoạt động "Khám phá", CHỈ áp dụng môn Tiếng
+Anh (`languageCode === "en"`) và không phải Mầm non - không rò rỉ sang môn khác hay Ngoại ngữ 2
+(Trung/Nhật/Pháp, có hệ phiên âm khác hẳn IPA). 4/4 test có sẵn từ trước (`test/lessonPlanEnglishAudioIpa.test.js`)
+nay PASS. `npm test`: 436/436 PASS (lần đầu tiên bộ test "xanh" hoàn toàn, không còn 2 fail tồn đọng
+nhiều phiên). `npm run build`: sạch.
+
 ## Phiên 40 — Xuất Word/PDF cho Ngoại ngữ 2 (Tiếng Trung/Tiếng Nhật/Tiếng Pháp) - Hướng A (nhân bản, isolation over DRY)
 
 **Bối cảnh:** Phiên 38-39 mới xong cấu hình/prompt + bản xem trước web cho Ngoại ngữ 2; nút "Tải
