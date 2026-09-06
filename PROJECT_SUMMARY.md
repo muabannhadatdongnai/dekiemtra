@@ -5,6 +5,76 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 40 — Xuất Word/PDF cho Ngoại ngữ 2 (Tiếng Trung/Tiếng Nhật/Tiếng Pháp) - Hướng A (nhân bản, isolation over DRY)
+
+**Bối cảnh:** Phiên 38-39 mới xong cấu hình/prompt + bản xem trước web cho Ngoại ngữ 2; nút "Tải
+Word"/"In PDF" vẫn gọi CỨNG service tiếng Anh (`LessonPlanExportActions.jsx`/
+`OutlineExportActions.jsx`/`ExportActions.jsx`), khiến 3 môn mới xuất NHẦM khuôn tiếng Anh. Đầu
+phiên, Hoan được hỏi và chọn **Hướng A - nhân bản riêng từng ngôn ngữ** (thay vì Hướng B - tách
+dictionary nhãn dùng chung) để giữ đúng nguyên tắc "isolation over DRY" đã áp dụng nhất quán trong
+dự án, chấp nhận đánh đổi trùng lặp code.
+
+**Đã làm:**
+1. `foreignLanguageDocBuilder.js` — thêm `createLanguageHelpers(font)` (bộ helper `textRun`/
+   `paragraph`/`heading`/`bulletList`/`cell` riêng, gắn thêm font `eastAsia` cho Tiếng Trung/Nhật)
+   và tham số `fontFamily` cho `printHtmlDocument()` (nhánh in PDF/HTML). Tiếng Pháp (Latinh) tiếp
+   tục dùng thẳng helper mặc định như tiếng Anh, không cần `eastAsia`.
+2. Nhân bản đúng khuôn `english*.js` thành 15 file mới (5 file × 3 ngôn ngữ):
+   `{chinese,japanese,french}LessonPlanExportService.js`,
+   `{chinese,japanese,french}OutlineExportService.js`,
+   `{chinese,japanese,french}ExamExportService.js`,
+   `{chinese,japanese,french}SpecificationBuilder.js`,
+   `{chinese,japanese,french}SpecificationExportBuilders.js`.
+3. `foreignLanguageExportRegistry.js` (MỚI) — bảng tra `languageCode` → đúng bộ
+   `{ exportToWord, print }` cho từng loại tài liệu (`lessonPlan`/`outline`/`exam`), để 3 component
+   xuất file không cần if/else lặp lại theo `languageCode` và thêm ngôn ngữ mới sau này chỉ cần
+   thêm 1 entry vào bảng, không sửa component.
+4. Sửa `LessonPlanExportActions.jsx`/`OutlineExportActions.jsx`/`ExportActions.jsx` — thay lệnh gọi
+   CỨNG `exportEnglishLessonPlanToWord`/`printEnglishLessonPlan`/... bằng tra qua
+   `getForeignLanguageExporters(foreignLanguageConfig.languageCode, docType)`.
+5. Tên file tải xuống đổi tiền tố theo ngôn ngữ: `Lesson-Plan-ZH-...`/`-JA-...`/`-FR-...`,
+   `Study-Outline-ZH-...`/..., `{title}-ZH-Student.docx`/`-ZH-Teacher.docx`/... (giữ ASCII, không
+   dùng ký tự Hán/Kana/dấu phụ Pháp trong tên file để tránh vấn đề tương thích hệ điều hành/trình
+   duyệt khi tải xuống).
+
+**Lỗi thật phát hiện lúc phát triển (không phải giả định lý thuyết):** Ban đầu viết
+`createLanguageHelpers({ name: "Times New Roman", eastAsia: "SimSun" })` — thư viện `docx@9` định
+nghĩa `TextRun.font` là `string | { name, hint } | { ascii, hAnsi, cs, eastAsia, hint }` (2 nhánh
+kiểu loại trừ nhau). Vì object truyền vào có field `name`, docx coi đây là nhánh `IFontOptions` và
+**ÂM THẦM BỎ QUA hoàn toàn field `eastAsia`** — không báo lỗi, không cảnh báo. Kết quả: toàn bộ chữ
+Hán/Kana trong Word vẫn đọc font "Times New Roman" (thiếu glyph CJK) dù code "nhìn có vẻ đúng" và
+XML vẫn "well-formed". Chỉ phát hiện được nhờ tự tay dựng 1 file `.docx` thật rồi soi trực tiếp
+`word/document.xml` bằng JSZip (không tin code, tin XML thật) — thấy `w:eastAsia="Times New Roman"`
+thay vì `"SimSun"`. Đã sửa đúng shape thư viện yêu cầu: `{ ascii: "Times New Roman", hAnsi: "Times
+New Roman", cs: "Times New Roman", eastAsia: "SimSun" }` (tương tự cho `"MS Mincho"` - tiếng Nhật).
+
+**Kiểm thử (3 lớp, đúng bài học Phiên 37 - "well-formed XML" KHÔNG đồng nghĩa "Word mở được"):**
+1. `test/foreignLanguage2Export.test.js` (24 test MỚI, pass) — dựng `.docx` thật cho cả 9 tổ hợp
+   (3 ngôn ngữ × 3 loại tài liệu), soi XML bằng JSZip, gọi `assertValidParagraphNesting()`
+   (`test/wordSchemaAssertions.js`) cho MỌI file kể cả kịch bản bảng 2 cột nhiều tiết (đúng đường
+   code `periodBoundaryTableRowZh/Ja/Fr` từng gây lỗi "<w:p>" lồng Phiên 37 ở bản tiếng Anh), kiểm
+   tra `w:eastAsia="SimSun"`/`"MS Mincho"` có mặt thật trong XML, và xác nhận "Tin nhắn gửi phụ
+   huynh"/"Thư ngỏ gửi Phụ huynh" vẫn giữ tiếng Việt ở cả 3 ngôn ngữ mới. Đồng thời kiểm tra
+   `getForeignLanguageExporters()` tra đúng cho cả 4 ngôn ngữ (`en`/`zh`/`ja`/`fr`) và trả `null` an
+   toàn khi `languageCode`/`docType` không tồn tại.
+2. `scripts/check-word-compatibility.mjs` — thêm 9 kịch bản mới (`giao-an-tieng-{trung,nhat,phap}-
+   nhieu-tiet`, `de-cuong-tieng-{trung,nhat,phap}`, `de-thi-tieng-{trung,nhat,phap}`) vào
+   `SCENARIOS`, dùng chung cấu trúc "bắc qua 2 tiết trong bảng 2 cột" như kịch bản tiếng Anh. Chạy
+   `npm run test:word-compat` (LibreOffice headless có sẵn trên máy) — 18/18 kịch bản (bao gồm cũ)
+   convert PDF thành công.
+3. Xác nhận TRỰC QUAN bằng mắt (không chỉ tin LibreOffice "convert được"): dựng 1 file `.docx`
+   tiếng Trung thật ngoài test suite, `soffice --convert-to pdf` rồi `pdftoppm` ra PNG, xem ảnh —
+   chữ Hán hiển thị đúng, không có ô vuông trống. Tiếng Nhật dùng chung cơ chế `eastAsia`/
+   `"MS Mincho"` nên tin cậy tương tự nhưng CHƯA tự xem ảnh riêng (xem `NEXT_STEPS.md`).
+- `npm test`: 436 tests, 434 pass (2 fail còn lại vẫn là mục #17 đã biết trước — English Audio/IPA,
+  không liên quan). `npm run build`: sạch.
+
+**Việc còn tồn đọng (xem `NEXT_STEPS.md` mục "🟢 Ngoại ngữ 2" để biết chi tiết):** rà bản dịch nhãn
+tĩnh bởi người biết tiếng Trung/Nhật/Pháp, xem ảnh trực quan riêng cho tiếng Nhật, xác nhận mở được
+bằng Microsoft Word thật (không chỉ LibreOffice), và dữ liệu SGK thật cho dropdown "Chương".
+
+---
+
 ## Phiên 39 — Sửa regression 3 test THPT (Phiên 38) + hạt sạn tiếng Việt trong bản xem trước Soạn Giáo Án môn Ngoại ngữ 2
 
 **Bối cảnh:** Đầu phiên, kiểm tra lại bằng cách tự chạy `npm install && npm test && npm run build`

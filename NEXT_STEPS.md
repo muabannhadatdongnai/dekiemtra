@@ -12,16 +12,14 @@ KHÔNG cần dropdown "chọn tổ hợp" riêng vì công cụ soạn theo 1 m�
 catalog Phiếu Bài Tập theo SGK KNTT. Môn Tiếng Anh ở 3 tab Soạn Giáo Án/Đề Cương Ôn Tập/Tạo Đề
 Kiểm Tra: từ Phiên 35, AI sinh nội dung TRỰC TIẾP bằng tiếng Anh ngay từ đầu (không còn sinh tiếng
 Việt rồi dịch lại) - nút "Tải Word"/"In PDF" DUY NHẤT tự động xuất bằng tiếng Anh khi môn học nằm
-trong danh bạ `src/data/foreignLanguageSubjects.js`. Phiên 38: đã thêm CẤU HÌNH (chưa xong XUẤT
-FILE Word/PDF) cho 3 môn Ngoại ngữ 2 mới - Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12 (THCS+THPT,
-theo bộ Kết nối tri thức). Phiên 39: sửa regression 3 test THPT do Ngoại ngữ 2 gây ra (đã cập nhật
-`thptSubjects.test.js`: 17 → 20 môn hợp lệ ở Lớp 10-12), và sửa "hạt sạn tiếng Việt" ở BẢN XEM
-TRƯỚC WEB (Soạn Giáo Án) cho 3 môn này (`LABELS_ZH`/`LABELS_JA`/`LABELS_FR` mới - xem
-`src/data/lessonPlanPreviewLabels.js`) - xem mục "🟡 Ngoại ngữ 2" bên dưới để biết chính xác phần
-nào xong/chưa xong (XUẤT FILE Word/PDF vẫn CHƯA LÀM). Riêng phụ lục "Tin nhắn gửi phụ huynh (Zalo)"
-ở Soạn Giáo Án và "Thư ngỏ gửi Phụ huynh" ở Đề Cương Ôn Tập (từ Phiên 37) LUÔN giữ tiếng Việt - đã
-xác nhận áp dụng đúng cho CẢ Ngoại ngữ 2 (tiêu đề tĩnh ở Phiên 39, nội dung AI sinh vốn đã đúng từ
-Phiên 37 nhờ cơ chế `exemptJsonFields` generic). Chi tiết đầy đủ từng module xem `README.md`.
+trong danh bạ `src/data/foreignLanguageSubjects.js`. Phiên 38-40: thêm ĐỦ 3 môn Ngoại ngữ 2 mới -
+Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12 (THCS+THPT, theo bộ Kết nối tri thức) - cấu hình/prompt
+(Phiên 38), bản xem trước web (Phiên 39), và XUẤT FILE Word/PDF (Phiên 40, xem
+`foreignLanguageExportRegistry.js`) - xem mục "🟢 Ngoại ngữ 2" bên dưới để biết chi tiết + phần còn
+tồn đọng (rà bởi người bản ngữ, xác nhận mở bằng Word thật). Riêng phụ lục "Tin nhắn gửi phụ huynh
+(Zalo)" ở Soạn Giáo Án và "Thư ngỏ gửi Phụ huynh" ở Đề Cương Ôn Tập (từ Phiên 37) LUÔN giữ tiếng
+Việt - đã xác nhận áp dụng đúng cho CẢ bản xem trước web lẫn file xuất ra của Ngoại ngữ 2. Chi tiết
+đầy đủ từng module xem `README.md`.
 
 ---
 
@@ -50,107 +48,66 @@ Phiên 37 nhờ cơ chế `exemptJsonFields` generic). Chi tiết đầy đủ t
 
 ---
 
-## 🟡 Ngoại ngữ 2 (Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12) — bắt đầu Phiên 38, tầng cấu hình + bản xem trước web ĐÃ XONG (Phiên 39), tầng XUẤT FILE CHƯA XONG
+## 🟢 Ngoại ngữ 2 (Tiếng Trung/Tiếng Nhật/Tiếng Pháp, Lớp 6-12) — bắt đầu Phiên 38, HOÀN TẤT ở Phiên 40 (cấu hình + bản xem trước web + XUẤT FILE Word/PDF)
 
 **Yêu cầu Hoan (Phiên 38):** SGK Kết nối tri thức đã có Tiếng Trung/Tiếng Nhật/Tiếng Pháp làm
 "Ngoại ngữ 2" cho THCS+THPT → thêm vào cả 3 tab Soạn Giáo Án/Đề Cương Ôn Tập/Tạo Đề Kiểm tra, giữ
 nguyên tắc "chia luồng riêng theo môn/khối" (isolation), và AI phải sinh nội dung bằng ĐÚNG ngôn
 ngữ riêng của từng môn (giống kiến trúc Tiếng Anh từ Phiên 35 - sinh trực tiếp, không dịch lại).
 
-**✅ ĐÃ XONG ở Phiên 38 (tầng cấu hình + prompt - rủi ro thấp, đã kiểm chứng bằng script Node thật):**
-- `config.js`: thêm 3 môn `Tieng_Trung`/`Tieng_Nhat`/`Tieng_Phap`, `minGrade: 6, maxGrade: 12`
-  (CHỈ THCS+THPT, không áp dụng Tiểu học - khác `Tieng_Anh` là Ngoại ngữ 1 dạy từ Lớp 1), không
-  giới hạn `modules` (mặc định hiện ở cả 3 tab, giống Tiếng Anh).
-- `foreignLanguageSubjects.js`: thêm 3 entry vào `FOREIGN_LANGUAGE_SUBJECTS` (languageCode
-  `zh`/`ja`/`fr`, `docLabel` bằng chính ngôn ngữ đó: 中文版本/日本語版/VERSION FRANÇAISE). Vì
-  `buildForeignLanguageOutputDirective()` được gọi KHÔNG ĐIỀU KIỆN ở cả 3 file prompt
-  (`promptTemplates.js`/`outlinePromptTemplates.js`/`lessonPlanPromptTemplates.js`), KHÔNG cần sửa
-  gì thêm ở 3 file đó - chỉ cần thêm entry là AI đã tự động nhận chỉ thị sinh đúng ngôn ngữ.
-- `subjectProfiles.js`: thêm 3 profile (`expertRole` + `extraRules` riêng biệt) - đã nghiên cứu kỹ
-  đặc thù CHỮ VIẾT/NGỮ ÂM từng tiếng để AI sinh đúng chuẩn sư phạm Ngoại ngữ 2 (không chỉ dịch máy):
-  - Tiếng Trung: bắt buộc chữ GIẢN THỂ + kèm PINYIN có dấu thanh điệu, giới hạn độ khó theo
-    thang HSK 1 (Lớp 6-9) → HSK 2-3 (Lớp 10-12).
-  - Tiếng Nhật: ưu tiên Hiragana/Katakana, Kanji phải có Furigana, kèm Rômaji, giới hạn ngữ pháp
-    theo thang JLPT N5 (Lớp 6-9) → cận N4 (Lớp 10-12), chỉ dùng thể lịch sự です/ます giai đoạn đầu.
-  - Tiếng Pháp: bắt buộc đủ dấu phụ (é/è/ê/ë/à/ù/â/î/ô/û/ç), tuân thủ hoà hợp giống-số, giới hạn
-    thì theo trình độ (présent → passé composé/futur proche → imparfait/futur simple).
-- Đã kiểm chứng bằng script Node thật (dựng từ đúng code trong `src/`, không viết tay mô phỏng):
-  dropdown Lớp 6-12 hiện đủ 4 ngôn ngữ (Anh/Trung/Nhật/Pháp), Lớp 1-5 KHÔNG có 3 môn mới (đúng yêu
-  cầu chỉ THCS+THPT), `getSubjectProfile()`/`findForeignLanguageConfig()`/
-  `buildForeignLanguageOutputDirective()` đều trả đúng dữ liệu cho cả 3 môn mới.
+**Tóm tắt Phiên 38-39 (cấu hình/prompt + bản xem trước web - chi tiết đầy đủ đã chuyển sang
+`PROJECT_SUMMARY.md`):** `config.js`/`foreignLanguageSubjects.js`/`subjectProfiles.js` đã thêm 3
+môn (`zh`/`ja`/`fr`, Lớp 6-12, không giới hạn `modules`), AI sinh nội dung TRỰC TIẾP bằng đúng ngôn
+ngữ (không dịch lại), có `expertRole`/`extraRules` riêng theo đặc thù HSK/JLPT/dấu phụ Pháp ngữ.
+`LessonPlanPreview.jsx` đã có `LABELS_ZH`/`LABELS_JA`/`LABELS_FR` (bản xem trước web, KHÁC xuất
+file). **CHƯA rà bởi người bản ngữ** - xem cảnh báo tương tự ở phần XUẤT FILE Phiên 40 bên dưới,
+gộp chung 1 việc cần làm.
+- **Kế thừa, GHI NHẬN chứ CHƯA sửa** (ngoài phạm vi): Đề Cương Ôn Tập (`OutlinePreview.jsx`) và Đề
+  Kiểm Tra (`VietnameseExamPreview.jsx`) hoàn toàn KHÔNG có xử lý theo `languageCode` ở BẢN XEM
+  TRƯỚC WEB (khác XUẤT FILE - Phiên 40 đã xong) - hiển thị nhãn tĩnh tiếng Việt cho MỌI môn kể cả
+  Tiếng Anh (khoảng trống có sẵn từ Phiên 35-36). Cần phiên riêng nếu Hoan muốn đồng bộ.
 
-**✅ ĐÃ XONG ở Phiên 39 (2 lỗi phát sinh từ việc thêm Ngoại ngữ 2 ở Phiên 38, phát hiện qua tự chạy
-`npm test` thật trong repo + ảnh chụp màn hình Hoan gửi):**
-- Regression 3 test `thptSubjects.test.js` (Lớp 10-12 có 20 môn thay vì 17 do Ngoại ngữ 2 không
-  giới hạn `modules`) — đã cập nhật lại kỳ vọng test cho đúng ý đồ (17 chính thức + 3 Ngoại ngữ 2).
-- Hạt sạn tiếng Việt ở BẢN XEM TRƯỚC WEB (Soạn Giáo Án) - `LessonPlanPreview.jsx` chỉ có
-  `LABELS_VI`/`LABELS_EN`, 3 môn mới rơi về `LABELS_VI` — đã thêm `LABELS_ZH`/`LABELS_JA`/`LABELS_FR`
-  (tách sang file mới `src/data/lessonPlanPreviewLabels.js` để test được bằng `node --test` thuần,
-  không qua JSX) + đồng bộ nhãn hoạt động/nhãn "Khởi động lại"/nhãn STEM trong
-  `lessonPlanTemplates.js`. Tiêu đề "PHỤ LỤC: Tin nhắn gửi phụ huynh (Zalo)" cố ý giữ tiếng Việt ở
-  cả 3 ngôn ngữ mới, đúng như English. Xem test bảo vệ mới
-  `test/lessonPlanForeignLanguage2Labels.test.js` (24 test, pass).
-- **CHƯA rà bởi người bản ngữ** — bản dịch tiếng Trung/Nhật/Pháp cho các nhãn này do Claude dịch,
-  cùng mức độ tin cậy như phần dịch nhãn Word ở mục 2 bên dưới (cần Hoan nhờ người biết tiếng kiểm
-  tra lại khi có dịp, không phải việc phải chặn triển khai vì đây chỉ là nhãn khung/tiêu đề, không
-  phải nội dung sư phạm do AI sinh).
-- **Phát hiện thêm, GHI NHẬN chứ CHƯA sửa** (Hoan chưa yêu cầu, ngoài phạm vi Phiên 39): Đề Cương
-  Ôn Tập (`OutlinePreview.jsx`) và Đề Kiểm Tra (`VietnameseExamPreview.jsx`) hoàn toàn KHÔNG có xử
-  lý theo `languageCode` ở bản xem trước - hiển thị nhãn tĩnh tiếng Việt cho MỌI môn kể cả Tiếng
-  Anh (khoảng trống có sẵn từ Phiên 35-36, không phải lỗi riêng của Ngoại ngữ 2). Nếu Hoan muốn sửa
-  đồng bộ cho cả 2 tab này (áp dụng cho cả Tiếng Anh lẫn Ngoại ngữ 2), cần làm ở phiên riêng vì khối
-  lượng tương đương lần sửa `LessonPlanPreview.jsx` này nhân đôi (2 component, có thể còn nhiều nhãn
-  tĩnh hơn do cấu trúc đề cương/đề kiểm tra phức tạp hơn giáo án).
+**✅ ĐÃ XONG ở Phiên 40 (XUẤT FILE Word/PDF - Hướng A, Hoan chọn giữ nguyên "isolation over DRY"):**
+- 15 file dịch vụ mới (5 file × 3 ngôn ngữ, đúng khuôn `english*.js`):
+  `{chinese,japanese,french}LessonPlanExportService.js`,
+  `{chinese,japanese,french}OutlineExportService.js`,
+  `{chinese,japanese,french}ExamExportService.js`,
+  `{chinese,japanese,french}SpecificationBuilder.js`,
+  `{chinese,japanese,french}SpecificationExportBuilders.js`.
+- `foreignLanguageDocBuilder.js` thêm `createLanguageHelpers(font)` (bộ helper riêng gắn font
+  `eastAsia` cho Tiếng Trung/Nhật) + tham số `fontFamily` cho `printHtmlDocument()`. Tiếng Pháp
+  dùng thẳng helper mặc định (Latinh, Times New Roman đủ).
+- `foreignLanguageExportRegistry.js` (MỚI) - bảng tra `languageCode` → đúng bộ hàm
+  `exportToWord`/`print` mỗi loại tài liệu; `LessonPlanExportActions.jsx`/
+  `OutlineExportActions.jsx`/`ExportActions.jsx` đã đổi sang gọi qua registry này thay vì gọi CỨNG
+  bản tiếng Anh. Tên file tải xuống đổi tiền tố theo ngôn ngữ (`Lesson-Plan-ZH-...`/`-JA-...`/
+  `-FR-...`, `{title}-ZH-Student.docx`/`-Teacher.docx`...).
+- **Bắt được 1 lỗi thật lúc phát triển**: shape `{ name, eastAsia }` truyền vào `TextRun.font` của
+  `docx@9` bị ÂM THẦM BỎ QUA `eastAsia` (docx coi là `IFontOptions`, không phải
+  `IFontAttributesProperties`) - chữ Hán/Kana ban đầu vẫn đọc "Times New Roman" dù code trông đúng.
+  Chỉ phát hiện được nhờ soi trực tiếp `word/document.xml` sinh ra. Đã sửa thành đúng shape
+  `{ ascii, hAnsi, cs, eastAsia }` - xem chi tiết trong `createLanguageHelpers()`.
+- Kiểm thử 3 lớp (đúng bài học Phiên 37 - "well-formed XML" ≠ "Word mở được"):
+  1. `test/foreignLanguage2Export.test.js` (24 test MỚI) - dựng `.docx` thật, soi XML bằng JSZip,
+     `assertValidParagraphNesting()` cho mọi file (kể cả kịch bản bảng 2 cột nhiều tiết - đúng
+     đường code từng gây lỗi Phiên 37), kiểm tra `w:eastAsia="SimSun"`/`"MS Mincho"` có trong XML
+     thật, và tin nhắn/thư ngỏ phụ huynh vẫn giữ tiếng Việt.
+  2. `npm run test:word-compat` (LibreOffice headless) - thêm 9 kịch bản mới, cả 18/18 (kể cả cũ)
+     convert PDF thành công.
+  3. Xem TRỰC QUAN bằng mắt: xuất 1 file `.docx` tiếng Trung → PDF → PNG - chữ Hán hiện đúng,
+     không ô vuông trống. (Tiếng Nhật CHƯA tự xem ảnh riêng, xem mục còn lại bên dưới.)
+  - `npm test`: 436 tests, 434 pass (2 fail còn lại vẫn là mục #17 - không liên quan). `npm run
+    build`: sạch.
 
-**❌ CHƯA LÀM (phần XUẤT FILE Word/PDF - việc lớn nhất, cố ý CHƯA làm vội để tránh lặp lại đúng lỗi
-schema `<w:p>` lồng `<w:p>` như Phiên 37 nếu làm ẩu/vội cho 3 ngôn ngữ cùng lúc):**
-
-1. **Quyết định kiến trúc trước khi viết code (Hoan chọn 1 trong 2 hướng dưới, hoặc để Claude đề
-   xuất ở phiên sau sau khi cân nhắc thêm):**
-   - **Hướng A - nhân bản như Tiếng Anh (đúng "isolation" nguyên bản):** tạo MỚI hoàn toàn 9 file
-     (`chineseLessonPlanExportService.js`, `chineseOutlineExportService.js`,
-     `chineseSpecificationBuilder.js` + `chineseSpecificationExportBuilders.js`, và tương tự cho
-     `japanese*`/`french*`) - mỗi file ~700 dòng, chép khuôn từ `english*.js` tương ứng rồi dịch
-     TOÀN BỘ tiêu đề tĩnh ("LESSON PLAN" → "教案"/"学習指導案"/"FICHE PÉDAGOGIQUE"...). Rủi ro: nhân
-     3 lần khối lượng code + nhân 3 lần khả năng lặp lại bug schema Word (VD lỗi `<w:p>` lồng
-     `<w:p>` của Phiên 37) nếu chép tay không cẩn thận ở cả 3 bản.
-   - **Hướng B - tách riêng "nhãn tĩnh" khỏi "khung dựng file" (khuyến nghị của Claude, giảm rủi ro
-     lặp bug):** tạo 1 file `foreignLanguageStaticLabels.js` chứa object tra theo `languageCode`
-     (vd `{ en: { LESSON_PLAN: "LESSON PLAN", OBJECTIVES: "I. LEARNING OBJECTIVES", ... }, zh: {...},
-     ja: {...}, fr: {...} }`), rồi sửa `englishLessonPlanExportService.js`/
-     `englishOutlineExportService.js`/`englishSpecification*.js` (ĐỔI TÊN thành
-     `foreignLanguageLessonPlanExportService.js`... hoặc giữ tên cũ, nhận thêm tham số
-     `languageCode`) để tra nhãn từ dictionary đó thay vì hard-code tiếng Anh - KHÔNG cần nhân bản
-     700 dòng x3, và SỬA LOGIC DỰNG DOCX (`cell()`/`periodBoundaryTableRowEn()`...) CHỈ Ở 1 NƠI DUY
-     NHẤT (tránh lặp lại đúng bug Phiên 37 ở 3 file khác nhau). Đánh đổi: đi ngược nguyên tắc
-     "isolation over DRY" đã áp dụng nhất quán cho các tính năng khác - cần Hoan xác nhận có chấp
-     nhận ngoại lệ này không (Claude cho rằng ĐÁNG đánh đổi ở riêng lớp "khung dựng file Word" vì
-     đây thuần là hạ tầng kỹ thuật/schema OOXML, không phải nội dung sư phạm - khác với lý do
-     "isolation" ban đầu là tránh 1 sửa đổi ảnh hưởng chéo nội dung sư phạm giữa các môn/khối).
-2. Dịch chính xác toàn bộ nhãn tĩnh sang cả 3 ngôn ngữ (tiêu đề "LESSON PLAN"/"I. LEARNING
-   OBJECTIVES"/"II. TEACHING AIDS"/"III. LEARNING ACTIVITIES"/"IV. POST-LESSON ADJUSTMENTS", các
-   phụ lục "APPENDIX: ..."/"STEM GUIDE"/"Student Worksheet"/"Consolidation - Quick Questions"/
-   "Mind Map", nhãn bảng 2 cột "Teacher & Student Activities"/"Expected Outcome", dòng "Hết Tiết"
-   ("── End of Period X (break) — Move to Period Y ──")...) - CẦN người biết tiếng Trung/Nhật/Pháp
-   rà lại bản dịch (Claude dịch được nhưng không thay thế người bản ngữ/giáo viên thật kiểm tra).
-3. Sửa routing ở 3 component xuất file: `LessonPlanExportActions.jsx`/`OutlineExportActions.jsx`/
-   `ExportActions.jsx` hiện gọi CỨNG `exportEnglishLessonPlanToWord`/`printEnglishLessonPlan`/...
-   bất kể `languageCode` gì (viết từ Phiên 35 khi mới có 1 ngôn ngữ) - phải đổi sang tra theo
-   `foreignLanguageConfig.languageCode` để gọi đúng service (hoặc đúng tham số nếu theo Hướng B).
-   File đặt tên tải xuống (`Lesson-Plan-EN-...`) cũng cần đổi tiền tố theo ngôn ngữ (`Lesson-Plan-
-   ZH-...`/`Lesson-Plan-JA-...`/`Lesson-Plan-FR-...`).
-4. Tab Tạo Đề Kiểm tra còn cần xuất bảng ma trận/đặc tả đề (`englishSpecificationBuilder.js`/
-   `englishSpecificationExportBuilders.js`) - cũng cần bản tương ứng 3 ngôn ngữ mới (hoặc theo
-   Hướng B ở trên).
-5. Kiểm thử BẮT BUỘC trước khi coi là xong (đúng bài học Phiên 37 - "well-formed XML" KHÔNG đồng
-   nghĩa "Word mở được"): viết test mới kiểu `test/foreignLanguageExport.test.js` áp dụng cho cả 3
-   ngôn ngữ, chạy `assertValidParagraphNesting()` (`test/wordSchemaAssertions.js`) trên
-   `document.xml` thật của cả 9 tổ hợp (3 ngôn ngữ x 3 tab), thêm kịch bản vào
-   `npm run test:word-compat`, và Hoan click-through + MỞ THẬT bằng Microsoft Word (không chỉ xem
-   trước/PDF) cho ít nhất 1 giáo án/1 đề cương/1 đề kiểm tra mỗi ngôn ngữ trước khi coi là hoàn tất.
-6. Dữ liệu SGK thật (kho GitHub kiến thức) cho 3 môn mới - dropdown "Chương" sẽ RỖNG tới khi có file
-   `chuong_{n}.md` đúng cấu trúc thư mục hiện dùng cho Tiếng Anh/Toán/Tiếng Việt (việc này độc lập
-   với phần code, Hoan có thể làm dần theo Chương, không cần xong hết cùng lúc với code).
+**❌ CÒN LẠI (không thuộc phạm vi Phiên 40, không chặn triển khai):**
+1. **Rà bởi người bản ngữ** - toàn bộ nhãn tĩnh tiếng Trung/Nhật/Pháp (cả bản xem trước web Phiên
+   39 lẫn 15 file xuất file Phiên 40) do Claude dịch, CẦN người biết tiếng kiểm tra lại khi có dịp.
+2. Xem ảnh PNG trực quan riêng cho 1 file tiếng Nhật (đã làm cho tiếng Trung) để chắc chắn
+   `MS Mincho` hiển thị đúng Kanji/Hiragana/Katakana.
+3. Mở THẬT bằng Microsoft Word (không chỉ LibreOffice headless) - đặc biệt xác nhận máy Windows của
+   giáo viên có sẵn `SimSun`/`MS Mincho` (thường có sẵn với Office tiêu chuẩn).
+4. Dữ liệu SGK thật (kho GitHub kiến thức) cho 3 môn mới - dropdown "Chương" sẽ RỖNG tới khi có file
+   `chuong_{n}.md` đúng cấu trúc thư mục hiện dùng cho Tiếng Anh/Toán/Tiếng Việt.
 
 ---
 

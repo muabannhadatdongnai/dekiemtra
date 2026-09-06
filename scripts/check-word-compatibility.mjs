@@ -49,6 +49,15 @@ import { exportReportCommentsToWord } from "../src/services/reportCommentExportS
 import { buildEnglishLessonPlanDocxBlob } from "../src/services/englishLessonPlanExportService.js";
 import { buildEnglishOutlineDocxBlob } from "../src/services/englishOutlineExportService.js";
 import { buildEnglishExamDocxBlob } from "../src/services/englishExamExportService.js";
+import { buildChineseLessonPlanDocxBlob } from "../src/services/chineseLessonPlanExportService.js";
+import { buildChineseOutlineDocxBlob } from "../src/services/chineseOutlineExportService.js";
+import { buildChineseExamDocxBlob } from "../src/services/chineseExamExportService.js";
+import { buildJapaneseLessonPlanDocxBlob } from "../src/services/japaneseLessonPlanExportService.js";
+import { buildJapaneseOutlineDocxBlob } from "../src/services/japaneseOutlineExportService.js";
+import { buildJapaneseExamDocxBlob } from "../src/services/japaneseExamExportService.js";
+import { buildFrenchLessonPlanDocxBlob } from "../src/services/frenchLessonPlanExportService.js";
+import { buildFrenchOutlineDocxBlob } from "../src/services/frenchOutlineExportService.js";
+import { buildFrenchExamDocxBlob } from "../src/services/frenchExamExportService.js";
 import { LESSON_PLAN_COLUMN_MODES } from "../src/data/lessonPlanTemplates.js";
 
 import {
@@ -231,6 +240,140 @@ function makeEnglishExamScenario() {
   return buildEnglishExamDocxBlob(examMeta, translatedContent, { includeMatrixAndSpec: false });
 }
 
+// ========== Phiên 40: Tiếng Trung/Tiếng Nhật/Tiếng Pháp (Ngoại ngữ 2) ==========
+// Cùng lý do/cùng kịch bản "bắc qua 2 tiết trong bảng 2 cột" như makeEnglishLessonPlanScenario() ở
+// trên - đây chính là đường code (periodBoundaryTableRowZh/Ja/Fr) từng gây lỗi Phiên 37 cho bản
+// tiếng Anh, nên PHẢI kiểm tra lại y hệt cho cả 3 ngôn ngữ mới bằng LibreOffice thật, không chỉ
+// JSZip-soi-XML (xem test/foreignLanguage2Export.test.js cho lớp kiểm tra JSZip).
+function makeChineseLessonPlanScenario() {
+  const lessonPlan = {
+    tenBai: "第一课：爱好",
+    yeuCauCanDat: { kienThuc: ["区分声调。"] },
+    doDungDayHoc: { giaoVien: ["录音"], hocSinh: ["课本"] },
+    hoatDong: [
+      {
+        ten: "热身",
+        mucTieu: "调动学生兴趣。",
+        tienTrinh: [
+          { tiet: 1, hoatDongGVHS: "问候学生。", sanPhamDuKien: "学生参与。" },
+          { tiet: 2, hoatDongGVHS: "复习并引入新词汇。", sanPhamDuKien: "学生记录词汇。" },
+        ],
+      },
+    ],
+  };
+  return buildChineseLessonPlanDocxBlob(lessonPlan, {
+    tenBai: lessonPlan.tenBai,
+    grade: 6,
+    soTiet: 2,
+    subjectLabelEn: "Tiếng Trung",
+    columnMode: LESSON_PLAN_COLUMN_MODES.TWO_COLUMN,
+  });
+}
+
+function makeChineseOutlineScenario() {
+  const outline = {
+    tenDeCuong: "复习提纲 - 第三单元",
+    kienThucCotLoi: [{ tieuMuc: "词汇", noiDung: "关于爱好的词汇。" }],
+    dangBai: [{ tenDang: "题型一", baiMauDe: "你的爱好是什么？", baiMauLoiGiai: "我的爱好是读书。" }],
+    thuNgoPhuHuynh: "Kính gửi quý phụ huynh, đây là đề cương ôn tập giúp con nắm vững từ vựng.",
+  };
+  return buildChineseOutlineDocxBlob(outline, { subjectLabelEn: "Tiếng Trung", grade: 5 });
+}
+
+function makeChineseExamScenario() {
+  const examMeta = { title: "中文测验 - Word Compat", grade: 5 };
+  const translatedContent = {
+    questions: [{ content: "选出正确答案。", options: ["A. 猫", "B. 狗"], correctAnswer: "A" }],
+  };
+  return buildChineseExamDocxBlob(examMeta, translatedContent, { includeMatrixAndSpec: false });
+}
+
+function makeJapaneseLessonPlanScenario() {
+  const lessonPlan = {
+    tenBai: "第1課：趣味",
+    yeuCauCanDat: { kienThuc: ["発音を区別する。"] },
+    doDungDayHoc: { giaoVien: ["音声"], hocSinh: ["教科書"] },
+    hoatDong: [
+      {
+        ten: "導入",
+        mucTieu: "生徒の興味を引く。",
+        tienTrinh: [
+          { tiet: 1, hoatDongGVHS: "生徒に挨拶する。", sanPhamDuKien: "生徒が参加する。" },
+          { tiet: 2, hoatDongGVHS: "復習して新しい語彙を導入する。", sanPhamDuKien: "生徒が語彙をノートに書く。" },
+        ],
+      },
+    ],
+  };
+  return buildJapaneseLessonPlanDocxBlob(lessonPlan, {
+    tenBai: lessonPlan.tenBai,
+    grade: 6,
+    soTiet: 2,
+    subjectLabelEn: "Tiếng Nhật",
+    columnMode: LESSON_PLAN_COLUMN_MODES.TWO_COLUMN,
+  });
+}
+
+function makeJapaneseOutlineScenario() {
+  const outline = {
+    tenDeCuong: "復習まとめ - 第3課",
+    kienThucCotLoi: [{ tieuMuc: "語彙", noiDung: "趣味に関する語彙。" }],
+    dangBai: [{ tenDang: "タイプ1", baiMauDe: "あなたの趣味は何ですか。", baiMauLoiGiai: "私の趣味は読書です。" }],
+    thuNgoPhuHuynh: "Kính gửi quý phụ huynh, đây là đề cương ôn tập giúp con nắm vững từ vựng.",
+  };
+  return buildJapaneseOutlineDocxBlob(outline, { subjectLabelEn: "Tiếng Nhật", grade: 5 });
+}
+
+function makeJapaneseExamScenario() {
+  const examMeta = { title: "日本語テスト - Word Compat", grade: 5 };
+  const translatedContent = {
+    questions: [{ content: "正しい答えを選びなさい。", options: ["A. 猫", "B. 犬"], correctAnswer: "A" }],
+  };
+  return buildJapaneseExamDocxBlob(examMeta, translatedContent, { includeMatrixAndSpec: false });
+}
+
+function makeFrenchLessonPlanScenario() {
+  const lessonPlan = {
+    tenBai: "Unité 1 : Les loisirs",
+    yeuCauCanDat: { kienThuc: ["Distinguer les sons cibles."] },
+    doDungDayHoc: { giaoVien: ["Audio"], hocSinh: ["Manuel"] },
+    hoatDong: [
+      {
+        ten: "Mise en route",
+        mucTieu: "Motiver les élèves.",
+        tienTrinh: [
+          { tiet: 1, hoatDongGVHS: "Saluer les élèves.", sanPhamDuKien: "Élèves engagés." },
+          { tiet: 2, hoatDongGVHS: "Réviser et introduire du nouveau vocabulaire.", sanPhamDuKien: "Élèves notent le vocabulaire." },
+        ],
+      },
+    ],
+  };
+  return buildFrenchLessonPlanDocxBlob(lessonPlan, {
+    tenBai: lessonPlan.tenBai,
+    grade: 6,
+    soTiet: 2,
+    subjectLabelEn: "Tiếng Pháp",
+    columnMode: LESSON_PLAN_COLUMN_MODES.TWO_COLUMN,
+  });
+}
+
+function makeFrenchOutlineScenario() {
+  const outline = {
+    tenDeCuong: "Fiche de révision - Unité 3",
+    kienThucCotLoi: [{ tieuMuc: "Vocabulaire", noiDung: "Mots sur les loisirs." }],
+    dangBai: [{ tenDang: "Type 1", baiMauDe: "Quel est ton loisir ?", baiMauLoiGiai: "Mon loisir est la lecture." }],
+    thuNgoPhuHuynh: "Kính gửi quý phụ huynh, đây là đề cương ôn tập giúp con nắm vững từ vựng.",
+  };
+  return buildFrenchOutlineDocxBlob(outline, { subjectLabelEn: "Tiếng Pháp", grade: 5 });
+}
+
+function makeFrenchExamScenario() {
+  const examMeta = { title: "Évaluation de français - Word Compat", grade: 5 };
+  const translatedContent = {
+    questions: [{ content: "Choisissez la bonne réponse.", options: ["A. chat", "B. chien"], correctAnswer: "A" }],
+  };
+  return buildFrenchExamDocxBlob(examMeta, translatedContent, { includeMatrixAndSpec: false });
+}
+
 const SCENARIOS = [
   { name: "de-thi-toan-cong-thuc", build: makeExamScenario },
   { name: "phieu-bai-tap-anh-nhung", build: makeWorksheetScenario },
@@ -241,6 +384,15 @@ const SCENARIOS = [
   { name: "giao-an-tieng-anh-nhieu-tiet", build: makeEnglishLessonPlanScenario },
   { name: "de-cuong-tieng-anh", build: makeEnglishOutlineScenario },
   { name: "de-thi-tieng-anh", build: makeEnglishExamScenario },
+  { name: "giao-an-tieng-trung-nhieu-tiet", build: makeChineseLessonPlanScenario },
+  { name: "de-cuong-tieng-trung", build: makeChineseOutlineScenario },
+  { name: "de-thi-tieng-trung", build: makeChineseExamScenario },
+  { name: "giao-an-tieng-nhat-nhieu-tiet", build: makeJapaneseLessonPlanScenario },
+  { name: "de-cuong-tieng-nhat", build: makeJapaneseOutlineScenario },
+  { name: "de-thi-tieng-nhat", build: makeJapaneseExamScenario },
+  { name: "giao-an-tieng-phap-nhieu-tiet", build: makeFrenchLessonPlanScenario },
+  { name: "de-cuong-tieng-phap", build: makeFrenchOutlineScenario },
+  { name: "de-thi-tieng-phap", build: makeFrenchExamScenario },
 ];
 
 // --------------------------------------------------------------------------------------------
