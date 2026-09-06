@@ -21,6 +21,11 @@ import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
  * getForeignLanguageExporters() (foreignLanguageExportRegistry.js) thay vì gọi cứng
  * exportEnglishOutlineToWord()/printEnglishOutline() - để Tiếng Trung/Nhật/Pháp xuất đúng ngôn ngữ
  * của môn học thay vì luôn rơi về tiếng Anh.
+ *
+ * ⚠️ FIX (Phiên 41) - cùng lỗi/sửa như LessonPlanExportActions.jsx: trước đây nếu
+ * `foreignLanguageConfig` tồn tại nhưng registry THIẾU entry (lỗi cấu hình - quên đồng bộ 2 file),
+ * code cũ âm thầm fallback về `exportOutlineBothVersions()` (bản tiếng Việt). Giờ vô hiệu hoá nút +
+ * cảnh báo rõ ràng thay vì xuất nhầm khuôn ngôn ngữ.
  */
 export default function OutlineExportActions({ outline, meta }) {
   const disabled = !outline?.kienThucCotLoi?.length;
@@ -28,8 +33,16 @@ export default function OutlineExportActions({ outline, meta }) {
   const exporters = foreignLanguageConfig
     ? getForeignLanguageExporters(foreignLanguageConfig.languageCode, "outline")
     : null;
+  const exporterMisconfigured = Boolean(foreignLanguageConfig) && !exporters;
 
   function handleWord() {
+    if (exporterMisconfigured) {
+      window.alert(
+        `Lỗi cấu hình: chưa có bộ hàm xuất Word cho ngôn ngữ "${foreignLanguageConfig.languageCode}". ` +
+          "Vui lòng báo cho người phát triển (thiếu entry trong foreignLanguageExportRegistry.js)."
+      );
+      return;
+    }
     if (exporters) {
       exporters.exportToWord(outline, { grade: meta?.grade, subjectLabelEn: foreignLanguageConfig.languageNameEn });
       return;
@@ -38,6 +51,13 @@ export default function OutlineExportActions({ outline, meta }) {
   }
 
   function handlePdf() {
+    if (exporterMisconfigured) {
+      window.alert(
+        `Lỗi cấu hình: chưa có bộ hàm in/xuất PDF cho ngôn ngữ "${foreignLanguageConfig.languageCode}". ` +
+          "Vui lòng báo cho người phát triển (thiếu entry trong foreignLanguageExportRegistry.js)."
+      );
+      return;
+    }
     if (exporters) {
       exporters.print(outline, { grade: meta?.grade, subjectLabelEn: foreignLanguageConfig.languageNameEn });
       return;
@@ -47,10 +67,16 @@ export default function OutlineExportActions({ outline, meta }) {
 
   return (
     <div className="no-print flex flex-col gap-2">
+      {exporterMisconfigured && (
+        <p className="text-sm font-medium text-red-600">
+          ⚠️ Lỗi cấu hình: chưa hỗ trợ xuất file cho ngôn ngữ này (thiếu entry trong registry) - đã
+          tắt tạm 2 nút xuất bên dưới để tránh xuất nhầm khuôn tiếng Việt. Vui lòng báo lỗi.
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleWord}
-          disabled={disabled}
+          disabled={disabled || exporterMisconfigured}
           className="flex items-center gap-2 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           <FileDown size={15} />
@@ -58,7 +84,7 @@ export default function OutlineExportActions({ outline, meta }) {
         </button>
         <button
           onClick={handlePdf}
-          disabled={disabled}
+          disabled={disabled || exporterMisconfigured}
           className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
           <Printer size={15} /> In / Tải PDF

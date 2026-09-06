@@ -29,6 +29,14 @@ import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 // NHẦM sang khuôn tiếng Anh. Giờ tra theo `foreignLanguageConfig.languageCode` qua
 // getForeignLanguageExporters() (foreignLanguageExportRegistry.js) để gọi đúng bộ hàm của từng
 // ngôn ngữ - xem PROJECT_SUMMARY.md Phiên 40.
+//
+// ⚠️ FIX (Phiên 41) - trước đây khi `foreignLanguageConfig` tồn tại (môn nằm trong danh bạ Ngoại
+// ngữ) NHƯNG `getForeignLanguageExporters()` trả về `null` (VD: có ai đó thêm 1 ngôn ngữ mới vào
+// foreignLanguageSubjects.js nhưng QUÊN thêm entry tương ứng vào foreignLanguageExportRegistry.js -
+// 2 file tách biệt, rất dễ quên đồng bộ), code CŨ âm thầm rơi xuống `exportLessonPlanToWord()` (bản
+// tiếng Việt) - khiến giáo viên nhận nhầm file xuất theo khuôn/nhãn tiếng Việt cho nội dung ĐÃ được
+// AI sinh bằng ngoại ngữ, mà KHÔNG có bất kỳ cảnh báo nào. Giờ coi đây là lỗi cấu hình THẬT SỰ: vô
+// hiệu hoá 2 nút xuất + hiện cảnh báo rõ ràng, KHÔNG fallback êm xuôi.
 export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) {
   const [includeTeacherScript, setIncludeTeacherScript] = useState(false);
   const disabled = !lessonPlan;
@@ -37,8 +45,18 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
   const exporters = foreignLanguageConfig
     ? getForeignLanguageExporters(foreignLanguageConfig.languageCode, "lessonPlan")
     : null;
+  // Môn học CÓ trong danh bạ Ngoại ngữ nhưng KHÔNG có bộ hàm xuất tương ứng trong registry - lỗi
+  // cấu hình (thiếu đồng bộ 2 file), không phải trường hợp bình thường "môn tiếng Việt".
+  const exporterMisconfigured = Boolean(foreignLanguageConfig) && !exporters;
 
   function handleWord() {
+    if (exporterMisconfigured) {
+      window.alert(
+        `Lỗi cấu hình: chưa có bộ hàm xuất Word cho ngôn ngữ "${foreignLanguageConfig.languageCode}". ` +
+          "Vui lòng báo cho người phát triển (thiếu entry trong foreignLanguageExportRegistry.js)."
+      );
+      return;
+    }
     if (exporters) {
       exporters.exportToWord(
         lessonPlan,
@@ -59,6 +77,13 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
   }
 
   function handlePdf() {
+    if (exporterMisconfigured) {
+      window.alert(
+        `Lỗi cấu hình: chưa có bộ hàm in/xuất PDF cho ngôn ngữ "${foreignLanguageConfig.languageCode}". ` +
+          "Vui lòng báo cho người phát triển (thiếu entry trong foreignLanguageExportRegistry.js)."
+      );
+      return;
+    }
     if (exporters) {
       exporters.print(
         lessonPlan,
@@ -80,6 +105,12 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
 
   return (
     <div className="no-print flex flex-col gap-2">
+      {exporterMisconfigured && (
+        <p className="text-sm font-medium text-red-600">
+          ⚠️ Lỗi cấu hình: chưa hỗ trợ xuất file cho ngôn ngữ này (thiếu entry trong registry) - đã
+          tắt tạm 2 nút xuất bên dưới để tránh xuất nhầm khuôn tiếng Việt. Vui lòng báo lỗi.
+        </p>
+      )}
       {hasTeacherScript && (
         <label className="flex w-fit cursor-pointer items-center gap-2 text-sm text-slate-600">
           <input
@@ -94,14 +125,14 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleWord}
-          disabled={disabled}
+          disabled={disabled || exporterMisconfigured}
           className="flex items-center gap-2 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           <FileDown size={15} /> Tải Word
         </button>
         <button
           onClick={handlePdf}
-          disabled={disabled}
+          disabled={disabled || exporterMisconfigured}
           className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
           <Printer size={15} /> In / Tải PDF

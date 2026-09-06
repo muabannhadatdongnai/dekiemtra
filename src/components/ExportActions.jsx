@@ -25,6 +25,12 @@ export default function ExportActions({
   const exporters = foreignLanguageConfig
     ? getForeignLanguageExporters(foreignLanguageConfig.languageCode, "exam")
     : null;
+  // ⚠️ FIX (Phiên 41) - cùng lỗi/sửa như LessonPlanExportActions.jsx/OutlineExportActions.jsx: nếu
+  // môn học nằm trong danh bạ Ngoại ngữ nhưng registry THIẾU entry tương ứng (lỗi cấu hình - quên
+  // đồng bộ 2 file), TRƯỚC ĐÂY âm thầm rơi về luồng xuất tiếng Việt (exportToWord/exportBothVersions)
+  // - khiến đề thi ĐÃ sinh bằng ngoại ngữ bị xuất nhầm khuôn tiếng Việt mà không cảnh báo gì. Giờ vô
+  // hiệu hoá nút xuất + cảnh báo rõ ràng thay vì fallback êm xuôi.
+  const exporterMisconfigured = Boolean(foreignLanguageConfig) && !exporters;
 
   function handleGenerateVariants() {
     const originalQuestions = variants?.length ? variants[activeVariantIndex].questions : questions;
@@ -47,6 +53,13 @@ export default function ExportActions({
   // exportEnglishExamToWord()/printEnglishExam() - để Tiếng Trung/Nhật/Pháp xuất đúng ngôn ngữ của
   // môn học thay vì luôn rơi về tiếng Anh.
   function handleWord() {
+    if (exporterMisconfigured) {
+      window.alert(
+        `Lỗi cấu hình: chưa có bộ hàm xuất Word cho ngôn ngữ "${foreignLanguageConfig.languageCode}". ` +
+          "Vui lòng báo cho người phát triển (thiếu entry trong foreignLanguageExportRegistry.js)."
+      );
+      return;
+    }
     if (exporters) {
       const meta = {
         title: examMeta?.title,
@@ -94,6 +107,13 @@ export default function ExportActions({
   }
 
   function handlePdf() {
+    if (exporterMisconfigured) {
+      window.alert(
+        `Lỗi cấu hình: chưa có bộ hàm in/xuất PDF cho ngôn ngữ "${foreignLanguageConfig.languageCode}". ` +
+          "Vui lòng báo cho người phát triển (thiếu entry trong foreignLanguageExportRegistry.js)."
+      );
+      return;
+    }
     if (exporters) {
       exporters.print(
         {
@@ -118,6 +138,12 @@ export default function ExportActions({
 
   return (
     <div className="no-print space-y-3">
+      {exporterMisconfigured && (
+        <p className="text-sm font-medium text-red-600">
+          ⚠️ Lỗi cấu hình: chưa hỗ trợ xuất file cho ngôn ngữ này (thiếu entry trong registry) - đã
+          tắt tạm nút "Tải Word"/"In / Tải PDF" để tránh xuất nhầm khuôn tiếng Việt. Vui lòng báo lỗi.
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleGenerateVariants}
@@ -128,7 +154,7 @@ export default function ExportActions({
         </button>
         <button
           onClick={handleWord}
-          disabled={disabled}
+          disabled={disabled || exporterMisconfigured}
           className="flex items-center gap-2 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
           <FileDown size={15} />
@@ -136,7 +162,7 @@ export default function ExportActions({
         </button>
         <button
           onClick={handlePdf}
-          disabled={disabled}
+          disabled={disabled || exporterMisconfigured}
           className="flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
         >
           <Printer size={15} /> In / Tải PDF
