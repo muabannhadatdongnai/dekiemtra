@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FileDown, Printer } from "lucide-react";
 import { exportLessonPlanToWord } from "@/services/lessonPlanExportService";
 import { exportToPDF } from "@/services/exportService";
-import { exportEnglishLessonPlanToWord, printEnglishLessonPlan } from "@/services/englishLessonPlanExportService";
+import { getForeignLanguageExporters } from "@/services/foreignLanguageExportRegistry";
 import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 
 // GIAI ĐOẠN 10, Việc 6/7 - "cờ ẩn-hiện" phụ lục Lời dẫn khi xuất Word (KE_HOACH_GIAI_DOAN_10.md
@@ -23,15 +23,24 @@ import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 // lục Lời dẫn" giờ hiển thị cho CẢ môn ngoại ngữ (trước đây bị ẩn hẳn qua điều kiện
 // `!foreignLanguageConfig`), và `includeTeacherScript` được truyền xuống
 // exportEnglishLessonPlanToWord()/printEnglishLessonPlan() giống hệt luồng tiếng Việt.
+//
+// ⚠️ Phiên 40: TRƯỚC ĐÂY gọi CỨNG exportEnglishLessonPlanToWord()/printEnglishLessonPlan() bất kể
+// `languageCode` gì (viết từ Phiên 35 khi mới có 1 ngôn ngữ) - khiến Tiếng Trung/Nhật/Pháp xuất
+// NHẦM sang khuôn tiếng Anh. Giờ tra theo `foreignLanguageConfig.languageCode` qua
+// getForeignLanguageExporters() (foreignLanguageExportRegistry.js) để gọi đúng bộ hàm của từng
+// ngôn ngữ - xem PROJECT_SUMMARY.md Phiên 40.
 export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) {
   const [includeTeacherScript, setIncludeTeacherScript] = useState(false);
   const disabled = !lessonPlan;
   const hasTeacherScript = Boolean(lessonPlan?.loiDan?.length);
   const foreignLanguageConfig = findForeignLanguageConfig(meta?.subject);
+  const exporters = foreignLanguageConfig
+    ? getForeignLanguageExporters(foreignLanguageConfig.languageCode, "lessonPlan")
+    : null;
 
   function handleWord() {
-    if (foreignLanguageConfig) {
-      exportEnglishLessonPlanToWord(
+    if (exporters) {
+      exporters.exportToWord(
         lessonPlan,
         {
           tenBai: meta?.tenBai,
@@ -50,8 +59,8 @@ export default function LessonPlanExportActions({ lessonPlan, timeline, meta }) 
   }
 
   function handlePdf() {
-    if (foreignLanguageConfig) {
-      printEnglishLessonPlan(
+    if (exporters) {
+      exporters.print(
         lessonPlan,
         {
           tenBai: meta?.tenBai,

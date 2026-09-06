@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FileDown, Printer, Shuffle } from "lucide-react";
 import { exportToWord, exportBothVersions, exportToPDF, generateFourExamVariants } from "@/services/exportService";
-import { exportEnglishExamToWord, printEnglishExam } from "@/services/englishExamExportService";
+import { getForeignLanguageExporters } from "@/services/foreignLanguageExportRegistry";
 import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 
 export default function ExportActions({
@@ -22,6 +22,9 @@ export default function ExportActions({
   // Giáo viên có thể tắt nếu chỉ cần in nhanh đề cho học sinh.
   const [includeMatrixAndSpec, setIncludeMatrixAndSpec] = useState(true);
   const foreignLanguageConfig = findForeignLanguageConfig(examMeta?.subject);
+  const exporters = foreignLanguageConfig
+    ? getForeignLanguageExporters(foreignLanguageConfig.languageCode, "exam")
+    : null;
 
   function handleGenerateVariants() {
     const originalQuestions = variants?.length ? variants[activeVariantIndex].questions : questions;
@@ -38,8 +41,13 @@ export default function ExportActions({
   // dưới tự động xuất bằng đúng ngôn ngữ đó (AI đã sinh câu hỏi/đáp án trực tiếp bằng ngôn ngữ này
   // từ promptTemplates.js, không cần dịch lại) - kể cả Ma trận đề + Bản đặc tả, xem
   // englishExamExportService.js.
+  //
+  // ⚠️ Phiên 40: tra hàm xuất theo `foreignLanguageConfig.languageCode` qua
+  // getForeignLanguageExporters() (foreignLanguageExportRegistry.js) thay vì gọi cứng
+  // exportEnglishExamToWord()/printEnglishExam() - để Tiếng Trung/Nhật/Pháp xuất đúng ngôn ngữ của
+  // môn học thay vì luôn rơi về tiếng Anh.
   function handleWord() {
-    if (foreignLanguageConfig) {
+    if (exporters) {
       const meta = {
         title: examMeta?.title,
         schoolName: examMeta?.schoolName,
@@ -50,7 +58,7 @@ export default function ExportActions({
         objective: examMeta?.objective,
         subjectLabelEn: foreignLanguageConfig.languageNameEn,
       };
-      exportEnglishExamToWord(
+      exporters.exportToWord(
         meta,
         { questions: activeQuestions(), teacherRubric },
         { chaptersInfo, typeByLevel, includeMatrixAndSpec }
@@ -86,8 +94,8 @@ export default function ExportActions({
   }
 
   function handlePdf() {
-    if (foreignLanguageConfig) {
-      printEnglishExam(
+    if (exporters) {
+      exporters.print(
         {
           title: examMeta?.title,
           schoolName: examMeta?.schoolName,

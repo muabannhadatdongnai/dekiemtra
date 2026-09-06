@@ -3,7 +3,7 @@
 import { FileDown, Printer } from "lucide-react";
 import { exportOutlineBothVersions } from "@/services/outlineExportService";
 import { exportToPDF } from "@/services/exportService";
-import { exportEnglishOutlineToWord, printEnglishOutline } from "@/services/englishOutlineExportService";
+import { getForeignLanguageExporters } from "@/services/foreignLanguageExportRegistry";
 import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
 
 /**
@@ -16,22 +16,30 @@ import { findForeignLanguageConfig } from "@/data/foreignLanguageSubjects";
  * môn học nằm trong danh bạ foreignLanguageSubjects.js, nút "Tải Word"/"In PDF" DUY NHẤT ở dưới tự
  * động xuất 1 file DUY NHẤT bằng đúng ngôn ngữ đó (xem docstring englishOutlineExportService.js
  * lý do chỉ 1 file thay vì 2).
+ *
+ * ⚠️ Phiên 40: tra hàm xuất theo `foreignLanguageConfig.languageCode` qua
+ * getForeignLanguageExporters() (foreignLanguageExportRegistry.js) thay vì gọi cứng
+ * exportEnglishOutlineToWord()/printEnglishOutline() - để Tiếng Trung/Nhật/Pháp xuất đúng ngôn ngữ
+ * của môn học thay vì luôn rơi về tiếng Anh.
  */
 export default function OutlineExportActions({ outline, meta }) {
   const disabled = !outline?.kienThucCotLoi?.length;
   const foreignLanguageConfig = findForeignLanguageConfig(meta?.subject);
+  const exporters = foreignLanguageConfig
+    ? getForeignLanguageExporters(foreignLanguageConfig.languageCode, "outline")
+    : null;
 
   function handleWord() {
-    if (foreignLanguageConfig) {
-      exportEnglishOutlineToWord(outline, { grade: meta?.grade, subjectLabelEn: foreignLanguageConfig.languageNameEn });
+    if (exporters) {
+      exporters.exportToWord(outline, { grade: meta?.grade, subjectLabelEn: foreignLanguageConfig.languageNameEn });
       return;
     }
     exportOutlineBothVersions({ outline, meta });
   }
 
   function handlePdf() {
-    if (foreignLanguageConfig) {
-      printEnglishOutline(outline, { grade: meta?.grade, subjectLabelEn: foreignLanguageConfig.languageNameEn });
+    if (exporters) {
+      exporters.print(outline, { grade: meta?.grade, subjectLabelEn: foreignLanguageConfig.languageNameEn });
       return;
     }
     exportToPDF();
