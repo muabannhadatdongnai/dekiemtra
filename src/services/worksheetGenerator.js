@@ -39,6 +39,8 @@ import {
   generateVanTocQuangDuongThoiGian,
   generatePhepChiaCoDu,
   generateSoThapPhanChiaNangCao,
+  generateCauTaoSo,
+  generateTracNghiemSoTuNhien,
 } from "@/data/worksheetSchemas";
 import { pickInstructionVariant, pickMascot, getSelectableCatalogFor } from "@/data/worksheetExerciseCatalog";
 import { pickRandomLayout, getLayoutById, pickLayoutFromSampleSpec, pickLayoutWithPreference } from "@/data/worksheetLayoutTemplates";
@@ -931,6 +933,21 @@ function buildSimpleSection(key, { grade, safeCounts, mascotFor }) {
         title: pickInstructionVariant("cac_ngay_trong_tuan") || "Điền tên ngày còn thiếu vào chỗ trống.",
         mascot: mascotFor("cac_ngay_trong_tuan"),
         items: generateCacNgayTrongTuan(safeCounts.cac_ngay_trong_tuan),
+      };
+    // ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+    case "cau_tao_so":
+      return {
+        type: "cau_tao_so",
+        title: pickInstructionVariant("cau_tao_so") || "Viết số thích hợp vào chỗ chấm.",
+        mascot: mascotFor("cau_tao_so"),
+        items: generateCauTaoSo(grade, safeCounts.cau_tao_so),
+      };
+    case "trac_nghiem_so_tu_nhien":
+      return {
+        type: "trac_nghiem_so_tu_nhien",
+        title: pickInstructionVariant("trac_nghiem_so_tu_nhien") || "Khoanh vào chữ đặt trước câu trả lời đúng.",
+        mascot: mascotFor("trac_nghiem_so_tu_nhien"),
+        items: generateTracNghiemSoTuNhien(grade, safeCounts.trac_nghiem_so_tu_nhien),
       };
     default:
       return null;

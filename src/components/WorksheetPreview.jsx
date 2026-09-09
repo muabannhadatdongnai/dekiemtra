@@ -1296,6 +1296,94 @@ function KhaNangXayRaSection({ items, accent }) {
 }
 
 /**
+ * ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+ * "cau_tao_so" - trộn 2 kiểu hàng (xem generateCauTaoSo(), worksheetSchemas.js):
+ *  - "phan_tich": số = tổng các hàng, ẩn ĐÚNG 1 số hạng (đúng khuôn SGK "8 741 = 8 000 + ... ").
+ *  - "doc_viet": cho 1 chiều (số hoặc chữ), yêu cầu điền chiều còn lại.
+ */
+function CauTaoSoSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 15 }}>
+      {items.map((it, i) => {
+        if (it.kind === "phan_tich") {
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 4 }}>
+              <span>{formatSoTuNhien(it.value)} =</span>
+              {it.terms.map((term, idx) => (
+                <span key={idx} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  {idx > 0 && <span>+</span>}
+                  {idx === it.blankIndex ? blankBox(accent, 56) : <span>{formatSoTuNhien(term)}</span>}
+                </span>
+              ))}
+            </div>
+          );
+        }
+        // "doc_viet": chiều "so_sang_chu" hiện số, yêu cầu đọc; chiều "chu_sang_so" hiện chữ, yêu
+        // cầu viết số - CHỦ Ý không hiện sẵn đáp án chiều còn lại (web preview không có đáp án).
+        return (
+          <div key={i} style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
+            {it.direction === "so_sang_chu" ? (
+              <>
+                <span>Số {formatSoTuNhien(it.value)} đọc là:</span>
+                {blankBox(accent, 220)}
+              </>
+            ) : (
+              <>
+                <span>Viết số, biết số đó đọc là "{it.words}":</span>
+                {blankBox(accent, 120)}
+              </>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * "trac_nghiem_so_tu_nhien" - hiện 4 lựa chọn A-D theo lưới 2x2, khớp đúng cách trình bày
+ * "Khoanh vào chữ đặt trước câu trả lời đúng" trong 2 PDF mẫu (không đánh dấu đáp án đúng ở đây -
+ * web preview không có đáp án, xem ghi chú đầu file WorksheetPreview.jsx).
+ */
+const OPTION_LETTERS = ["A", "B", "C", "D"];
+
+function TracNghiemSoTuNhienSection({ items, accent }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 15 }}>
+      {items.map((it, i) => (
+        <div key={i}>
+          <div>
+            {i + 1}. {it.prompt}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "4px 16px", marginTop: 6 }}>
+            {it.options.map((opt, idx) => (
+              <div key={idx} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 20,
+                    height: 20,
+                    border: `1.5px solid ${accent}`,
+                    borderRadius: "50%",
+                    fontSize: 12,
+                    flexShrink: 0,
+                  }}
+                >
+                  {OPTION_LETTERS[idx]}
+                </span>
+                <span>{opt}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * ================== MỞ RỘNG LỚP 3, ĐỢT 3 ==================
  * "Thu thập, phân loại số liệu" - biểu đồ cột NGANG đơn giản (mỗi hàng: nhãn + thanh màu dài
  * theo tỉ lệ giá trị/giá trị lớn nhất + số liệu) rồi danh sách câu hỏi rút ra từ CÙNG 1 bảng đó.
@@ -1785,6 +1873,8 @@ function RenderedExerciseBox({ section, index, layout, bwMode }) {
         <ThuThapSoLieuSection surveyTitle={section.surveyTitle} data={section.data} questions={section.questions} accent={t.border} bwMode={bwMode} />
       )}
       {section.type === "cac_ngay_trong_tuan" && <CacNgayTrongTuanSection items={section.items} accent={t.border} />}
+      {section.type === "cau_tao_so" && <CauTaoSoSection items={section.items} accent={t.border} />}
+      {section.type === "trac_nghiem_so_tu_nhien" && <TracNghiemSoTuNhienSection items={section.items} accent={t.border} />}
       {section.type === "nhan_dien_hinh" && <NhanDienHinhSection shapes={section.shapes} accent={t.border} />}
       {section.type === "dem_hinh_ung_dung" && <DemHinhUngDungSection data={section.data} accent={t.border} />}
       {section.type === "giai_toan" && <GiaiToanSection items={section.items} accent={t.border} />}

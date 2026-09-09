@@ -74,6 +74,101 @@ export const WORKSHEET_TOPIC_PACKAGES = [
     description: "Thu thập, phân loại số liệu và khả năng xảy ra của một sự kiện - đúng mạch \"Một số yếu tố thống kê, xác suất\" SGK Toán 3.",
     exerciseKeys: ["thu_thap_so_lieu", "kha_nang_xay_ra"],
   },
+  // ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ==================
+  // Phản hồi Hoan (Phiên 41): "khung chọn bài trông cứng nhắc, không linh động" - đúng nguyên
+  // nhân là Lớp 4/5 TRƯỚC ĐÂY chưa có gói chủ đề nào (chỉ Lớp 1/3 có), giáo viên phải tự bật rời
+  // rạc từng dòng. Bổ sung theo ĐÚNG thứ tự mạch nội dung PPCT SGK Toán 4-5 KNTT, cùng nguyên tắc
+  // Lớp 3: chỉ gom dạng bài "độc quyền" 1-2 khối này (không gom so_sanh/day_so... dùng chung nhiều
+  // khối). Gói "Ôn tập số tự nhiên" dùng CHUNG cho cả 2 khối vì đúng là Bài 1 mở đầu SGK của CẢ
+  // Lớp 4 lẫn Lớp 5 (xem generateCauTaoSo(), worksheetSchemas.js - đối chiếu PDF mẫu Hoan gửi).
+  {
+    id: "lop4_on_tap_so_tu_nhien",
+    grade: "LOP_4",
+    subject: "TOAN",
+    label: "Ôn tập số tự nhiên",
+    icon: "🔢",
+    description: "Đọc, viết số theo cấu tạo hàng và trắc nghiệm A/B/C/D - đúng mạch \"Ôn tập và bổ sung\" (Bài 1) mở đầu SGK Toán 4.",
+    exerciseKeys: ["cau_tao_so", "trac_nghiem_so_tu_nhien"],
+  },
+  {
+    id: "lop4_phan_so",
+    grade: "LOP_4",
+    subject: "TOAN",
+    label: "Phân số",
+    icon: "🍕",
+    description: "Rút gọn và so sánh phân số - đúng mạch \"Phân số\" SGK Toán 4.",
+    exerciseKeys: ["phan_so_rut_gon", "phan_so_so_sanh"],
+  },
+  {
+    id: "lop4_bieu_thuc_va_hinh_hoc",
+    grade: "LOP_4",
+    subject: "TOAN",
+    label: "Biểu thức chữ & Góc",
+    icon: "📐",
+    description: "Biểu thức có chứa chữ và nhận biết các loại góc - 2 mạch nội dung riêng của SGK Toán 4, gom chung 1 gói vì đều là kiến thức MỚI (chưa dạy ở Lớp 3).",
+    exerciseKeys: ["bieu_thuc_chu", "goc_nhan_biet"],
+  },
+  {
+    id: "lop5_on_tap_so_tu_nhien",
+    grade: "LOP_5",
+    subject: "TOAN",
+    label: "Ôn tập số tự nhiên",
+    icon: "🔢",
+    description: "Đọc, viết số theo cấu tạo hàng (mở rộng tới hàng chục triệu) và trắc nghiệm A/B/C/D - đúng mạch \"Ôn tập và bổ sung\" (Bài 1) mở đầu SGK Toán 5.",
+    exerciseKeys: ["cau_tao_so", "trac_nghiem_so_tu_nhien"],
+  },
+  {
+    id: "lop5_so_thap_phan",
+    grade: "LOP_5",
+    subject: "TOAN",
+    label: "Số thập phân",
+    icon: "🔟",
+    description: "So sánh, cộng, trừ, nhân, chia số thập phân (kể cả chia nâng cao và chia có dư) - đúng mạch \"Số thập phân\" SGK Toán 5.",
+    exerciseKeys: [
+      "so_thap_phan_so_sanh",
+      "so_thap_phan_cong_tru",
+      "so_thap_phan_nhan",
+      "so_thap_phan_chia",
+      "so_thap_phan_chia_nang_cao",
+      "phep_chia_co_du",
+    ],
+  },
+  {
+    id: "lop5_ti_so_phan_tram",
+    grade: "LOP_5",
+    subject: "TOAN",
+    label: "Tỉ số phần trăm",
+    icon: "💯",
+    description: "Tìm tỉ số phần trăm, tìm giá trị phần trăm của một số - đúng mạch \"Tỉ số. Tỉ số phần trăm\" SGK Toán 5.",
+    exerciseKeys: ["ti_so_phan_tram"],
+  },
+  {
+    id: "lop5_hinh_hoc_phang",
+    grade: "LOP_5",
+    subject: "TOAN",
+    label: "Hình học phẳng",
+    icon: "📐",
+    description: "Diện tích hình tam giác, hình thang và hình tròn - đúng mạch \"Hình tam giác. Hình thang. Hình tròn\" SGK Toán 5.",
+    exerciseKeys: ["hinh_tam_giac_hinh_thang", "hinh_tron"],
+  },
+  {
+    id: "lop5_hinh_khong_gian",
+    grade: "LOP_5",
+    subject: "TOAN",
+    label: "Hình học không gian",
+    icon: "📦",
+    description: "Thể tích hình hộp chữ nhật/lập phương, đổi đơn vị đo thể tích và diện tích xung quanh/toàn phần - đúng mạch \"Hình hộp chữ nhật. Hình lập phương\" SGK Toán 5.",
+    exerciseKeys: ["the_tich_hhcn_lp", "doi_don_vi_the_tich", "dien_tich_xq_tp"],
+  },
+  {
+    id: "lop5_van_toc_thoi_gian",
+    grade: "LOP_5",
+    subject: "TOAN",
+    label: "Vận tốc & Số đo thời gian",
+    icon: "🚗",
+    description: "Cộng trừ số đo thời gian và toán chuyển động đều (vận tốc, quãng đường, thời gian) - đúng mạch \"Chuyển động đều\" SGK Toán 5.",
+    exerciseKeys: ["so_do_thoi_gian", "van_toc_quang_duong_thoi_gian"],
+  },
 ];
 
 /** Lấy toàn bộ gói chủ đề khả dụng cho 1 khối lớp + môn học. */

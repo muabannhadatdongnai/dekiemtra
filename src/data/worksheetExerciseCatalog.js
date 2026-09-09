@@ -856,6 +856,49 @@ export const WORKSHEET_EXERCISE_CATALOG = [
     mascotPool: ["➗", "🧮", "✨"],
     colorThemeTags: ["orange", "blue", "purple"],
   },
+  {
+    // ===== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") =====
+    // Lấp khoảng trống phát hiện khi đối chiếu 2 PDF mẫu Hoan gửi (SGK Toán 4-5 KNTT, Bài 1):
+    // catalog trước đây bỏ trống hẳn mảng "ôn tập đầu năm" (đọc/viết số theo cấu tạo hàng) - xem
+    // giải thích đầy đủ + đối chiếu từng ví dụ thật trong generateCauTaoSo() (worksheetSchemas.js).
+    key: "cau_tao_so",
+    subject: "TOAN",
+    label: "Đọc, viết số và cấu tạo hàng",
+    skillGroup: "on_tap_dau_nam",
+    source: "code",
+    minGrade: "LOP_4",
+    maxGrade: "LOP_5",
+    defaultCount: 6,
+    instructionVariants: [
+      "Viết số thích hợp vào chỗ chấm.",
+      "Em hãy hoàn thành bảng sau (theo mẫu).",
+      "Đọc, viết số và phân tích cấu tạo của mỗi số sau.",
+    ],
+    mascotPool: ["🔢", "🧮", "📖"],
+    colorThemeTags: ["blue", "teal", "yellow"],
+  },
+  {
+    // ===== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") =====
+    // Định dạng "khoanh vào chữ đặt trước câu trả lời đúng" (A/B/C/D) - dạng xuất hiện DÀY ĐẶC
+    // nhất trong 2 PDF mẫu nhưng TRƯỚC ĐÂY catalog không có bất kỳ dạng trắc nghiệm nào (mọi dạng
+    // bài cũ đều là điền/tính). Kho câu hỏi (làm tròn, so sánh, giá trị hàng, số liền trước/sau)
+    // xem generateTracNghiemSoTuNhien() (worksheetSchemas.js).
+    key: "trac_nghiem_so_tu_nhien",
+    subject: "TOAN",
+    label: "Trắc nghiệm số tự nhiên",
+    skillGroup: "on_tap_dau_nam",
+    source: "code",
+    minGrade: "LOP_4",
+    maxGrade: "LOP_5",
+    defaultCount: 6,
+    instructionVariants: [
+      "Khoanh vào chữ đặt trước câu trả lời đúng.",
+      "Chọn đáp án đúng cho mỗi câu sau.",
+      "Em hãy khoanh tròn vào đáp án đúng nhất.",
+    ],
+    mascotPool: ["✅", "🎯", "📝"],
+    colorThemeTags: ["green", "blue", "purple"],
+  },
 ];
 
 /** Lấy toàn bộ block phù hợp với 1 khối lớp + môn học cụ thể. */

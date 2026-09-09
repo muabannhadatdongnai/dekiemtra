@@ -24,6 +24,13 @@
 // KNTT tập trung vào SỐ THẬP PHÂN, không dạy số tự nhiên lớn hơn Lớp 4) - xem NEXT_STEPS.md mục
 // "Vấn đề kỹ thuật cần giải quyết TRƯỚC khi code Lớp 5". Các dạng bài số thập phân dùng generator
 // RIÊNG (generateSoThapPhanSoSanh...), KHÔNG dùng maxNumber này.
+/**
+ * ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+ * Duy nhất chỗ worksheetSchemas.js cần import từ services/ (đọc số bằng chữ - xem giải thích đầy
+ * đủ ở numberFormatUtils.js). Cùng ngoại lệ "dùng chung" như formatSoTuNhien/formatSoThapPhan.
+ */
+import { docSoTuNhien, formatSoTuNhien } from "../services/numberFormatUtils";
+
 export const WORKSHEET_GRADES = {
   MAM_NON: { key: "MAM_NON", label: "Mầm non (chuẩn bị vào lớp 1)", maxNumber: 10 },
   LOP_1: { key: "LOP_1", label: "Lớp 1", maxNumber: 20 },
@@ -60,6 +67,9 @@ export const EXERCISE_TYPES = {
   VAN_TOC_QUANG_DUONG_THOI_GIAN: "van_toc_quang_duong_thoi_gian", // Toán chuyển động đều
   PHEP_CHIA_CO_DU: "phep_chia_co_du", // Chia số tự nhiên có dư (ôn tập nâng cao)
   SO_THAP_PHAN_CHIA_NANG_CAO: "so_thap_phan_chia_nang_cao", // Chia thập phân cho thập phân / chia ra thương thập phân
+  // ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+  CAU_TAO_SO: "cau_tao_so", // Đọc, viết số và phân tích cấu tạo theo hàng (tổng các hàng)
+  TRAC_NGHIEM_SO_TU_NHIEN: "trac_nghiem_so_tu_nhien", // Trắc nghiệm A/B/C/D (làm tròn, so sánh, giá trị hàng, số liền trước/sau...)
 };
 
 // ================== GIAI ĐOẠN 9 (mở rộng kho icon đếm số - mục 2) ==================
@@ -1567,3 +1577,216 @@ export function generateSoThapPhanChiaNangCao(count = 6) {
   return items;
 }
 
+
+// ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+// Phân tích gap từ 2 file PDF mẫu Hoan gửi (SGK "Kết nối tri thức" Toán 4 Bài 1 "Ôn tập các số
+// đến 100 000" + Toán 5 Bài 1 "Ôn tập số tự nhiên"): catalog TRƯỚC ĐÂY hoàn toàn bỏ trống mảng
+// "ôn tập đầu năm" (đọc/viết số theo cấu tạo hàng, trắc nghiệm A/B/C/D) dù đây là Bài 1 của SGK.
+//
+// GHI CHÚ SỬA 1 GIẢ ĐỊNH CŨ: comment ở WORKSHEET_GRADES phía trên viết "Lớp 5 KHÔNG mở rộng thêm
+// phạm vi số tự nhiên vì SGK tập trung số thập phân" - ĐÚNG cho các dạng bài "trong năm" (thực
+// hiện phép tính...), nhưng bài "ÔN TẬP ĐẦU NĂM" (Bài 1) lại ôn lại số tự nhiên tới hàng CHỤC
+// TRIỆU (SGK ví dụ "2 chục triệu, 6 nghìn, 5 chục và 1 đơn vị" = 20 006 051) - RỘNG HƠN hẳn Lớp 4
+// (chỉ tới hàng trăm nghìn). Vì vậy 2 hàm dưới đây KHÔNG dùng WORKSHEET_GRADES[grade].maxNumber
+// (dùng chung nhiều dạng bài khác) mà tự định nghĩa phạm vi riêng, đúng ý đồ SGK từng khối.
+
+// Số chữ số ngẫu nhiên cho "cau_tao_so"/trắc nghiệm mỗi khối (đầu số luôn khác 0, tự nhiên).
+const CAU_TAO_SO_DIGIT_RANGE = {
+  LOP_4: [5, 5], // "đến 100 000" - luôn đúng 5 chữ số (10 000 - 99 999)
+  LOP_5: [6, 8], // "ôn tập số tự nhiên" mở rộng - 6 đến 8 chữ số (trăm nghìn -> chục triệu)
+};
+
+function randomDigitNumber(minDigits, maxDigits) {
+  const digits = randInt(minDigits, maxDigits);
+  const min = digits === 1 ? 1 : 10 ** (digits - 1);
+  const max = 10 ** digits - 1;
+  return randInt(min, max);
+}
+
+/**
+ * Phân tích 1 số N chữ số thành tổng giá trị các hàng, ẩn ĐÚNG 1 số hạng (giống hệt khuôn SGK:
+ * "8 741 = 8 000 + 700 + 40 + ........", chỉ ẩn 1 chỗ trống, không ẩn dàn trải nhiều chỗ).
+ * Trả về { terms: [{ value, blank }], value: N } - terms giữ ĐỦ hàng kể cả hàng = 0 (SGK có bài
+ * dùng số có hàng = 0, VD 90 000 + 80 + 6 - hàng nghìn/trăm = 0 bị bỏ qua, KHÔNG hiện "+ 0") nên
+ * ở đây terms tự động bỏ qua hàng = 0, đúng cách viết tổng thông thường.
+ */
+function decomposeIntoPlaceValueTerms(n) {
+  const str = String(n);
+  const len = str.length;
+  const terms = [];
+  for (let i = 0; i < len; i++) {
+    const digit = Number(str[i]);
+    if (digit === 0) continue;
+    const placeValue = digit * 10 ** (len - 1 - i);
+    terms.push(placeValue);
+  }
+  return terms;
+}
+
+/**
+ * "cau_tao_so" - Đọc, viết số và phân tích cấu tạo theo hàng (2 kiểu câu random cho mỗi dòng,
+ * TRỘN giống 2 PDF mẫu Hoan gửi thay vì tách 2 dạng bài riêng - vẫn cùng 1 kỹ năng gốc):
+ *   - "phan_tich": cho số N, ẩn ĐÚNG 1 số hạng trong phép phân tích thành tổng các hàng.
+ *   - "doc_viet": cho 1 CHIỀU (số hoặc chữ), yêu cầu điền chiều còn lại - dùng docSoTuNhien() để
+ *     sinh đúng đáp án "đọc số" (trước Phiên 42 dự án chưa có hàm này nên KHÔNG thể ra dạng này).
+ */
+export function generateCauTaoSo(grade, count = 5) {
+  const [minDigits, maxDigits] = CAU_TAO_SO_DIGIT_RANGE[grade] || CAU_TAO_SO_DIGIT_RANGE.LOP_4;
+  const used = new Set();
+  const items = [];
+  let guard = 0;
+  while (items.length < count && guard < count * 30) {
+    guard++;
+    const value = randomDigitNumber(minDigits, maxDigits);
+    if (used.has(value)) continue;
+    used.add(value);
+    const kind = Math.random() < 0.5 ? "phan_tich" : "doc_viet";
+    if (kind === "phan_tich") {
+      const terms = decomposeIntoPlaceValueTerms(value);
+      if (terms.length < 2) continue; // cần ít nhất 2 số hạng mới có ý nghĩa "phân tích"
+      const blankIndex = randInt(0, terms.length - 1);
+      items.push({ kind, value, terms, blankIndex });
+    } else {
+      // Random chiều hỏi: cho số -> yêu cầu đọc, hoặc cho chữ -> yêu cầu viết số.
+      const direction = Math.random() < 0.5 ? "so_sang_chu" : "chu_sang_so";
+      items.push({ kind, value, words: docSoTuNhien(value), direction });
+    }
+  }
+  return items;
+}
+
+// ================== Trắc nghiệm A/B/C/D ("trac_nghiem_so_tu_nhien") ==================
+// Kho câu hỏi theo khối - mỗi hàm trả về { prompt, options: [4 chuỗi], correctIndex }. Số liệu
+// LUÔN sinh ngược từ đáp án đúng (né việc phải "tính lại rồi so sánh" dễ sai) - cùng triết lý các
+// generator số thập phân/tỉ số % khác trong file này.
+const ROUNDING_PLACES = {
+  LOP_4: [10, 100, 1000, 10000],
+  LOP_5: [100, 1000, 10000, 100000],
+};
+
+function shuffleWithCorrectIndex(correctValue, distractors) {
+  const options = [correctValue, ...distractors];
+  // Fisher-Yates - đủ ngẫu nhiên, không thiên vị vị trí A luôn đúng (lỗi sư phạm hay gặp).
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  return { options, correctIndex: options.indexOf(correctValue) };
+}
+
+function questionMinMax(grade) {
+  const [minDigits, maxDigits] = CAU_TAO_SO_DIGIT_RANGE[grade] || CAU_TAO_SO_DIGIT_RANGE.LOP_4;
+  const nums = new Set();
+  while (nums.size < 4) nums.add(randomDigitNumber(minDigits, maxDigits));
+  const arr = [...nums];
+  const isMin = Math.random() < 0.5;
+  const target = isMin ? Math.min(...arr) : Math.max(...arr);
+  const prompt = `Trong các số ${arr.map(formatSoTuNhien).join(", ")}. Số ${isMin ? "bé" : "lớn"} nhất là:`;
+  const { options, correctIndex } = shuffleWithCorrectIndex(
+    formatSoTuNhien(target),
+    arr.filter((v) => v !== target).map(formatSoTuNhien)
+  );
+  return { prompt, options, correctIndex };
+}
+
+function questionRounding(grade) {
+  const [minDigits, maxDigits] = CAU_TAO_SO_DIGIT_RANGE[grade] || CAU_TAO_SO_DIGIT_RANGE.LOP_4;
+  const place = pick(ROUNDING_PLACES[grade] || ROUNDING_PLACES.LOP_4);
+  const value = randomDigitNumber(minDigits, maxDigits);
+  const rounded = Math.round(value / place) * place;
+  const prompt = `Làm tròn số ${formatSoTuNhien(value)} đến hàng ${roundingPlaceLabel(place)}, ta được số:`;
+  // SỬA LỖI (Phiên 42, phát hiện qua stress-test): pool cũ chỉ [-2,-1,1,2] có thể KHÔNG ĐỦ 3 giá
+  // trị dương hợp lệ khi `rounded` nhỏ gần hàng làm tròn (VD rounded=100000, place=100000 -> chỉ
+  // offset +1,+2 hợp lệ, -1 -> 0, -2 -> âm) => vòng lặp cũ `while (distractors.size < 3)` LẶP VÔ
+  // HẠN. Mở rộng pool offset (âm nhiều hơn dương, ưu tiên số dương luôn có sẵn) + guard chống lặp.
+  const distractors = new Set();
+  const offsetPool = [1, 2, 3, -1, -2, -3, 4, -4];
+  let guard = 0;
+  while (distractors.size < 3 && guard < 50) {
+    guard++;
+    const offset = pick(offsetPool) * place;
+    const candidate = rounded + offset;
+    if (candidate > 0 && candidate !== rounded) distractors.add(candidate);
+  }
+  // Guard cuối cùng (cực hiếm, chỉ khi rounded quá nhỏ VÀ place quá lớn cùng lúc): điền thêm bằng
+  // bội số liên tiếp của place để LUÔN đủ 3, không bao giờ để vòng lặp trên chạy quá 50 lần.
+  let extra = 1;
+  while (distractors.size < 3) {
+    const candidate = rounded + extra * place;
+    if (candidate > 0 && candidate !== rounded) distractors.add(candidate);
+    extra++;
+  }
+  const { options, correctIndex } = shuffleWithCorrectIndex(
+    formatSoTuNhien(rounded),
+    [...distractors].slice(0, 3).map(formatSoTuNhien)
+  );
+  return { prompt, options, correctIndex };
+}
+
+function roundingPlaceLabel(place) {
+  const labels = { 10: "chục", 100: "trăm", 1000: "nghìn", 10000: "chục nghìn", 100000: "trăm nghìn" };
+  return labels[place] || "chục";
+}
+
+const PLACE_LABELS_BY_INDEX_FROM_RIGHT = ["đơn vị", "chục", "trăm", "nghìn", "chục nghìn", "trăm nghìn", "triệu", "chục triệu", "trăm triệu"];
+
+function questionDigitAtPlace(grade) {
+  const [minDigits, maxDigits] = CAU_TAO_SO_DIGIT_RANGE[grade] || CAU_TAO_SO_DIGIT_RANGE.LOP_4;
+  // Chọn 1 hàng NẰM TRONG phạm vi số chữ số đang dùng (né hỏi "hàng triệu" cho số chỉ có 5 chữ số).
+  const placeIndex = randInt(0, minDigits - 1); // tính từ phải sang (0 = đơn vị)
+  const targetDigit = randInt(1, 9); // né chữ số 0 (dễ gây câu hỏi mơ hồ "có/không có hàng đó")
+  // Sinh số sao cho ĐÚNG hàng cần hỏi = targetDigit (sinh ngược từ đáp án, né thử-sai).
+  const digits = randInt(minDigits, maxDigits);
+  const otherDigits = Array.from({ length: digits }, (_, i) => (i === digits - 1 - placeIndex ? targetDigit : randInt(0, 9)));
+  if (otherDigits[0] === 0) otherDigits[0] = randInt(1, 9); // chữ số đầu khác 0
+  const value = Number(otherDigits.join(""));
+  const label = PLACE_LABELS_BY_INDEX_FROM_RIGHT[placeIndex] || "đơn vị";
+  const prompt = `Số ${formatSoTuNhien(value)} có chữ số hàng ${label} là:`;
+  const distractors = new Set();
+  while (distractors.size < 3) {
+    const d = randInt(0, 9);
+    if (d !== targetDigit) distractors.add(d);
+  }
+  const { options, correctIndex } = shuffleWithCorrectIndex(String(targetDigit), [...distractors].map(String));
+  return { prompt, options, correctIndex };
+}
+
+function questionLienTruocSau(grade) {
+  const [minDigits, maxDigits] = CAU_TAO_SO_DIGIT_RANGE[grade] || CAU_TAO_SO_DIGIT_RANGE.LOP_4;
+  const value = randomDigitNumber(minDigits, maxDigits);
+  const askSuccessor = Math.random() < 0.5;
+  const answer = askSuccessor ? value + 1 : value - 1;
+  const prompt = askSuccessor
+    ? `Số liền sau của ${formatSoTuNhien(value)} là:`
+    : `Số liền trước của ${formatSoTuNhien(value)} là:`;
+  const distractors = new Set([value, value + 2, value - 2].filter((v) => v > 0 && v !== answer));
+  while (distractors.size < 3) {
+    const d = answer + pick([-3, -1, 1, 3].filter((x) => answer + x > 0));
+    if (d !== answer && d > 0) distractors.add(d);
+  }
+  const { options, correctIndex } = shuffleWithCorrectIndex(
+    formatSoTuNhien(answer),
+    [...distractors].slice(0, 3).map(formatSoTuNhien)
+  );
+  return { prompt, options, correctIndex };
+}
+
+const QUESTION_GENERATORS = [questionMinMax, questionRounding, questionDigitAtPlace, questionLienTruocSau];
+
+/**
+ * "trac_nghiem_so_tu_nhien" - trộn ngẫu nhiên 4 dạng câu hỏi ở trên, KHÔNG lặp 2 câu liên tiếp
+ * cùng dạng (đọc phiếu đỡ nhàm, giống nguyên tắc chống lặp mascot/instructionVariant đã có).
+ */
+export function generateTracNghiemSoTuNhien(grade, count = 6) {
+  const items = [];
+  let lastGenIndex = -1;
+  for (let i = 0; i < count; i++) {
+    let genIndex;
+    do {
+      genIndex = randInt(0, QUESTION_GENERATORS.length - 1);
+    } while (genIndex === lastGenIndex && QUESTION_GENERATORS.length > 1);
+    lastGenIndex = genIndex;
+    items.push(QUESTION_GENERATORS[genIndex](grade));
+  }
+  return items;
+}

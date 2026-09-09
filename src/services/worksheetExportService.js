@@ -35,6 +35,7 @@ import { LINE_ART_ICON_PNG_BASE64 } from "@/data/lineArtIconPngs";
 // máy người dùng, đảm bảo Word/PDF/Web hiển thị giống hệt nhau.
 import { SHAPE_ICON_PNG_BASE64 } from "@/data/shapeIconPngs";
 import { BAR_TILE_PNG_BASE64 } from "@/data/barTilePng";
+import { CLOCK_FACE_PNG_BY_HOUR } from "@/data/clockFacePngs";
 
 /**
  * worksheetExportService.js
@@ -102,6 +103,7 @@ const CIRCLED_DIGITS = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", 
 const FONT = "Times New Roman";
 const BLANK = "................";      // chỗ trống cho học sinh điền số
 const BLANK_CIRCLE = "○";              // chỗ trống cho học sinh điền dấu >, <, =
+const OPTION_LETTERS_WORD = ["A", "B", "C", "D"]; // nhãn trắc nghiệm (cau_tao_so/trac_nghiem_so_tu_nhien)
 const WRITING_LINE = "..............................................................";
 
 function chunkArray(arr, size) {
@@ -263,13 +265,33 @@ function buildSapXepThuTuParagraphs(items, showAnswers) {
 const CM_TO_PX = 16;
 const BAR_HEIGHT_PX = 16;
 
-// Thanh xám đặc co giãn theo cm (ẢNH, không phải ký tự Unicode - xem ghi chú import ở đầu file).
-function lengthBarImageRun(cm) {
+/**
+ * ================== SỬA LỖI (Phiên 42, phản hồi giáo viên qua file .docx thật) ==================
+ * BẢN CŨ nhúng 1 ảnh vuông 40x40 DUY NHẤT rồi ÉP CO GIÃN PHI TỈ LỆ (vd 320x16 cho thanh 20cm,
+ * tỉ lệ 20:1) qua `transformation.width/height` của ImageRun - PDF/LibreOffice vẫn hiện đúng thanh
+ * dài ngắn khác nhau, nhưng khi mở FILE .docx THẬT bằng Microsoft Word, cả khối hiện thành 1 nền
+ * đặc màu đen thay vì thanh dài đúng tỉ lệ (đúng loại lỗi "well-formed XML ≠ Word mở đúng" đã ghi
+ * nhận ở Phiên 37 - LibreOffice không bắt được, chỉ Word thật mới lộ).
+ * SỬA: LẶP LẠI ảnh gốc N lần (N = số cm/đơn vị), MỖI ảnh giữ NGUYÊN tỉ lệ vuông 1:1 của ảnh gốc
+ * (hiển thị 16x16, co đều từ 40x40 - không méo theo bất kỳ chiều nào) thay vì 1 ảnh bị kéo dài
+ * riêng theo chiều ngang. Kết quả thị giác giống hệt bản cũ (dãy ô vuông liền nhau tạo thành 1
+ * thanh liền mạch) nhưng không còn phụ thuộc hành vi co giãn phi tỉ lệ nào của Word nữa.
+ */
+function lengthBarTile() {
   return new ImageRun({
     type: "png",
     data: base64ToUint8Array(BAR_TILE_PNG_BASE64),
-    transformation: { width: Math.max(cm * CM_TO_PX, CM_TO_PX), height: BAR_HEIGHT_PX },
+    transformation: { width: CM_TO_PX, height: BAR_HEIGHT_PX },
   });
+}
+
+// Trần số ô để phòng dữ liệu bất thường (vượt hẳn phạm vi cmA/cmB [3,20] hay giá trị khảo sát
+// [3,15] hiện có trong worksheetSchemas.js) làm thanh dài quá khổ trang A4.
+const MAX_BAR_TILES = 40;
+
+function lengthBarImageRuns(units) {
+  const count = Math.max(1, Math.min(Math.round(units), MAX_BAR_TILES));
+  return Array.from({ length: count }, () => lengthBarTile());
 }
 
 function buildDoDaiSoSanhParagraphs(items, showAnswers) {
@@ -279,14 +301,14 @@ function buildDoDaiSoSanhParagraphs(items, showAnswers) {
       {
         children: [
           new TextRun({ text: `${it.nameA} (${unit} ${it.cmA} cm)  `, font: FONT, size: 22 }),
-          lengthBarImageRun(it.cmA),
+          ...lengthBarImageRuns(it.cmA),
         ],
         spacing: { after: 40 },
       },
       {
         children: [
           new TextRun({ text: `${it.nameB} (${unit} ${it.cmB} cm)  `, font: FONT, size: 22 }),
-          lengthBarImageRun(it.cmB),
+          ...lengthBarImageRuns(it.cmB),
         ],
         spacing: { after: 80 },
       },
@@ -306,28 +328,38 @@ function buildDoDaiSoSanhParagraphs(items, showAnswers) {
 }
 
 /**
- * ================== GIAI ĐOẠN 9, BƯỚC 2 (chủ đề "Thời gian", Lớp 1) ==================
- * Word không vẽ được SVG mặt đồng hồ có kim - dùng ĐÚNG emoji Unicode "đồng hồ chỉ giờ" (mỗi
- * emoji ứng với ĐÚNG 1 giờ tròn, sẵn có trong bảng mã Unicode 🕐-🕛) thay vì tự vẽ - vừa đơn
- * giản vừa chính xác 100% (không có sai số vẽ tay như hình).
+ * ================== SỬA LỖI (Phiên 42, phản hồi giáo viên qua file .docx thật) ==================
+ * BẢN CŨ dùng emoji Unicode "đồng hồ chỉ giờ" (🕐-🕛) - PDF/preview vẫn ổn (trình duyệt tự
+ * fallback font emoji màu), nhưng khi mở file .docx THẬT bằng Microsoft Word, kim đồng hồ trong
+ * glyph emoji quá mảnh/mờ, KHÔNG NHÌN RÕ BẰNG MẮT THƯỜNG - đúng đúng loại lỗi "phụ thuộc font/
+ * glyph máy người dùng" mà quy ước dự án đã cấm dùng cho hình vẽ trong Word (xem NEXT_STEPS.md,
+ * mục "Xuất Word - không dùng ký tự Unicode hiếm để vẽ hình", trước đây mới áp dụng cho hình khối/
+ * thanh đo, CHƯA áp dụng cho đồng hồ).
+ * SỬA: rasterize CHÍNH XÁC hình học ClockFace() (WorksheetPreview.jsx, bản xem trước web) sang 12
+ * ảnh PNG (1 ảnh/giờ, xem scripts/render-clock-face-pngs.js + src/data/clockFacePngs.js) rồi nhúng
+ * bằng ImageRun - kim giờ/kim phút/số đều là NÉT VẼ THẬT trong ảnh, không phụ thuộc font máy giáo
+ * viên nữa, và khớp 100% hình dạng với bản xem trước web.
  */
-const CLOCK_EMOJI_BY_HOUR = {
-  1: "🕐", 2: "🕑", 3: "🕒", 4: "🕓", 5: "🕔", 6: "🕕",
-  7: "🕖", 8: "🕗", 9: "🕘", 10: "🕙", 11: "🕚", 12: "🕛",
-};
+function clockFaceImageRun(hour) {
+  const base64 = CLOCK_FACE_PNG_BY_HOUR[hour] || CLOCK_FACE_PNG_BY_HOUR[1];
+  return new ImageRun({
+    type: "png",
+    data: base64ToUint8Array(base64),
+    transformation: { width: 60, height: 60 },
+  });
+}
 
 /**
  * ================== SỬA LỖI (phản hồi giáo viên, Phiên 19) ==================
- * Trước đây 4 đồng hồ/dòng (chunkArray(items, 4)) khiến emoji đồng hồ bị ép quá nhỏ khi in trên
- * khổ A4 (chữ + emoji chia đều cho 4 cột trong bề rộng cố định của trang). Giảm còn 2/dòng và
- * tăng cỡ chữ emoji (30 -> 40) để đồng hồ đủ lớn, dễ nhìn kim khi in ra giấy.
+ * Trước đây 4 đồng hồ/dòng (chunkArray(items, 4)) khiến hình đồng hồ bị ép quá nhỏ khi in trên
+ * khổ A4. Giữ 2/dòng (đã đổi từ Phiên 19) để đồng hồ đủ lớn, dễ nhìn kim khi in ra giấy.
  */
 function buildXemDongHoGioDungParagraphs(items, showAnswers) {
   return chunkArray(items, 2).map((row) => ({
     children: row.flatMap((it, idx) => {
-      const text = `${CLOCK_EMOJI_BY_HOUR[it.hour] || "🕐"}  ${showAnswers ? `${it.hour} giờ` : `${BLANK} giờ`}`;
-      const run = new TextRun({ text, font: FONT, size: 40 });
-      return idx < row.length - 1 ? [run, new TextRun({ text: "          ", font: FONT, size: 24 })] : [run];
+      const text = `  ${showAnswers ? `${it.hour} giờ` : `${BLANK} giờ`}`;
+      const runs = [clockFaceImageRun(it.hour), new TextRun({ text, font: FONT, size: 28 })];
+      return idx < row.length - 1 ? [...runs, new TextRun({ text: "          ", font: FONT, size: 24 })] : runs;
     }),
     spacing: { after: 200 },
   }));
@@ -818,7 +850,7 @@ function buildThuThapSoLieuParagraphs(surveyTitle, data, questions, showAnswers)
   const dataParas = data.map((d) => ({
     children: [
       new TextRun({ text: `${d.label}: `, font: FONT, size: 24 }),
-      lengthBarImageRun(d.value),
+      ...lengthBarImageRuns(d.value),
       new TextRun({ text: `  (${d.value})`, font: FONT, size: 24 }),
     ],
     spacing: { after: 60 },
@@ -834,6 +866,65 @@ function buildThuThapSoLieuParagraphs(surveyTitle, data, questions, showAnswers)
     spacing: { after: 140, before: i === 0 ? 120 : 0 },
   }));
   return [titlePara, ...dataParas, ...questionParas];
+}
+
+/**
+ * ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+ * "cau_tao_so" - 2 kiểu hàng (xem CauTaoSoSection trong WorksheetPreview.jsx để đối chiếu layout
+ * web - PHẢI giống hệt, chỉ khác cách vẽ ô trống: Word dùng chuỗi chấm BLANK thay vì <span> viền).
+ */
+function buildCauTaoSoParagraphs(items, showAnswers) {
+  return items.map((it, i) => {
+    if (it.kind === "phan_tich") {
+      const termTexts = it.terms.map((term, idx) => {
+        const isBlank = idx === it.blankIndex;
+        const text = isBlank ? (showAnswers ? formatSoTuNhien(term) : BLANK) : formatSoTuNhien(term);
+        return isBlank && showAnswers ? `[${text}]` : text;
+      });
+      return {
+        children: [
+          new TextRun({
+            text: `${i + 1}. ${formatSoTuNhien(it.value)} = ${termTexts.join(" + ")}`,
+            font: FONT,
+            size: 24,
+          }),
+        ],
+        spacing: { after: 140 },
+      };
+    }
+    const text =
+      it.direction === "so_sang_chu"
+        ? `${i + 1}. Số ${formatSoTuNhien(it.value)} đọc là: ${showAnswers ? `[${it.words}]` : BLANK}`
+        : `${i + 1}. Viết số, biết số đó đọc là "${it.words}": ${showAnswers ? `[${formatSoTuNhien(it.value)}]` : BLANK}`;
+    return {
+      children: [new TextRun({ text, font: FONT, size: 24 })],
+      spacing: { after: 140 },
+    };
+  });
+}
+
+/**
+ * "trac_nghiem_so_tu_nhien" - 4 lựa chọn A-D trên 1 dòng (đủ ngắn vì options đều là số/chữ số
+ * đơn giản, không cần xuống dòng 2x2 như bản web - Word có margin hẹp hơn màn hình nên gộp 1 dòng
+ * để đỡ tốn giấy in). Đáp án đúng in đậm + trong ngoặc vuông khi showAnswers=true (khớp quy ước
+ * đánh dấu đáp án đúng đã dùng ở buildKhaNangXayRaParagraphs()).
+ */
+function buildTracNghiemSoTuNhienParagraphs(items, showAnswers) {
+  return items.map((it, i) => {
+    const optionsText = it.options
+      .map((opt, idx) => {
+        const label = `${OPTION_LETTERS_WORD[idx]}. ${opt}`;
+        return showAnswers && idx === it.correctIndex ? `[${label}]` : label;
+      })
+      .join("     ");
+    return {
+      children: [
+        new TextRun({ text: `${i + 1}. ${it.prompt}`, font: FONT, size: 24 }),
+        new TextRun({ text: `\n${optionsText}`, font: FONT, size: 24, bold: showAnswers, break: 1 }),
+      ],
+      spacing: { after: 160 },
+    };
+  });
 }
 
 /**
@@ -1127,6 +1218,10 @@ function buildSectionContentOptions(section, showAnswers) {
       return buildThuThapSoLieuParagraphs(section.surveyTitle, section.data, section.questions, showAnswers);
     case "cac_ngay_trong_tuan":
       return buildCacNgayTrongTuanParagraphs(section.items, showAnswers);
+    case "cau_tao_so":
+      return buildCauTaoSoParagraphs(section.items, showAnswers);
+    case "trac_nghiem_so_tu_nhien":
+      return buildTracNghiemSoTuNhienParagraphs(section.items, showAnswers);
     case "nhan_dien_hinh":
       return buildNhanDienHinhParagraphs(section.shapes);
     case "dem_hinh_ung_dung":

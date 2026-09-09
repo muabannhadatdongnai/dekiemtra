@@ -54,3 +54,92 @@ export function formatSoThapPhan(n, decimals = 1) {
   const result = decPart ? `${intWithDots},${decPart}` : intWithDots;
   return negative ? `-${result}` : result;
 }
+
+/**
+ * ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ("Ôn tập số tự nhiên") ==================
+ * Đọc số tự nhiên thành chữ (0 -> "chín trăm chín mươi chín triệu..."). Trước Phiên 42 dự án
+ * CHƯA có hàm này (đã ghi trong NEXT_STEPS.md là việc tồn đọng) - cần cho dạng bài "cau_tao_so"
+ * (bảng đọc/viết số theo cấu tạo hàng, xem worksheetSchemas.js) để sinh ĐÚNG đáp án "đọc số" thay
+ * vì chỉ có thể yêu cầu học sinh tự đọc miệng (không chấm được).
+ *
+ * QUY TẮC ĐỌC (đã đối chiếu khớp từng ví dụ thật trong SGK "Kết nối tri thức với cuộc sống"
+ * Toán 4-5, Bài 1 "Ôn tập các số..."):
+ *  - Nhóm 3 chữ số từ phải sang trái, đơn vị nhóm: "" / "nghìn" / "triệu" / "tỷ".
+ *  - Nhóm TOÀN SỐ 0 (không phải nhóm đầu) -> BỎ QUA HẲN, không đọc "không nghìn"/"không triệu"
+ *    (VD 1 000 000 -> "một triệu", KHÔNG phải "một triệu không nghìn").
+ *  - Nhóm có hàng trăm = 0 nhưng KHÔNG PHẢI nhóm đầu tiên (nhóm cao nhất) của toàn bộ số -> phải
+ *    thêm "không trăm" (VD 95 006 -> "chín mươi lăm nghìn KHÔNG TRĂM linh sáu" - khớp đúng PDF mẫu
+ *    Lớp 4 Hoan gửi Phiên 41).
+ *  - Hàng chục-đơn vị chỉ có đơn vị (chục = 0): thêm "linh" NẾU phía trước đã có hàng trăm hoặc
+ *    không phải nhóm đầu (VD "ba trăm linh chín"); nếu là nhóm đầu và không có hàng trăm thì đọc
+ *    trần trụi (VD số "9" đứng đầu nhóm nghìn -> "chín nghìn", không phải "linh chín nghìn").
+ *  - "mười" (không phải "một mươi") khi hàng chục = 1; "mười một" (không "mười mốt") khi vừa
+ *    hàng chục = 1 vừa hàng đơn vị = 1; "X mươi mốt"/"X mươi lăm" (không "một"/"năm") khi hàng
+ *    chục >= 2.
+ * Phạm vi: an toàn tới hàng tỷ (999 999 999 999) - vượt xa nhu cầu Tiểu học (tối đa Lớp 5 dạy tới
+ * lớp triệu), đủ dư cho mọi random hiện tại.
+ */
+const DIGIT_WORDS_VI = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"];
+const GROUP_SUFFIX_VI = ["", " nghìn", " triệu", " tỷ"];
+
+function readTwoDigitsVi(tens, ones) {
+  if (tens === 0 && ones === 0) return "";
+  if (tens === 0) return DIGIT_WORDS_VI[ones];
+  if (tens === 1) {
+    if (ones === 0) return "mười";
+    if (ones === 5) return "mười lăm";
+    return `mười ${DIGIT_WORDS_VI[ones]}`; // "mười một", không phải "mười mốt"
+  }
+  let onesWord = "";
+  if (ones === 1) onesWord = " mốt";
+  else if (ones === 5) onesWord = " lăm";
+  else if (ones !== 0) onesWord = ` ${DIGIT_WORDS_VI[ones]}`;
+  return `${DIGIT_WORDS_VI[tens]} mươi${onesWord}`;
+}
+
+function readThreeDigitGroupVi(n, isLeadingGroup) {
+  const hundreds = Math.floor(n / 100);
+  const rem = n % 100;
+  const tens = Math.floor(rem / 10);
+  const ones = rem % 10;
+  const parts = [];
+  if (hundreds > 0) {
+    parts.push(`${DIGIT_WORDS_VI[hundreds]} trăm`);
+  } else if (!isLeadingGroup && n > 0) {
+    parts.push("không trăm");
+  }
+  if (rem > 0) {
+    if (tens === 0) {
+      const needLinh = hundreds > 0 || !isLeadingGroup;
+      parts.push(`${needLinh ? "linh " : ""}${DIGIT_WORDS_VI[ones]}`);
+    } else {
+      parts.push(readTwoDigitsVi(tens, ones));
+    }
+  }
+  return parts.join(" ");
+}
+
+export function docSoTuNhien(n) {
+  const numeric = typeof n === "string" ? Number(n) : n;
+  if (!Number.isFinite(numeric)) return "";
+  const isNegative = numeric < 0;
+  const num = Math.trunc(Math.abs(numeric));
+  if (num === 0) return "không";
+  const groups = [];
+  let rest = num;
+  while (rest > 0) {
+    groups.unshift(rest % 1000);
+    rest = Math.floor(rest / 1000);
+  }
+  const totalGroups = groups.length;
+  const parts = [];
+  let leadingDone = false;
+  groups.forEach((g, idx) => {
+    if (g === 0) return; // bỏ qua hẳn nhóm toàn số 0 (không phải nhóm đầu, vì num!==0)
+    const suffixIdx = totalGroups - 1 - idx;
+    parts.push(readThreeDigitGroupVi(g, !leadingDone) + GROUP_SUFFIX_VI[suffixIdx]);
+    leadingDone = true;
+  });
+  const result = parts.join(" ").replace(/\s+/g, " ").trim();
+  return isNegative ? `âm ${result}` : result;
+}
