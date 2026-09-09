@@ -111,7 +111,45 @@ gộp chung 1 việc cần làm.
 
 ---
 
+## 🟢 Phiếu Bài Tập Toán Lớp 4-5 — "Ôn tập số tự nhiên" + gói chủ đề (Phiên 42)
+
+Phản hồi Hoan qua file `.docx` thật (Phiên 41): (1) Bài "so sánh độ dài" hiện nền đen trong Word
+thật dù PDF vẫn ổn, (2) Bài "xem đồng hồ" không thấy kim bằng mắt thường, (3) đối chiếu 2 PDF mẫu
+SGK Toán 4-5 KNTT phát hiện catalog thiếu hẳn mảng "Ôn tập đầu năm" (Bài 1 mọi SGK), (4) khung chọn
+bài Lớp 4/5 "cứng nhắc" vì chưa có gói chủ đề. Đã xử lý cả 4:
+
+1. **Sửa "so sánh độ dài" (Bài 7):** thay 1 ảnh 40×40 bị co giãn PHI TỈ LỆ (`transformation`
+   16:1 với thanh 20cm) bằng LẶP LẠI ảnh gốc N lần, mỗi ảnh giữ ĐÚNG tỉ lệ vuông gốc — không còn
+   phụ thuộc hành vi co giãn cực đoan của Word thật. Xem `lengthBarImageRuns()` trong
+   `worksheetExportService.js`.
+2. **Sửa "xem đồng hồ giờ đúng" (Bài 12):** thay emoji Unicode 🕐-🕛 (kim mờ, phụ thuộc font máy)
+   bằng 12 ảnh PNG rasterize đúng hình học `ClockFace` (bản web) — xem
+   `scripts/render-clock-face-pngs.js` + `src/data/clockFacePngs.js` (chạy lại script này nếu cần
+   đổi hình học đồng hồ, ĐỪNG sửa tay file PNG base64).
+3. **Thêm hàm `docSoTuNhien()`** (`numberFormatUtils.js`) — đọc số tự nhiên thành chữ, đã đối
+   chiếu khớp 100% với ví dụ thật trong SGK (test `worksheetOnTapSoTuNhienPhien42.test.js`). Đây
+   là tiện ích còn thiếu đã ghi nhận từ Phiên 41.
+4. **Thêm 2 dạng bài mới** (Lớp 4-5): `cau_tao_so` (đọc/viết số + phân tích cấu tạo hàng) và
+   `trac_nghiem_so_tu_nhien` (trắc nghiệm A/B/C/D: làm tròn, so sánh, giá trị chữ số theo hàng, số
+   liền trước/sau) — đủ 4 tầng catalog → generator → preview → xuất Word. Lớp 4 dùng số 5 chữ số
+   (đến 100 000), Lớp 5 dùng 6-8 chữ số (đến hàng chục triệu — SỬA 1 giả định cũ trong
+   `worksheetSchemas.js` tưởng Lớp 5 không cần số tự nhiên lớn hơn Lớp 4, sai với phần "ôn tập đầu
+   năm").
+5. **Thêm 9 gói chủ đề** (`worksheetTopicPackages.js`): 3 gói Lớp 4, 6 gói Lớp 5 — trước Phiên 42
+   CHỈ Lớp 1/3 có gói, Lớp 4/5 giáo viên phải tự bật rời rạc từng dòng.
+
+Đã build docx thật + convert PDF (LibreOffice) xác nhận trực quan cả 5 mục trên đúng như kỳ vọng,
+và `npm test`: 449/449 pass (thêm 13 test mới, không vỡ test cũ nào).
+
+**Còn tồn đọng:** chưa mở bằng Microsoft Word thật (chỉ LibreOffice) để xác nhận 100% hết lỗi
+"nền đen"/"kim mờ" gốc; layout `trac_nghiem_so_tu_nhien` trong Word hiện 4 lựa chọn trên 1 dòng
+(khác bản web 2x2) — CHỦ Ý (đỡ tốn giấy in) nhưng Hoan nên xem thử có ổn không.
+
+---
+
 ## Nguyên tắc sư phạm/kỹ thuật BẮT BUỘC — đọc trước khi code Phiếu Bài Tập/Đề mới
+
+
 
 **Toán Lớp 5 — hình học không gian & số liệu:**
 1. Bài tính Diện tích xung quanh/toàn phần/Thể tích CHỈ dùng Hình Lập Phương và Hình Hộp Chữ

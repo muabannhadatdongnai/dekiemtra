@@ -5,6 +5,22 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 42 — Sửa 2 lỗi Word thật (Phiếu Bài Tập Toán) + dạng bài "Ôn tập số tự nhiên" Lớp 4-5 + gói chủ đề
+Hoan phản hồi qua file `.docx` thật (không phải PDF): Bài "so sánh độ dài" hiện nền đen, bài "xem
+đồng hồ" không thấy kim. Đối chiếu 2 PDF mẫu SGK Toán 4-5 KNTT phát hiện thêm: catalog thiếu hẳn
+mảng "Ôn tập đầu năm" (Bài 1 mọi SGK), và Lớp 4/5 chưa có gói chủ đề (khung chọn bài "cứng nhắc").
+1. **Sửa "so sánh độ dài"**: thay 1 ảnh bị co giãn phi tỉ lệ bằng lặp lại ảnh gốc N lần, mỗi ảnh
+   giữ đúng tỉ lệ vuông gốc — không còn phụ thuộc hành vi co giãn cực đoan của Word thật.
+2. **Sửa "xem đồng hồ giờ đúng"**: thay emoji Unicode 🕐-🕛 bằng 12 ảnh PNG rasterize đúng hình
+   học `ClockFace` (`scripts/render-clock-face-pngs.js`).
+3. Thêm `docSoTuNhien()` (đọc số tự nhiên thành chữ, đối chiếu khớp 100% ví dụ thật SGK).
+4. Thêm 2 dạng bài Lớp 4-5: `cau_tao_so` (đọc/viết số + cấu tạo hàng) và
+   `trac_nghiem_so_tu_nhien` (trắc nghiệm A/B/C/D) — đủ 4 tầng catalog → generator → preview →
+   xuất Word.
+5. Thêm 9 gói chủ đề (3 Lớp 4, 6 Lớp 5) vào `worksheetTopicPackages.js`.
+Đã build docx thật + convert PDF (LibreOffice) xác nhận trực quan. `npm test`: 449/449 pass (thêm
+13 test mới). Còn tồn đọng: chưa xác nhận mở bằng Microsoft Word thật (xem `NEXT_STEPS.md`).
+
 ## Phiên 41 — Sửa 2 lỗ hổng phát hiện lúc rà soát chủ động + cài đặt Item #17 (Audio/IPA)
 Rà soát chủ động code Phiên 40 (không chờ báo lỗi), phát hiện 2 vấn đề thật:
 1. **Fallback âm thầm khi thiếu entry registry**: cả 3 component (`LessonPlanExportActions.jsx`/

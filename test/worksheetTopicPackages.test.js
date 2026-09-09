@@ -54,3 +54,21 @@ test("không có id trùng lặp giữa các gói", () => {
   const ids = WORKSHEET_TOPIC_PACKAGES.map((p) => p.id);
   assert.equal(new Set(ids).size, ids.length, "phát hiện id trùng lặp");
 });
+
+// ================== MỞ RỘNG LỚP 4-5, PHIÊN 42 ==================
+test("getTopicPackagesFor trả về đúng 3 gói cho LOP_4/TOAN và 6 gói cho LOP_5/TOAN", () => {
+  const lop4 = getTopicPackagesFor("LOP_4", "TOAN");
+  const lop5 = getTopicPackagesFor("LOP_5", "TOAN");
+  assert.equal(lop4.length, 3, `LOP_4 kỳ vọng 3 gói, được ${lop4.length}`);
+  assert.equal(lop5.length, 6, `LOP_5 kỳ vọng 6 gói, được ${lop5.length}`);
+  assert.ok(lop4.every((p) => p.grade === "LOP_4" && p.subject === "TOAN"));
+  assert.ok(lop5.every((p) => p.grade === "LOP_5" && p.subject === "TOAN"));
+});
+
+test("gói 'Ôn tập số tự nhiên' tồn tại ở CẢ Lớp 4 lẫn Lớp 5, cùng exerciseKeys", () => {
+  const lop4Pkg = getTopicPackageById("lop4_on_tap_so_tu_nhien");
+  const lop5Pkg = getTopicPackageById("lop5_on_tap_so_tu_nhien");
+  assert.ok(lop4Pkg && lop5Pkg);
+  assert.deepEqual(lop4Pkg.exerciseKeys.sort(), lop5Pkg.exerciseKeys.sort());
+  assert.deepEqual(lop4Pkg.exerciseKeys.sort(), ["cau_tao_so", "trac_nghiem_so_tu_nhien"].sort());
+});
