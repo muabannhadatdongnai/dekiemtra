@@ -1,0 +1,17 @@
+[
+  {
+    "soBai": 6,
+    "tenBai": "Vectơ trong không gian",
+    "noiDungCotLoi": "Định nghĩa vectơ trong không gian, độ dài vectơ, giá của vectơ, hai vectơ cùng phương/cùng hướng/ngược hướng/bằng nhau, vectơ-không. Tổng và hiệu hai vectơ (quy tắc ba điểm, quy tắc hình bình hành, quy tắc hình hộp), tính chất phép cộng vectơ. Tích của một số với vectơ và các tính chất. Tích vô hướng của hai vectơ (công thức a·b = |a|·|b|·cos(a,b)), góc giữa hai vectơ, điều kiện vuông góc."
+  },
+  {
+    "soBai": 7,
+    "tenBai": "Hệ trục toạ độ trong không gian",
+    "noiDungCotLoi": "Hệ trục toạ độ Oxyz với ba trục Ox, Oy, Oz vuông góc từng đôi và các vectơ đơn vị i, j, k. Toạ độ của điểm M(x;y;z) qua công thức OM = xi+yj+zk; hình chiếu của điểm lên các trục và mặt phẳng toạ độ. Toạ độ của vectơ a(x;y;z); công thức tính toạ độ vectơ MN từ toạ độ hai điểm đầu mút M, N."
+  },
+  {
+    "soBai": 8,
+    "tenBai": "Biểu thức toạ độ của các phép toán vectơ",
+    "noiDungCotLoi": "Biểu thức toạ độ phép cộng, trừ hai vectơ, phép nhân số với vectơ, vectơ đối, điều kiện hai vectơ bằng nhau và điều kiện cùng phương theo toạ độ. Công thức toạ độ trung điểm đoạn thẳng và toạ độ trọng tâm tam giác. Biểu thức toạ độ tích vô hướng a·b = xx'+yy'+zz' và các hệ quả: điều kiện vuông góc, độ dài vectơ, khoảng cách giữa hai điểm, công thức tính cosin góc giữa hai vectơ."
+  }
+]

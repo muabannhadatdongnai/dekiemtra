@@ -1,0 +1,12 @@
+[
+  {
+    "soBai": 9,
+    "tenBai": "Khoảng biến thiên và khoảng tứ phân vị",
+    "noiDungCotLoi": "Khoảng biến thiên R của mẫu số liệu ghép nhóm là hiệu giữa đầu mút phải của nhóm cuối và đầu mút trái của nhóm đầu (R = a(k+1) - a1), dùng để đo mức độ phân tán. Khoảng tứ phân vị ΔQ = Q3 - Q1, không bị ảnh hưởng bởi giá trị bất thường (outliers). Công thức tính tứ phân vị thứ r (Qr) của mẫu số liệu ghép nhóm dựa vào nhóm chứa tứ phân vị và tần số tích lũy."
+  },
+  {
+    "soBai": 10,
+    "tenBai": "Phương sai và độ lệch chuẩn",
+    "noiDungCotLoi": "Công thức phương sai s² của mẫu số liệu ghép nhóm dựa trên giá trị đại diện xi và số trung bình x̄; công thức tính nhanh phương sai. Phương sai hiệu chỉnh ŝ² (chia cho n-1). Độ lệch chuẩn s là căn bậc hai của phương sai, dùng đo mức độ phân tán quanh số trung bình. Hệ số biến thiên CV = s/x̄ dùng để so sánh độ phân tán giữa các mẫu số liệu có đơn vị hoặc giá trị trung bình khác nhau."
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Tính đơn điệu và cực trị của hàm số",
+    "noiDungCotLoi": "Định nghĩa hàm số đồng biến, nghịch biến trên khoảng K và mối liên hệ với dấu đạo hàm (f'(x)>0 thì đồng biến, f'(x)<0 thì nghịch biến). Quy tắc xét tính đơn điệu: tìm tập xác định, tính đạo hàm, lập bảng biến thiên, kết luận khoảng đơn điệu. Khái niệm điểm cực đại, cực tiểu, điều kiện đủ để hàm số có cực trị dựa vào sự đổi dấu của đạo hàm khi qua điểm x0."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Giá trị lớn nhất và giá trị nhỏ nhất của hàm số",
+    "noiDungCotLoi": "Định nghĩa giá trị lớn nhất (M) và giá trị nhỏ nhất (m) của hàm số trên một tập D. Quy trình tìm GTLN, GTNN của hàm số liên tục trên đoạn [a;b]: tìm các điểm làm đạo hàm bằng 0 hoặc không xác định trong (a;b), tính giá trị hàm số tại các điểm đó và tại hai đầu mút a, b, so sánh để tìm M và m."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Đường tiệm cận của đồ thị hàm số",
+    "noiDungCotLoi": "Định nghĩa đường tiệm cận ngang y=y0 (dựa vào giới hạn của f(x) khi x tiến ra vô cực), đường tiệm cận đứng x=x0 (dựa vào giới hạn một phía tiến ra vô cực), và đường tiệm cận xiên y=ax+b (dựa vào giới hạn của hiệu f(x)-(ax+b) tiến về 0). Công thức tính hệ số a, b của tiệm cận xiên bằng giới hạn."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Khảo sát sự biến thiên và vẽ đồ thị của hàm số",
+    "noiDungCotLoi": "Sơ đồ khảo sát hàm số gồm 3 bước: tìm tập xác định; khảo sát sự biến thiên (tính đạo hàm, xét dấu, tìm giới hạn và tiệm cận, lập bảng biến thiên); vẽ đồ thị (xác định điểm đặc biệt, vẽ tiệm cận, vẽ đồ thị dựa vào bảng biến thiên). Các dạng đồ thị thường gặp: hàm bậc ba, hàm phân thức bậc nhất/bậc nhất, hàm phân thức bậc hai/bậc nhất."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Ứng dụng đạo hàm để giải quyết một số vấn đề liên quan đến thực tiễn",
+    "noiDungCotLoi": "Tốc độ thay đổi trung bình và tức thời của một đại lượng qua tỉ số Δy/Δx và đạo hàm f'(x1). Ứng dụng trong Vật lí (vận tốc v(t)=s'(t), gia tốc a(t)=v'(t)), Kinh tế (chi phí biên, doanh thu biên, lợi nhuận biên). Quy trình giải bài toán tối ưu hóa: xác định đại lượng cần tối ưu, biểu diễn theo một biến x, tìm GTLN/GTNN của hàm số thu được."
+  }
+]
