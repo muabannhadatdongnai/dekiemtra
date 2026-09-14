@@ -5,6 +5,28 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 43 — Xác nhận fix `<w:p>` lồng `<w:p>` đã lên Vercel + xoá hẳn tab "Tô màu"
+
+1. **Xác nhận mục #18 (NEXT_STEPS.md) đã xong:** Hoan xác nhận file Word tiếng Anh (Soạn Giáo Án)
+   nay mở được bình thường bằng Microsoft Word thật — bản deploy trên Vercel đã lên đúng code fix
+   `<w:p>` lồng `<w:p>` ở bảng "Hết Tiết" (`englishLessonPlanExportService.js`/
+   `foreignLanguageDocBuilder.js`, gốc từ Phiên 37). Đã xoá mục #18 khỏi `NEXT_STEPS.md`.
+2. **Xoá hẳn tab "Tô màu" (Coloring Page):** Hoan xác nhận không khả thi, chọn xoá thay vì kích
+   hoạt (mục #1 cũ trong `NEXT_STEPS.md`). Đã xoá 6 file dành riêng cho tính năng này — không file
+   nào khác trong dự án import các file này (đã grep xác nhận trước khi xoá), nên xoá an toàn,
+   không ảnh hưởng tab nào đang hoạt động:
+   - `src/components/ColoringPageForm.jsx`
+   - `src/components/ColoringPagePreview.jsx`
+   - `src/components/ColoringExportActions.jsx`
+   - `src/services/coloringPageGenerator.js`
+   - `src/services/coloringImageKeyPool.js`
+   - `src/app/api/generate-coloring-page/route.js`
+   Đã xoá dòng mô tả "Chưa kích hoạt: Tô màu" khỏi `README.md`. **Còn lại cho Hoan tự làm:** xoá
+   biến môi trường `COLORING_GEMINI_API_KEYS` trên Vercel dashboard (Claude không có quyền truy
+   cập Vercel). Lưu ý: các cụm "tô màu" còn lại trong code (`worksheetGenerator.js`,
+   `worksheetExerciseCatalog.js`, `activityTypes.js`...) thuộc dạng bài "Nhận diện hình + tô màu"
+   trong Phiếu Bài Tập — KHÁC HẲN tab Tô màu vừa xoá, không đụng tới.
+
 ## Phiên 42 — Sửa 2 lỗi Word thật (Phiếu Bài Tập Toán) + dạng bài "Ôn tập số tự nhiên" Lớp 4-5 + gói chủ đề
 Hoan phản hồi qua file `.docx` thật (không phải PDF): Bài "so sánh độ dài" hiện nền đen, bài "xem
 đồng hồ" không thấy kim. Đối chiếu 2 PDF mẫu SGK Toán 4-5 KNTT phát hiện thêm: catalog thiếu hẳn

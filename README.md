@@ -20,9 +20,6 @@ chi phí **$0** (Vercel + Upstash Redis free tier + AI backbone Gemini qua pool 
 | 6 | 💬 Nhận Xét Học Bạ | Lớp 1-5 | Sinh nhận xét học bạ theo học sinh, lưu lịch sử theo học kỳ qua Upstash Redis. |
 | 7 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
 
-**Chưa kích hoạt** (đã code đủ 4 tầng nhưng chưa nối vào `page.js`, đang chờ Hoan quyết định giữ
-hay xoá): Tô màu (Coloring Page) — xem mục 🔴 trong `NEXT_STEPS.md`.
-
 ## Môn học & khối lớp hỗ trợ (tab Soạn Giáo án / Đề Cương Ôn Tập / Tạo Đề Kiểm Tra)
 
 3 tab trên dùng chung 1 danh sách môn (`src/data/config.js`), tự lọc đúng môn theo khối lớp đang
