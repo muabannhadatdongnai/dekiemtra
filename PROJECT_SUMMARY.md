@@ -5,6 +5,58 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 44 — Rà soát prompt theo pháp luật/chuẩn mực Việt Nam mới nhất + ẩn UsageWidget
+
+1. **Ẩn widget "Mức dùng Gemini hôm nay":** đã xoá phần render `<UsageWidget />` + import khỏi
+   `src/app/page.js`. Component `UsageWidget.jsx`, service liên quan (`activeSessionCounter.js`,
+   `apiClient.js`) và API route `api/usage/route.js` VẪN GIỮ NGUYÊN (chỉ ẩn UI, không xoá backend) -
+   nếu Hoan muốn xoá hẳn sau này thì báo lại, hiện chưa nơi nào khác gọi tới `UsageWidget` nên xoá
+   an toàn nếu cần.
+
+2. **Rà soát prompt theo 3 hướng Hoan yêu cầu (chuẩn giáo dục / thông tin thực tế / nội dung nhạy
+   cảm chính trị-pháp lý) - đã tra cứu quy định mới nhất (tính đến 9/2026) và SỬA trực tiếp
+   `src/data/subjectProfiles.js`:**
+   - **Căn cứ chính:** Thông tư 17/2025/TT-BGDĐT sửa đổi, bổ sung Chương trình GDPT 2018 (kèm
+     TT32/2018) - ban hành RIÊNG để cập nhật nội dung do sáp nhập tỉnh/thành (Nghị quyết
+     202/2025/QH15, hiệu lực 12/6/2025, cả nước còn 34 tỉnh/thành - 28 tỉnh + 6 thành phố, KHÔNG
+     còn cấp huyện, mô hình chính quyền địa phương 2 cấp) và Hiến pháp sửa đổi 2025. Thông tư này
+     sửa trực tiếp phân môn Địa lí (Lớp 4, 5, 8, 9) và môn Địa lí Lớp 12.
+   - Đã bổ sung lưu ý "CẬP NHẬT HÀNH CHÍNH 2025" (ưu tiên bám tài liệu giáo viên cung cấp, nhưng
+     nếu AI phải tự nêu số liệu/tên tỉnh mà tài liệu không có thì phải dùng đúng 34 tỉnh/thành,
+     không dùng "63 tỉnh thành" cũ theo kiến thức nền) vào: `Lich_Su_Dia_Li` (Lớp 4-9),
+     `Dia_Li` (THPT Lớp 12), `Giao_Duc_Kinh_Te_Va_Phap_Luat` (THPT, thêm khía cạnh mô hình chính
+     quyền 2 cấp), và `Noi_Dung_Giao_Duc_Dia_Phuong` (thêm lưu ý KHÔNG tự "sửa" tên gọi địa phương
+     trong tài liệu giáo viên cung cấp theo tên mới nếu tài liệu không nêu rõ - tôn trọng nguồn).
+   - Đã bổ sung dòng "bám sát ĐÚNG quan điểm chính thống của Nhà nước Việt Nam" cho nội dung CHỦ
+     QUYỀN LÃNH THỔ vào `Lich_Su` (THPT) và `Lich_Su_Dia_Li` (Lớp 4-9) - trước đó chỉ có câu chung
+     chung "không đưa quan điểm chính trị gây tranh cãi", trong khi `Dia_Li` (THPT) đã có sẵn câu
+     cụ thể hơn cho chủ quyền biển đảo - nay đồng nhất cả 3 môn Sử/Địa cho nhất quán.
+   - **Đã kiểm tra, XÁC NHẬN VẪN ĐÚNG (không cần sửa):** trích dẫn Thông tư 27/2020 (Tiểu học) và
+     22/2021 (THCS/THPT) trong `reportCommentConfig.js`/`reportCommentPromptTemplates.js` - đây vẫn
+     là 2 văn bản đánh giá học sinh hiện hành, không có thay thế mới. Công văn 3175/2022 +
+     3935/2024 (ngữ liệu Đọc hiểu Ngữ văn không trùng SGK) cũng vẫn hiện hành.
+   - **Tin tốt liên quan kiến trúc dự án:** theo Quyết định 3588/QĐ-BGDĐT (26/12/2025), bộ SGK "Kết
+     nối tri thức với cuộc sống" - bộ mà dự án đang dùng làm chuẩn cho hầu hết môn - được chọn làm
+     **SGK DÙNG CHUNG TOÀN QUỐC từ năm học 2026-2027**, hướng tới miễn phí SGK từ 2030. Không cần
+     hành động gì, chỉ để Hoan biết lựa chọn kiến trúc hiện tại đang đi đúng hướng chính sách mới.
+   - **Đã kiểm tra, KHÔNG phát hiện vấn đề (code sạch):** grep toàn bộ `src/data` và `src/services`
+     không thấy hardcode tên tỉnh cũ đã sáp nhập (Hà Tây, Bắc Kạn, Vĩnh Phúc...) hay số liệu "63
+     tỉnh thành"/cấp huyện - rủi ro nội dung lỗi thời chỉ có thể đến từ kiến thức nền của Gemini khi
+     KHÔNG có tài liệu chương/bài cụ thể, không phải từ code cứng. Các prompt vốn đã có nguyên tắc
+     "bám sát tài liệu cung cấp, không tự bịa số liệu/địa danh" khá tốt từ trước (đặc biệt
+     `Noi_Dung_Giao_Duc_Dia_Phuong`, `Dia_Li`).
+   - **Lưu ý riêng, KHÔNG sửa code (thuộc phạm vi pháp lý cần Hoan tự cân nhắc, Claude không phải
+     luật sư):** Luật Trí tuệ nhân tạo 2025 (số 134/2025/QH15, hiệu lực 1/3/2026) yêu cầu nhà cung
+     cấp dịch vụ AI có cơ chế để người dùng nhận biết đang tương tác với AI (Điều 11) - dự án vốn đã
+     tên là công cụ AI và có nút "Sinh bằng AI" rõ ràng nên có thể đã đáp ứng tinh thần minh bạch cơ
+     bản, nhưng đây là luật rất mới, Hoan có thể cân nhắc thêm 1 dòng disclaimer ngắn kiểu "Nội dung
+     do AI tạo, giáo viên cần kiểm tra lại trước khi sử dụng" ở UI nếu muốn chắc chắn hơn.
+   - **Về "sáng tạo/đổi mới cấu trúc ra đề, soạn bài":** CHƯA rà trong phiên này (Hoan chưa yêu cầu
+     brainstorm cụ thể ở lượt trả lời gần nhất) - nếu Hoan muốn, nói rõ "brainstorm cấu trúc mới
+     cho [môn/dạng bài cụ thể]" ở phiên sau.
+   - Đã chạy `npm test` (449/449 pass) và `npm run build` (build sạch) sau khi sửa để xác nhận
+     không phá vỡ gì.
+
 ## Phiên 43 — Xác nhận fix `<w:p>` lồng `<w:p>` đã lên Vercel + xoá hẳn tab "Tô màu"
 
 1. **Xác nhận mục #18 (NEXT_STEPS.md) đã xong:** Hoan xác nhận file Word tiếng Anh (Soạn Giáo Án)
