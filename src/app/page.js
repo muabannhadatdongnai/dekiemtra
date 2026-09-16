@@ -22,7 +22,6 @@ import OutlineForm from "@/components/OutlineForm";
 import OutlinePreview from "@/components/OutlinePreview";
 import OutlineExportActions from "@/components/OutlineExportActions";
 import HelpGuideView from "@/components/HelpGuideView";
-import UsageWidget from "@/components/UsageWidget";
 import { getSession, clearSession, DISABLE_LOGIN, TEST_SESSION as TEST_USER } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
 import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
@@ -263,9 +262,6 @@ export default function HomePage() {
             {mode === MODES.VIETNAMESE_EXAM && <VietnameseExamForm onGenerated={handleVietnameseExamGenerated} />}
             {mode === MODES.OUTLINE && <OutlineForm onGenerated={handleOutlineGenerated} />}
             {mode === MODES.REPORT_COMMENT && <ReportCommentForm onGenerated={handleReportCommentGenerated} />}
-            <div className="mt-4">
-              <UsageWidget />
-            </div>
           </aside>
 
           {mode === MODES.EXAM ? (
