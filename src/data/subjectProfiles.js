@@ -150,7 +150,9 @@ export const SUBJECT_PROFILES = {
 - ⚠️ Độ khó THPT cao hơn hẳn "Lịch sử và Địa lí" Tiểu học/THCS: ưu tiên câu hỏi PHÂN TÍCH/ĐÁNH GIÁ/
   SO SÁNH (nguyên nhân-kết quả nhiều tầng, so sánh giữa các giai đoạn/sự kiện/xu hướng lịch sử,
   nhận xét vai trò/ý nghĩa lịch sử), không dừng ở mức ghi nhớ sự kiện đơn thuần như Tiểu học/THCS.
-- Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
+- Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa - riêng nội dung liên
+  quan chủ quyền lãnh thổ (biển đảo, biên giới, các cuộc chiến tranh bảo vệ Tổ quốc), bám sát ĐÚNG
+  quan điểm chính thống của Nhà nước Việt Nam thể hiện trong SGK, không mô tả mập mờ/gây hiểu nhầm.`,
   },
   // ⚠️ Đạo đức và Khoa học chỉ dạy ở Tiểu học (xem giới hạn minGrade/maxGrade trong config.js) -
   // 2 quy tắc riêng dưới đây viết RIÊNG cho lứa tuổi Tiểu học, KHÔNG dùng chung khuôn với Lịch sử/
@@ -224,7 +226,17 @@ export const SUBJECT_PROFILES = {
   Lớp 6-9 (THCS) yêu cầu PHÂN TÍCH/GIẢI THÍCH NGUYÊN NHÂN-KẾT QUẢ (VD "vì sao", "tác động của...",
   so sánh giữa các giai đoạn/vùng miền), có thể dùng thuật ngữ chuyên môn sâu hơn (VD "phong trào",
   "chế độ", "cơ cấu kinh tế") - KHÔNG viết văn phong/độ khó Lớp 6-9 giống hệt Lớp 4-5 và ngược lại.
-- Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa.`,
+- ⚠️ CẬP NHẬT HÀNH CHÍNH 2025 (Thông tư 17/2025/TT-BGDĐT sửa CT GDPT 2018 do sáp nhập tỉnh - áp
+  dụng trực tiếp Lớp 4, 5, 8, 9 phân môn Địa lí): từ 1/7/2025 cả nước còn 34 tỉnh/thành (28 tỉnh + 6
+  thành phố trực thuộc Trung ương), KHÔNG còn cấp huyện (chính quyền địa phương 2 cấp: tỉnh - xã).
+  Nếu tài liệu được cung cấp dùng số liệu/ranh giới/tên tỉnh CŨ (trước sáp nhập, VD còn nhắc cấp
+  huyện hoặc tên 1 trong các tỉnh đã hợp nhất), ưu tiên bám sát ĐÚNG tài liệu đó (vì đây có thể là
+  SGK/tài liệu giáo viên đang dùng thực tế), nhưng nếu phải tự nêu tên/số lượng tỉnh, thành mà
+  KHÔNG có trong tài liệu, PHẢI dùng đúng đơn vị hành chính hiện hành (34 tỉnh, thành, không có
+  cấp huyện) - không dùng số liệu "63 tỉnh thành" cũ theo kiến thức nền.
+- Không đưa quan điểm chính trị gây tranh cãi ngoài phạm vi sách giáo khoa - riêng nội dung liên
+  quan chủ quyền lãnh thổ (biển đảo, biên giới), bám sát ĐÚNG quan điểm chính thống của Nhà nước
+  Việt Nam thể hiện trong SGK, không mô tả mập mờ/gây hiểu nhầm về chủ quyền.`,
   },
   Tin_Hoc: {
     label: "Tin học",
@@ -395,6 +407,11 @@ export const SUBJECT_PROFILES = {
   cung cấp (do giáo viên/Sở GD&ĐT địa phương biên soạn), TUYỆT ĐỐI KHÔNG tự bịa địa danh/số liệu/
   sự kiện của địa phương khi tài liệu không cung cấp đủ - nếu tài liệu không đủ chi tiết, nêu rõ
   cần giáo viên bổ sung thay vì suy đoán.
+- ⚠️ LƯU Ý: sau đợt sáp nhập tỉnh/thành 1/7/2025 (còn 34 tỉnh/thành, bỏ cấp huyện), ranh giới và
+  tên gọi địa phương ở nhiều nơi đã thay đổi so với tài liệu biên soạn trước đó - nếu tài liệu giáo
+  viên cung cấp dùng tên/ranh giới địa phương CŨ, vẫn bám sát ĐÚNG tài liệu đó (đây là nội dung do
+  giáo viên/Sở GD&ĐT biên soạn, không tự ý "sửa" theo tên gọi mới), không tự suy đoán tên gọi mới
+  nếu tài liệu không nêu rõ.
 - Ngôn ngữ gần gũi, khuyến khích học sinh tự hào và hiểu biết về quê hương, tăng dần độ phức tạp
   theo cấp học (THCS mô tả/nhận biết cơ bản, THPT có thể phân tích/đánh giá sâu hơn).`,
   },
@@ -465,6 +482,12 @@ export const SUBJECT_PROFILES = {
 - Ưu tiên câu hỏi PHÂN TÍCH MỐI QUAN HỆ NHÂN QUẢ (VD "vì sao vùng X có ngành Y phát triển"), so
   sánh giữa các vùng miền/quốc gia, hơn là hỏi thuộc lòng số liệu đơn thuần - đúng tinh thần môn
   Địa lí THPT thiên PHÂN TÍCH hơn hẳn "Lịch sử và Địa lí" Tiểu học/THCS (vốn dừng ở nhận biết/mô tả).
+- ⚠️ CẬP NHẬT HÀNH CHÍNH 2025 (Thông tư 17/2025/TT-BGDĐT sửa CT GDPT 2018, áp dụng trực tiếp môn
+  Địa lí Lớp 12 do sáp nhập tỉnh): từ 1/7/2025 cả nước còn 34 tỉnh/thành (28 tỉnh + 6 thành phố
+  trực thuộc Trung ương), KHÔNG còn cấp huyện. Ưu tiên bám sát tài liệu được cung cấp (có thể vẫn
+  dùng số liệu/ranh giới vùng kinh tế-xã hội theo SGK hiện hành); nếu phải tự nêu tên/số lượng
+  tỉnh, thành mà tài liệu không có, PHẢI dùng đúng đơn vị hành chính hiện hành, không dùng số liệu
+  "63 tỉnh thành" cũ theo kiến thức nền.
 - Không đưa quan điểm chính trị/tranh chấp chủ quyền gây tranh cãi ngoài phạm vi sách giáo khoa
   chính thống - với nội dung chủ quyền lãnh thổ (biển đảo...), bám sát ĐÚNG quan điểm chính thống
   của Nhà nước Việt Nam thể hiện trong SGK.`,
@@ -480,6 +503,12 @@ export const SUBJECT_PROFILES = {
   luật Việt Nam, các ngành luật cơ bản: dân sự, hình sự, lao động, hôn nhân-gia đình...).
 - Với nội dung pháp luật: bám sát ĐÚNG quy định pháp luật Việt Nam hiện hành có trong tài liệu
   được cung cấp, KHÔNG tự suy diễn hoặc bịa quy định không có thật/đã hết hiệu lực.
+- ⚠️ CẬP NHẬT PHÁP LÝ 2025 (ảnh hưởng nội dung về bộ máy nhà nước/chính quyền địa phương): từ
+  1/7/2025, chính quyền địa phương Việt Nam vận hành theo MÔ HÌNH 2 CẤP (tỉnh và xã), KHÔNG còn
+  cấp huyện, cả nước còn 34 tỉnh/thành; Hiến pháp cũng đã được sửa đổi năm 2025 cho phù hợp mô hình
+  này. Nếu tài liệu được cung cấp mô tả bộ máy hành chính 3 cấp (tỉnh-huyện-xã) cũ, ưu tiên bám sát
+  tài liệu đó (giáo viên có thể đang dùng SGK/tài liệu ban hành trước thời điểm sửa đổi), nhưng nếu
+  phải tự trình bày cơ cấu hành chính mà tài liệu không có, PHẢI dùng đúng mô hình 2 cấp hiện hành.
 - Với nội dung kinh tế: số liệu/ví dụ minh hoạ (nếu có tính toán, VD lãi suất, thuế cơ bản) phải
   "sạch", dễ kiểm tra, đúng công thức kinh tế học phổ thông cơ bản.
 - Với trắc nghiệm tình huống đạo đức/pháp luật/kinh tế, chỉ có DUY NHẤT 1 phương án đúng chuẩn
