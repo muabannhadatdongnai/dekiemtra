@@ -5,6 +5,52 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 45 — Tab mới "Khung KHGD" (Phụ lục III, CV 5512) — TOÀN BỘ môn THCS (Lớp 6-9)
+
+1. **Yêu cầu Hoan:** thêm 1 tab riêng soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ lục III,
+   CV 5512/BGDĐT-GDTrH) — bảng Phân phối chương trình lồng ghép SWD (khuyết tật) + Biểu hiện Năng
+   lực số (NLS), bảng Kiểm tra đánh giá định kỳ, khổ A4 NGANG — theo mẫu thật Hoan gửi (Tiếng Anh
+   Lớp 7, trường THCS Phú Túc). Đã trao đổi/chốt kế hoạch trước khi code (3 quyết định chính: tên
+   bài lấy gợi ý GitHub + AI chỉ soạn SWD/NLS; làm luôn TOÀN BỘ môn THCS ngay đợt 1; SWD/NLS bật
+   tắt riêng theo TỪNG LOẠI, không phải theo từng dòng).
+
+2. **Quyết định kỹ thuật quan trọng nhất:** Số tiết + Thời điểm (tuần) mỗi bài do GIÁO VIÊN TỰ GÕ
+   TAY, AI KHÔNG được tự tính/đoán (khác mọi tab khác trong app vốn để AI tự soạn toàn bộ nội
+   dung) — vì mỗi trường/GV phân phối chương trình khác nhau. `khgdResult.js:buildKhgdResult()`
+   khớp kết quả AI lại theo `id`, LUÔN giữ nguyên các trường giáo viên tự nhập.
+
+3. **File mới (10 file services/data + 3 component + 1 API route + 1 test):**
+   `khgdBlueprint.js`, `khgdResult.js`, `khgdSubjectDefaults.js`, `khgdPromptTemplates.js`,
+   `khgdEngine.js`, `khgdOrchestrator.js`, `khgdExportService.js`, `app/api/generate-khgd/route.js`,
+   `KhgdForm.jsx`, `KhgdPreview.jsx`, `KhgdExportActions.jsx`, `test/khgdExportService.test.js`.
+   Sửa thêm: `constants.js` (thêm `PAGE_A4_LANDSCAPE_MM`), `contentGenerationLimits.js` (thêm
+   `clampKhgdLessons`), `apiClient.js` (thêm `generateKhgdRequest`), `globals.css` (thêm
+   `.khgd-a4-page`), `scripts/check-word-compatibility.mjs` (thêm scenario
+   `khung-khgd-phu-luc-3`), `page.js` (nối tab mới, `MODES.KHGD`).
+
+4. **Tái dùng tối đa hạ tầng có sẵn** thay vì viết mới: `getSubjectProfile()`
+   (subjectProfiles.js) cho vai trò AI theo môn, `buildForeignLanguageOutputDirective()`
+   (foreignLanguageSubjects.js, với `exemptJsonFields: ["nls"]` để "nls" LUÔN tiếng Việt còn "swd"
+   viết bằng đúng ngôn ngữ môn Ngoại ngữ), `/api/chapters` + `/api/lessons` (đã có sẵn cho Soạn
+   giáo án) cho nút "Nạp gợi ý tên bài từ SGK", `getSubjectsForGrade(grade)` (config.js, không cần
+   thêm `MODULE_KEYS.KHGD` hay whitelist riêng — tự động đúng cho THCS).
+
+5. **Xuất Word dùng CHUNG 1 bộ cho mọi môn** (`khgdExportService.js`) — khác
+   `foreignLanguageExportRegistry.js` (tách theo ngôn ngữ) vì bố cục Phụ lục III giống hệt nhau
+   theo CV 5512 bất kể môn học, chỉ nội dung khác theo môn (đặt trong `khgdSubjectDefaults.js`,
+   mỗi môn 1 entry riêng dễ sửa độc lập — đúng "Isolation over DRY" nhưng KHÔNG nhân bản cả file
+   export cho từng môn vì không cần thiết ở tầng đó).
+
+6. **Kết quả kiểm thử:** `next build` sạch (route `/api/generate-khgd` lên đúng); `npm test`
+   452/452 pass (bao gồm 3 test mới, không phá vỡ test nào của 7 tab cũ); LibreOffice headless
+   (`npm run test:word-compat` tương đương, chạy trực tiếp script) mở được file `.docx` xuất ra,
+   convert PDF 2 trang không lỗi.
+
+7. **CHƯA làm/CHƯA xác nhận** (xem mục #19-22, `NEXT_STEPS.md`): dữ liệu SGK GitHub thật cho các
+   môn chưa có `chuong_{n}_bai.json`; test với Gemini API key thật (sandbox không có key); mở rộng
+   Tiểu học/THPT; hỗ trợ "In/Tải PDF" trực tiếp từ trình duyệt (hiện chỉ có "Tải Word" vì khổ A4
+   ngang xung đột với rule `@page` khổ dọc toàn cục dùng chung `id="print-area"`).
+
 ## Phiên 44 — Rà soát prompt theo pháp luật/chuẩn mực Việt Nam mới nhất + ẩn UsageWidget
 
 1. **Ẩn widget "Mức dùng Gemini hôm nay":** đã xoá phần render `<UsageWidget />` + import khỏi

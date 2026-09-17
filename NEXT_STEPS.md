@@ -4,8 +4,8 @@
 > đủ từng phiên nằm ở `PROJECT_SUMMARY.md`. Khi 1 việc trong bảng dưới đã xong, XOÁ dòng đó khỏi
 > bảng (đừng giữ lại "lịch sử đã xong" ở đây — chuyển 1 dòng tóm tắt sang `PROJECT_SUMMARY.md`).
 
-**Trạng thái tổng quát:** 7 tab đang hoạt động (Soạn Giáo án, Phiếu Bài Tập, Đề Tiếng Việt Tiểu
-học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, Hướng dẫn sử dụng). Soạn Giáo án/Đề Cương
+**Trạng thái tổng quát:** 8 tab đang hoạt động (Soạn Giáo án, Phiếu Bài Tập, Đề Tiếng Việt Tiểu
+học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, Khung KHGD, Hướng dẫn sử dụng). Soạn Giáo án/Đề Cương
 Ôn Tập/Tạo Đề Kiểm Tra đã hỗ trợ ĐỦ Mầm non → Lớp 12 (Tiểu học + THCS + THPT, xem Phiên 33 - THPT
 khai báo đủ 17 môn/HĐGD: 8 bắt buộc + 9 lựa chọn theo Thông tư 32/2018 sửa đổi Thông tư 13/2022,
 KHÔNG cần dropdown "chọn tổ hợp" riêng vì công cụ soạn theo 1 môn/1 lúc). Toán Lớp 3-5 đã đủ
@@ -44,6 +44,10 @@ Việt - đã xác nhận áp dụng đúng cho CẢ bản xem trước web lẫ
 | 16 | Kiểm tra thật trên trình duyệt việc AI sinh trực tiếp tiếng Anh (Soạn Giáo Án/Đề Cương Ôn Tập/Đề Kiểm tra, môn Tiếng Anh) | Phiên 35: đã đổi kiến trúc (sinh thẳng tiếng Anh, bỏ bước dịch); Phiên 36: đã SỬA 2 lỗi (hạt sạn tiếng Việt trong tên hoạt động; nút In/Tải PDF báo lỗi popup); Phiên 37: đã SỬA 2 lỗi tiếp theo phát hiện qua file `.docx` lỗi thật Hoan gửi (file Word tiếng Anh Soạn Giáo Án không mở được do `<w:p>` lồng `<w:p>` ở bảng "Hết Tiết"; "Thư ngỏ gửi Phụ huynh" Đề Cương Ôn Tập bị dịch nhầm sang tiếng Anh) — Phiên 43: Hoan đã XÁC NHẬN mở được file Word thật bằng Microsoft Word, bản deploy Vercel đã lên đúng code fix. Phần CÒN LẠI: vẫn CHƯA test thật với Gemini API key thật (sandbox không có `GEMINI_API_KEYS`) để xác nhận AI TUÂN THỦ chỉ thị `buildForeignLanguageOutputDirective()` với nội dung bài học thật (không chỉ cấu trúc/tên hoạt động).
 | 17 | Cân nhắc thêm dòng disclaimer "Nội dung do AI tạo, giáo viên cần kiểm tra lại" lên UI | Phiên 44: Luật Trí tuệ nhân tạo 2025 (số 134/2025/QH15, hiệu lực 1/3/2026) yêu cầu nhà cung cấp dịch vụ AI có cơ chế để người dùng nhận biết đang tương tác với AI (Điều 11) - dự án vốn đã tên là công cụ AI + có nút "Sinh bằng AI" rõ ràng nên có thể đã đủ, nhưng đây là luật rất mới và Claude không phải luật sư nên không tự ý thêm/diễn giải - Hoan tự cân nhắc có cần bổ sung disclaimer rõ hơn hay không.
 | 18 | Brainstorm sáng tạo/đổi mới cấu trúc ra đề, soạn bài (nếu Hoan vẫn muốn) | Phiên 44: Hoan có nhắc tới "sự sáng tạo, đổi mới trong cấu trúc ra đề, soạn bài" khi yêu cầu rà soát pháp lý, nhưng lượt trả lời gần nhất tập trung vào phần pháp lý/chuẩn mực trước - phần brainstorm cấu trúc mới CHƯA làm, cần Hoan nói rõ muốn đổi mới cho môn/dạng bài cụ thể nào ở phiên sau.
+| 19 | Khung KHGD (Phụ lục III): tạo dữ liệu SGK thật cho các môn THCS chưa có trong kho GitHub kiến thức | Nút "Nạp gợi ý tên bài từ SGK" ở `KhgdForm.jsx` tái dùng `/api/lessons` (giống Soạn Giáo án) — môn nào CHƯA có `chuong_{n}_bai.json` trong kho GitHub thì nút này chỉ báo "chưa có gợi ý sẵn", giáo viên vẫn tạo được bình thường bằng cách tự gõ tay từng dòng (KHÔNG bị chặn tính năng), chỉ mất phần tiện lợi gợi ý tên bài. |
+| 20 | Khung KHGD: CHƯA test thật với Gemini API key thật | Sandbox không có `GEMINI_API_KEYS` — mới xác nhận được: build sạch (`next build`), 452/452 `npm test` pass (bao gồm 3 test mới `khgdExportService.test.js`), và LibreOffice mở được file `.docx` xuất ra (script `check-word-compatibility.mjs`, entry `khung-khgd-phu-luc-3`). CHƯA xác nhận AI thật trả JSON đúng schema + văn phong SWD/NLS giống bản mẫu Bộ GDĐT với môn/bài học thật. |
+| 21 | Khung KHGD: quyết định có mở rộng ra Tiểu học/THPT hay không | Phiên 45 chỉ làm THCS (Lớp 6-9, theo yêu cầu "làm luôn cho tất cả môn của 1 cấp") — kiến trúc dùng chung `getSubjectsForGrade(grade)` (không giới hạn `moduleKey` riêng) nên VỀ MẶT KỸ THUẬT có thể mở sang Tiểu học/THPT khá nhanh (chỉ cần đổi mảng `THCS_GRADES` trong `KhgdForm.jsx` + bổ sung `khgdSubjectDefaults.js` cho môn Tiểu học/THPT chưa có entry), nhưng Phụ lục III có thể có khác biệt nhỏ theo cấp học (VD Tiểu học đánh giá theo Thông tư 27 khác THCS/THPT) — CHƯA đối chiếu văn bản mẫu cấp khác, cần Hoan xác nhận trước khi mở rộng.
+| 22 | Khung KHGD: chưa hỗ trợ "In/Tải PDF" trực tiếp từ trình duyệt | Cố ý bỏ qua ở Phiên 45 vì khổ A4 NGANG (297x210mm) xung đột với rule `@page` toàn cục (khổ dọc, dùng chung `id="print-area"` với 6 tab kia — xem giải thích trong `globals.css`/`KhgdPreview.jsx`). Hiện tab này CHỈ có nút "Tải Word" (đã đúng khổ ngang, sẵn sàng in trực tiếp từ Word) — nếu Hoan cần thêm PDF/in trình duyệt, cần thiết kế cơ chế bật/tắt `@page` theo mode (hoặc mở cửa sổ in riêng như `foreignLanguageDocBuilder.js` đang làm cho Ngoại ngữ 2).
 
 ---
 
@@ -110,6 +114,58 @@ gộp chung 1 việc cần làm.
    `chuong_{n}.md` đúng cấu trúc thư mục hiện dùng cho Tiếng Anh/Toán/Tiếng Việt.
 
 ---
+
+## 🟢 Khung KHGD — Phụ lục III (CV 5512/BGDĐT-GDTrH) — Phiên 45, đợt 1: TOÀN BỘ môn THCS (Lớp 6-9)
+
+**Yêu cầu Hoan (Phiên 45):** thêm 1 tab riêng soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ
+lục III, CV 5512) — bảng Phân phối chương trình có lồng ghép SWD (giáo dục học sinh khuyết tật) +
+Biểu hiện Năng lực số (NLS), cùng bảng Kiểm tra đánh giá định kỳ, khổ giấy A4 NGANG. Đã chốt 3
+quyết định trước khi code: (1) tên bài lấy gợi ý từ kho GitHub có sẵn, AI CHỈ soạn SWD/NLS; (2)
+làm luôn cho TẤT CẢ môn THCS ngay từ đợt 1 (không chỉ 1 môn mẫu); (3) 2 công tắc lồng ghép SWD/NLS
+bật/tắt riêng theo TỪNG LOẠI (không phải bật/tắt từng dòng bài học).
+
+**⚠️ QUYẾT ĐỊNH QUAN TRỌNG NHẤT (khác mọi tab khác trong app): Số tiết + Thời điểm (tuần) của MỖI
+bài học do GIÁO VIÊN TỰ GÕ TAY, AI KHÔNG ĐƯỢC PHÉP TỰ TÍNH/ĐOÁN** — vì mỗi trường/giáo viên phân
+phối chương trình khác nhau. `khgdPromptTemplates.js` chỉ gửi lên AI: tên bài + số tiết ĐÃ CÓ (chỉ
+để AI hiểu ngữ cảnh viết SWD phù hợp độ dài bài), và CHỈ yêu cầu AI trả về đúng 2 trường
+`swd`/`nls` khớp lại theo `id` — `khgdResult.js:buildKhgdResult()` LUÔN giữ nguyên
+tenBai/soTiet/tuan/thietBi/diaDiem gốc do giáo viên nhập, không cho phép AI ghi đè.
+
+**Kiến trúc (đọc file nào trước khi sửa gì):**
+- `src/data/khgdBlueprint.js` — shape dữ liệu gửi lên `/api/generate-khgd`.
+- `src/data/khgdResult.js` — gộp kết quả AI vào ĐÚNG danh sách bài gốc (khớp theo `id`).
+- `src/data/khgdSubjectDefaults.js` — Thiết bị dạy học/Địa điểm GỢI Ý theo từng môn (chỉ pre-fill
+  form, không gửi AI) — mỗi môn 1 entry riêng, dễ sửa từng môn độc lập (đúng "Isolation over
+  DRY"), THIẾU môn nào cứ thêm entry mới, không cần sửa hàm chung.
+- `src/services/khgdPromptTemplates.js` + `khgdEngine.js` + `khgdOrchestrator.js` — lớp AI, tái
+  dùng `getSubjectProfile()` (subjectProfiles.js, lấy `expertRole`) và
+  `buildForeignLanguageOutputDirective()` (foreignLanguageSubjects.js, môn Tiếng Anh/Trung/Nhật/
+  Pháp viết "swd" bằng CHÍNH ngôn ngữ đó, "nls" LUÔN tiếng Việt qua `exemptJsonFields: ["nls"]`).
+- `src/app/api/generate-khgd/route.js` — có `clampKhgdLessons()` (contentGenerationLimits.js,
+  trần mặc định 80 bài/lượt, đổi qua env `KHGD_MAX_LESSONS`) chặn client gửi danh sách khổng lồ.
+- `src/services/khgdExportService.js` — DÙNG CHUNG 1 bộ xuất Word cho MỌI môn (khác
+  `foreignLanguageExportRegistry.js` tách theo ngôn ngữ) vì bố cục Phụ lục III giống hệt nhau theo
+  CV 5512 bất kể môn học — chỉ NỘI DUNG khác theo môn. Khổ A4 NGANG
+  (`PAGE_A4_LANDSCAPE_MM`/`PAGE_LANDSCAPE_MARGIN_MM`, constants.js) — ĐÃ test bằng LibreOffice
+  headless thật (`scripts/check-word-compatibility.mjs`, entry `khung-khgd-phu-luc-3`), mở được,
+  ra đúng số trang.
+- `src/components/KhgdForm.jsx`/`KhgdPreview.jsx`/`KhgdExportActions.jsx` — form nhập bảng bài học
+  (nút "Nạp gợi ý tên bài từ SGK" tái dùng `/api/lessons` có sẵn, giống LessonPlanForm.jsx) + bản
+  xem trước web + xuất Word. `.khgd-a4-page` (globals.css) là class CSS RIÊNG (khổ ngang), CỐ Ý
+  KHÔNG dùng `id="print-area"` — xem mục #22 ở bảng "CẦN HOAN QUYẾT ĐỊNH" phía trên (chưa hỗ trợ
+  In/Tải PDF trình duyệt, chỉ có "Tải Word").
+
+**✅ ĐÃ XÁC NHẬN Ở PHIÊN 45:** `next build` sạch; `npm test` 452/452 pass (thêm mới 3 test ở
+`test/khgdExportService.test.js`); LibreOffice headless mở được file `.docx` xuất ra, convert PDF
+2 trang không lỗi.
+
+**❌ CHƯA LÀM / CẦN HOAN XÁC NHẬN TIẾP:** xem mục #19-22 ở bảng "🔴 CẦN HOAN QUYẾT ĐỊNH" phía trên
+(dữ liệu SGK GitHub cho môn chưa có, test AI thật, mở rộng Tiểu học/THPT, hỗ trợ PDF/in trình
+duyệt).
+
+---
+
+
 
 ## 🟢 Phiếu Bài Tập Toán Lớp 4-5 — "Ôn tập số tự nhiên" + gói chủ đề (Phiên 42)
 

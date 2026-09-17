@@ -45,6 +45,8 @@ import { buildWorksheetDocxBlob } from "../src/services/worksheetExportService.j
 import { exportLessonPlanToWord } from "../src/services/lessonPlanExportService.js";
 import { exportVietnameseExamToWord } from "../src/services/vietnameseExamExportService.js";
 import { buildOutlineDocxBlob } from "../src/services/outlineExportService.js";
+import { buildKhgdDocument } from "../src/services/khgdExportService.js";
+import { Packer } from "docx";
 import { exportReportCommentsToWord } from "../src/services/reportCommentExportService.js";
 import { buildEnglishLessonPlanDocxBlob } from "../src/services/englishLessonPlanExportService.js";
 import { buildEnglishOutlineDocxBlob } from "../src/services/englishOutlineExportService.js";
@@ -161,6 +163,55 @@ function makeOutlineScenario() {
     nganHangBaiTap: [{ cauHoi: "Tính 2/3 + 1/6", dapAn: "5/6" }],
   };
   return buildOutlineDocxBlob({ outline, meta: { tenDeCuong: outline.tenDeCuong }, showAnswers: true });
+}
+
+async function makeKhgdScenario() {
+  const lessons = [
+    {
+      id: "l1",
+      tenBai: "Unit 1. Hobbies - Getting started",
+      soTiet: 3,
+      tuan: "Tuần 1",
+      thietBi: "Cassette, CDs, S.mềm",
+      diaDiem: "Phòng học 7",
+      swd: [
+        "Recognise some basic words related to hobbies through pictures and videos.",
+        "Participate in simple pair activities with support.",
+      ],
+      nls: "Học sinh tạo 1 video ngắn giới thiệu sở thích của mình.",
+    },
+    {
+      id: "l2",
+      tenBai: "Unit 1. Hobbies - A closer look 1",
+      soTiet: 1,
+      tuan: "Tuần 1",
+      thietBi: "Cassette, CDs, S.mềm",
+      diaDiem: "Phòng học 7",
+      swd: ["Match words with pictures."],
+      nls: "",
+    },
+  ];
+  const kiemTraDinhKy = [
+    {
+      ten: "Giữa Học kỳ 1",
+      thoiGian: "60 phút",
+      thoiDiem: "Tuần 9, Tiết 26,27",
+      yeuCauCanDat: "Kiểm tra kiến thức/kỹ năng Unit 1-3.",
+      hinhThuc: "Viết (giấy)",
+    },
+  ];
+  const meta = {
+    subject: "Tieng_Anh",
+    grade: 7,
+    truong: "THCS Phú Túc",
+    to: "Tiếng Anh",
+    giaoVien: "Đỗ Thị Vân Trinh",
+    namHoc: "2026-2027",
+    enableSwd: true,
+    enableNls: true,
+  };
+  const doc = buildKhgdDocument({ lessons, kiemTraDinhKy, meta });
+  return Packer.toBlob(doc);
 }
 
 async function makeReportCommentScenario() {
@@ -380,6 +431,7 @@ const SCENARIOS = [
   { name: "giao-an-loi-dan-slide", build: makeLessonPlanScenario },
   { name: "de-tieng-viet", build: makeVietnameseExamScenario },
   { name: "de-cuong-on-tap", build: makeOutlineScenario },
+  { name: "khung-khgd-phu-luc-3", build: makeKhgdScenario },
   { name: "nhan-xet-hoc-ba", build: makeReportCommentScenario },
   { name: "giao-an-tieng-anh-nhieu-tiet", build: makeEnglishLessonPlanScenario },
   { name: "de-cuong-tieng-anh", build: makeEnglishOutlineScenario },

@@ -18,7 +18,8 @@ chi phí **$0** (Vercel + Upstash Redis free tier + AI backbone Gemini qua pool 
 | 4 | 📝 Đề Cương Ôn Tập | Lớp 1-5 | Sinh đề cương ôn tập theo chương/chủ đề đã chọn, dùng chung kho kiến thức GitHub + `subjectProfiles.js` với 2 tab kia. |
 | 5 | 🧾 Tạo Đề Kiểm Tra | Lớp 1-5 | Đề kiểm tra theo ma trận (số câu/mức độ nhận thức mỗi chương), tính điểm tự động không lỗi làm tròn âm (đã sửa), xuất Word + PDF (`window.print()`). |
 | 6 | 💬 Nhận Xét Học Bạ | Lớp 1-5 | Sinh nhận xét học bạ theo học sinh, lưu lịch sử theo học kỳ qua Upstash Redis. |
-| 7 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
+| 7 | 🗂️ Khung KHGD | Lớp 6-9 (THCS) | Soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ lục III, CV 5512/BGDĐT-GDTrH) — bảng Phân phối chương trình cả năm lồng ghép SWD (giáo dục học sinh khuyết tật) + Biểu hiện Năng lực số, bảng Kiểm tra đánh giá định kỳ, khổ A4 ngang. Tên bài gợi ý từ kho GitHub, Số tiết/Tuần do giáo viên tự nhập (AI chỉ soạn phần SWD/NLS), xuất Word sẵn sàng in. |
+| 8 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
 
 ## Môn học & khối lớp hỗ trợ (tab Soạn Giáo án / Đề Cương Ôn Tập / Tạo Đề Kiểm Tra)
 
