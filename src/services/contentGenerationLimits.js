@@ -201,3 +201,21 @@ export function clampOutlineStudyDays(soNgayOnTap) {
   const value = Math.max(1, Number(soNgayOnTap) || 1);
   return Math.min(value, max);
 }
+
+// ================== Khung KHGD - Phụ lục III (/api/generate-khgd) ==================
+// Giáo viên tự nhập TOÀN BỘ danh sách bài học (tên bài/số tiết/tuần) - không có "chapterMatrix"
+// như Đề kiểm tra, nhưng vẫn cần trần tối đa số DÒNG bài học/1 lượt gọi, cùng lý do các trần
+// khác trong file này (client gọi thẳng API có thể gửi hàng nghìn dòng giả, khiến 1 lượt gọi
+// AI phải sinh JSON khổng lồ, dễ timeout/tốn quota). 1 năm học thực tế tối đa ~110-120 tiết,
+// mỗi bài thường 2-4 tiết -> khoảng 60-70 bài là đủ dư cho hầu hết môn học 1 năm.
+export function getKhgdMaxLessons() {
+  return envInt("KHGD_MAX_LESSONS", 80);
+}
+
+/** Cắt (clamp) danh sách bài học về đúng trần (giữ lại các bài ĐẦU TIÊN, bỏ bớt các bài dư ở cuối). */
+export function clampKhgdLessons(lessons) {
+  const max = getKhgdMaxLessons();
+  const list = Array.isArray(lessons) ? lessons : [];
+  const wasClamped = list.length > max;
+  return { lessons: wasClamped ? list.slice(0, max) : list, wasClamped };
+}

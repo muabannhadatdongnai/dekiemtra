@@ -1,0 +1,307 @@
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  AlignmentType,
+  BorderStyle,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
+  VerticalAlign,
+  convertMillimetersToTwip,
+} from "docx";
+import { saveAs } from "file-saver";
+import { PAGE_A4_LANDSCAPE_MM, PAGE_LANDSCAPE_MARGIN_MM } from "@/data/constants";
+import { getSubjectLabel } from "@/data/config";
+
+/**
+ * khgdExportService.js
+ * Xuất Word (.docx) cho tab "Khung KHGD" (Phụ lục III, CV 5512/BGDĐT-GDTrH) - ĐỘC LẬP HOÀN TOÀN
+ * với các module export khác (đúng nguyên tắc "Isolation over DRY" của dự án - xem
+ * foreignLanguageExportRegistry.js), dù cùng dùng thư viện "docx".
+ *
+ * ⚠️ DÙNG CHUNG 1 BỘ CHO MỌI MÔN HỌC (khác foreignLanguageExportRegistry.js vốn tách theo ngôn
+ * ngữ) - đã thống nhất với người dùng: bố cục bảng Phụ lục III GIỐNG HỆT nhau bất kể môn học
+ * (chuẩn theo CV 5512), chỉ nội dung (do khgdSubjectDefaults.js + AI cung cấp) khác nhau theo
+ * môn. Nếu sau này có môn cần bố cục khác hẳn (VD thêm cột riêng), tách file export riêng cho
+ * đúng môn đó - KHÔNG rẽ nhánh if/else môn học trong CÙNG 1 file này.
+ *
+ * Khổ giấy: A4 NGANG (297x210mm, xem PAGE_A4_LANDSCAPE_MM trong constants.js) - nhiều cột hơn
+ * khổ dọc thông thường, đúng khổ giấy văn bản mẫu Bộ GDĐT gửi kèm.
+ */
+
+const FONT = "Times New Roman";
+const CELL_BORDER = { style: BorderStyle.SINGLE, size: 4, color: "444444" };
+const ALL_BORDERS = { top: CELL_BORDER, bottom: CELL_BORDER, left: CELL_BORDER, right: CELL_BORDER };
+
+const pageProperties = {
+  page: {
+    size: {
+      width: convertMillimetersToTwip(PAGE_A4_LANDSCAPE_MM.width),
+      height: convertMillimetersToTwip(PAGE_A4_LANDSCAPE_MM.height),
+    },
+    margin: {
+      top: convertMillimetersToTwip(PAGE_LANDSCAPE_MARGIN_MM.top),
+      bottom: convertMillimetersToTwip(PAGE_LANDSCAPE_MARGIN_MM.bottom),
+      left: convertMillimetersToTwip(PAGE_LANDSCAPE_MARGIN_MM.left),
+      right: convertMillimetersToTwip(PAGE_LANDSCAPE_MARGIN_MM.right),
+    },
+  },
+};
+
+function textRun(text, opts = {}) {
+  return new TextRun({ text: String(text ?? ""), font: FONT, size: 20, ...opts });
+}
+
+function multilineTextRuns(text, opts = {}) {
+  const lines = String(text ?? "").split("\n");
+  return lines.flatMap((line, i) => (i === 0 ? [textRun(line, opts)] : [textRun(line, { ...opts, break: 1 })]));
+}
+
+/** 1 ô bảng, có thể truyền sẵn danh sách Paragraph (`children`) thay vì 1 đoạn text đơn. */
+function cell(content, widthPercent, opts = {}) {
+  const paragraphs = opts.children
+    ? opts.children
+    : [
+        new Paragraph({
+          alignment: opts.alignment,
+          children: multilineTextRuns(content, { bold: opts.bold }),
+        }),
+      ];
+  return new TableCell({
+    width: { size: widthPercent, type: WidthType.PERCENTAGE },
+    borders: ALL_BORDERS,
+    verticalAlign: VerticalAlign.TOP,
+    columnSpan: opts.columnSpan,
+    shading: opts.shading,
+    children: paragraphs,
+  });
+}
+
+function headerCell(text, widthPercent) {
+  return cell(text, widthPercent, { bold: true, alignment: AlignmentType.CENTER, shading: { fill: "E5E7EB" } });
+}
+
+/** Cột "SWD"/"NLS" hiển thị dạng gạch đầu dòng (khớp bản mẫu Bộ GDĐT: "SWD: – ... – ..."). */
+function bulletCell(label, items, widthPercent) {
+  const lines = Array.isArray(items) ? items.filter(Boolean) : items ? [items] : [];
+  if (lines.length === 0) {
+    return cell("", widthPercent);
+  }
+  const paragraphs = [
+    new Paragraph({ children: [textRun(`${label}:`, { bold: true })], spacing: { after: 40 } }),
+    ...lines.map((line) => new Paragraph({ bullet: { level: 0 }, children: multilineTextRuns(`${line}`) })),
+  ];
+  return cell(null, widthPercent, { children: paragraphs });
+}
+
+/**
+ * Tính % chiều rộng cột "SWD"/"NLS" tuỳ theo 2 công tắc bật/tắt - phần trăm CÒN LẠI (sau 6 cột cố
+ * định: STT/Bài học/Số tiết/Thời điểm/Thiết bị/Địa điểm = 58%) được chia cho SWD/NLS nếu bật,
+ * hoặc dồn hết về cột "Bài học" nếu cả 2 đều tắt (không để bảng có khoảng trắng thừa vô nghĩa).
+ */
+function computeColumnWidths(enableSwd, enableNls) {
+  const base = { stt: 3, baiHoc: 15, soTiet: 6, thoiDiem: 8, thietBi: 12, diaDiem: 9 }; // = 53
+  const remaining = 100 - Object.values(base).reduce((s, v) => s + v, 0); // = 47
+
+  if (enableSwd && enableNls) return { ...base, swd: 31, nls: remaining - 31 };
+  if (enableSwd) return { ...base, swd: remaining, nls: 0 };
+  if (enableNls) return { ...base, swd: 0, nls: remaining };
+  return { ...base, baiHoc: base.baiHoc + remaining, swd: 0, nls: 0 };
+}
+
+function buildHeaderParagraphs(meta) {
+  const subtitle = [
+    meta?.truong ? `TRƯỜNG: ${meta.truong.toUpperCase()}` : null,
+    meta?.to ? `TỔ: ${meta.to.toUpperCase()}` : null,
+  ].filter(Boolean);
+
+  return [
+    ...subtitle.map(
+      (line) =>
+        new Paragraph({ children: [textRun(line, { bold: true })], spacing: { after: 20 } })
+    ),
+    meta?.giaoVien &&
+      new Paragraph({
+        children: [textRun(`Họ và tên giáo viên: ${meta.giaoVien}`)],
+        spacing: { after: 120 },
+      }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [textRun("KẾ HOẠCH GIÁO DỤC CỦA GIÁO VIÊN", { bold: true, size: 26 })],
+      spacing: { after: 40 },
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        textRun(
+          `MÔN HỌC/HOẠT ĐỘNG GIÁO DỤC ${(getSubjectLabel(meta?.subject) || "").toUpperCase()}, LỚP ${
+            meta?.grade || ""
+          }${meta?.namHoc ? ` (Năm học ${meta.namHoc})` : ""}`,
+          { bold: true, size: 24 }
+        ),
+      ],
+      spacing: { after: 200 },
+    }),
+  ].filter(Boolean);
+}
+
+function buildLessonTable(lessons, widths) {
+  const headerRow = new TableRow({
+    tableHeader: true,
+    children: [
+      headerCell("STT", widths.stt),
+      headerCell("Bài học", widths.baiHoc),
+      headerCell("Số tiết", widths.soTiet),
+      headerCell("Thời điểm", widths.thoiDiem),
+      headerCell("Thiết bị dạy học", widths.thietBi),
+      headerCell("Địa điểm dạy học", widths.diaDiem),
+      ...(widths.swd ? [headerCell("Nội dung lồng ghép (SWD)", widths.swd)] : []),
+      ...(widths.nls ? [headerCell("Biểu hiện Năng lực số", widths.nls)] : []),
+    ],
+  });
+
+  const rows = lessons.map(
+    (lesson, i) =>
+      new TableRow({
+        children: [
+          cell(String(i + 1), widths.stt, { alignment: AlignmentType.CENTER }),
+          cell(lesson.tenBai, widths.baiHoc, { bold: true }),
+          cell(lesson.soTiet != null ? String(lesson.soTiet) : "", widths.soTiet, {
+            alignment: AlignmentType.CENTER,
+          }),
+          cell(lesson.tuan || "", widths.thoiDiem, { alignment: AlignmentType.CENTER }),
+          cell(lesson.thietBi || "", widths.thietBi),
+          cell(lesson.diaDiem || "", widths.diaDiem),
+          ...(widths.swd ? [bulletCell("SWD", lesson.swd, widths.swd)] : []),
+          ...(widths.nls ? [cell(lesson.nls || "", widths.nls)] : []),
+        ],
+      })
+  );
+
+  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...rows] });
+}
+
+function buildKiemTraTable(kiemTraDinhKy) {
+  const headerRow = new TableRow({
+    tableHeader: true,
+    children: [
+      headerCell("Bài kiểm tra, đánh giá", 20),
+      headerCell("Thời gian", 12),
+      headerCell("Thời điểm", 16),
+      headerCell("Yêu cầu cần đạt", 34),
+      headerCell("Hình thức", 18),
+    ],
+  });
+
+  const rows = (kiemTraDinhKy || []).map(
+    (mốc) =>
+      new TableRow({
+        children: [
+          cell(mốc.ten || "", 20, { bold: true }),
+          cell(mốc.thoiGian || "", 12, { alignment: AlignmentType.CENTER }),
+          cell(mốc.thoiDiem || "", 16),
+          cell(mốc.yeuCauCanDat || "", 34),
+          cell(mốc.hinhThuc || "", 18),
+        ],
+      })
+  );
+
+  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...rows] });
+}
+
+const NO_BORDERS = {
+  top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+  bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+  left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+  right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+};
+
+/**
+ * Khối ký tên "TỔ TRƯỞNG" / "GIÁO VIÊN" đặt CẠNH NHAU - dùng Table 2 cột KHÔNG VIỀN thay vì
+ * tabStops (docx@9 yêu cầu enum TabStopType cho `type`, dễ sai lệch/không tương thích giữa các
+ * phiên bản - Table không viền là cách AN TOÀN đã dùng sẵn ở exportService.js:buildOptionsTable()).
+ */
+function buildSignatureParagraphs(meta) {
+  const col = (paragraphs) =>
+    new TableCell({
+      width: { size: 50, type: WidthType.PERCENTAGE },
+      borders: NO_BORDERS,
+      children: paragraphs,
+    });
+
+  return [
+    new Paragraph({ spacing: { before: 300 } }),
+    new Paragraph({
+      alignment: AlignmentType.RIGHT,
+      children: [textRun("......................, ngày ..... tháng ..... năm .....")],
+    }),
+    new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      borders: NO_BORDERS,
+      rows: [
+        new TableRow({
+          children: [
+            col([
+              new Paragraph({ alignment: AlignmentType.CENTER, children: [textRun("TỔ TRƯỞNG", { bold: true })] }),
+              new Paragraph({ alignment: AlignmentType.CENTER, children: [textRun("(Ký và ghi rõ họ tên)")] }),
+            ]),
+            col([
+              new Paragraph({ alignment: AlignmentType.CENTER, children: [textRun("GIÁO VIÊN", { bold: true })] }),
+              new Paragraph({ alignment: AlignmentType.CENTER, children: [textRun("(Ký và ghi rõ họ tên)")] }),
+            ]),
+          ],
+        }),
+        new TableRow({
+          children: [
+            col([new Paragraph({ spacing: { before: 500 } })]),
+            col([
+              new Paragraph({ spacing: { before: 500 } }),
+              new Paragraph({ alignment: AlignmentType.CENTER, children: [textRun(meta?.giaoVien || "")] }),
+            ]),
+          ],
+        }),
+      ],
+    }),
+  ];
+}
+
+export function buildKhgdDocument({ lessons, kiemTraDinhKy, meta }) {
+  const widths = computeColumnWidths(!!meta?.enableSwd, !!meta?.enableNls);
+
+  return new Document({
+    sections: [
+      {
+        properties: pageProperties,
+        children: [
+          ...buildHeaderParagraphs(meta),
+          new Paragraph({
+            children: [textRun("II. Kế hoạch dạy học", { bold: true, size: 22 })],
+            spacing: { after: 60 },
+          }),
+          new Paragraph({
+            children: [textRun("1. Phân phối chương trình", { bold: true, italics: true })],
+            spacing: { after: 80 },
+          }),
+          buildLessonTable(lessons || [], widths),
+          new Paragraph({
+            children: [textRun("2. Kiểm tra, đánh giá định kỳ", { bold: true, italics: true })],
+            spacing: { before: 200, after: 80 },
+          }),
+          buildKiemTraTable(kiemTraDinhKy),
+          ...buildSignatureParagraphs(meta),
+        ],
+      },
+    ],
+  });
+}
+
+export async function exportKhgdToWord({ lessons, kiemTraDinhKy, meta }) {
+  const doc = buildKhgdDocument({ lessons, kiemTraDinhKy, meta });
+  const blob = await Packer.toBlob(doc);
+  const subjectLabel = getSubjectLabel(meta?.subject) || "";
+  const fileName = `Khung-KHGD_${subjectLabel}_Lop-${meta?.grade || ""}`.replace(/\s+/g, "-");
+  saveAs(blob, `${fileName}.docx`);
+}
