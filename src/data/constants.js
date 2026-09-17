@@ -31,6 +31,16 @@ export const PAGE_A4_MM = { width: 210, height: 297 };
 export const PAGE_MARGIN_MM = { top: 20, bottom: 20, left: 18, right: 18 };
 
 /**
+ * ================== TAB "KHUNG KHGD" (Phụ lục III, CV 5512) ==================
+ * Khổ A4 NGANG (landscape) - width/height ĐẢO NGƯỢC so với PAGE_A4_MM ở trên, vì bảng Phân phối
+ * chương trình có nhiều cột (STT/Bài học/Số tiết/Thời điểm/Thiết bị/Địa điểm/NLS) không đủ chỗ ở
+ * khổ dọc thông thường - đúng khổ giấy của văn bản mẫu Bộ GDĐT (297 × 210 mm). Margin hẹp hơn
+ * PAGE_MARGIN_MM (15mm thay vì 18-20mm) để bảng có nhiều chỗ hiển thị hơn, vẫn đủ an toàn khi in.
+ */
+export const PAGE_A4_LANDSCAPE_MM = { width: 297, height: 210 };
+export const PAGE_LANDSCAPE_MARGIN_MM = { top: 15, bottom: 15, left: 15, right: 15 };
+
+/**
  * ================== GIAI ĐOẠN 5 (liên kết SGK markdown) ==================
  * "Phiếu bài tập" dùng mã khối riêng (MAM_NON/LOP_1/LOP_2 - xem WORKSHEET_GRADES trong
  * worksheetSchemas.js), trong khi repo SGK (githubService.js) dùng SỐ LỚP thô (lop_1, lop_2...,
