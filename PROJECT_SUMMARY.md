@@ -5,6 +5,37 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 46 — Mở rộng Khung KHGD sang THPT + dữ liệu SGK thật Tiếng Anh 7 cho "Nạp gợi ý tên bài"
+
+1. **Yêu cầu Hoan:** làm tiếp 2 việc còn tồn đọng của tab Khung KHGD (Phiên 45) — nút "Nạp gợi ý
+   tên bài từ SGK" và mở rộng sang Tiểu học/THPT.
+
+2. **Mở rộng THPT (Lớp 10-12):** trước khi code đã tra cứu xác nhận CV5512/BGDĐT-GDTrH áp dụng
+   CHUNG cho GDTrH (THCS+THPT, KHÔNG có 2 mẫu khác nhau) nên đây là mở rộng AN TOÀN, thuần kỹ
+   thuật — đổi `KHGD_GRADES` trong `KhgdForm.jsx` thành `[6..12]` + bổ sung 7 entry
+   `khgdSubjectDefaults.js` cho môn chỉ có ở THPT (Lịch sử/Vật lí/Hoá học/Sinh học/Địa lí/GDKT&PL/
+   GDQPAN, đối chiếu đúng `subjectProfiles.js` đã có sẵn). KHÔNG cần sửa export/prompt/API.
+
+3. **Mở rộng Tiểu học: CỐ Ý CHƯA làm.** Tra cứu (web search, không dựa trí nhớ) xác nhận Tiểu học
+   dùng Công văn 2345/2021/BGDĐT-GDTH — mẫu "Kế hoạch dạy học các môn học, hoạt động giáo dục" nằm
+   ở PHỤ LỤC 2 (khác hẳn "Phụ lục III" của CV5512 đang dùng), cấu trúc/nội dung khác — KHÔNG thể
+   chỉ đổi khối lớp như THPT. Đã yêu cầu Hoan gửi 1 mẫu Kế hoạch dạy học Tiểu học THẬT (như đã làm
+   với PDF Tiếng Anh 7 THCS ở Phiên 44) trước khi code, tránh tự dựng mẫu theo suy đoán cho 1 loại
+   hồ sơ chuyên môn giáo viên nộp thật.
+
+4. **Dữ liệu SGK thật cho "Nạp gợi ý tên bài từ SGK":** đã tạo 24 file (12 Unit × `.md` + `.json`)
+   tại `docs/khgd-sample-data/lop_7/tieng_anh_t{1,2}/` — LẤY ĐÚNG tên 12 Unit + 7 dạng bài chuẩn
+   (Getting started/A closer look 1-2/Communication/Skills 1-2/Looking back & Project) từ chính
+   PPCT Tiếng Anh 7 Hoan gửi Phiên 44, KHÔNG bịa từ vựng/ngữ pháp/ngữ liệu cụ thể nào (chỉ thêm 1
+   câu mô tả CHỨC NĂNG sư phạm chung của mỗi dạng bài — kiến thức phổ biến, áp dụng như nhau mọi
+   Unit, an toàn về bản quyền). Kèm `docs/khgd-sample-data/README.md` hướng dẫn Hoan tự copy vào
+   kho GitHub kiến thức riêng (Claude không có quyền ghi trực tiếp vào đó). Các môn/khối khác vẫn
+   cần Hoan cung cấp nguồn thật (PPCT/mục lục SGK) trước khi Claude tạo tiếp — không tự bịa.
+
+5. **Kết quả kiểm thử:** `next build` sạch; `npm test` 452/452 pass (không có test mới ở phiên
+   này — phần mở rộng THPT chỉ là dữ liệu, đã verify thủ công qua `getKhgdSubjectDefaults()` cho
+   cả 7 môn mới + 1 môn không tồn tại (fallback đúng)).
+
 ## Phiên 45 — Tab mới "Khung KHGD" (Phụ lục III, CV 5512) — TOÀN BỘ môn THCS (Lớp 6-9)
 
 1. **Yêu cầu Hoan:** thêm 1 tab riêng soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ lục III,
