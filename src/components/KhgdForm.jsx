@@ -11,8 +11,9 @@ import { fetchChaptersRequest, fetchLessonsRequest, generateKhgdRequest } from "
 
 /**
  * KhgdForm.jsx
- * Form nhập liệu tab "Khung KHGD" (Phụ lục III, CV 5512/BGDĐT-GDTrH) - đợt đầu triển khai cho
- * TOÀN BỘ môn học cấp THCS (Lớp 6-9, xem NEXT_STEPS.md).
+ * Form nhập liệu tab "Khung KHGD" (Phụ lục III, CV 5512/BGDĐT-GDTrH) - áp dụng cho TOÀN BỘ môn
+ * học cấp THCS + THPT (Lớp 6-12, mở rộng THPT ở Phiên 46 - xem khgdSubjectDefaults.js). KHÔNG áp
+ * dụng cho Tiểu học (dùng mẫu khác hẳn theo CV2345/2021).
  *
  * ⚠️ ĐÃ CHỐT VỚI NGƯỜI DÙNG (khác OutlineForm.jsx): "Số tiết" + "Thời điểm" (tuần) của MỖI bài
  * học do GIÁO VIÊN TỰ GÕ TAY, KHÔNG do AI/GitHub tính - vì mỗi trường/giáo viên phân phối chương
@@ -22,7 +23,10 @@ import { fetchChaptersRequest, fetchLessonsRequest, generateKhgdRequest } from "
  */
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
-const THCS_GRADES = [6, 7, 8, 9];
+// Phiên 46: mở rộng THCS+THPT (Lớp 6-12) - CV5512/BGDĐT-GDTrH áp dụng chung cho GDTrH (2 cấp),
+// nên Phụ lục III KHÔNG đổi cấu trúc giữa THCS/THPT, chỉ cần mở dải khối. Tiểu học KHÔNG nằm
+// trong dải này (dùng mẫu khác hẳn theo CV2345/2021, xem khgdSubjectDefaults.js).
+const KHGD_GRADES = [6, 7, 8, 9, 10, 11, 12];
 
 const DEFAULT_KIEM_TRA = [
   { ten: "Giữa Học kỳ 1", thoiGian: "60 phút", thoiDiem: "", yeuCauCanDat: "", hinhThuc: "Viết (giấy)" },
@@ -219,7 +223,7 @@ export default function KhgdForm({ onGenerated }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-3 border-b border-slate-100 pb-5">
-        <p className="text-sm font-semibold text-slate-800">Môn / Lớp (THCS)</p>
+        <p className="text-sm font-semibold text-slate-800">Môn / Lớp (THCS + THPT)</p>
         <div className="grid grid-cols-3 gap-3">
           <Field label="Môn học">
             <select value={subject} onChange={(e) => setSubject(e.target.value)} className={inputClass}>
@@ -232,7 +236,7 @@ export default function KhgdForm({ onGenerated }) {
           </Field>
           <Field label="Lớp">
             <select value={grade} onChange={(e) => setGrade(Number(e.target.value))} className={inputClass}>
-              {THCS_GRADES.map((g) => (
+              {KHGD_GRADES.map((g) => (
                 <option key={g} value={g}>
                   Lớp {g}
                 </option>
