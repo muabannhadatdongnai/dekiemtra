@@ -9,6 +9,13 @@
  *
  * ⚠️ Đây CHỈ là gợi ý mở đầu (pre-fill) cho từng dòng bài học mới thêm vào bảng PPCT ở
  * KhgdForm.jsx - KHÔNG gửi lên AI, KHÔNG ảnh hưởng nội dung SWD/NLS do AI sinh.
+ *
+ * Phiên 46: mở rộng thêm 7 môn CHỈ có ở THPT (Lịch sử, Vật lí, Hoá học, Sinh học, Địa lí, GDKT&PL,
+ * GDQPAN) - Phụ lục III (CV 5512/BGDĐT-GDTrH) áp dụng CHUNG cho CẢ THCS lẫn THPT (GDTrH = Giáo dục
+ * trung học, gồm cả 2 cấp - đã tra cứu xác nhận, KHÔNG có 2 mẫu khác nhau) nên KHÔNG cần tách
+ * export/preview riêng theo cấp, chỉ cần mở khối Lớp 10-12 ở KhgdForm.jsx + bổ sung defaults môn
+ * mới ở đây. Tiểu học KHÔNG áp dụng được kiến trúc này - dùng Công văn 2345/2021/BGDĐT-GDTH với
+ * Phụ lục 2 HOÀN TOÀN KHÁC (không phải "Phụ lục III"), xem NEXT_STEPS.md mục liên quan.
  */
 
 export const KHGD_DEFAULT_DEVICE = "Sách giáo khoa, máy chiếu/tivi, phiếu học tập";
@@ -70,6 +77,35 @@ export const KHGD_SUBJECT_DEFAULTS = {
   Noi_Dung_Giao_Duc_Dia_Phuong: {
     device: "Tài liệu giáo dục địa phương, máy chiếu/tivi, tư liệu thực tế",
     location: "Phòng học",
+  },
+  // ---- Môn CHỈ có ở THPT (Lớp 10-12, minGrade:10 trong config.js) - mở rộng Phiên 46 ----
+  Lich_Su: {
+    device: "SGK, lược đồ/bản đồ lịch sử, máy chiếu/tivi, tư liệu/phim tư liệu",
+    location: "Phòng học",
+  },
+  Vat_Li: {
+    device: "SGK, dụng cụ thí nghiệm Vật lí, máy chiếu/tivi, phiếu học tập",
+    location: "Phòng học/Phòng thí nghiệm",
+  },
+  Hoa_Hoc: {
+    device: "SGK, dụng cụ/hoá chất thí nghiệm, máy chiếu/tivi, phiếu học tập",
+    location: "Phòng học/Phòng thí nghiệm",
+  },
+  Sinh_Hoc: {
+    device: "SGK, mẫu vật/mô hình, kính hiển vi, máy chiếu/tivi",
+    location: "Phòng học/Phòng thí nghiệm",
+  },
+  Dia_Li: {
+    device: "SGK, bản đồ/Atlat, máy chiếu/tivi, số liệu thống kê",
+    location: "Phòng học",
+  },
+  Giao_Duc_Kinh_Te_Va_Phap_Luat: {
+    device: "SGK, máy chiếu/tivi, tình huống pháp luật/kinh tế thực tế",
+    location: "Phòng học",
+  },
+  Giao_Duc_Quoc_Phong_An_Ninh: {
+    device: "SGK, dụng cụ/mô hình huấn luyện, máy chiếu/tivi",
+    location: "Phòng học/Sân bãi tập",
   },
 };
 
