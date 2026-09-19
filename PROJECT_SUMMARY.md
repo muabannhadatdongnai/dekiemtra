@@ -5,6 +5,36 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 47 — Tab mới "Khung KHGD - Tiểu học" (Phụ lục 2, CV 2345/2021) — RIÊNG HOÀN TOÀN với THCS/THPT
+
+1. **Yêu cầu Hoan:** gửi file mẫu thật "KHDH CÁC MÔN LỚP 2-KNTT" để làm tiếp việc mở rộng Tiểu học
+   còn tồn đọng từ Phiên 46 (đã yêu cầu mẫu thật trước khi code, đúng cam kết tránh tự bịa cấu
+   trúc hồ sơ chuyên môn).
+
+2. **Phát hiện quan trọng:** mẫu Tiểu học (Phụ lục 2, CV2345) KHÁC HẲN Phụ lục III (THCS/THPT) —
+   không có cột Thiết bị/Địa điểm/SWD/NLS riêng, thay vào đó có "Chủ đề/Mạch nội dung" + "Tiết
+   PPCT" (chạy suốt năm) + 1 cột gộp DUY NHẤT "Nội dung điều chỉnh cần thiết" cho MỌI loại tích
+   hợp (KNS/GDĐP/BVMT/TTĐĐ HCM/công dân số/Quyền con người/GDQPAN...). Đã hỏi lại Hoan 3 câu hỏi
+   (ý nghĩa dãy số Tiết PPCT; có thêm cột Thiết bị/Địa điểm/SWD không; có cần bảng Kiểm tra định
+   kỳ không) — Hoan trả lời "tiếp tục", Claude chọn phương án AN TOÀN NHẤT/sát đúng mẫu thật nhất:
+   giữ nguyên cấu trúc, không tự thêm cột, không tự bịa bảng Kiểm tra định kỳ.
+
+3. **Kiến trúc:** tab HOÀN TOÀN RIÊNG `MODES.KHGD_TIEU_HOC`, không dùng chung file với
+   `MODES.KHGD` (THCS/THPT) ngoài 2 hằng số khổ giấy + 1 class CSS — đúng nguyên tắc "mỗi cấp 1
+   router riêng". 11 file mới (blueprint/result/prompt/engine/orchestrator/export/route/3
+   component/1 test), cộng `contentGenerationLimits.js` + `apiClient.js` + `page.js` sửa thêm.
+   "Tiết PPCT" tự động tính cộng dồn theo "Số tiết" từng dòng ở `KhgdTieuHocForm.jsx` (giáo viên
+   sửa tay được).
+
+4. **Kết quả kiểm thử:** `next build` sạch; `npm test` 455/455 pass; LibreOffice headless mở được
+   CẢ 2 loại file Khung KHGD (THCS/THPT + Tiểu học), 20/20 kịch bản `check-word-compatibility.mjs`
+   OK — kịch bản Tiểu học dùng dữ liệu THẬT trích từ chính file mẫu Hoan gửi.
+
+5. **Phát hiện thêm (ngoài phạm vi Phiên 47, để lại NEXT_STEPS.md):** `config.js` hiện THIẾU môn
+   Âm nhạc/Mĩ thuật/GDTC/HĐTN cho Tiểu học (Lớp 1-5) — chỉ khai báo từ `minGrade: 6` — gap có sẵn
+   từ trước, ảnh hưởng CẢ 3 tab khác nếu chọn Tiểu học + 1 trong 4 môn này, CHƯA sửa vì cần Hoan
+   xác nhận trước (đụng vào `config.js` ảnh hưởng nhiều tab cùng lúc).
+
 ## Phiên 46 — Mở rộng Khung KHGD sang THPT + dữ liệu SGK thật Tiếng Anh 7 cho "Nạp gợi ý tên bài"
 
 1. **Yêu cầu Hoan:** làm tiếp 2 việc còn tồn đọng của tab Khung KHGD (Phiên 45) — nút "Nạp gợi ý

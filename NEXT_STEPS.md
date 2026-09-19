@@ -4,8 +4,9 @@
 > đủ từng phiên nằm ở `PROJECT_SUMMARY.md`. Khi 1 việc trong bảng dưới đã xong, XOÁ dòng đó khỏi
 > bảng (đừng giữ lại "lịch sử đã xong" ở đây — chuyển 1 dòng tóm tắt sang `PROJECT_SUMMARY.md`).
 
-**Trạng thái tổng quát:** 8 tab đang hoạt động (Soạn Giáo án, Phiếu Bài Tập, Đề Tiếng Việt Tiểu
-học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, Khung KHGD, Hướng dẫn sử dụng). Soạn Giáo án/Đề Cương
+**Trạng thái tổng quát:** 9 tab đang hoạt động (Soạn Giáo án, Phiếu Bài Tập, Đề Tiếng Việt Tiểu
+học, Đề Cương Ôn Tập, Tạo Đề Kiểm Tra, Nhận Xét Học Bạ, Khung KHGD, Khung KHGD Tiểu học, Hướng dẫn
+sử dụng). Soạn Giáo án/Đề Cương
 Ôn Tập/Tạo Đề Kiểm Tra đã hỗ trợ ĐỦ Mầm non → Lớp 12 (Tiểu học + THCS + THPT, xem Phiên 33 - THPT
 khai báo đủ 17 môn/HĐGD: 8 bắt buộc + 9 lựa chọn theo Thông tư 32/2018 sửa đổi Thông tư 13/2022,
 KHÔNG cần dropdown "chọn tổ hợp" riêng vì công cụ soạn theo 1 môn/1 lúc). Toán Lớp 3-5 đã đủ
@@ -45,9 +46,12 @@ Việt - đã xác nhận áp dụng đúng cho CẢ bản xem trước web lẫ
 | 17 | Cân nhắc thêm dòng disclaimer "Nội dung do AI tạo, giáo viên cần kiểm tra lại" lên UI | Phiên 44: Luật Trí tuệ nhân tạo 2025 (số 134/2025/QH15, hiệu lực 1/3/2026) yêu cầu nhà cung cấp dịch vụ AI có cơ chế để người dùng nhận biết đang tương tác với AI (Điều 11) - dự án vốn đã tên là công cụ AI + có nút "Sinh bằng AI" rõ ràng nên có thể đã đủ, nhưng đây là luật rất mới và Claude không phải luật sư nên không tự ý thêm/diễn giải - Hoan tự cân nhắc có cần bổ sung disclaimer rõ hơn hay không.
 | 18 | Brainstorm sáng tạo/đổi mới cấu trúc ra đề, soạn bài (nếu Hoan vẫn muốn) | Phiên 44: Hoan có nhắc tới "sự sáng tạo, đổi mới trong cấu trúc ra đề, soạn bài" khi yêu cầu rà soát pháp lý, nhưng lượt trả lời gần nhất tập trung vào phần pháp lý/chuẩn mực trước - phần brainstorm cấu trúc mới CHƯA làm, cần Hoan nói rõ muốn đổi mới cho môn/dạng bài cụ thể nào ở phiên sau.
 | 19 | Khung KHGD (Phụ lục III): tạo dữ liệu SGK thật cho các môn/khối chưa có trong kho GitHub kiến thức | Phiên 46: đã tạo sẵn bộ mẫu THẬT cho Tiếng Anh Lớp 7 (12 Unit × .md + .json, lấy tên bài từ chính PPCT Hoan gửi Phiên 44) tại `docs/khgd-sample-data/` — Hoan tự copy vào kho GitHub riêng theo hướng dẫn trong `docs/khgd-sample-data/README.md`. Các môn/khối KHÁC vẫn CHƯA có — nút "Nạp gợi ý tên bài từ SGK" chỉ báo "chưa có gợi ý sẵn", giáo viên vẫn tạo được bình thường bằng cách tự gõ tay (KHÔNG bị chặn tính năng). Muốn có thêm môn/khối nào, gửi PPCT/mục lục SGK thật cho Claude ở phiên sau (KHÔNG tự bịa tên bài khi chưa có nguồn). |
-| 20 | Khung KHGD: CHƯA test thật với Gemini API key thật | Sandbox không có `GEMINI_API_KEYS` — mới xác nhận được: build sạch (`next build`), 452/452 `npm test` pass (bao gồm 3 test mới `khgdExportService.test.js`), và LibreOffice mở được file `.docx` xuất ra (script `check-word-compatibility.mjs`, entry `khung-khgd-phu-luc-3`). CHƯA xác nhận AI thật trả JSON đúng schema + văn phong SWD/NLS giống bản mẫu Bộ GDĐT với môn/bài học thật. |
-| 21 | Khung KHGD: mở rộng sang Tiểu học | Phiên 46: đã TRA CỨU XÁC NHẬN Tiểu học dùng Công văn 2345/2021/BGDĐT-GDTH, KHÔNG PHẢI CV5512 — mẫu "Kế hoạch dạy học các môn học, hoạt động giáo dục" của Tiểu học nằm ở PHỤ LỤC 2 của CV2345 (khác hẳn tên gọi "Phụ lục III" đang dùng cho THCS/THPT), cấu trúc/nội dung yêu cầu KHÁC — KHÔNG THỂ chỉ đổi khối lớp như đã làm với THPT. CẦN Hoan gửi 1 file mẫu Kế hoạch dạy học Tiểu học THẬT (giống cách đã gửi PDF Tiếng Anh 7 THCS) để Claude đối chiếu đúng cấu trúc trước khi code — tuyệt đối không tự dựng mẫu theo suy đoán vì đây là hồ sơ chuyên môn giáo viên nộp thật. |
-| 22 | Khung KHGD: chưa hỗ trợ "In/Tải PDF" trực tiếp từ trình duyệt | Cố ý bỏ qua ở Phiên 45 vì khổ A4 NGANG (297x210mm) xung đột với rule `@page` toàn cục (khổ dọc, dùng chung `id="print-area"` với 6 tab kia — xem giải thích trong `globals.css`/`KhgdPreview.jsx`). Hiện tab này CHỈ có nút "Tải Word" (đã đúng khổ ngang, sẵn sàng in trực tiếp từ Word) — nếu Hoan cần thêm PDF/in trình duyệt, cần thiết kế cơ chế bật/tắt `@page` theo mode (hoặc mở cửa sổ in riêng như `foreignLanguageDocBuilder.js` đang làm cho Ngoại ngữ 2).
+| 20 | Khung KHGD: CHƯA test thật với Gemini API key thật | Sandbox không có `GEMINI_API_KEYS` — mới xác nhận được: build sạch (`next build`), 455/455 `npm test` pass, và LibreOffice mở được cả 2 file `.docx` xuất ra (script `check-word-compatibility.mjs`, entry `khung-khgd-phu-luc-3` + `khung-khgd-tieu-hoc-phu-luc-2`, 20/20 kịch bản OK). CHƯA xác nhận AI thật trả JSON đúng schema + văn phong SWD/NLS/"Nội dung điều chỉnh" giống bản mẫu Bộ GDĐT với môn/bài học thật. |
+| 21 | Khung KHGD: mở rộng sang Tiểu học | ✅ ĐÃ LÀM ở Phiên 47 — tab RIÊNG `MODES.KHGD_TIEU_HOC` ("🧒 Khung KHGD (Tiểu học)"), dùng đúng Phụ lục 2/CV2345/2021, KHÁC HẲN Phụ lục III (THCS/THPT) — xem section "🟢 Khung KHGD - Tiểu học" bên dưới để biết chi tiết cấu trúc + các điểm CHƯA làm (bảng Kiểm tra định kỳ, gộp ô "Chủ đề", môn Âm nhạc/Mĩ thuật/GDTC/HĐTN chưa có trong `config.js` cho Tiểu học). |
+| 22 | Khung KHGD: chưa hỗ trợ "In/Tải PDF" trực tiếp từ trình duyệt | Cố ý bỏ qua ở Phiên 45 vì khổ A4 NGANG (297x210mm) xung đột với rule `@page` toàn cục (khổ dọc, dùng chung `id="print-area"` với 6 tab kia — xem giải thích trong `globals.css`/`KhgdPreview.jsx`). Áp dụng cho CẢ 2 tab Khung KHGD (THCS/THPT lẫn Tiểu học) — hiện chỉ có nút "Tải Word" (đã đúng khổ ngang, sẵn sàng in trực tiếp từ Word).
+| 23 | Khung KHGD Tiểu học: chưa có bảng "Kiểm tra, đánh giá định kỳ" | Cố ý bỏ qua ở Phiên 47 — Tiểu học đánh giá theo Thông tư 27, cách khác hẳn kiểu "kiểm tra viết định kỳ" của THCS/THPT (không có bảng tương tự trong file mẫu thật đã đối chiếu). CẦN Hoan gửi mẫu thật (nếu trường có 1 bảng tương ứng) trước khi làm, tránh tự bịa cấu trúc. |
+| 24 | Khung KHGD Tiểu học: cột "Chủ đề" chưa gộp ô (merge cell) giống bản Word gốc | Cố ý đơn giản hoá ở Phiên 47 — hiện lặp lại giá trị "Chủ đề" ở MỌI dòng cùng chủ đề thay vì gộp ô, để tránh lỗi rowSpan khi giáo viên tự thêm/xoá dòng. Có thể cải thiện sau nếu Hoan thấy cần đúng y hệt bản gốc. |
+| 25 | Khung KHGD Tiểu học: môn Âm nhạc/Mĩ thuật/GDTC/HĐTN chưa có trong `config.js` cho Lớp 1-5 | Phát hiện ở Phiên 47 khi đối chiếu `getSubjectsForGrade()` — các môn này hiện chỉ khai báo `minGrade: 6` (THCS trở lên) dù thực tế Tiểu học cũng dạy. Đây là gap CÓ SẴN TỪ TRƯỚC (không phải lỗi mới của Khung KHGD), ảnh hưởng CẢ 3 tab khác (Soạn giáo án/Đề cương/Đề kiểm tra) nếu chọn Tiểu học + 1 trong 4 môn này — CHƯA sửa vì ngoài phạm vi yêu cầu Phiên 47, cần Hoan xác nhận trước khi đụng vào `config.js` (ảnh hưởng nhiều tab cùng lúc).
 
 ---
 
@@ -112,6 +116,52 @@ gộp chung 1 việc cần làm.
    giáo viên có sẵn `SimSun`/`MS Mincho` (thường có sẵn với Office tiêu chuẩn).
 4. Dữ liệu SGK thật (kho GitHub kiến thức) cho 3 môn mới - dropdown "Chương" sẽ RỖNG tới khi có file
    `chuong_{n}.md` đúng cấu trúc thư mục hiện dùng cho Tiếng Anh/Toán/Tiếng Việt.
+
+---
+
+## 🟢 Khung KHGD — Tiểu học — Phụ lục 2 (CV 2345/2021/BGDĐT-GDTH) — Phiên 47
+
+**Yêu cầu Hoan:** gửi file mẫu thật "KHDH CÁC MÔN LỚP 2-KNTT" (Kế hoạch dạy học môn Tiếng Việt,
+Lớp 2, sách Kết nối tri thức) để đối chiếu trước khi mở rộng Khung KHGD sang Tiểu học — ĐÚNG tinh
+thần đã cam kết ở Phiên 46 (không tự dựng mẫu theo suy đoán cho hồ sơ chuyên môn thật).
+
+**Phát hiện quan trọng khi đối chiếu (đã hỏi lại Hoan qua 3 câu hỏi trước khi code, Hoan trả lời
+"tiếp tục" — nghĩa là đồng ý để Claude tự chọn phương án AN TOÀN NHẤT/sát mẫu thật nhất):**
+Mẫu Tiểu học (Phụ lục 2, CV2345) **KHÁC HẲN** Phụ lục III (THCS/THPT, CV5512) đang có:
+- Cột bảng: **Tuần, tháng | Chủ đề/Mạch nội dung | Tên bài | Tiết học/Thời lượng | Tiết PPCT |
+  Nội dung điều chỉnh cần thiết (nếu có)** — hoàn toàn KHÔNG có Thiết bị dạy học/Địa điểm dạy
+  học/cột SWD/cột NLS riêng như THCS.
+- "Tiết PPCT": dãy số chạy suốt cả năm (1→350 với Tiếng Việt Lớp 2) — xác nhận khớp đúng tổng số
+  tiết cả năm, đã cài đặt **tự động tính cộng dồn** theo "Số tiết" từng dòng ở `KhgdTieuHocForm.jsx`
+  (giáo viên vẫn sửa tay được nếu cần).
+- CHỈ 1 công tắc lồng ghép DUY NHẤT ("Nội dung điều chỉnh cần thiết") gộp MỌI loại tích hợp (GD
+  KNS, GDĐP, GD bảo vệ môi trường, Tích hợp tư tưởng HCM, GD kĩ năng công dân số, Quyền con người,
+  GDQPAN, liên môn...) — KHÁC THCS tách riêng SWD/NLS thành 2 công tắc.
+- KHÔNG có bảng "Kiểm tra, đánh giá định kỳ" trong mẫu thật đã đối chiếu — CỐ Ý bỏ qua bảng này ở
+  Phiên 47 (xem mục #23 bảng trên), Tiểu học đánh giá theo Thông tư 27, khác hẳn kiểu THCS/THPT.
+
+**Kiến trúc:** tách **tab RIÊNG HOÀN TOÀN** `MODES.KHGD_TIEU_HOC` ("🧒 Khung KHGD (Tiểu học)"),
+KHÔNG dùng chung bất kỳ file nào với tab `MODES.KHGD` (THCS/THPT) ngoài 2 hằng số khổ giấy
+(`PAGE_A4_LANDSCAPE_MM`/`PAGE_LANDSCAPE_MARGIN_MM`, constants.js) và class CSS `.khgd-a4-page`
+(globals.css) — đúng nguyên tắc "mỗi cấp 1 router riêng" đã thống nhất từ đầu dự án. File mới:
+`khgdTieuHocBlueprint.js`, `khgdTieuHocResult.js`, `khgdTieuHocPromptTemplates.js`,
+`khgdTieuHocEngine.js`, `khgdTieuHocOrchestrator.js`, `khgdTieuHocExportService.js`,
+`app/api/generate-khgd-tieu-hoc/route.js`, `KhgdTieuHocForm.jsx`, `KhgdTieuHocPreview.jsx`,
+`KhgdTieuHocExportActions.jsx`, `test/khgdTieuHocExportService.test.js`. Sửa thêm:
+`contentGenerationLimits.js` (`clampKhgdTieuHocLessons`, trần 200 bài/lượt — cao hơn THCS vì
+Tiểu học có nhiều tiết/năm hơn), `apiClient.js` (`generateKhgdTieuHocRequest`), `page.js` (tab
+mới). Subject/grade dùng THẲNG `getSubjectsForGrade(grade)` có sẵn (Lớp 1-5: Tiếng Việt, Toán,
+Đạo đức, Tiếng Anh, Tự nhiên và Xã hội, Lịch sử và Địa lí, Khoa học, Tin học, Công nghệ) — không
+cần data mới, nhưng phát hiện gap có sẵn (mục #25 bảng trên: thiếu Âm nhạc/Mĩ thuật/GDTC/HĐTN cho
+Tiểu học trong `config.js`).
+
+**✅ ĐÃ XÁC NHẬN Ở PHIÊN 47:** `next build` sạch; `npm test` 455/455 pass (3 test mới
+`khgdTieuHocExportService.test.js`); LibreOffice headless mở được **CẢ 2** file `.docx` (THCS/THPT
++ Tiểu học), 20/20 kịch bản `check-word-compatibility.mjs` OK — kịch bản Tiểu học dùng dữ liệu
+THẬT trích từ file mẫu Hoan gửi (Tuần 1, chủ đề "Em lớn lên từng ngày").
+
+**❌ CHƯA LÀM:** xem mục #23-25 ở bảng "🔴 CẦN HOAN QUYẾT ĐỊNH" phía trên (bảng Kiểm tra định kỳ,
+gộp ô "Chủ đề", gap môn Âm nhạc/Mĩ thuật/GDTC/HĐTN Tiểu học trong `config.js`).
 
 ---
 

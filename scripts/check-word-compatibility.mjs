@@ -46,6 +46,7 @@ import { exportLessonPlanToWord } from "../src/services/lessonPlanExportService.
 import { exportVietnameseExamToWord } from "../src/services/vietnameseExamExportService.js";
 import { buildOutlineDocxBlob } from "../src/services/outlineExportService.js";
 import { buildKhgdDocument } from "../src/services/khgdExportService.js";
+import { buildKhgdTieuHocDocument } from "../src/services/khgdTieuHocExportService.js";
 import { Packer } from "docx";
 import { exportReportCommentsToWord } from "../src/services/reportCommentExportService.js";
 import { buildEnglishLessonPlanDocxBlob } from "../src/services/englishLessonPlanExportService.js";
@@ -211,6 +212,35 @@ async function makeKhgdScenario() {
     enableNls: true,
   };
   const doc = buildKhgdDocument({ lessons, kiemTraDinhKy, meta });
+  return Packer.toBlob(doc);
+}
+
+async function makeKhgdTieuHocScenario() {
+  // Dữ liệu THẬT lấy từ chính file mẫu "KHDH CÁC MÔN LỚP 2-KNTT" giáo viên gửi (Phiên 47).
+  const lessons = [
+    { id: "l1", chuDe: "Em lớn lên từng ngày", tenBai: "Đọc: Bài 1: Tôi là học sinh lớp 2-Tiết 1", tuan: "Tuần 1", soTiet: 1, tietPPCT: 1, dieuChinh: "" },
+    { id: "l2", chuDe: "Em lớn lên từng ngày", tenBai: "Đọc: Bài 1: Tôi là học sinh lớp 2-Tiết 2", tuan: "Tuần 1", soTiet: 1, tietPPCT: 2, dieuChinh: "" },
+    { id: "l3", chuDe: "Em lớn lên từng ngày", tenBai: "Viết: Chữ hoa A", tuan: "Tuần 1", soTiet: 1, tietPPCT: 3, dieuChinh: "" },
+    {
+      id: "l4",
+      chuDe: "Em lớn lên từng ngày",
+      tenBai: "Nói và nghe: Những ngày hè của em",
+      tuan: "Tuần 1",
+      soTiet: 1,
+      tietPPCT: 4,
+      dieuChinh: "Giáo dục HS cách phòng chống đuối nước.",
+    },
+  ];
+  const meta = {
+    subject: "Tieng_Viet",
+    grade: 2,
+    truong: "Tiểu học Test",
+    to: "Tiếng Việt",
+    giaoVien: "Nguyễn Văn A",
+    namHoc: "2026-2027",
+    enableDieuChinh: true,
+  };
+  const doc = buildKhgdTieuHocDocument({ lessons, meta });
   return Packer.toBlob(doc);
 }
 
@@ -432,6 +462,7 @@ const SCENARIOS = [
   { name: "de-tieng-viet", build: makeVietnameseExamScenario },
   { name: "de-cuong-on-tap", build: makeOutlineScenario },
   { name: "khung-khgd-phu-luc-3", build: makeKhgdScenario },
+  { name: "khung-khgd-tieu-hoc-phu-luc-2", build: makeKhgdTieuHocScenario },
   { name: "nhan-xet-hoc-ba", build: makeReportCommentScenario },
   { name: "giao-an-tieng-anh-nhieu-tiet", build: makeEnglishLessonPlanScenario },
   { name: "de-cuong-tieng-anh", build: makeEnglishOutlineScenario },
