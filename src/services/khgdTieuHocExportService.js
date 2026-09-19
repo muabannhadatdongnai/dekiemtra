@@ -27,9 +27,10 @@ import { getSubjectLabel } from "@/data/config";
  * (nếu có) - KHÔNG có Thiết bị dạy học/Địa điểm/SWD/NLS riêng (đã hỏi lại người dùng, chốt giữ
  * đúng mẫu thật). KHÔNG có bảng "Kiểm tra định kỳ" (chưa có mẫu thật cho phần này ở Tiểu học).
  *
- * ⚠️ Đơn giản hoá đã biết: cột "Chủ đề" lặp lại giá trị ở MỌI dòng thuộc chủ đề đó (không gộp ô
- * - "merge cell" - như bản Word gốc thường trình bày) - dễ đọc kém hơn 1 chút nhưng AN TOÀN hơn
- * (tránh lỗi rowSpan khi giáo viên tự thêm/xoá dòng) - có thể cải thiện sau nếu cần.
+ * ⚠️ Cột "Tuần" và "Chủ đề" được GỘP Ô (rowSpan) cho các dòng liên tiếp cùng giá trị - đúng cách
+ * trình bày bản mẫu thật (bổ sung Phiên 48 sau phản hồi test thật của giáo viên, xem
+ * computeMergeInfo() bên dưới) - CHỈ gộp khi giá trị không rỗng, tránh gộp nhầm các dòng còn
+ * trống thành 1 ô lớn gây hiểu lầm.
  */
 
 const FONT = "Times New Roman";
@@ -60,6 +61,9 @@ function cell(content, widthPercent, opts = {}) {
     width: { size: widthPercent, type: WidthType.PERCENTAGE },
     borders: ALL_BORDERS,
     verticalAlign: VerticalAlign.TOP,
+    shading: opts.shading,
+    rowSpan: opts.rowSpan,
+    margins: { top: 40, bottom: 40, left: 80, right: 80 },
     children: [
       new Paragraph({ alignment: opts.alignment, children: [textRun(content, { bold: opts.bold })] }),
     ],
@@ -67,10 +71,34 @@ function cell(content, widthPercent, opts = {}) {
 }
 
 function headerCell(text, widthPercent) {
-  return cell(text, widthPercent, { bold: true, alignment: AlignmentType.CENTER });
+  return cell(text, widthPercent, { bold: true, alignment: AlignmentType.CENTER, shading: { fill: "E5E7EB" } });
 }
 
 const WIDTHS = { tuan: 6, chuDe: 12, tenBai: 40, soTiet: 8, tietPPCT: 8, dieuChinh: 26 };
+
+/**
+ * Tính nhóm các dòng LIÊN TIẾP có CÙNG giá trị 1 cột (Tuần/Chủ đề) để GỘP Ô (rowSpan) - đúng cách
+ * trình bày của bản mẫu thật giáo viên tham khảo (ảnh đính kèm Phiên 48). CHỈ gộp khi giá trị
+ * KHÔNG RỖNG - nếu để trống hàng loạt (VD giáo viên chưa điền Tuần), KHÔNG gộp thành 1 ô khổng lồ
+ * (dễ gây hiểu lầm/xấu), mỗi dòng rỗng vẫn hiển thị RIÊNG.
+ * @returns {Array<{show: boolean, span: number}>} cùng độ dài với `lessons` - `show: false` nghĩa
+ *   là dòng này KHÔNG render ô ở cột đó (đã gộp vào dòng trước).
+ */
+function computeMergeInfo(lessons, getKey) {
+  const info = lessons.map(() => ({ show: true, span: 1 }));
+  let i = 0;
+  while (i < lessons.length) {
+    const key = getKey(lessons[i]);
+    let j = i + 1;
+    if (key) {
+      while (j < lessons.length && getKey(lessons[j]) === key) j++;
+    }
+    info[i] = { show: true, span: j - i };
+    for (let k = i + 1; k < j; k++) info[k] = { show: false, span: 0 };
+    i = j;
+  }
+  return info;
+}
 
 function buildLessonTable(lessons) {
   const headerRow = new TableRow({
@@ -80,24 +108,28 @@ function buildLessonTable(lessons) {
       headerCell("Chủ đề/Mạch nội dung", WIDTHS.chuDe),
       headerCell("Tên bài", WIDTHS.tenBai),
       headerCell("Tiết học/Thời lượng", WIDTHS.soTiet),
-      headerCell("Tiết PPCT", WIDTHS.tietPPCT),
+      headerCell("Ghi chú", WIDTHS.tietPPCT),
       headerCell("Nội dung điều chỉnh cần thiết (nếu có)", WIDTHS.dieuChinh),
     ],
   });
 
-  const rows = lessons.map(
-    (l) =>
-      new TableRow({
-        children: [
-          cell(l.tuan || "", WIDTHS.tuan, { alignment: AlignmentType.CENTER }),
-          cell(l.chuDe || "", WIDTHS.chuDe),
-          cell(l.tenBai || "", WIDTHS.tenBai),
-          cell(l.soTiet != null ? String(l.soTiet) : "", WIDTHS.soTiet, { alignment: AlignmentType.CENTER }),
-          cell(l.tietPPCT != null ? String(l.tietPPCT) : "", WIDTHS.tietPPCT, { alignment: AlignmentType.CENTER }),
-          cell(l.dieuChinh || "", WIDTHS.dieuChinh),
-        ],
-      })
-  );
+  const tuanMerge = computeMergeInfo(lessons, (l) => l.tuan || "");
+  const chuDeMerge = computeMergeInfo(lessons, (l) => l.chuDe || "");
+
+  const rows = lessons.map((l, i) => {
+    const children = [];
+    if (tuanMerge[i].show) {
+      children.push(cell(l.tuan || "", WIDTHS.tuan, { alignment: AlignmentType.CENTER, rowSpan: tuanMerge[i].span > 1 ? tuanMerge[i].span : undefined }));
+    }
+    if (chuDeMerge[i].show) {
+      children.push(cell(l.chuDe || "", WIDTHS.chuDe, { bold: true, rowSpan: chuDeMerge[i].span > 1 ? chuDeMerge[i].span : undefined }));
+    }
+    children.push(cell(l.tenBai || "", WIDTHS.tenBai));
+    children.push(cell(l.soTiet != null ? String(l.soTiet) : "", WIDTHS.soTiet, { alignment: AlignmentType.CENTER }));
+    children.push(cell(l.tietPPCT != null ? String(l.tietPPCT) : "", WIDTHS.tietPPCT, { alignment: AlignmentType.CENTER }));
+    children.push(cell(l.dieuChinh || "", WIDTHS.dieuChinh));
+    return new TableRow({ children });
+  });
 
   return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...rows] });
 }
