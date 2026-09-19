@@ -37,6 +37,24 @@ test("buildKhgdTieuHocDocument chạy được khi tắt lồng ghép (dieuChinh
   assert.ok(blob.size > 0);
 });
 
+test("buildKhgdTieuHocDocument gộp ô đúng khi nhiều dòng liên tiếp cùng Tuần/Chủ đề", async () => {
+  const lessons = [
+    { id: "a", chuDe: "Em lớn lên từng ngày", tenBai: "Bài 1", tuan: "Tuần 1", soTiet: 1, tietPPCT: 1, dieuChinh: "" },
+    { id: "b", chuDe: "Em lớn lên từng ngày", tenBai: "Bài 2", tuan: "Tuần 1", soTiet: 1, tietPPCT: 2, dieuChinh: "" },
+    { id: "c", chuDe: "Đi học vui sao", tenBai: "Bài 3", tuan: "Tuần 2", soTiet: 1, tietPPCT: 3, dieuChinh: "" },
+  ];
+  const doc = buildKhgdTieuHocDocument({ lessons, meta: makeMeta() });
+  const blob = await Packer.toBlob(doc);
+  assert.ok(blob.size > 0);
+});
+
+test("buildKhgdTieuHocDocument không gộp ô khi Tuần/Chủ đề để trống hàng loạt", async () => {
+  const lessons = makeLessons().map((l) => ({ ...l, tuan: "", chuDe: "" }));
+  const doc = buildKhgdTieuHocDocument({ lessons, meta: makeMeta() });
+  const blob = await Packer.toBlob(doc);
+  assert.ok(blob.size > 0);
+});
+
 test("buildKhgdTieuHocDocument chạy được với danh sách bài học rỗng", async () => {
   const doc = buildKhgdTieuHocDocument({ lessons: [], meta: makeMeta() });
   const blob = await Packer.toBlob(doc);

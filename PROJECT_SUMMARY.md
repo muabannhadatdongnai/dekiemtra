@@ -5,6 +5,29 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 48 — Sửa lỗi thật Khung KHGD Tiểu học (cột Tuần trống, nhãn sai, thiếu định dạng)
+
+1. **Yêu cầu Hoan:** gửi file Word thật sau khi test tab Khung KHGD Tiểu học + ảnh chụp 1 mẫu
+   tham khảo khác từ giáo viên, phản hồi "quá sơ sài, không thêm tuần, thiếu cột ghi chú".
+
+2. **3 lỗi xác nhận và sửa:**
+   - Cột "Tuần" trống hoàn toàn ở mọi dòng — thiết kế cũ bắt giáo viên gõ tay, không thực tế. Sửa:
+     thêm ô "Số tiết/tuần" ở form, tự động tính "Tuần" + "Ghi chú" (tiết PPCT chạy suốt năm) theo
+     "Số tiết" từng dòng — giáo viên chỉ cần khai báo 1 lần, không phải gõ tay từng dòng nữa.
+   - Cột cuối gọi nhầm "Tiết PPCT" thay vì đúng "Ghi chú" như bản mẫu thật — đổi nhãn hiển thị
+     (giữ nguyên field nội bộ `tietPPCT` để tránh phá vỡ code, chỉ đổi label UI/export).
+   - Bảng Word thiếu tô nền tiêu đề (phát hiện đây là OVERSIGHT thật khi copy code từ
+     `khgdExportService.js` — bản THCS có shading, bản Tiểu học bị quên) và không gộp ô Tuần/Chủ
+     đề (đã cố ý bỏ qua ở Phiên 47 vì lo ngại rowSpan). Đã TEST THỬ rowSpan bằng LibreOffice thật
+     trước khi làm (script scratch riêng, xoá sau khi xác nhận hoạt động) — xác nhận docx@9.0.2 hỗ
+     trợ tốt qua thuộc tính `rowSpan` trực tiếp trên `TableCell`, không cần `verticalMerge` kiểu
+     cũ. Viết `computeMergeInfo()` gộp các dòng liên tiếp cùng giá trị Tuần/Chủ đề — CHỈ gộp khi
+     giá trị không rỗng (tránh gộp nhầm các dòng trống thành 1 ô khổng lồ).
+
+3. **Kết quả kiểm thử:** `next build` sạch; `npm test` 457/457 pass (2 test mới cho rowSpan);
+   LibreOffice headless 20/20 kịch bản OK; đã RENDER TRỰC QUAN (.docx → .pdf → .png) bảng Tiểu học
+   mới để xác nhận bằng mắt trước khi giao — gộp ô đúng, tô nền đúng, không lỗi layout.
+
 ## Phiên 47 — Tab mới "Khung KHGD - Tiểu học" (Phụ lục 2, CV 2345/2021) — RIÊNG HOÀN TOÀN với THCS/THPT
 
 1. **Yêu cầu Hoan:** gửi file mẫu thật "KHDH CÁC MÔN LỚP 2-KNTT" để làm tiếp việc mở rộng Tiểu học

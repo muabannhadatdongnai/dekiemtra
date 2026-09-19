@@ -47,11 +47,12 @@ Việt - đã xác nhận áp dụng đúng cho CẢ bản xem trước web lẫ
 | 18 | Brainstorm sáng tạo/đổi mới cấu trúc ra đề, soạn bài (nếu Hoan vẫn muốn) | Phiên 44: Hoan có nhắc tới "sự sáng tạo, đổi mới trong cấu trúc ra đề, soạn bài" khi yêu cầu rà soát pháp lý, nhưng lượt trả lời gần nhất tập trung vào phần pháp lý/chuẩn mực trước - phần brainstorm cấu trúc mới CHƯA làm, cần Hoan nói rõ muốn đổi mới cho môn/dạng bài cụ thể nào ở phiên sau.
 | 19 | Khung KHGD (Phụ lục III): tạo dữ liệu SGK thật cho các môn/khối chưa có trong kho GitHub kiến thức | Phiên 46: đã tạo sẵn bộ mẫu THẬT cho Tiếng Anh Lớp 7 (12 Unit × .md + .json, lấy tên bài từ chính PPCT Hoan gửi Phiên 44) tại `docs/khgd-sample-data/` — Hoan tự copy vào kho GitHub riêng theo hướng dẫn trong `docs/khgd-sample-data/README.md`. Các môn/khối KHÁC vẫn CHƯA có — nút "Nạp gợi ý tên bài từ SGK" chỉ báo "chưa có gợi ý sẵn", giáo viên vẫn tạo được bình thường bằng cách tự gõ tay (KHÔNG bị chặn tính năng). Muốn có thêm môn/khối nào, gửi PPCT/mục lục SGK thật cho Claude ở phiên sau (KHÔNG tự bịa tên bài khi chưa có nguồn). |
 | 20 | Khung KHGD: CHƯA test thật với Gemini API key thật | Sandbox không có `GEMINI_API_KEYS` — mới xác nhận được: build sạch (`next build`), 455/455 `npm test` pass, và LibreOffice mở được cả 2 file `.docx` xuất ra (script `check-word-compatibility.mjs`, entry `khung-khgd-phu-luc-3` + `khung-khgd-tieu-hoc-phu-luc-2`, 20/20 kịch bản OK). CHƯA xác nhận AI thật trả JSON đúng schema + văn phong SWD/NLS/"Nội dung điều chỉnh" giống bản mẫu Bộ GDĐT với môn/bài học thật. |
-| 21 | Khung KHGD: mở rộng sang Tiểu học | ✅ ĐÃ LÀM ở Phiên 47 — tab RIÊNG `MODES.KHGD_TIEU_HOC` ("🧒 Khung KHGD (Tiểu học)"), dùng đúng Phụ lục 2/CV2345/2021, KHÁC HẲN Phụ lục III (THCS/THPT) — xem section "🟢 Khung KHGD - Tiểu học" bên dưới để biết chi tiết cấu trúc + các điểm CHƯA làm (bảng Kiểm tra định kỳ, gộp ô "Chủ đề", môn Âm nhạc/Mĩ thuật/GDTC/HĐTN chưa có trong `config.js` cho Tiểu học). |
+| 21 | Khung KHGD: mở rộng sang Tiểu học | ✅ ĐÃ LÀM ở Phiên 47, ĐÃ SỬA lỗi thực tế ở Phiên 48 (cột Tuần bị bỏ trống + thiếu định dạng) sau khi Hoan test file Word thật — xem mục #23/#24 (nay đã đóng) và section "🟢 Khung KHGD - Tiểu học" bên dưới. |
 | 22 | Khung KHGD: chưa hỗ trợ "In/Tải PDF" trực tiếp từ trình duyệt | Cố ý bỏ qua ở Phiên 45 vì khổ A4 NGANG (297x210mm) xung đột với rule `@page` toàn cục (khổ dọc, dùng chung `id="print-area"` với 6 tab kia — xem giải thích trong `globals.css`/`KhgdPreview.jsx`). Áp dụng cho CẢ 2 tab Khung KHGD (THCS/THPT lẫn Tiểu học) — hiện chỉ có nút "Tải Word" (đã đúng khổ ngang, sẵn sàng in trực tiếp từ Word).
-| 23 | Khung KHGD Tiểu học: chưa có bảng "Kiểm tra, đánh giá định kỳ" | Cố ý bỏ qua ở Phiên 47 — Tiểu học đánh giá theo Thông tư 27, cách khác hẳn kiểu "kiểm tra viết định kỳ" của THCS/THPT (không có bảng tương tự trong file mẫu thật đã đối chiếu). CẦN Hoan gửi mẫu thật (nếu trường có 1 bảng tương ứng) trước khi làm, tránh tự bịa cấu trúc. |
-| 24 | Khung KHGD Tiểu học: cột "Chủ đề" chưa gộp ô (merge cell) giống bản Word gốc | Cố ý đơn giản hoá ở Phiên 47 — hiện lặp lại giá trị "Chủ đề" ở MỌI dòng cùng chủ đề thay vì gộp ô, để tránh lỗi rowSpan khi giáo viên tự thêm/xoá dòng. Có thể cải thiện sau nếu Hoan thấy cần đúng y hệt bản gốc. |
+| 23 | ~~Khung KHGD Tiểu học: chưa có bảng "Kiểm tra, đánh giá định kỳ"~~ | Vẫn CHƯA làm — cần Hoan gửi mẫu thật nếu trường có bảng tương ứng, tránh tự bịa cấu trúc (không phải lỗi, chỉ là tính năng chưa làm). |
+| 24 | ~~Khung KHGD Tiểu học: cột "Chủ đề" chưa gộp ô~~ | ✅ ĐÃ SỬA Phiên 48 — cả cột "Tuần" lẫn "Chủ đề" nay đều GỘP Ô (rowSpan) cho các dòng liên tiếp cùng giá trị, đúng bản mẫu tham khảo Hoan gửi ảnh chụp — xem `computeMergeInfo()` trong `khgdTieuHocExportService.js`/`KhgdTieuHocPreview.jsx`. |
 | 25 | Khung KHGD Tiểu học: môn Âm nhạc/Mĩ thuật/GDTC/HĐTN chưa có trong `config.js` cho Lớp 1-5 | Phát hiện ở Phiên 47 khi đối chiếu `getSubjectsForGrade()` — các môn này hiện chỉ khai báo `minGrade: 6` (THCS trở lên) dù thực tế Tiểu học cũng dạy. Đây là gap CÓ SẴN TỪ TRƯỚC (không phải lỗi mới của Khung KHGD), ảnh hưởng CẢ 3 tab khác (Soạn giáo án/Đề cương/Đề kiểm tra) nếu chọn Tiểu học + 1 trong 4 môn này — CHƯA sửa vì ngoài phạm vi yêu cầu Phiên 47, cần Hoan xác nhận trước khi đụng vào `config.js` (ảnh hưởng nhiều tab cùng lúc).
+| 26 | Khung KHGD Tiểu học: "Số tiết/tuần" mặc định cứng 10, có thể sai với môn/khối khác | Phiên 48: thêm ô "Số tiết/tuần" ở `KhgdTieuHocForm.jsx` để tự tính cột Tuần/Ghi chú (mặc định 10, đúng Tiếng Việt Lớp 2 KNTT: 350 tiết/35 tuần) — giáo viên PHẢI tự đổi số này cho đúng môn/khối khác (VD Toán Lớp 2 thường 5 tiết/tuần) TRƯỚC KHI nhập bảng, vì đổi số sau khi đã nhập sẽ tính lại TOÀN BỘ bảng (ghi đè mọi chỉnh sửa tay ở cột Tuần/Ghi chú trước đó). Chưa có cơ chế tự nhận diện số tiết/tuần theo môn — để giáo viên tự nhập cho linh hoạt.
 
 ---
 
@@ -119,7 +120,26 @@ gộp chung 1 việc cần làm.
 
 ---
 
-## 🟢 Khung KHGD — Tiểu học — Phụ lục 2 (CV 2345/2021/BGDĐT-GDTH) — Phiên 47
+## 🟢 Khung KHGD — Tiểu học — Phụ lục 2 (CV 2345/2021/BGDĐT-GDTH) — Phiên 47, sửa lỗi thật ở Phiên 48
+
+**Cập nhật Phiên 48:** Hoan tự test tab này (tạo file Word thật + chụp ảnh 1 mẫu KHGD Tiểu học
+khác tham khảo từ giáo viên) và phát hiện 3 vấn đề: (1) cột "Tuần" bị bỏ trống hoàn toàn — thiết
+kế cũ để giáo viên gõ tay nhưng không ai gõ; (2) cột cuối đặt tên "Tiết PPCT" thay vì đúng "Ghi
+chú" như bản mẫu thật; (3) bảng xuất Word "quá sơ sài" — thiếu tô nền tiêu đề + không gộp ô
+Tuần/Chủ đề như bản mẫu tham khảo. ĐÃ SỬA CẢ 3:
+- `KhgdTieuHocForm.jsx`: thêm ô "Số tiết/tuần" (mặc định 10, đúng Tiếng Việt Lớp 2 KNTT) —
+  `recomputeTietPPCT()` giờ tự tính CẢ "Tuần" (`Tuần ${Math.ceil(tietPPCT / tietPerWeek)}`) lẫn
+  "Ghi chú" (tiết PPCT chạy suốt năm), không còn bắt giáo viên gõ tay từng dòng. Đổi "Số tiết/tuần"
+  sẽ tính lại TOÀN BỘ bảng (ghi đè sửa tay trước đó — đánh đổi chấp nhận được, xem mục #26 bảng
+  trên).
+- `khgdTieuHocExportService.js` + `KhgdTieuHocPreview.jsx`: đổi nhãn cột cuối thành "Ghi chú";
+  thêm `computeMergeInfo()` GỘP Ô (rowSpan/HTML rowSpan) cho "Tuần" và "Chủ đề" khi nhiều dòng
+  liên tiếp cùng giá trị (CHỈ gộp giá trị không rỗng, tránh gộp nhầm các dòng trống thành 1 ô to);
+  thêm tô nền tiêu đề (`shading: { fill: "E5E7EB" }` — bị THIẾU ở bản Phiên 47, một oversight khi
+  copy code từ `khgdExportService.js` sang) + margin trong ô cho dễ đọc hơn.
+- Đã TEST TRỰC QUAN bằng LibreOffice thật (convert .docx -> .pdf -> .png, xem ảnh render) trước
+  khi giao — xác nhận gộp ô hiển thị đúng, không lỗi layout.
+
 
 **Yêu cầu Hoan:** gửi file mẫu thật "KHDH CÁC MÔN LỚP 2-KNTT" (Kế hoạch dạy học môn Tiếng Việt,
 Lớp 2, sách Kết nối tri thức) để đối chiếu trước khi mở rộng Khung KHGD sang Tiểu học — ĐÚNG tinh

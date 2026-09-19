@@ -216,7 +216,8 @@ async function makeKhgdScenario() {
 }
 
 async function makeKhgdTieuHocScenario() {
-  // Dữ liệu THẬT lấy từ chính file mẫu "KHDH CÁC MÔN LỚP 2-KNTT" giáo viên gửi (Phiên 47).
+  // Dữ liệu THẬT lấy từ chính file mẫu "KHDH CÁC MÔN LỚP 2-KNTT" giáo viên gửi (Phiên 47),
+  // CÓ nhiều dòng cùng Tuần/Chủ đề để test rowSpan gộp ô (bổ sung Phiên 48).
   const lessons = [
     { id: "l1", chuDe: "Em lớn lên từng ngày", tenBai: "Đọc: Bài 1: Tôi là học sinh lớp 2-Tiết 1", tuan: "Tuần 1", soTiet: 1, tietPPCT: 1, dieuChinh: "" },
     { id: "l2", chuDe: "Em lớn lên từng ngày", tenBai: "Đọc: Bài 1: Tôi là học sinh lớp 2-Tiết 2", tuan: "Tuần 1", soTiet: 1, tietPPCT: 2, dieuChinh: "" },
@@ -230,6 +231,8 @@ async function makeKhgdTieuHocScenario() {
       tietPPCT: 4,
       dieuChinh: "Giáo dục HS cách phòng chống đuối nước.",
     },
+    { id: "l5", chuDe: "Đi học vui sao", tenBai: "Đọc: Bài 11: Cái trống trường em-Tiết 1", tuan: "Tuần 6", soTiet: 1, tietPPCT: 51, dieuChinh: "" },
+    { id: "l6", chuDe: "Đi học vui sao", tenBai: "Đọc: Bài 11: Cái trống trường em-Tiết 2", tuan: "Tuần 6", soTiet: 1, tietPPCT: 52, dieuChinh: "" },
   ];
   const meta = {
     subject: "Tieng_Viet",
