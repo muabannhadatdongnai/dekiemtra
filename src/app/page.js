@@ -24,6 +24,9 @@ import OutlineExportActions from "@/components/OutlineExportActions";
 import KhgdForm from "@/components/KhgdForm";
 import KhgdPreview from "@/components/KhgdPreview";
 import KhgdExportActions from "@/components/KhgdExportActions";
+import KhgdTieuHocForm from "@/components/KhgdTieuHocForm";
+import KhgdTieuHocPreview from "@/components/KhgdTieuHocPreview";
+import KhgdTieuHocExportActions from "@/components/KhgdTieuHocExportActions";
 import HelpGuideView from "@/components/HelpGuideView";
 import { getSession, clearSession, DISABLE_LOGIN, TEST_SESSION as TEST_USER } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
@@ -31,6 +34,7 @@ import { EMPTY_LESSON_PLAN_RESULT } from "@/data/lessonPlanResult";
 import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
 import { EMPTY_OUTLINE_RESULT } from "@/data/outlineResult";
 import { EMPTY_KHGD_RESULT } from "@/data/khgdResult";
+import { EMPTY_KHGD_TIEU_HOC_RESULT } from "@/data/khgdTieuHocResult";
 
 // A2/A3/Giai đoạn 2/Bước 2 (Nhóm B): 6 chế độ làm việc "tạo nội dung" - "lessonPlan" (Soạn giáo
 // án, Mầm non - Lớp 5), "worksheet" (Phiếu bài tập, Mầm non - Lớp 2), "vietnameseExam" (Đề Tiếng
@@ -61,6 +65,11 @@ const MODES = {
   // giải thích trong globals.css/KhgdPreview.jsx), nên không vi phạm nguyên tắc "1 print-area tại
   // 1 thời điểm" dù mount cùng lúc với layout 2 cột như các mode kia.
   KHGD: "khgd",
+  // "khgdTieuHoc" (MỚI, Phiên 47): tab RIÊNG cho Tiểu học - Phụ lục 2, CV2345/2021/BGDĐT-GDTH,
+  // KHÁC HẲN cấu trúc "khgd" (Phụ lục III, CV5512, THCS/THPT) - xem khgdTieuHocBlueprint.js.
+  // Tách tab riêng đúng nguyên tắc "mỗi cấp 1 router riêng" đã thống nhất từ đầu, KHÔNG nhét
+  // chung vào tab "khgd" dù cùng chủ đề "Khung KHGD".
+  KHGD_TIEU_HOC: "khgdTieuHoc",
   HELP: "help",
 };
 
@@ -109,6 +118,7 @@ export default function HomePage() {
   const [reportCommentResult, setReportCommentResult] = useState(EMPTY_REPORT_COMMENT_RESULT);
   const [outlineResult, setOutlineResult] = useState(EMPTY_OUTLINE_RESULT);
   const [khgdResult, setKhgdResult] = useState(EMPTY_KHGD_RESULT);
+  const [khgdTieuHocResult, setKhgdTieuHocResult] = useState(EMPTY_KHGD_TIEU_HOC_RESULT);
 
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
@@ -128,6 +138,7 @@ export default function HomePage() {
     setReportCommentResult(EMPTY_REPORT_COMMENT_RESULT);
     setOutlineResult(EMPTY_OUTLINE_RESULT);
     setKhgdResult(EMPTY_KHGD_RESULT);
+    setKhgdTieuHocResult(EMPTY_KHGD_TIEU_HOC_RESULT);
     setMode(MODES.LESSON_PLAN);
   }
 
@@ -164,6 +175,10 @@ export default function HomePage() {
 
   function handleKhgdGenerated(result) {
     setKhgdResult(result);
+  }
+
+  function handleKhgdTieuHocGenerated(result) {
+    setKhgdTieuHocResult(result);
   }
 
   const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
@@ -265,6 +280,17 @@ export default function HomePage() {
           </button>
           <button
             type="button"
+            onClick={() => setMode(MODES.KHGD_TIEU_HOC)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.KHGD_TIEU_HOC
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            🧒 Khung KHGD (Tiểu học)
+          </button>
+          <button
+            type="button"
             onClick={() => setMode(MODES.HELP)}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
               mode === MODES.HELP
@@ -289,6 +315,7 @@ export default function HomePage() {
             {mode === MODES.VIETNAMESE_EXAM && <VietnameseExamForm onGenerated={handleVietnameseExamGenerated} />}
             {mode === MODES.OUTLINE && <OutlineForm onGenerated={handleOutlineGenerated} />}
             {mode === MODES.KHGD && <KhgdForm onGenerated={handleKhgdGenerated} />}
+            {mode === MODES.KHGD_TIEU_HOC && <KhgdTieuHocForm onGenerated={handleKhgdTieuHocGenerated} />}
             {mode === MODES.REPORT_COMMENT && <ReportCommentForm onGenerated={handleReportCommentGenerated} />}
           </aside>
 
@@ -419,6 +446,23 @@ export default function HomePage() {
                   kiemTraDinhKy={khgdResult.kiemTraDinhKy}
                   meta={khgdResult.meta}
                 />
+              </div>
+            </section>
+          ) : mode === MODES.KHGD_TIEU_HOC ? (
+            <section className="space-y-4">
+              {khgdTieuHocResult.warnings.length > 0 && (
+                <div className="no-print rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                  <p className="mb-1 font-semibold">⚠️ Lưu ý:</p>
+                  <ul className="list-disc space-y-0.5 pl-5">
+                    {khgdTieuHocResult.warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <KhgdTieuHocExportActions lessons={khgdTieuHocResult.lessons} meta={khgdTieuHocResult.meta} />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <KhgdTieuHocPreview lessons={khgdTieuHocResult.lessons} meta={khgdTieuHocResult.meta} />
               </div>
             </section>
           ) : (
