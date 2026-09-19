@@ -212,6 +212,16 @@ export async function generateKhgdRequest(blueprint) {
   return handleResponse(res);
 }
 
+/** Tab "Khung KHGD - Tiểu học" (Phụ lục 2, CV2345/2021) - xem khgdTieuHocBlueprint.js. */
+export async function generateKhgdTieuHocRequest(blueprint) {
+  const res = await fetch("/api/generate-khgd-tieu-hoc", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(blueprint),
+  });
+  return handleResponse(res);
+}
+
 /** Thống kê mức dùng Gemini API hôm nay - xem UsageWidget.jsx */
 export async function fetchUsageSummaryRequest() {
   const res = await fetch("/api/usage", { headers: authHeaders() });

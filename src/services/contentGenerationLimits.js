@@ -219,3 +219,18 @@ export function clampKhgdLessons(lessons) {
   const wasClamped = list.length > max;
   return { lessons: wasClamped ? list.slice(0, max) : list, wasClamped };
 }
+
+// ================== Khung KHGD - Tiểu học (/api/generate-khgd-tieu-hoc) ==================
+// Cùng lý do clampKhgdLessons() ở trên - trần riêng vì Tiểu học thường CÓ SỐ BÀI/NĂM NHIỀU HƠN
+// THCS/THPT (Tiếng Việt Lớp 2 ~350 tiết/năm, thường 1 bài = 1-2 tiết -> có thể tới ~150-200
+// dòng/năm) nên đặt trần cao hơn KHGD_MAX_LESSONS (80) một chút.
+export function getKhgdTieuHocMaxLessons() {
+  return envInt("KHGD_TIEU_HOC_MAX_LESSONS", 200);
+}
+
+export function clampKhgdTieuHocLessons(lessons) {
+  const max = getKhgdTieuHocMaxLessons();
+  const list = Array.isArray(lessons) ? lessons : [];
+  const wasClamped = list.length > max;
+  return { lessons: wasClamped ? list.slice(0, max) : list, wasClamped };
+}
