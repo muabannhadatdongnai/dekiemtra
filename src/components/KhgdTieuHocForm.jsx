@@ -11,9 +11,11 @@ import { fetchChaptersRequest, fetchLessonsRequest, generateKhgdTieuHocRequest }
 /**
  * KhgdTieuHocForm.jsx
  * Form nhập liệu tab "Khung KHGD - Tiểu học" (Phụ lục 2, CV2345/2021/BGDĐT-GDTH) - Lớp 1-5.
- * KHÁC KhgdForm.jsx (THCS/THPT): có thêm "Chủ đề/Mạch nội dung" + "Tiết PPCT" (tự tính cộng dồn
- * theo Số tiết, giáo viên sửa được), KHÔNG có Thiết bị dạy học/Địa điểm/SWD/NLS riêng, chỉ 1
- * công tắc lồng ghép DUY NHẤT ("Nội dung điều chỉnh cần thiết") - đúng mẫu thật đã đối chiếu.
+ * KHÁC KhgdForm.jsx (THCS/THPT): có thêm "Chủ đề/Mạch nội dung" + "Tuần"/"Ghi chú" (2 cột này TỰ
+ * ĐỘNG tính theo "Số tiết/tuần" giáo viên khai báo - xem recomputeTietPPCT(), sửa ở Phiên 48 sau
+ * khi giáo viên test thật phát hiện cột "Tuần" bị bỏ trống hoàn toàn vì trước đó phải gõ tay),
+ * KHÔNG có Thiết bị dạy học/Địa điểm/SWD/NLS riêng, chỉ 1 công tắc lồng ghép DUY NHẤT ("Nội dung
+ * điều chỉnh cần thiết") - đúng mẫu thật đã đối chiếu.
  */
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
@@ -35,13 +37,18 @@ function Field({ label, children, hint }) {
   );
 }
 
-/** Tự tính lại "Tiết PPCT" = số cộng dồn theo "Số tiết" từng dòng, tính từ dòng 1. */
-function recomputeTietPPCT(rows) {
+/** Tự tính lại "Tuần" + "Ghi chú" (Tiết PPCT, chạy suốt năm) theo "Số tiết" từng dòng + "Số
+ * tiết/tuần" giáo viên khai báo - VD 10 tiết/tuần: tiết 1-10 = Tuần 1, tiết 11-20 = Tuần 2...
+ * Đây là điểm sửa quan trọng sau phản hồi test thật (Phiên 48): trước đó "Tuần" là ô trống hoàn
+ * toàn phải gõ tay từng dòng, dễ bị bỏ sót (đúng lỗi giáo viên gặp phải). Giáo viên vẫn sửa tay
+ * được từng ô nếu auto-tính chưa đúng thực tế lớp mình. */
+function recomputeTietPPCT(rows, tietPerWeek) {
   let running = 0;
+  const perWeek = Number(tietPerWeek) || 10;
   return rows.map((r) => {
     const soTiet = Number(r.soTiet) || 1;
     running += soTiet;
-    return { ...r, tietPPCT: running };
+    return { ...r, tietPPCT: running, tuan: `Tuần ${Math.ceil(running / perWeek)}` };
   });
 }
 
@@ -63,6 +70,7 @@ export default function KhgdTieuHocForm({ onGenerated }) {
   const [giaoVien, setGiaoVien] = useState("");
   const [namHoc, setNamHoc] = useState("");
   const [enableDieuChinh, setEnableDieuChinh] = useState(true);
+  const [tietPerWeek, setTietPerWeek] = useState(10);
 
   const [availableChapters, setAvailableChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
@@ -101,18 +109,25 @@ export default function KhgdTieuHocForm({ onGenerated }) {
   }
 
   function addLessonRow() {
-    setLessons((prev) => recomputeTietPPCT([...prev, makeEmptyRow()]));
+    setLessons((prev) => recomputeTietPPCT([...prev, makeEmptyRow()], tietPerWeek));
   }
 
   function removeLessonRow(id) {
-    setLessons((prev) => recomputeTietPPCT(prev.filter((l) => l.id !== id)));
+    setLessons((prev) => recomputeTietPPCT(prev.filter((l) => l.id !== id), tietPerWeek));
   }
 
   function updateLessonField(id, field, value) {
     setLessons((prev) => {
       const next = prev.map((l) => (l.id === id ? { ...l, [field]: value } : l));
-      return field === "soTiet" ? recomputeTietPPCT(next) : next;
+      return field === "soTiet" ? recomputeTietPPCT(next, tietPerWeek) : next;
     });
+  }
+
+  /** Đổi "Số tiết/tuần" -> tính lại Tuần/Ghi chú cho TOÀN BỘ bảng (ghi đè sửa tay trước đó, xem
+   * giải thích trong recomputeTietPPCT()). */
+  function handleTietPerWeekChange(value) {
+    setTietPerWeek(value);
+    setLessons((prev) => recomputeTietPPCT(prev, value));
   }
 
   async function loadLessonsFromChapter(chapterId, chapterLabel) {
@@ -126,7 +141,10 @@ export default function KhgdTieuHocForm({ onGenerated }) {
       }
       setError("");
       setLessons((prev) =>
-        recomputeTietPPCT([...prev, ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuDe: chapterLabel }))])
+        recomputeTietPPCT(
+          [...prev, ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuDe: chapterLabel }))],
+          tietPerWeek
+        )
       );
     } catch {
       setError(`Không tải được gợi ý tên bài cho "${chapterLabel}" - vui lòng tự thêm dòng và gõ tay.`);
@@ -228,6 +246,15 @@ export default function KhgdTieuHocForm({ onGenerated }) {
           <input type="checkbox" checked={enableDieuChinh} onChange={(e) => setEnableDieuChinh(e.target.checked)} />
           Nhờ AI gợi ý "Nội dung điều chỉnh cần thiết" (lồng ghép KNS/GDĐP/BVMT/công dân số...) cho các bài phù hợp
         </label>
+        <Field label="Số tiết/tuần (để tự tính cột Tuần + Ghi chú)" hint="VD: Tiếng Việt Lớp 2 KNTT thường 10 tiết/tuần. Đổi số này sẽ tính lại TOÀN BỘ bảng bên dưới.">
+          <input
+            type="number"
+            min={1}
+            value={tietPerWeek}
+            onChange={(e) => handleTietPerWeekChange(e.target.value)}
+            className={`${inputClass} max-w-[140px]`}
+          />
+        </Field>
       </div>
 
       <div className="space-y-3 border-b border-slate-100 pb-5">
@@ -254,19 +281,19 @@ export default function KhgdTieuHocForm({ onGenerated }) {
           ))}
         </div>
         <p className="text-xs text-slate-500">
-          Bấm 1 chương để nạp gợi ý tên bài, hoặc "+ Thêm dòng" để tự gõ. Cột "Tiết PPCT" tự tính
-          cộng dồn theo "Số tiết" từng dòng - bạn có thể sửa tay nếu cần.
+          Bấm 1 chương để nạp gợi ý tên bài, hoặc "+ Thêm dòng" để tự gõ. Cột "Tuần" và "Ghi chú"
+          TỰ ĐỘNG tính theo "Số tiết/tuần" đã khai báo ở trên - bạn vẫn sửa tay được nếu cần.
         </p>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="w-full min-w-[820px] text-xs">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
-                <th className="w-24 p-2 text-left">Tuần</th>
+                <th className="w-20 p-2 text-left">Tuần</th>
                 <th className="w-32 p-2 text-left">Chủ đề</th>
                 <th className="p-2 text-left">Tên bài</th>
                 <th className="w-16 p-2 text-left">Số tiết</th>
-                <th className="w-20 p-2 text-left">Tiết PPCT</th>
+                <th className="w-16 p-2 text-left">Ghi chú</th>
                 <th className="w-8 p-2"></th>
               </tr>
             </thead>

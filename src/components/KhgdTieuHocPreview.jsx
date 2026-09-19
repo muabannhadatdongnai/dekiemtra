@@ -2,8 +2,25 @@
 
 import { getSubjectLabel } from "@/data/config";
 
-const cellStyle = (align = "left") => ({ border: "1px solid #94a3b8", padding: "4px 6px", fontSize: 11, textAlign: align });
+const cellStyle = (align = "left") => ({ border: "1px solid #94a3b8", padding: "4px 6px", fontSize: 11, textAlign: align, verticalAlign: "top" });
 const headerCellStyle = { ...cellStyle("center"), fontWeight: 700, background: "#e5e7eb" };
+
+/** Cùng logic gộp ô computeMergeInfo() trong khgdTieuHocExportService.js - xem giải thích ở đó. */
+function computeMergeInfo(lessons, getKey) {
+  const info = lessons.map(() => ({ show: true, span: 1 }));
+  let i = 0;
+  while (i < lessons.length) {
+    const key = getKey(lessons[i]);
+    let j = i + 1;
+    if (key) {
+      while (j < lessons.length && getKey(lessons[j]) === key) j++;
+    }
+    info[i] = { show: true, span: j - i };
+    for (let k = i + 1; k < j; k++) info[k] = { show: false, span: 0 };
+    i = j;
+  }
+  return info;
+}
 
 /**
  * KhgdTieuHocPreview.jsx
@@ -41,21 +58,33 @@ export default function KhgdTieuHocPreview({ lessons, meta }) {
             <th style={headerCellStyle}>Chủ đề/Mạch nội dung</th>
             <th style={headerCellStyle}>Tên bài</th>
             <th style={headerCellStyle}>Tiết học/Thời lượng</th>
-            <th style={headerCellStyle}>Tiết PPCT</th>
+            <th style={headerCellStyle}>Ghi chú</th>
             <th style={headerCellStyle}>Nội dung điều chỉnh cần thiết (nếu có)</th>
           </tr>
         </thead>
         <tbody>
-          {lessons.map((l, i) => (
-            <tr key={l.id || i} style={{ verticalAlign: "top" }}>
-              <td style={cellStyle("center")}>{l.tuan}</td>
-              <td style={cellStyle()}>{l.chuDe}</td>
-              <td style={{ ...cellStyle(), fontWeight: 700 }}>{l.tenBai}</td>
-              <td style={cellStyle("center")}>{l.soTiet}</td>
-              <td style={cellStyle("center")}>{l.tietPPCT}</td>
-              <td style={cellStyle()}>{l.dieuChinh}</td>
-            </tr>
-          ))}
+          {(() => {
+            const tuanMerge = computeMergeInfo(lessons, (l) => l.tuan || "");
+            const chuDeMerge = computeMergeInfo(lessons, (l) => l.chuDe || "");
+            return lessons.map((l, i) => (
+              <tr key={l.id || i} style={{ verticalAlign: "top" }}>
+                {tuanMerge[i].show && (
+                  <td style={cellStyle("center")} rowSpan={tuanMerge[i].span > 1 ? tuanMerge[i].span : undefined}>
+                    {l.tuan}
+                  </td>
+                )}
+                {chuDeMerge[i].show && (
+                  <td style={{ ...cellStyle(), fontWeight: 700 }} rowSpan={chuDeMerge[i].span > 1 ? chuDeMerge[i].span : undefined}>
+                    {l.chuDe}
+                  </td>
+                )}
+                <td style={{ ...cellStyle(), fontWeight: 700 }}>{l.tenBai}</td>
+                <td style={cellStyle("center")}>{l.soTiet}</td>
+                <td style={cellStyle("center")}>{l.tietPPCT}</td>
+                <td style={cellStyle()}>{l.dieuChinh}</td>
+              </tr>
+            ));
+          })()}
         </tbody>
       </table>
 
