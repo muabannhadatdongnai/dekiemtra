@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { orchestrateKhgdGeneration } from "@/services/khgdOrchestrator";
 import { requireAuth, requireWithinTeacherGenerateLimit } from "@/services/apiAuth";
-import { clampKhgdLessons } from "@/services/contentGenerationLimits";
+import { clampKhgdLessons, sanitizeKhgdLessons } from "@/services/contentGenerationLimits";
 
 export async function POST(request) {
   try {
@@ -42,10 +42,12 @@ export async function POST(request) {
       );
     }
 
+    // Phiên 49: mỗi bài có thể kèm `noiDung` (đoạn trích Markdown SGK do form gắn vào) → chèn vào prompt
+    // AI nên PHẢI ép kiểu + cắt độ dài (client không đáng tin), sau bước clamp số bài.
     const { lessons: aiLessons, warnings } = await orchestrateKhgdGeneration({
       subject,
       grade,
-      lessons: clampedLessons,
+      lessons: sanitizeKhgdLessons(clampedLessons),
       enableSwd,
       enableNls,
     });

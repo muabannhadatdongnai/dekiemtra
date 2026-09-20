@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2, Sparkles } from "lucide-react";
+import { Loader2, Plus, Trash2, Sparkles, BookOpen } from "lucide-react";
 import { getSubjectsForGrade } from "@/data/config";
 import { getKhgdSubjectDefaults } from "@/data/khgdSubjectDefaults";
 import { buildKhgdBlueprint } from "@/data/khgdBlueprint";
 import { buildKhgdResult } from "@/data/khgdResult";
 import { getEffectiveSession } from "@/services/authService";
-import { fetchChaptersRequest, fetchLessonsRequest, generateKhgdRequest } from "@/services/apiClient";
+import {
+  fetchChaptersRequest,
+  fetchKhgdOutlineRequest,
+  fetchLessonsRequest,
+  generateKhgdRequest,
+} from "@/services/apiClient";
 
 /**
  * KhgdForm.jsx
@@ -20,6 +25,11 @@ import { fetchChaptersRequest, fetchLessonsRequest, generateKhgdRequest } from "
  * trình khác nhau. Tên bài CHỈ là GỢI Ý lấy từ kho GitHub (nút "Nạp gợi ý tên bài từ SGK"), giáo
  * viên có thể sửa/xoá/thêm dòng tuỳ ý trước khi bấm "Tạo Khung KHGD" - AI CHỈ soạn thêm 2 cột
  * SWD/NLS cho danh sách bài đã chốt (xem khgdOrchestrator.js), không đụng vào số tiết/tuần.
+ *
+ * ⚠️ Phiên 49 - LUÔN ƯU TIÊN NỘI DUNG MARKDOWN CỦA BỘ MÔN: nút nạp chương giờ ĐỌC THẲNG file Markdown
+ * SGK (/api/khgd-outline → khgdOutlineService.js) để lấy tên bài + `noiDung` (đoạn trích của từng bài,
+ * gửi kèm lên AI để SWD/NLS bám sát nội dung thật, không chung chung). Thứ tự ưu tiên: (1) Markdown,
+ * (2) phụ lục `chuong_{n}_bai.json` (dùng `noiDungCotLoi` làm `noiDung`), (3) giáo viên gõ tay.
  */
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
@@ -121,6 +131,7 @@ export default function KhgdForm({ onGenerated }) {
       tuan: "",
       thietBi: defaults.device,
       diaDiem: defaults.location,
+      noiDung: "", // đoạn trích Markdown SGK của bài (Phiên 49) - rỗng với dòng gõ tay
       ...overrides,
     };
   }
@@ -138,14 +149,31 @@ export default function KhgdForm({ onGenerated }) {
   }
 
   /**
-   * "Nạp gợi ý tên bài từ SGK": tái dùng /api/lessons (ĐÃ có sẵn cho LessonPlanForm.jsx) để lấy
-   * tên bài + nội dung cốt lõi trong 1 chương, rồi thêm mỗi bài thành 1 DÒNG MỚI vào bảng - giáo
-   * viên tự điền số tiết/tuần sau đó. Lỗi tải (chương chưa có phụ lục) KHÔNG chặn thao tác, đây
-   * chỉ là gợi ý phụ trợ - cùng tinh thần LessonPlanForm.jsx.
+   * "Nạp gợi ý từ SGK" (Phiên 49): ƯU TIÊN đọc TRỰC TIẾP Markdown chương (/api/khgd-outline) → mỗi bài
+   * thành 1 DÒNG MỚI kèm `noiDung` (trích từ Markdown, gửi lên AI khi tạo). Không nhận ra định dạng
+   * Markdown/lỗi mạng → quay về luồng cũ /api/lessons (`chuong_{n}_bai.json`, dùng `noiDungCotLoi`
+   * làm `noiDung`). Số tiết/tuần giáo viên tự điền sau. Lỗi tải KHÔNG chặn thao tác - chỉ là gợi ý phụ trợ.
    */
   async function loadLessonsFromChapter(chapterId, chapterLabel) {
     setLoadingLessonsFor(chapterId);
     try {
+      let outline = null;
+      try {
+        outline = await fetchKhgdOutlineRequest({ grade, subject, volume, chapter: chapterId });
+      } catch {
+        outline = null; // gợi ý phụ trợ - lỗi thì âm thầm quay về luồng cũ
+      }
+      const chuong = outline?.chuong || chapterLabel;
+
+      if (outline?.rows?.length > 0) {
+        setError("");
+        setLessons((prev) => [
+          ...prev,
+          ...outline.rows.map((r) => makeEmptyRow({ tenBai: r.tenBai || "", chuong, noiDung: r.noiDung || "" })),
+        ]);
+        return;
+      }
+
       const data = await fetchLessonsRequest({ grade, subject, volume, chapter: chapterId });
       const found = data.lessons || [];
       if (found.length === 0) {
@@ -155,7 +183,7 @@ export default function KhgdForm({ onGenerated }) {
       setError("");
       setLessons((prev) => [
         ...prev,
-        ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuong: chapterLabel })),
+        ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuong, noiDung: l.noiDungCotLoi || "" })),
       ]);
     } catch {
       setError(`Không tải được gợi ý tên bài cho "${chapterLabel}" - vui lòng tự thêm dòng và gõ tay.`);
@@ -299,7 +327,7 @@ export default function KhgdForm({ onGenerated }) {
               disabled={loadingLessonsFor !== null}
               onClick={() => loadLessonsFromChapter(c.chapter, c.label || `Chương ${c.chapter}`)}
               className="flex items-center gap-1 rounded-full border border-brand-300 bg-brand-50 px-3 py-1 text-xs text-brand-700 transition hover:bg-brand-100 disabled:opacity-50"
-              title="Nạp gợi ý tên bài từ SGK vào bảng bên dưới"
+              title="Nạp tên bài + nội dung từ Markdown SGK vào bảng bên dưới"
             >
               {loadingLessonsFor === c.chapter ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -311,7 +339,9 @@ export default function KhgdForm({ onGenerated }) {
           ))}
         </div>
         <p className="text-xs text-slate-500">
-          Bấm 1 chương để nạp gợi ý tên bài vào bảng bên dưới, hoặc bấm "+ Thêm dòng" để tự gõ. Số
+          Bấm 1 chương để nạp tên bài vào bảng bên dưới - hệ thống đọc thẳng file Markdown SGK của môn
+          và giữ lại nội dung từng bài để AI soạn SWD/NLS bám sát sách (dòng có biểu tượng sách). Hoặc bấm
+          "+ Thêm dòng" để tự gõ (dòng gõ tay không có nội dung SGK nên AI chỉ dựa vào tên bài). Số
           tiết/Thời điểm/Thiết bị/Địa điểm LUÔN do giáo viên tự nhập/sửa.
         </p>
 
@@ -337,6 +367,14 @@ export default function KhgdForm({ onGenerated }) {
                       className="w-full rounded border border-slate-200 px-2 py-1"
                       placeholder="Tên bài học"
                     />
+                    {l.noiDung && (
+                      <p
+                        className="mt-1 flex items-center gap-1 text-[11px] text-emerald-700"
+                        title={l.noiDung.slice(0, 400)}
+                      >
+                        <BookOpen size={11} /> Đã nạp nội dung SGK - AI sẽ bám theo
+                      </p>
+                    )}
                   </td>
                   <td className="p-1">
                     <input

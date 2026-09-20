@@ -3,7 +3,10 @@
 import { getSubjectLabel } from "@/data/config";
 import { computeMergeInfo, computeTietMerge } from "@/services/khgdTieuHocMergeUtils";
 
-const cellStyle = (align = "left") => ({ border: "1px solid #94a3b8", padding: "4px 6px", fontSize: 11, textAlign: align, verticalAlign: "top" });
+// Cỡ chữ 14pt theo quy định Bộ GD&ĐT (Phiên 49) - cùng cỡ với file Word xuất ra.
+const FONT_SIZE_PT = "14pt";
+
+const cellStyle = (align = "left") => ({ border: "1px solid #94a3b8", padding: "4px 6px", fontSize: FONT_SIZE_PT, textAlign: align, verticalAlign: "top" });
 const headerCellStyle = { ...cellStyle("center"), fontWeight: 700, background: "#e5e7eb" };
 
 /**
@@ -27,11 +30,11 @@ export default function KhgdTieuHocPreview({ lessons, meta }) {
       {meta?.to && <p style={{ margin: 0, fontWeight: 700 }}>TỔ: {meta.to.toUpperCase()}</p>}
       {meta?.giaoVien && <p style={{ margin: "0 0 12px" }}>Họ và tên giáo viên: {meta.giaoVien}</p>}
 
-      <h1 style={{ textAlign: "center", fontWeight: 700, fontSize: 14, margin: "0 0 4px" }}>
+      <h1 style={{ textAlign: "center", fontWeight: 700, fontSize: FONT_SIZE_PT, margin: "0 0 4px" }}>
         KẾ HOẠCH DẠY HỌC CÁC MÔN HỌC, HOẠT ĐỘNG GIÁO DỤC LỚP {meta?.grade} - MÔN:{" "}
         {getSubjectLabel(meta?.subject)?.toUpperCase()}
       </h1>
-      <p style={{ textAlign: "center", fontStyle: "italic", fontSize: 12, margin: "0 0 14px" }}>
+      <p style={{ textAlign: "center", fontStyle: "italic", fontSize: FONT_SIZE_PT, margin: "0 0 14px" }}>
         CT GDPT 2018{meta?.namHoc ? ` - Năm học ${meta.namHoc}` : ""}
       </p>
 
@@ -77,7 +80,7 @@ export default function KhgdTieuHocPreview({ lessons, meta }) {
         </tbody>
       </table>
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40, fontSize: 12 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40, fontSize: FONT_SIZE_PT }}>
         <div style={{ textAlign: "center", width: "45%" }}>
           <p style={{ fontWeight: 700, margin: 0 }}>TỔ TRƯỞNG</p>
           <p style={{ margin: 0 }}>(Ký và ghi rõ họ tên)</p>

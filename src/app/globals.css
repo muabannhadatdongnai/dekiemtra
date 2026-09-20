@@ -49,7 +49,7 @@ body {
   background: #fff;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
   font-family: "Times New Roman", Times, serif;
-  font-size: 11pt;
+  font-size: 14pt; /* Phiên 49: quy định Bộ GD&ĐT - cùng cỡ chữ với file Word (khgd*ExportService.js) */
   line-height: 1.4;
   color: #111827;
 }
