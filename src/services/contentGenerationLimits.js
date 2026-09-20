@@ -241,7 +241,7 @@ export function chunkLessons(lessons, size) {
 }
 
 /** Trần ký tự đoạn trích Markdown `noiDung` MỖI bài (Phiên 49) - client không được tin (xem sanitizeKhgdLessons). */
-export const KHGD_NOI_DUNG_HARD_MAX_CHARS = 1500;
+export const KHGD_NOI_DUNG_HARD_MAX_CHARS = 2000;
 
 /**
  * Làm sạch danh sách bài học client gửi lên: ép `tenBai`/`noiDung` về chuỗi và cắt độ dài. `noiDung`

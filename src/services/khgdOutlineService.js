@@ -19,7 +19,9 @@
  *   - Tiếng Anh (Global Success): mỗi Unit 1 file, các phần `### 1. GETTING STARTED (Trang 8 - 9)`...
  *     → 7 dòng/Unit đúng PPCT giáo viên đang dùng ("Unit 1. Hobbies - Getting started",
  *     "... - Looking back & Project" - Looking back và Project GỘP 1 dòng như PPCT thật).
- *   - Mọi môn còn lại (Toán, Ngữ văn, KHTN...): mỗi tiêu đề `## BÀI 1: TÊN` = 1 dòng.
+ *   - Ngữ văn (Kết nối tri thức): mỗi Bài 1 file (`# BÀI 1: TÊN`), tách theo HOẠT ĐỘNG: Giới thiệu bài học +
+ *     Tri thức Ngữ văn (1 dòng), mỗi văn bản đọc hiểu 1 dòng, Thực hành tiếng Việt, Viết, Nói và nghe, Củng cố.
+ *   - Mọi môn còn lại (Toán, KHTN...): mỗi tiêu đề `## BÀI 1: TÊN` = 1 dòng.
  * Thêm/đổi cách dựng của 1 môn = sửa 1 dòng trong OUTLINE_BUILDERS, KHÔNG ảnh hưởng môn khác.
  *
  * Thiết kế "an toàn khi thiếu": Markdown lạ định dạng (không thấy Bài/Section nào) → `rows: []`,
@@ -51,11 +53,16 @@ function isAllCaps(s) {
   return s === s.toLocaleUpperCase("vi") && s !== s.toLocaleLowerCase("vi");
 }
 
+/** Tên riêng phổ biến bị hạ thường khi đổi IN HOA → dạng câu ("TIẾNG VIỆT" → "Tiếng Việt"). */
+function restoreProperNouns(s) {
+  return s.replace(/việt nam/g, "Việt Nam").replace(/tiếng việt/g, "tiếng Việt").replace(/ngữ văn/g, "Ngữ văn");
+}
+
 function sentenceCase(s) {
-  const lower = s.toLocaleLowerCase("vi");
+  const lower = restoreProperNouns(s.toLocaleLowerCase("vi"));
   const head = lower.charAt(0).toLocaleUpperCase("vi") + lower.slice(1);
-  // Viết hoa lại chữ đầu sau dấu kết câu ("THỨ TỰ THỰC HIỆN. QUY TẮC" → "Thứ tự thực hiện. Quy tắc")
-  return head.replace(/([.!?]\s+)(\p{L})/gu, (_, sep, ch) => sep + ch.toLocaleUpperCase("vi"));
+  // Viết hoa lại chữ đầu sau dấu kết câu/hai chấm ("THỨ TỰ THỰC HIỆN. QUY TẮC" → "Thứ tự thực hiện. Quy tắc")
+  return head.replace(/([.!?:]\s+)(\p{L})/gu, (_, sep, ch) => sep + ch.toLocaleUpperCase("vi"));
 }
 
 /**
@@ -137,11 +144,10 @@ export function composeNoiDung({ titles = [], bodyLines = [], footer = "", maxCh
     if (!line || seen.has(line)) continue;
     seen.add(line);
     if (!tryPush(`- ${line}`)) {
-      // dòng đầu tiên quá dài → cắt ở ranh giới từ để vẫn có ít nội dung; các dòng sau bỏ hẳn
-      if (out.length <= 1) {
-        const room = budget - used - 4;
-        if (room > 40) tryPush(`- ${line.slice(0, room).replace(/\s+\S*$/, "")}…`);
-      }
+      // Dòng không vừa: nếu còn đủ chỗ thì CẮT ở ranh giới từ (đoạn tóm tắt dài của Ngữ văn vẫn góp được ý
+      // chính, thay vì bị bỏ cả đoạn); các dòng sau bỏ hẳn.
+      const room = budget - used - 4; // trừ "\n- " và dấu "…"
+      if (room > 80) tryPush(`- ${line.slice(0, room).replace(/\s+\S*$/, "")}…`);
       break;
     }
   }
@@ -161,6 +167,7 @@ function firstHeading1(lines) {
 
 /**
  * Nhãn chương lấy từ tiêu đề # đầu tiên: `# CHƯƠNG I: SỐ HỮU TỈ` → "Chương I: Số hữu tỉ".
+ * `# BÀI 1: BẦU TRỜI TUỔI THƠ` (Ngữ văn) → "Bài 1: Bầu trời tuổi thơ".
  * Với Tiếng Anh (`# ... - Unit 1: Hobbies (Sở thích)`) → "Unit 1. Hobbies". Không nhận ra → null.
  */
 export function extractChuongLabel(markdown) {
@@ -171,7 +178,7 @@ export function extractChuongLabel(markdown) {
   const unit = parseUnitLabel(h1);
   if (unit) return unit;
 
-  const m = h1.match(/^(CH[ƯU][ƠO]NG|CHỦ ĐỀ|CHỦ ĐIỂM|PHẦN)\s+([IVXLC\d]+)\s*[:.\-–]\s*(.+)$/i);
+  const m = h1.match(/^(CH[ƯU][ƠO]NG|CHỦ ĐỀ|CHỦ ĐIỂM|PHẦN|B[ÀA]I)\s+([IVXLC\d]+)\s*[:.\-–]\s*(.+)$/i);
   if (!m) return null;
   const kind = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
   const name = normalizeHeading(m[3]);
@@ -324,11 +331,183 @@ function buildBaiRows(markdown, lessonIndex = []) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Ngữ văn (Kết nối tri thức): mỗi Bài 1 file, các phần I-VII → nhiều dòng PPCT/Bài
+// ---------------------------------------------------------------------------------------------
+// Định dạng thật (Ngữ văn 7, Bài 1): `# BÀI 1: TÊN` → `## I. GIỚI THIỆU CHUNG...` `## II. TRI THỨC NGỮ VĂN`
+// `## III. ĐỌC HIỂU CÁC VĂN BẢN` (mỗi `### k. Văn bản k: Tên (Tác giả)` gồm `#### a./b./c.`) `## IV. THỰC HÀNH
+// TIẾNG VIỆT` `## V. THỰC HÀNH VIẾT: ...` `## VI. THỰC HÀNH NÓI VÀ NGHE: ...` `## VII. CỦNG CỐ VÀ MỞ RỘNG`.
+// PPCT Ngữ văn liệt kê theo HOẠT ĐỘNG trong Bài (không phải 1 dòng/Bài) nên tách: Giới thiệu bài học + Tri
+// thức Ngữ văn (gộp 1 dòng), mỗi văn bản đọc hiểu 1 dòng, rồi Thực hành tiếng Việt / Viết / Nói và nghe /
+// Củng cố. Tên dòng lấy TỪ TIÊU ĐỀ Markdown (không tự đặt), giáo viên vẫn sửa được trong bảng.
+
+const NGU_VAN_MAX_CHARS = 1600;
+const NGU_VAN_INTRO_MAX_CHARS = 2000; // = KHGD_NOI_DUNG_HARD_MAX_CHARS (contentGenerationLimits.js): server cắt ở mức này // đoạn tóm tắt văn bản dài hơn Toán/Tiếng Anh nên nới trần trích
+
+/** Bỏ dấu tiếng Việt + về chữ thường - dùng để nhận diện loại phần bằng từ khoá, không phụ thuộc dấu. */
+function foldVN(s) {
+  return String(s ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/gi, "d")
+    .toLowerCase();
+}
+
+function headingLevel(line) {
+  const m = String(line ?? "").match(/^(#{1,6})\s+\S/);
+  return m ? m[1].length : 0;
+}
+
+/** Tách các dòng thành các phần theo tiêu đề đúng cấp `level` (dòng trước tiêu đề đầu tiên bị bỏ - VD câu trích dẫn đầu bài). */
+function splitByLevel(lines, level) {
+  const parts = [];
+  let cur = null;
+  for (const line of lines) {
+    if (headingLevel(line) === level) {
+      cur = { titleRaw: line.replace(/^#+\s*/, ""), lines: [] };
+      parts.push(cur);
+    } else if (cur) {
+      cur.lines.push(line);
+    }
+  }
+  return parts;
+}
+
+/** Bảng Markdown → các dòng chữ ("A — B — C"): bảng "Củng cố và mở rộng" chứa đề tài/nhân vật/thông điệp từng văn bản. */
+function expandTables(lines) {
+  const out = [];
+  let headerSeen = false;
+  for (const raw of lines) {
+    const t = String(raw ?? "").trim();
+    if (!t.startsWith("|")) {
+      headerSeen = false;
+      out.push(raw);
+      continue;
+    }
+    const cells = t.split("|").slice(1, -1).map((c) => squash(stripEmphasis(stripCitations(c))));
+    if (cells.length === 0 || cells.every((c) => /^:?-{2,}:?$/.test(c) || c === "")) continue; // dòng phân cách
+    out.push(headerSeen ? `* ${cells.filter(Boolean).join(" — ")}` : `* Bảng gồm các cột: ${cells.filter(Boolean).join(" — ")}`);
+    headerSeen = true;
+  }
+  return out;
+}
+
+/** "1. Văn bản 1: Bầy chim chìa vôi (Nguyễn Quang Thiều)" → "Văn bản 1: Bầy chim chìa vôi" (bỏ số thứ tự + phần tác giả/trích). */
+function nguVanTextName(raw) {
+  const s = stripEmphasis(stripCitations(raw))
+    .replace(/^(?:\d+|[a-z])\.\s+/i, "")
+    .replace(/\s*\([^)]*\)/g, "");
+  return normalizeHeading(s);
+}
+
+/** Tên phần: bỏ số La Mã đầu, "Thực hành viết:" → "Viết:", "Thực hành nói và nghe:" → "Nói và nghe:". */
+function nguVanSectionName(raw) {
+  let s = normalizeHeading(String(raw ?? "").replace(/^[IVXLC]+\.\s*/, ""));
+  s = s.replace(/^Thực hành viết:/i, "Viết:").replace(/^Thực hành nói và nghe:/i, "Nói và nghe:");
+  return s.charAt(0).toLocaleUpperCase("vi") + s.slice(1);
+}
+
+/** Dòng nội dung của 1 phần; `withLabels`: giữ tiêu đề con (a. Thông tin chung...) làm nhãn "Thông tin chung:". */
+function nguVanBodyLines(lines, { withLabels }) {
+  const out = [];
+  for (const line of expandTables(lines)) {
+    if (headingLevel(line) > 0) {
+      if (withLabels) {
+        const label = nguVanTextName(line.replace(/^#+\s*/, ""));
+        if (label) out.push(label.endsWith(":") ? label : `${label}:`);
+      }
+      continue;
+    }
+    const text = cleanContentLine(line);
+    if (text) out.push(text);
+  }
+  return out;
+}
+
+function buildNguVanRows(markdown) {
+  const lines = String(markdown ?? "").normalize("NFC").split(/\r?\n/);
+
+  const baiHeads = [];
+  lines.forEach((ln, i) => {
+    const m = stripCitations(ln).match(RE_BAI);
+    if (m) {
+      const ten = normalizeHeading(m[3]);
+      if (ten) baiHeads.push({ i, level: m[1].length, soBai: Number(m[2]), ten });
+    }
+  });
+  if (baiHeads.length === 0) return [];
+
+  const rows = [];
+  baiHeads.forEach((b, k) => {
+    const end = k + 1 < baiHeads.length ? baiHeads[k + 1].i : lines.length;
+    const prefix = `Bài ${b.soBai}. ${b.ten} - `;
+    const sections = splitByLevel(lines.slice(b.i + 1, end), b.level + 1);
+
+    for (let si = 0; si < sections.length; si++) {
+      const sec = sections[si];
+      const fold = foldVN(sec.titleRaw);
+      const next = sections[si + 1];
+
+      // Giới thiệu bài học + Tri thức Ngữ văn → 1 dòng (đúng cách PPCT Ngữ văn thường gộp)
+      if (fold.includes("gioi thieu") && next && foldVN(next.titleRaw).includes("tri thuc")) {
+        const introSubs = splitByLevel(sec.lines, b.level + 2);
+        const triThucSubs = splitByLevel(next.lines, b.level + 2);
+        // Thứ tự ưu tiên khi cắt trần ký tự: TRI THỨC NGỮ VĂN (nội dung chính của tiết này) → YÊU CẦU CẦN ĐẠT →
+        // đoạn dẫn nhập (văn kể chuyện, ít giá trị cho việc soạn mục tiêu/SWD nhất nên đặt cuối, cắt trước).
+        const isYeuCau = (x) => foldVN(x.titleRaw).includes("yeu cau");
+        const bodyLines = [
+          // giữ nhãn tiêu đề con (Đề tài và chi tiết:/Tính cách nhân vật:...) vì các gạch đầu dòng bên dưới là định nghĩa
+          // "Là những đặc điểm riêng..." không có chủ ngữ nếu thiếu nhãn
+          ...nguVanBodyLines(next.lines, { withLabels: true }),
+          ...introSubs.filter(isYeuCau).flatMap((x) => nguVanBodyLines(x.lines, { withLabels: false })),
+          ...introSubs.filter((x) => !isYeuCau(x)).flatMap((x) => nguVanBodyLines(x.lines, { withLabels: false })),
+        ];
+        rows.push({
+          tenBai: `${prefix}Giới thiệu bài học và ${nguVanSectionName(next.titleRaw)}`,
+          noiDung: composeNoiDung({
+            titles: [...introSubs, ...triThucSubs].map((x) => nguVanTextName(x.titleRaw)),
+            bodyLines,
+            maxChars: NGU_VAN_INTRO_MAX_CHARS, // hàng GỘP 2 phần nên được nới trần hơn
+          }),
+        });
+        si++; // đã dùng luôn phần "Tri thức"
+        continue;
+      }
+
+      // Đọc hiểu các văn bản → mỗi văn bản 1 dòng
+      if (fold.includes("doc hieu")) {
+        const texts = splitByLevel(sec.lines, b.level + 2);
+        if (texts.length > 0) {
+          for (const t of texts) {
+            rows.push({
+              tenBai: `${prefix}${nguVanTextName(t.titleRaw)}`,
+              noiDung: composeNoiDung({ bodyLines: nguVanBodyLines(t.lines, { withLabels: true }), maxChars: NGU_VAN_MAX_CHARS }),
+            });
+          }
+          continue;
+        }
+      }
+
+      const subs = splitByLevel(sec.lines, b.level + 2);
+      rows.push({
+        tenBai: `${prefix}${nguVanSectionName(sec.titleRaw)}`,
+        noiDung: composeNoiDung({
+          titles: subs.length >= 2 ? subs.map((x) => nguVanTextName(x.titleRaw)) : [],
+          bodyLines: nguVanBodyLines(sec.lines, { withLabels: false }),
+          maxChars: NGU_VAN_MAX_CHARS,
+        }),
+      });
+    }
+  });
+  return rows;
+}
+
+// ---------------------------------------------------------------------------------------------
 // API chính
 // ---------------------------------------------------------------------------------------------
 
 const OUTLINE_BUILDERS = {
   Tieng_Anh: (markdown) => buildEnglishRows(markdown),
+  Ngu_Van: (markdown) => buildNguVanRows(markdown),
 };
 
 /**
