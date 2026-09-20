@@ -15,6 +15,7 @@ import {
 import { saveAs } from "file-saver";
 import { PAGE_A4_LANDSCAPE_MM, PAGE_LANDSCAPE_MARGIN_MM } from "@/data/constants";
 import { getSubjectLabel } from "@/data/config";
+import { computeMergeInfo, computeTietMerge } from "./khgdTieuHocMergeUtils";
 
 /**
  * khgdTieuHocExportService.js
@@ -23,14 +24,19 @@ import { getSubjectLabel } from "@/data/config";
  * khác nhau theo quy định, KHÔNG dùng chung export builder dù cùng "họ" tab Khung KHGD.
  *
  * Cấu trúc bảng đối chiếu ĐÚNG file mẫu thật "KHDH CÁC MÔN LỚP 2-KNTT" (Phiên 47): Tuần/Chủ đề
- * (Mạch nội dung)/Tên bài/Tiết học (Thời lượng)/Tiết theo PPCT/Nội dung điều chỉnh cần thiết
- * (nếu có) - KHÔNG có Thiết bị dạy học/Địa điểm/SWD/NLS riêng (đã hỏi lại người dùng, chốt giữ
- * đúng mẫu thật). KHÔNG có bảng "Kiểm tra định kỳ" (chưa có mẫu thật cho phần này ở Tiểu học).
+ * (Mạch nội dung)/Tên bài/Tiết học (Thời lượng)/Nội dung điều chỉnh cần thiết (nếu có)/Ghi chú
+ * (tiết theo PPCT, chạy suốt năm) - KHÔNG có Thiết bị dạy học/Địa điểm/SWD/NLS riêng (đã hỏi lại
+ * người dùng, chốt giữ đúng mẫu thật). KHÔNG có bảng "Kiểm tra định kỳ" (chưa có mẫu thật cho
+ * phần này ở Tiểu học).
+ *
+ * ⚠️ "Ghi chú" LUÔN là cột CUỐI CÙNG (sửa Phiên 48b theo phản hồi test file Word thật + ảnh mẫu
+ * của giáo viên) - trước đó nằm trước "Nội dung điều chỉnh". Field nội bộ vẫn tên `tietPPCT`.
  *
  * ⚠️ Cột "Tuần" và "Chủ đề" được GỘP Ô (rowSpan) cho các dòng liên tiếp cùng giá trị - đúng cách
  * trình bày bản mẫu thật (bổ sung Phiên 48 sau phản hồi test thật của giáo viên, xem
- * computeMergeInfo() bên dưới) - CHỈ gộp khi giá trị không rỗng, tránh gộp nhầm các dòng còn
- * trống thành 1 ô lớn gây hiểu lầm.
+ * khgdTieuHocMergeUtils.js) - CHỈ gộp khi giá trị không rỗng, tránh gộp nhầm các dòng còn trống
+ * thành 1 ô lớn gây hiểu lầm. Phiên 48b: cột "Tiết học/Thời lượng" cũng gộp theo `nhomTiet` (VD
+ * Đọc Tiết 1 + Tiết 2 → 1 ô "2 tiết") và luôn ghi dạng "N tiết" như bản mẫu.
  */
 
 const FONT = "Times New Roman";
@@ -74,47 +80,27 @@ function headerCell(text, widthPercent) {
   return cell(text, widthPercent, { bold: true, alignment: AlignmentType.CENTER, shading: { fill: "E5E7EB" } });
 }
 
-const WIDTHS = { tuan: 6, chuDe: 12, tenBai: 40, soTiet: 8, tietPPCT: 8, dieuChinh: 26 };
-
-/**
- * Tính nhóm các dòng LIÊN TIẾP có CÙNG giá trị 1 cột (Tuần/Chủ đề) để GỘP Ô (rowSpan) - đúng cách
- * trình bày của bản mẫu thật giáo viên tham khảo (ảnh đính kèm Phiên 48). CHỈ gộp khi giá trị
- * KHÔNG RỖNG - nếu để trống hàng loạt (VD giáo viên chưa điền Tuần), KHÔNG gộp thành 1 ô khổng lồ
- * (dễ gây hiểu lầm/xấu), mỗi dòng rỗng vẫn hiển thị RIÊNG.
- * @returns {Array<{show: boolean, span: number}>} cùng độ dài với `lessons` - `show: false` nghĩa
- *   là dòng này KHÔNG render ô ở cột đó (đã gộp vào dòng trước).
- */
-function computeMergeInfo(lessons, getKey) {
-  const info = lessons.map(() => ({ show: true, span: 1 }));
-  let i = 0;
-  while (i < lessons.length) {
-    const key = getKey(lessons[i]);
-    let j = i + 1;
-    if (key) {
-      while (j < lessons.length && getKey(lessons[j]) === key) j++;
-    }
-    info[i] = { show: true, span: j - i };
-    for (let k = i + 1; k < j; k++) info[k] = { show: false, span: 0 };
-    i = j;
-  }
-  return info;
-}
+const WIDTHS = { tuan: 6, chuDe: 12, tenBai: 40, soTiet: 8, dieuChinh: 26, tietPPCT: 8 };
 
 function buildLessonTable(lessons) {
+  // ⚠️ KHÔNG đặt `tableHeader: true` (Phiên 48b): Word sẽ LẶP LẠI hàng tiêu đề ở đầu mỗi trang
+  // tiếp theo - giáo viên phản hồi bảng nhảy về "phần head của trang 1" thay vì nối tiếp phần
+  // dòng của trang trước (bản mẫu giáo viên gửi cũng không lặp tiêu đề). Chỉ hàng tiêu đề đầu
+  // tiên xuất hiện 1 lần ở trang 1.
   const headerRow = new TableRow({
-    tableHeader: true,
     children: [
       headerCell("Tuần, tháng", WIDTHS.tuan),
       headerCell("Chủ đề/Mạch nội dung", WIDTHS.chuDe),
       headerCell("Tên bài", WIDTHS.tenBai),
       headerCell("Tiết học/Thời lượng", WIDTHS.soTiet),
-      headerCell("Ghi chú", WIDTHS.tietPPCT),
       headerCell("Nội dung điều chỉnh cần thiết (nếu có)", WIDTHS.dieuChinh),
+      headerCell("Ghi chú", WIDTHS.tietPPCT),
     ],
   });
 
   const tuanMerge = computeMergeInfo(lessons, (l) => l.tuan || "");
   const chuDeMerge = computeMergeInfo(lessons, (l) => l.chuDe || "");
+  const tietMerge = computeTietMerge(lessons);
 
   const rows = lessons.map((l, i) => {
     const children = [];
@@ -125,9 +111,16 @@ function buildLessonTable(lessons) {
       children.push(cell(l.chuDe || "", WIDTHS.chuDe, { bold: true, rowSpan: chuDeMerge[i].span > 1 ? chuDeMerge[i].span : undefined }));
     }
     children.push(cell(l.tenBai || "", WIDTHS.tenBai));
-    children.push(cell(l.soTiet != null ? String(l.soTiet) : "", WIDTHS.soTiet, { alignment: AlignmentType.CENTER }));
-    children.push(cell(l.tietPPCT != null ? String(l.tietPPCT) : "", WIDTHS.tietPPCT, { alignment: AlignmentType.CENTER }));
+    if (tietMerge[i].show) {
+      children.push(
+        cell(tietMerge[i].label, WIDTHS.soTiet, {
+          alignment: AlignmentType.CENTER,
+          rowSpan: tietMerge[i].span > 1 ? tietMerge[i].span : undefined,
+        })
+      );
+    }
     children.push(cell(l.dieuChinh || "", WIDTHS.dieuChinh));
+    children.push(cell(l.tietPPCT != null ? String(l.tietPPCT) : "", WIDTHS.tietPPCT, { alignment: AlignmentType.CENTER }));
     return new TableRow({ children });
   });
 

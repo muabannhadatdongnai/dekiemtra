@@ -45,6 +45,10 @@ có nội dung trên mỗi 5-8 bài liên tiếp, đúng tỉ lệ thường g�
 - Các loại lồng ghép trên là VÍ DỤ THAM KHẢO PHỔ BIẾN, không bắt buộc dùng đúng nhãn này - hãy
   chọn loại lồng ghép PHÙ HỢP NHẤT với nội dung bài, hoặc để trống nếu không có gì phù hợp.
 - KHÔNG gán lồng ghép GƯỢNG ÉP cho bài không liên quan.
+- Các dòng có hậu tố "- Tiết 2" (hoặc "- Tiết 3"...) là TIẾT TIẾP THEO của cùng 1 hoạt động ở dòng
+  "- Tiết 1" ngay phía trên (VD "Đọc: Bài 1: ... - Tiết 1", "Đọc: Bài 1: ... - Tiết 2"). Nếu hoạt
+  động đó cần lồng ghép, CHỈ ghi ở dòng "- Tiết 1" và để CHUỖI RỖNG ở các dòng "- Tiết" tiếp theo -
+  không lặp lại cùng 1 nội dung ở nhiều dòng của cùng 1 hoạt động.
 
 ĐỊNH DẠNG JSON TRẢ VỀ (BẮT BUỘC, không kèm giải thích/markdown ngoài JSON):
 { "lessons": [ { "id": "(chép lại ĐÚNG id)", "dieuChinh": "..." } ] }

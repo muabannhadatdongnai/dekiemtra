@@ -61,6 +61,18 @@ export async function fetchLessonsRequest({ grade, subject, volume, chapter }) {
 }
 
 /**
+ * Gợi ý Khung KHGD Tiểu học từ Markdown 1 chương SGK (Phiên 48b): { chuDe, rows[], source }.
+ * `rows` rỗng khi môn chưa có bộ đọc riêng hoặc Markdown lạ định dạng → form quay về fetchLessonsRequest.
+ */
+export async function fetchKhgdTieuHocOutlineRequest({ grade, subject, volume, chapter }) {
+  const res = await fetch(
+    `/api/khgd-tieu-hoc-outline?grade=${grade}&subject=${subject}&volume=${volume}&chapter=${encodeURIComponent(chapter)}`,
+    { headers: authHeaders() }
+  );
+  return handleResponse(res);
+}
+
+/**
  * @param blueprint - xem cấu trúc "examBlueprint" trong src/data/examBlueprint.js
  */
 export async function generateExamRequest(blueprint) {
