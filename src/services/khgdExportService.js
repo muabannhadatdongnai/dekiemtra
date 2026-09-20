@@ -10,6 +10,7 @@ import {
   TableCell,
   WidthType,
   VerticalAlign,
+  TableLayoutType,
   convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
@@ -33,6 +34,9 @@ import { getSubjectLabel } from "@/data/config";
  */
 
 const FONT = "Times New Roman";
+// ⚠️ Cỡ chữ 14pt (Phiên 49, Hoan chốt: đúng quy định của Bộ GD&ĐT) cho TOÀN BỘ văn bản: tiêu đề, bảng,
+// chữ ký. Đơn vị `size` của docx là NỬA-POINT → 14pt = 28. KHÔNG hạ cỡ chữ để "cho vừa trang".
+const FONT_SIZE = 28;
 const CELL_BORDER = { style: BorderStyle.SINGLE, size: 4, color: "444444" };
 const ALL_BORDERS = { top: CELL_BORDER, bottom: CELL_BORDER, left: CELL_BORDER, right: CELL_BORDER };
 
@@ -51,8 +55,27 @@ const pageProperties = {
   },
 };
 
+// ⚠️ Độ rộng bảng tính bằng TWIP CỐ ĐỊNH (Phiên 49) thay vì % - LibreOffice bỏ qua độ rộng % của ô khi
+// bảng không khai báo lưới cột (mọi cột thành đều nhau → cột SWD/NLS bị bóp hẹp, chữ 14pt rớt từng
+// chữ cái), còn Word có thể co giãn theo nội dung. Khai báo `columnWidths` + layout FIXED cho ra CÙNG
+// 1 bố cục ở cả Word lẫn LibreOffice. Các hàm cell()/headerCell() vẫn nhận PHẦN TRĂM cho dễ chỉnh.
+const TABLE_WIDTH_TWIP = convertMillimetersToTwip(
+  PAGE_A4_LANDSCAPE_MM.width - PAGE_LANDSCAPE_MARGIN_MM.left - PAGE_LANDSCAPE_MARGIN_MM.right
+);
+const pctToTwip = (pct) => Math.round((TABLE_WIDTH_TWIP * pct) / 100);
+
+/** Bảng độ rộng cố định theo danh sách % cột (thứ tự trái → phải, chỉ gồm cột đang hiển thị). */
+function fixedTable(rows, columnPercents) {
+  return new Table({
+    width: { size: TABLE_WIDTH_TWIP, type: WidthType.DXA },
+    columnWidths: columnPercents.map(pctToTwip),
+    layout: TableLayoutType.FIXED,
+    rows,
+  });
+}
+
 function textRun(text, opts = {}) {
-  return new TextRun({ text: String(text ?? ""), font: FONT, size: 20, ...opts });
+  return new TextRun({ text: String(text ?? ""), font: FONT, size: FONT_SIZE, ...opts });
 }
 
 function multilineTextRuns(text, opts = {}) {
@@ -71,7 +94,7 @@ function cell(content, widthPercent, opts = {}) {
         }),
       ];
   return new TableCell({
-    width: { size: widthPercent, type: WidthType.PERCENTAGE },
+    width: { size: pctToTwip(widthPercent), type: WidthType.DXA },
     borders: ALL_BORDERS,
     verticalAlign: VerticalAlign.TOP,
     columnSpan: opts.columnSpan,
@@ -99,14 +122,16 @@ function bulletCell(label, items, widthPercent) {
 
 /**
  * Tính % chiều rộng cột "SWD"/"NLS" tuỳ theo 2 công tắc bật/tắt - phần trăm CÒN LẠI (sau 6 cột cố
- * định: STT/Bài học/Số tiết/Thời điểm/Thiết bị/Địa điểm = 58%) được chia cho SWD/NLS nếu bật,
+ * định: STT/Bài học/Số tiết/Thời điểm/Thiết bị/Địa điểm = 55%) được chia cho SWD/NLS nếu bật,
  * hoặc dồn hết về cột "Bài học" nếu cả 2 đều tắt (không để bảng có khoảng trắng thừa vô nghĩa).
  */
 function computeColumnWidths(enableSwd, enableNls) {
-  const base = { stt: 3, baiHoc: 15, soTiet: 6, thoiDiem: 8, thietBi: 12, diaDiem: 9 }; // = 53
-  const remaining = 100 - Object.values(base).reduce((s, v) => s + v, 0); // = 47
+  // Phiên 49: chữ 14pt to hơn 10pt cũ nên cột STT/Số tiết/Thời điểm được nới ra (STT 2 chữ số như "12"
+  // không được rớt dòng), bù lại bớt chút ở cột SWD/NLS.
+  const base = { stt: 5, baiHoc: 17, soTiet: 6, thoiDiem: 8, thietBi: 11, diaDiem: 8 }; // = 55
+  const remaining = 100 - Object.values(base).reduce((s, v) => s + v, 0); // = 45
 
-  if (enableSwd && enableNls) return { ...base, swd: 31, nls: remaining - 31 };
+  if (enableSwd && enableNls) return { ...base, swd: 27, nls: remaining - 27 };
   if (enableSwd) return { ...base, swd: remaining, nls: 0 };
   if (enableNls) return { ...base, swd: 0, nls: remaining };
   return { ...base, baiHoc: base.baiHoc + remaining, swd: 0, nls: 0 };
@@ -130,7 +155,7 @@ function buildHeaderParagraphs(meta) {
       }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [textRun("KẾ HOẠCH GIÁO DỤC CỦA GIÁO VIÊN", { bold: true, size: 26 })],
+      children: [textRun("KẾ HOẠCH GIÁO DỤC CỦA GIÁO VIÊN", { bold: true })],
       spacing: { after: 40 },
     }),
     new Paragraph({
@@ -140,7 +165,7 @@ function buildHeaderParagraphs(meta) {
           `MÔN HỌC/HOẠT ĐỘNG GIÁO DỤC ${(getSubjectLabel(meta?.subject) || "").toUpperCase()}, LỚP ${
             meta?.grade || ""
           }${meta?.namHoc ? ` (Năm học ${meta.namHoc})` : ""}`,
-          { bold: true, size: 24 }
+          { bold: true }
         ),
       ],
       spacing: { after: 200 },
@@ -183,7 +208,17 @@ function buildLessonTable(lessons, widths) {
       })
   );
 
-  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...rows] });
+  const columnPercents = [
+    widths.stt,
+    widths.baiHoc,
+    widths.soTiet,
+    widths.thoiDiem,
+    widths.thietBi,
+    widths.diaDiem,
+    ...(widths.swd ? [widths.swd] : []),
+    ...(widths.nls ? [widths.nls] : []),
+  ];
+  return fixedTable([headerRow, ...rows], columnPercents);
 }
 
 function buildKiemTraTable(kiemTraDinhKy) {
@@ -210,7 +245,7 @@ function buildKiemTraTable(kiemTraDinhKy) {
       })
   );
 
-  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...rows] });
+  return fixedTable([headerRow, ...rows], [20, 12, 16, 34, 18]);
 }
 
 const NO_BORDERS = {
@@ -273,13 +308,16 @@ export function buildKhgdDocument({ lessons, kiemTraDinhKy, meta }) {
   const widths = computeColumnWidths(!!meta?.enableSwd, !!meta?.enableNls);
 
   return new Document({
+    // Mặc định toàn văn bản 14pt/Times New Roman: phủ luôn các đoạn KHÔNG có TextRun riêng (đoạn trống
+    // giữ chỗ, ô bảng rỗng, ký hiệu gạch đầu dòng) để không rơi về cỡ mặc định nhỏ hơn của Word.
+    styles: { default: { document: { run: { font: FONT, size: FONT_SIZE } } } },
     sections: [
       {
         properties: pageProperties,
         children: [
           ...buildHeaderParagraphs(meta),
           new Paragraph({
-            children: [textRun("II. Kế hoạch dạy học", { bold: true, size: 22 })],
+            children: [textRun("II. Kế hoạch dạy học", { bold: true })],
             spacing: { after: 60 },
           }),
           new Paragraph({

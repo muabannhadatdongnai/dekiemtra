@@ -208,8 +208,10 @@ export function clampOutlineStudyDays(soNgayOnTap) {
 // khác trong file này (client gọi thẳng API có thể gửi hàng nghìn dòng giả, khiến 1 lượt gọi
 // AI phải sinh JSON khổng lồ, dễ timeout/tốn quota). 1 năm học thực tế tối đa ~110-120 tiết,
 // mỗi bài thường 2-4 tiết -> khoảng 60-70 bài là đủ dư cho hầu hết môn học 1 năm.
+// ⚠️ Phiên 49: nâng mặc định 80 → 120 vì nạp từ Markdown Tiếng Anh cho ra 7 dòng/Unit (12 Unit =
+// 84 dòng, chưa kể các dòng Review/Kiểm tra giáo viên tự thêm) - trần 80 cũ sẽ CẮT MẤT các Unit cuối.
 export function getKhgdMaxLessons() {
-  return envInt("KHGD_MAX_LESSONS", 80);
+  return envInt("KHGD_MAX_LESSONS", 120);
 }
 
 /** Cắt (clamp) danh sách bài học về đúng trần (giữ lại các bài ĐẦU TIÊN, bỏ bớt các bài dư ở cuối). */
@@ -218,6 +220,43 @@ export function clampKhgdLessons(lessons) {
   const list = Array.isArray(lessons) ? lessons : [];
   const wasClamped = list.length > max;
   return { lessons: wasClamped ? list.slice(0, max) : list, wasClamped };
+}
+
+/**
+ * Số bài gửi AI trong MỖI lần gọi (Phiên 49). Khi bài kèm đoạn trích Markdown, prompt + JSON trả về
+ * phình to; chia lô giúp AI viết CHI TIẾT hơn cho từng bài và tránh JSON bị cắt giữa chừng. 1 lượt
+ * thường (vài Unit/Bài) vẫn chỉ tốn 1 lần gọi; cả năm ~100 bài tốn ~3 lần. Đổi qua env `KHGD_AI_BATCH_SIZE`.
+ */
+export function getKhgdAiBatchSize() {
+  return Math.max(1, envInt("KHGD_AI_BATCH_SIZE", 40));
+}
+
+/** Chia mảng thành các lô liên tiếp, mỗi lô tối đa `size` phần tử (giữ đúng thứ tự, không mất/lặp phần tử). */
+export function chunkLessons(lessons, size) {
+  const n = Math.max(1, Math.floor(Number(size)) || 1);
+  const list = Array.isArray(lessons) ? lessons : [];
+  const out = [];
+  for (let i = 0; i < list.length; i += n) out.push(list.slice(i, i + n));
+  return out;
+}
+
+/** Trần ký tự đoạn trích Markdown `noiDung` MỖI bài (Phiên 49) - client không được tin (xem sanitizeKhgdLessons). */
+export const KHGD_NOI_DUNG_HARD_MAX_CHARS = 1500;
+
+/**
+ * Làm sạch danh sách bài học client gửi lên: ép `tenBai`/`noiDung` về chuỗi và cắt độ dài. `noiDung`
+ * (đoạn trích Markdown SGK do form gắn kèm) sẽ được chèn vào prompt AI nên KHÔNG được để client gửi
+ * chuỗi khổng lồ (tốn quota/token) - cùng nguyên tắc "không tin dữ liệu client" của file này.
+ */
+export function sanitizeKhgdLessons(lessons) {
+  const list = Array.isArray(lessons) ? lessons : [];
+  return list
+    .filter((l) => l && typeof l === "object")
+    .map((l) => ({
+      ...l,
+      tenBai: String(l.tenBai ?? "").slice(0, 300),
+      noiDung: typeof l.noiDung === "string" ? l.noiDung.slice(0, KHGD_NOI_DUNG_HARD_MAX_CHARS) : "",
+    }));
 }
 
 // ================== Khung KHGD - Tiểu học (/api/generate-khgd-tieu-hoc) ==================

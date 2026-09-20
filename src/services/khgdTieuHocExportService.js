@@ -10,6 +10,7 @@ import {
   TableCell,
   WidthType,
   VerticalAlign,
+  TableLayoutType,
   convertMillimetersToTwip,
 } from "docx";
 import { saveAs } from "file-saver";
@@ -40,6 +41,9 @@ import { computeMergeInfo, computeTietMerge } from "./khgdTieuHocMergeUtils";
  */
 
 const FONT = "Times New Roman";
+// ⚠️ Cỡ chữ 14pt (Phiên 49, Hoan chốt: đúng quy định của Bộ GD&ĐT) cho TOÀN BỘ văn bản. `size` của docx
+// tính bằng NỬA-POINT → 14pt = 28. KHÔNG hạ cỡ chữ để "cho vừa trang".
+const FONT_SIZE = 28;
 const CELL_BORDER = { style: BorderStyle.SINGLE, size: 4, color: "444444" };
 const ALL_BORDERS = { top: CELL_BORDER, bottom: CELL_BORDER, left: CELL_BORDER, right: CELL_BORDER };
 
@@ -58,13 +62,21 @@ const pageProperties = {
   },
 };
 
+// ⚠️ Độ rộng bảng tính bằng TWIP CỐ ĐỊNH (Phiên 49) - xem giải thích ở khgdExportService.js: LibreOffice
+// bỏ qua độ rộng % của ô khi không có lưới cột (mọi cột đều nhau), layout FIXED + columnWidths cho ra
+// cùng 1 bố cục ở Word và LibreOffice. cell()/headerCell() vẫn nhận PHẦN TRĂM.
+const TABLE_WIDTH_TWIP = convertMillimetersToTwip(
+  PAGE_A4_LANDSCAPE_MM.width - PAGE_LANDSCAPE_MARGIN_MM.left - PAGE_LANDSCAPE_MARGIN_MM.right
+);
+const pctToTwip = (pct) => Math.round((TABLE_WIDTH_TWIP * pct) / 100);
+
 function textRun(text, opts = {}) {
-  return new TextRun({ text: String(text ?? ""), font: FONT, size: 20, ...opts });
+  return new TextRun({ text: String(text ?? ""), font: FONT, size: FONT_SIZE, ...opts });
 }
 
 function cell(content, widthPercent, opts = {}) {
   return new TableCell({
-    width: { size: widthPercent, type: WidthType.PERCENTAGE },
+    width: { size: pctToTwip(widthPercent), type: WidthType.DXA },
     borders: ALL_BORDERS,
     verticalAlign: VerticalAlign.TOP,
     shading: opts.shading,
@@ -80,7 +92,9 @@ function headerCell(text, widthPercent) {
   return cell(text, widthPercent, { bold: true, alignment: AlignmentType.CENTER, shading: { fill: "E5E7EB" } });
 }
 
-const WIDTHS = { tuan: 6, chuDe: 12, tenBai: 40, soTiet: 8, dieuChinh: 26, tietPPCT: 8 };
+// Phiên 49: chữ 14pt to hơn 10pt cũ nên nới cột Tuần/Tiết học/Ghi chú (số 2-3 chữ số như "Tuần 12", "350"
+// không được rớt dòng), bù lại bớt ở cột Tên bài (tổng vẫn = 100).
+const WIDTHS = { tuan: 8, chuDe: 13, tenBai: 33, soTiet: 10, dieuChinh: 26, tietPPCT: 10 };
 
 function buildLessonTable(lessons) {
   // ⚠️ KHÔNG đặt `tableHeader: true` (Phiên 48b): Word sẽ LẶP LẠI hàng tiêu đề ở đầu mỗi trang
@@ -124,7 +138,12 @@ function buildLessonTable(lessons) {
     return new TableRow({ children });
   });
 
-  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [headerRow, ...rows] });
+  return new Table({
+    width: { size: TABLE_WIDTH_TWIP, type: WidthType.DXA },
+    columnWidths: [WIDTHS.tuan, WIDTHS.chuDe, WIDTHS.tenBai, WIDTHS.soTiet, WIDTHS.dieuChinh, WIDTHS.tietPPCT].map(pctToTwip),
+    layout: TableLayoutType.FIXED,
+    rows: [headerRow, ...rows],
+  });
 }
 
 function buildHeaderParagraphs(meta) {
@@ -144,7 +163,7 @@ function buildHeaderParagraphs(meta) {
           `KẾ HOẠCH DẠY HỌC CÁC MÔN HỌC, HOẠT ĐỘNG GIÁO DỤC LỚP ${meta?.grade || ""} - MÔN: ${(
             getSubjectLabel(meta?.subject) || ""
           ).toUpperCase()}`,
-          { bold: true, size: 25 }
+          { bold: true }
         ),
       ],
       spacing: { after: 40 },
@@ -206,6 +225,9 @@ function buildSignatureParagraphs(meta) {
 
 export function buildKhgdTieuHocDocument({ lessons, meta }) {
   return new Document({
+    // Mặc định toàn văn bản 14pt/Times New Roman: phủ luôn các đoạn KHÔNG có TextRun riêng (đoạn trống
+    // giữ chỗ, ô bảng rỗng, ký hiệu gạch đầu dòng) để không rơi về cỡ mặc định nhỏ hơn của Word.
+    styles: { default: { document: { run: { font: FONT, size: FONT_SIZE } } } },
     sections: [
       {
         properties: pageProperties,

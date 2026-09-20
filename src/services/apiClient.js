@@ -61,6 +61,19 @@ export async function fetchLessonsRequest({ grade, subject, volume, chapter }) {
 }
 
 /**
+ * Gợi ý Khung KHGD (THCS/THPT, Phụ lục III) từ Markdown 1 chương SGK (Phiên 49):
+ * { chuong, rows: [{ tenBai, noiDung }], source }. `rows` rỗng khi Markdown lạ định dạng/thiếu file →
+ * form quay về fetchLessonsRequest (`_bai.json`).
+ */
+export async function fetchKhgdOutlineRequest({ grade, subject, volume, chapter }) {
+  const res = await fetch(
+    `/api/khgd-outline?grade=${grade}&subject=${subject}&volume=${volume}&chapter=${encodeURIComponent(chapter)}`,
+    { headers: authHeaders() }
+  );
+  return handleResponse(res);
+}
+
+/**
  * Gợi ý Khung KHGD Tiểu học từ Markdown 1 chương SGK (Phiên 48b): { chuDe, rows[], source }.
  * `rows` rỗng khi môn chưa có bộ đọc riêng hoặc Markdown lạ định dạng → form quay về fetchLessonsRequest.
  */
