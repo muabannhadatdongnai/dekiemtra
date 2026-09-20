@@ -6,7 +6,12 @@ import { getSubjectsForGrade } from "@/data/config";
 import { buildKhgdTieuHocBlueprint } from "@/data/khgdTieuHocBlueprint";
 import { buildKhgdTieuHocResult } from "@/data/khgdTieuHocResult";
 import { getEffectiveSession } from "@/services/authService";
-import { fetchChaptersRequest, fetchLessonsRequest, generateKhgdTieuHocRequest } from "@/services/apiClient";
+import {
+  fetchChaptersRequest,
+  fetchLessonsRequest,
+  fetchKhgdTieuHocOutlineRequest,
+  generateKhgdTieuHocRequest,
+} from "@/services/apiClient";
 
 /**
  * KhgdTieuHocForm.jsx
@@ -105,7 +110,7 @@ export default function KhgdTieuHocForm({ onGenerated }) {
   }, [grade, subject, volume]);
 
   function makeEmptyRow(overrides = {}) {
-    return { id: nextRowId(), chuDe: "", tenBai: "", tuan: "", soTiet: 1, tietPPCT: "", ...overrides };
+    return { id: nextRowId(), chuDe: "", tenBai: "", tuan: "", soTiet: 1, tietPPCT: "", nhomTiet: "", ...overrides };
   }
 
   function addLessonRow() {
@@ -130,9 +135,45 @@ export default function KhgdTieuHocForm({ onGenerated }) {
     setLessons((prev) => recomputeTietPPCT(prev, value));
   }
 
+  /**
+   * Nạp gợi ý của 1 chương (Phiên 48b). Ưu tiên đọc TRỰC TIẾP Markdown SGK (/api/khgd-tieu-hoc-outline):
+   * lấy "Chủ đề" đúng tên trong SGK (thay vì "Chương n") và - với môn đã có bộ đọc riêng (hiện Tiếng
+   * Việt) - các dòng theo tiết. Không có rows (môn chưa hỗ trợ / Markdown lạ / lỗi mạng) → quay về
+   * luồng cũ nạp tên bài từ `chuong_{n}_bai.json`, chỉ khác là Chủ đề vẫn ưu tiên tên lấy từ Markdown.
+   */
   async function loadLessonsFromChapter(chapterId, chapterLabel) {
     setLoadingLessonsFor(chapterId);
     try {
+      let outline = null;
+      try {
+        outline = await fetchKhgdTieuHocOutlineRequest({ grade, subject, volume, chapter: chapterId });
+      } catch {
+        outline = null; // gợi ý phụ trợ - lỗi thì âm thầm quay về luồng cũ
+      }
+      const chuDe = outline?.chuDe || chapterLabel;
+
+      if (outline?.rows?.length > 0) {
+        setError("");
+        setLessons((prev) =>
+          recomputeTietPPCT(
+            [
+              ...prev,
+              ...outline.rows.map((r) =>
+                makeEmptyRow({
+                  tenBai: r.tenBai || "",
+                  chuDe,
+                  soTiet: r.soTiet || 1,
+                  // Khoá nhóm phải khác nhau giữa các chương (cùng "b1-1" có thể lặp ở chương khác)
+                  nhomTiet: r.nhomTiet ? `${chapterId}:${r.nhomTiet}` : "",
+                })
+              ),
+            ],
+            tietPerWeek
+          )
+        );
+        return;
+      }
+
       const data = await fetchLessonsRequest({ grade, subject, volume, chapter: chapterId });
       const found = data.lessons || [];
       if (found.length === 0) {
@@ -142,7 +183,7 @@ export default function KhgdTieuHocForm({ onGenerated }) {
       setError("");
       setLessons((prev) =>
         recomputeTietPPCT(
-          [...prev, ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuDe: chapterLabel }))],
+          [...prev, ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuDe }))],
           tietPerWeek
         )
       );
@@ -281,8 +322,9 @@ export default function KhgdTieuHocForm({ onGenerated }) {
           ))}
         </div>
         <p className="text-xs text-slate-500">
-          Bấm 1 chương để nạp gợi ý tên bài, hoặc "+ Thêm dòng" để tự gõ. Cột "Tuần" và "Ghi chú"
-          TỰ ĐỘNG tính theo "Số tiết/tuần" đã khai báo ở trên - bạn vẫn sửa tay được nếu cần.
+          Bấm 1 chương để nạp gợi ý từ sách giáo khoa (Chủ đề lấy đúng tên trong SGK; môn Tiếng Việt nạp
+          sẵn từng tiết Đọc/Viết/Nói và nghe/Luyện từ và câu...), hoặc "+ Thêm dòng" để tự gõ. Cột "Tuần"
+          và "Ghi chú" TỰ ĐỘNG tính theo "Số tiết/tuần" đã khai báo ở trên - bạn vẫn sửa tay được nếu cần.
         </p>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
