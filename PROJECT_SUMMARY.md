@@ -5,6 +5,38 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 48b — Khung KHGD Tiểu học: sửa 3 lỗi test Word thật + đọc Markdown SGK để dựng bảng theo tiết
+
+1. **Yêu cầu Hoan:** test tiếp file Word Tiểu học (Tiếng Việt Lớp 2), phản hồi 3 lỗi: (a) cột "Chủ đề"
+   ghi "Chương 1/2/3" thay vì tên chủ đề trong Markdown; (b) cột "Ghi chú" phải ở CUỐI CÙNG; (c) sang
+   trang 2 bảng lặp lại hàng tiêu đề của trang 1. Kèm ảnh bản mẫu giáo viên (mỗi bài tách theo
+   tiết/hoạt động) + 2 file Markdown thật `chuong_1.md`, `chuong_2.md`.
+
+2. **Đã sửa:**
+   - Thứ tự cột: Tuần → Chủ đề → Tên bài → Tiết học → Nội dung điều chỉnh → **Ghi chú** (export Word +
+     xem trước web). Bỏ `tableHeader: true` ở bảng Tiểu học (Word lặp hàng tiêu đề mỗi trang).
+   - "Chủ đề" nay lấy từ tiêu đề `# CHỦ ĐỀ n: ...` của Markdown (`extractChuDe()`); nguyên nhân cũ:
+     `listChapters()` chỉ trả số chương nên form tự điền "Chương n".
+   - Mới: `khgdTieuHocTiengVietParser.js` bóc Markdown Tiếng Việt → MỖI TIẾT 1 DÒNG đúng bản mẫu
+     (Đọc Tiết 1/2, Viết chữ hoa/Nghe-viết, Nói và nghe, Luyện từ và câu, Viết đoạn văn Tiết 1/2), cột
+     "Tiết học" gộp ô "2 tiết", dòng lẻ "1 tiết". Số tiết lấy từ bảng `TIENG_VIET_TIET_RULES` (Markdown
+     KHÔNG ghi số tiết) — đối chiếu bản mẫu giáo viên + cả 16 Bài của 2 file: mỗi tuần đúng 10 tiết
+     (Bài lẻ 4 + Bài chẵn 6). `khgdTieuHocOutlineService.js` + route `/api/khgd-tieu-hoc-outline`; form
+     gọi route này trước, không có `rows` → quay về luồng cũ `_bai.json` (chỉ Chủ đề vẫn lấy từ Markdown).
+   - `khgdTieuHocMergeUtils.js`: gom `computeMergeInfo()` (trước đây trùng ở export + preview) và thêm
+     `computeTietMerge()`.
+   - Prompt AI: dặn chỉ ghi lồng ghép ở dòng "- Tiết 1" của mỗi hoạt động (tránh lặp ở "- Tiết 2").
+
+3. **Phát hiện quan trọng — 2 file Markdown CÙNG môn khác định dạng hẳn nhau** (`chuong_1.md`: `#### Bài`,
+   hoạt động là mục danh sách in đậm, có dấu trích dẫn `[n]`; `chuong_2.md`: `### BÀI` IN HOA, hoạt động
+   là tiêu đề `I./II./III. HOẠT ĐỘNG ...`) nên parser dựa vào TỪ KHOÁ, không dựa mức tiêu đề. Môn khác
+   sẽ cần parser riêng (xem NEXT_STEPS #27).
+
+4. **Kết quả kiểm thử:** `next build` sạch; `npm test` 481/481 pass (24 test mới, gồm test đọc XML thật
+   của .docx); LibreOffice 20/20 kịch bản OK; đã RENDER TRỰC QUAN file dựng từ 2 Markdown thật (80 dòng,
+   Tuần 1–8): Tuần 1 khớp cấu trúc bản mẫu giáo viên, không lặp tiêu đề ở trang sau. CHƯA test với Gemini
+   key thật (như mục #20).
+
 ## Phiên 48 — Sửa lỗi thật Khung KHGD Tiểu học (cột Tuần trống, nhãn sai, thiếu định dạng)
 
 1. **Yêu cầu Hoan:** gửi file Word thật sau khi test tab Khung KHGD Tiểu học + ảnh chụp 1 mẫu
