@@ -149,8 +149,10 @@ function buildHeaderParagraphs(meta) {
 }
 
 function buildLessonTable(lessons, widths) {
+  // ⚠️ KHÔNG đặt `tableHeader: true` (Phiên 48b, Hoan chốt): Word sẽ lặp lại hàng tiêu đề ở đầu mỗi
+  // trang tiếp theo - giáo viên phản hồi bảng "nhảy về phần head của trang 1" thay vì nối tiếp.
+  // Áp dụng cho CẢ 2 bảng của tab này (bài học + kiểm tra định kỳ) và bản Tiểu học.
   const headerRow = new TableRow({
-    tableHeader: true,
     children: [
       headerCell("STT", widths.stt),
       headerCell("Bài học", widths.baiHoc),
@@ -186,7 +188,6 @@ function buildLessonTable(lessons, widths) {
 
 function buildKiemTraTable(kiemTraDinhKy) {
   const headerRow = new TableRow({
-    tableHeader: true,
     children: [
       headerCell("Bài kiểm tra, đánh giá", 20),
       headerCell("Thời gian", 12),

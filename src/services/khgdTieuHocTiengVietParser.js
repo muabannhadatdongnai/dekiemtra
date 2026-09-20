@@ -70,25 +70,40 @@ function isAllCaps(s) {
 
 function sentenceCase(s) {
   const lower = s.toLocaleLowerCase("vi");
-  return lower.charAt(0).toLocaleUpperCase("vi") + lower.slice(1);
+  const head = lower.charAt(0).toLocaleUpperCase("vi") + lower.slice(1);
+  // Viết hoa lại chữ đầu sau dấu kết câu ("TIA SỐ. SỐ LIỀN TRƯỚC" → "Tia số. Số liền trước")
+  return head.replace(/([.!?]\s+)(\p{L})/gu, (_, sep, ch) => sep + ch.toLocaleUpperCase("vi"));
 }
 
 /**
  * Chuẩn hoá tiêu đề: bỏ dấu ngoặc kép/Markdown/trích dẫn; nếu IN HOA TOÀN BỘ (VD "CÔ GIÁO LỚP EM",
  * `KỂ CHUYỆN "CẬU BÉ HAM HỌC"`) thì đổi về dạng câu, xử lý riêng từng đoạn trong/ngoài ngoặc kép
- * → "Kể chuyện Cậu bé ham học". (Tên riêng in hoa toàn bộ sẽ mất viết hoa - ưu tiên tên trong
- * `chuong_{n}_bai.json` khi có, xem buildTiengVietRows.)
+ * → "Kể chuyện Cậu bé ham học". Phần trong ngoặc ĐƠN được bỏ qua khi xét "in hoa toàn bộ" và giữ
+ * nguyên (Phiên 48b, tiêu đề Toán "ÔN TẬP PHÉP CỘNG, PHÉP TRỪ (không nhớ) TRONG PHẠM VI 100" →
+ * "Ôn tập phép cộng, phép trừ (không nhớ) trong phạm vi 100"). Tên riêng in hoa toàn bộ sẽ mất viết
+ * hoa - ưu tiên tên trong `chuong_{n}_bai.json` khi có, xem buildTiengVietRows.
  */
 export function normalizeTitle(raw) {
   const s = clean(raw);
   if (!s) return "";
-  if (!isAllCaps(s)) return s.replace(/["“”]/g, "").replace(/\s+/g, " ").trim();
-  return s
-    .split(/["“”]/)
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map(sentenceCase)
-    .join(" ");
+
+  // Che phần trong ngoặc đơn bằng ký tự giữ chỗ (không có chữ cái) để không ảnh hưởng phép xét IN HOA
+  const parens = [];
+  const masked = s.replace(/\([^)]*\)/g, (m) => {
+    parens.push(m);
+    return `\u0000${parens.length - 1}\u0000`;
+  });
+  const restore = (t) => t.replace(/\u0000(\d+)\u0000/g, (_, i) => parens[Number(i)]);
+
+  if (!isAllCaps(masked)) return restore(masked).replace(/["“”]/g, "").replace(/\s+/g, " ").trim();
+  return restore(
+    masked
+      .split(/["“”]/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .map(sentenceCase)
+      .join(" ")
+  );
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -108,6 +123,15 @@ export function extractChuDe(markdown) {
   if (h1Index === -1) return null;
 
   const h1 = stripCitations(lines[h1Index].replace(/^#\s+/, "")).trim();
+
+  // Tiếng Anh: `# Unit 1: At My Birthday Party (Chủ đề 1: Tại bữa tiệc sinh nhật của tớ)` (Phiên 48b)
+  const mUnit = h1.match(/^Unit\s*(\d+)\s*[:.\-–]\s*(.+)$/i);
+  if (mUnit) {
+    const ten = clean(mUnit[2].replace(/\(\s*chủ đề[^)]*\)/i, ""));
+    if (!ten) return null;
+    return { chuDe: `Unit ${mUnit[1]}: ${ten}`, so: Number(mUnit[1]), tuanTu: null, tuanDen: null };
+  }
+
   const m = h1.match(/^CH[ỦU]\s*ĐỀ\s*(\d+)?\s*[:.\-–]\s*(.+)$/i) || h1.match(/^CH[ỦU]\s*ĐI[ỂE]M\s*(\d+)?\s*[:.\-–]\s*(.+)$/i);
   if (!m) return null;
 
