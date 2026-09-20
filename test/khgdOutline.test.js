@@ -30,6 +30,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const readFixture = (name) => fs.readFileSync(path.join(here, "fixtures", "khgd", name), "utf8");
 const ENGLISH_MD = readFixture("tieng_anh_lop7_chuong_1.md");
 const MATH_MD = readFixture("toan_lop7_chuong_1.md");
+const VAN_MD = readFixture("ngu_van_lop7_chuong_1.md");
 
 // ==================== Tiếng Anh 7 ====================
 
@@ -132,12 +133,84 @@ test("Toán: tên bài trong chuong_{n}_bai.json (lessonIndex) được ưu tiê
   assert.equal(out.rows[1].tenBai, "Bài 2. Cộng, trừ, nhân, chia số hữu tỉ");
 });
 
-test("Môn khác (VD Ngữ văn) dùng bộ đọc 'Bài' chung với tiêu đề Markdown dạng khác (### Bài k. Tên)", () => {
-  const md = "# Bài học Ngữ văn\n\n### Bài 1. Bầu trời tuổi thơ\n#### Đọc hiểu văn bản 1\n* Tóm tắt nội dung A\n\n### Bài 2. Khúc nhạc tâm hồn\n* Nội dung B\n";
-  const out = buildKhgdOutline({ subject: "Ngu_Van", markdown: md });
+test("Môn khác (VD Lịch sử và Địa lí) dùng bộ đọc 'Bài' chung với tiêu đề Markdown dạng khác (### Bài k. Tên)", () => {
+  const md = "# Sách\n\n### Bài 1. Bầu trời tuổi thơ\n#### Mục con A\n* Tóm tắt nội dung A\n\n### Bài 2. Khúc nhạc tâm hồn\n* Nội dung B\n";
+  const out = buildKhgdOutline({ subject: "Lich_Su_Dia_Li", markdown: md });
   assert.deepEqual(out.rows.map((r) => r.tenBai), ["Bài 1. Bầu trời tuổi thơ", "Bài 2. Khúc nhạc tâm hồn"]);
-  assert.match(out.rows[0].noiDung, /Đọc hiểu văn bản 1/);
+  assert.match(out.rows[0].noiDung, /Mục con A/);
   assert.doesNotMatch(out.rows[0].noiDung, /Nội dung B/);
+});
+
+// ==================== Ngữ văn 7 (file Markdown thật, Bài 1) ====================
+
+test("Ngữ văn: nhận nhãn 'Bài 1: Bầu trời tuổi thơ' từ tiêu đề # BÀI 1", () => {
+  assert.equal(extractChuongLabel(VAN_MD), "Bài 1: Bầu trời tuổi thơ");
+});
+
+test("Ngữ văn: tách theo HOẠT ĐỘNG - 9 dòng/Bài, tên lấy từ tiêu đề Markdown (bỏ tác giả/trích trong ngoặc)", () => {
+  const out = buildKhgdOutline({ subject: "Ngu_Van", markdown: VAN_MD });
+  assert.equal(out.source, "markdown");
+  assert.deepEqual(
+    out.rows.map((r) => r.tenBai),
+    [
+      "Bài 1. Bầu trời tuổi thơ - Giới thiệu bài học và Tri thức Ngữ văn", // phần I + II gộp 1 dòng
+      "Bài 1. Bầu trời tuổi thơ - Văn bản 1: Bầy chim chìa vôi",
+      "Bài 1. Bầu trời tuổi thơ - Văn bản 2: Đi lấy mật",
+      "Bài 1. Bầu trời tuổi thơ - Văn bản 3: Ngàn sao làm việc",
+      "Bài 1. Bầu trời tuổi thơ - Thực hành đọc: Ngôi nhà trên cây",
+      "Bài 1. Bầu trời tuổi thơ - Thực hành tiếng Việt",
+      "Bài 1. Bầu trời tuổi thơ - Viết: Tóm tắt văn bản theo các yêu cầu khác nhau về độ dài",
+      "Bài 1. Bầu trời tuổi thơ - Nói và nghe: Trao đổi về một vấn đề đời sống mà em quan tâm",
+      "Bài 1. Bầu trời tuổi thơ - Củng cố và mở rộng",
+    ]
+  );
+});
+
+test("Ngữ văn: đoạn trích mỗi dòng lấy đúng nội dung phần đó, không lẫn phần khác, không lọt câu trích đầu bài", () => {
+  const rows = buildKhgdOutline({ subject: "Ngu_Van", markdown: VAN_MD }).rows;
+  const by = (part) => rows.find((r) => r.tenBai.includes(part)).noiDung;
+
+  const intro = by("Giới thiệu bài học");
+  assert.match(intro, /Các mục: Giới thiệu bài học; Yêu cầu cần đạt; Đề tài và chi tiết; Tính cách nhân vật/);
+  assert.match(intro, /Tính cách nhân vật:\n- Là những đặc điểm riêng/, "định nghĩa phải đi kèm nhãn mục con");
+  assert.match(intro, /Chi tiết: Là yếu tố nhỏ nhất/);
+  assert.doesNotMatch(intro, /Nguyễn Quang Thiều/);
+
+  assert.match(by("Văn bản 1"), /Mên và Mon/);
+  assert.match(by("Văn bản 1"), /Nội dung tóm tắt:/);
+  assert.match(by("Văn bản 1"), /Thể loại: Truyện ngắn/);
+  assert.match(by("Văn bản 2"), /Tía nuôi/);
+  assert.match(by("Văn bản 3"), /Dải Ngân Hà/);
+  assert.match(by("Thực hành đọc"), /Tốt-tô-chan/);
+  assert.match(by("Thực hành tiếng Việt"), /Mưa rơi/);
+  assert.match(by("Viết:"), /Bước 1: Đọc kỹ văn bản gốc/);
+  assert.match(by("Nói và nghe"), /Lập dàn ý bài nói/);
+
+  for (const r of rows) {
+    assert.doesNotMatch(r.noiDung, /Trẻ thơ tìm thấy|Leopardi/, `${r.tenBai} lọt câu trích đầu bài`);
+    assert.ok(!r.noiDung.includes("**"), `${r.tenBai}: còn ký hiệu in đậm`);
+    assert.ok(r.noiDung.length <= KHGD_NOI_DUNG_HARD_MAX_CHARS, `${r.tenBai}: ${r.noiDung.length} ký tự vượt trần server`);
+  }
+});
+
+test("Ngữ văn: bảng 'Củng cố và mở rộng' được chuyển thành chữ (đề tài/nhân vật/thông điệp từng văn bản), không lọt ký tự bảng", () => {
+  const cungCo = buildKhgdOutline({ subject: "Ngu_Van", markdown: VAN_MD }).rows.find((r) => r.tenBai.endsWith("Củng cố và mở rộng"));
+  assert.match(cungCo.noiDung, /Bảng gồm các cột: Tên văn bản — Đề tài chính/);
+  assert.match(cungCo.noiDung, /Ngôi nhà trên cây — Tình bạn và nghị lực sống — Tốt-tô-chan, Ya-su-a-ki-chan/);
+  assert.ok(!cungCo.noiDung.includes("|") && !/:---/.test(cungCo.noiDung));
+});
+
+test("Ngữ văn: file có nhiều Bài → mỗi Bài có tiền tố riêng; Markdown chỉ có Bài phẳng vẫn ra 1 dòng/Bài (bộ đọc chung)", () => {
+  const two = "# BÀI 1: A\n\n## I. GIỚI THIỆU\n* x\n\n## II. THỰC HÀNH VIẾT: TÓM TẮT\n* y\n\n# BÀI 2: B\n\n## I. THỰC HÀNH NÓI VÀ NGHE: TRAO ĐỔI\n* z\n";
+  const out = buildKhgdOutline({ subject: "Ngu_Van", markdown: two });
+  assert.deepEqual(out.rows.map((r) => r.tenBai), [
+    "Bài 1. A - Giới thiệu",
+    "Bài 1. A - Viết: Tóm tắt",
+    "Bài 2. B - Nói và nghe: Trao đổi",
+  ]);
+
+  const flat = buildKhgdOutline({ subject: "Ngu_Van", markdown: "## Bài 1: Ôn tập\n* nội dung\n## Bài 2: Luyện tập\n* nội dung" });
+  assert.deepEqual(flat.rows.map((r) => r.tenBai), ["Bài 1. Ôn tập", "Bài 2. Luyện tập"]);
 });
 
 // ==================== An toàn khi thiếu / lạ định dạng ====================

@@ -37,7 +37,16 @@
      ĐỀU mọi cột (cột SWD bị bóp hẹp, chữ 14pt rớt từng chữ cái). Đã chuyển sang `columnWidths` (twip) + layout
      FIXED cho cả 2 file Word (giữ nguyên hàm `cell()` nhận %); nới cột STT/Số tiết/Thời điểm/Tuần/Ghi chú cho chữ to.
 
-4. **Kiểm thử:** test mới `khgdOutline.test.js` (20, dùng 2 file Markdown THẬT trong `test/fixtures/khgd/`) và
+3b. **Phiên 49b - Ngữ văn (Hoan gửi lại file thật Ngữ văn 7 Bài 1):** `buildNguVanRows()` trong `khgdOutlineService.js`
+   (đăng ký ở `OUTLINE_BUILDERS.Ngu_Van`): 9 dòng/Bài theo hoạt động (Giới thiệu bài học và Tri thức Ngữ văn /
+   Văn bản 1-3 / Thực hành đọc / Thực hành tiếng Việt / Viết / Nói và nghe / Củng cố và mở rộng), tên lấy từ tiêu đề
+   Markdown (bỏ phần tác giả/trích trong ngoặc); hàng gộp Giới thiệu + Tri thức ưu tiên phần Tri thức khi cắt trần;
+   bảng "Củng cố" chuyển thành chữ; nhãn chương "Bài 1: Bầu trời tuổi thơ". Nới trần đoạn trích: mặc định 1100,
+   Ngữ văn 1600 (hàng gộp 2000 = `KHGD_NOI_DUNG_HARD_MAX_CHARS`, server cắt ở mức này). `composeNoiDung` nay CẮT theo từ
+   dòng dài không vừa (trước: bỏ cả dòng - làm mất đoạn tóm tắt văn bản). Sửa `sentenceCase`: viết hoa sau dấu ":" và
+   giữ "tiếng Việt/Việt Nam/Ngữ văn".
+
+4. **Kiểm thử:** test mới `khgdOutline.test.js` (25, dùng 3 file Markdown THẬT Tiếng Anh/Toán/Ngữ văn trong `test/fixtures/khgd/`) và
    `khgdFontSize14pt.test.js` (3, soi `w:sz` = 28 mọi run + lưới cột). CHƯA test với Gemini key thật (như #20):
    chưa xác nhận AI thật tuân thủ khối "ưu tiên SGK" và viết đủ chi tiết.
 
