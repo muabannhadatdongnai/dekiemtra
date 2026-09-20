@@ -322,9 +322,11 @@ export default function KhgdTieuHocForm({ onGenerated }) {
           ))}
         </div>
         <p className="text-xs text-slate-500">
-          Bấm 1 chương để nạp gợi ý từ sách giáo khoa (Chủ đề lấy đúng tên trong SGK; môn Tiếng Việt nạp
-          sẵn từng tiết Đọc/Viết/Nói và nghe/Luyện từ và câu...), hoặc "+ Thêm dòng" để tự gõ. Cột "Tuần"
-          và "Ghi chú" TỰ ĐỘNG tính theo "Số tiết/tuần" đã khai báo ở trên - bạn vẫn sửa tay được nếu cần.
+          Bấm 1 chương để nạp gợi ý từ sách giáo khoa (Chủ đề lấy đúng tên trong SGK). Môn Tiếng Việt nạp
+          sẵn từng tiết (Đọc/Viết/Nói và nghe/Luyện từ và câu...), Tiếng Anh nạp từng Lesson, các môn còn
+          lại nạp từng Bài (mặc định 1 tiết/bài - bạn sửa "Số tiết" theo phân phối chương trình). Hoặc bấm
+          "+ Thêm dòng" để tự gõ. Cột "Tuần" và "Ghi chú" TỰ ĐỘNG tính theo "Số tiết/tuần" đã khai báo ở
+          trên - bạn vẫn sửa tay được nếu cần.
         </p>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
