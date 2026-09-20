@@ -27,12 +27,20 @@
      `computeTietMerge()`.
    - Prompt AI: dặn chỉ ghi lồng ghép ở dòng "- Tiết 1" của mỗi hoạt động (tránh lặp ở "- Tiết 2").
 
+   - **Bổ sung cùng phiên (sau khi Hoan gửi Markdown Toán/Tiếng Anh/Đạo đức/Tự nhiên và Xã hội Lớp 2):**
+     bộ đọc mức Bài `khgdTieuHocBaiParser.js` (mặc định cho mọi môn ngoài Tiếng Việt/Tiếng Anh: mỗi
+     `## Bài k: TÊN` 1 dòng, 1 tiết mặc định, đọc được `(N tiết)` ghi sẵn trong tiêu đề Bài) và bộ đọc
+     Tiếng Anh `khgdTieuHocUnitParser.js` (mỗi `### Lesson k` 1 dòng "Unit 1: ... - Lesson k"); Chủ đề
+     nhận thêm dạng `# Unit n: ... (Chủ đề n: ...)`; `normalizeTitle()` xử lý tiêu đề IN HOA có ngoặc
+     đơn ("(không nhớ)") và viết hoa lại sau dấu chấm. Bảng Word THCS/THPT (`khgdExportService.js`, cả
+     bảng bài học và bảng kiểm tra định kỳ) cũng bỏ `tableHeader: true` theo Hoan chốt.
+
 3. **Phát hiện quan trọng — 2 file Markdown CÙNG môn khác định dạng hẳn nhau** (`chuong_1.md`: `#### Bài`,
    hoạt động là mục danh sách in đậm, có dấu trích dẫn `[n]`; `chuong_2.md`: `### BÀI` IN HOA, hoạt động
    là tiêu đề `I./II./III. HOẠT ĐỘNG ...`) nên parser dựa vào TỪ KHOÁ, không dựa mức tiêu đề. Môn khác
-   sẽ cần parser riêng (xem NEXT_STEPS #27).
+   sẽ cần parser riêng nếu muốn tách chi tiết hơn mức Bài (xem NEXT_STEPS #27).
 
-4. **Kết quả kiểm thử:** `next build` sạch; `npm test` 481/481 pass (24 test mới, gồm test đọc XML thật
+4. **Kết quả kiểm thử:** `next build` sạch; `npm test` 493/493 pass (36 test mới, gồm test đọc XML thật
    của .docx); LibreOffice 20/20 kịch bản OK; đã RENDER TRỰC QUAN file dựng từ 2 Markdown thật (80 dòng,
    Tuần 1–8): Tuần 1 khớp cấu trúc bản mẫu giáo viên, không lặp tiêu đề ở trang sau. CHƯA test với Gemini
    key thật (như mục #20).
