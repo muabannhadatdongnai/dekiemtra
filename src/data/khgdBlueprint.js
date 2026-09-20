@@ -17,6 +17,9 @@
  * @property {string} tuan - "Thời điểm" (VD: "Tuần 1", "55" - giáo viên tự nhập, không chuẩn hoá)
  * @property {string} thietBi - Thiết bị dạy học (đã điền sẵn theo môn, giáo viên có thể sửa)
  * @property {string} diaDiem - Địa điểm dạy học (đã điền sẵn theo môn, giáo viên có thể sửa)
+ * @property {string} [noiDung] - (Phiên 49) đoạn TRÍCH từ Markdown SGK của bài (do form gắn vào khi nạp
+ *   gợi ý từ kho GitHub - xem khgdOutlineService.js); AI BẮT BUỘC bám vào đây để viết SWD/NLS chi tiết.
+ *   Bài gõ tay/không có Markdown → rỗng, AI chỉ dựa vào tên bài. Server luôn cắt độ dài (sanitizeKhgdLessons).
  *
  * @typedef {Object} KhgdKiemTraMoc
  * @property {string} ten - VD: "Giữa Học kỳ 1"
