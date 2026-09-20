@@ -261,10 +261,18 @@ test("buildKhgdTieuHocOutline: Tiếng Việt → có Chủ đề + dòng theo t
   assert.equal(r.rows.length, 10);
 });
 
-test("buildKhgdTieuHocOutline: môn chưa có bộ đọc riêng → vẫn trả Chủ đề nhưng rows rỗng (form quay về luồng cũ)", async () => {
+test("buildKhgdTieuHocOutline: môn khác Tiếng Việt/Tiếng Anh dùng bộ đọc mức Bài (mỗi 'Bài k' 1 dòng, 1 tiết mặc định)", async () => {
   const { buildKhgdTieuHocOutline } = await import("../src/services/khgdTieuHocOutlineService.js");
   const r = buildKhgdTieuHocOutline({ subject: "Toan", markdown: MD_A });
   assert.equal(r.chuDe, "Em lớn lên từng ngày");
+  assert.equal(r.source, "markdown");
+  assert.deepEqual(r.rows.map((x) => x.tenBai), ["Bài 1: Tôi là học sinh lớp 2", "Bài 2: Ngày hôm qua đâu rồi?"]);
+});
+
+test("buildKhgdTieuHocOutline: Markdown không có Bài/Lesson nào → rows rỗng (source none) nhưng vẫn trả Chủ đề nếu có", async () => {
+  const { buildKhgdTieuHocOutline } = await import("../src/services/khgdTieuHocOutlineService.js");
+  const r = buildKhgdTieuHocOutline({ subject: "Toan", markdown: "# CHỦ ĐỀ 4: HÌNH HỌC\n\nChỉ có đoạn văn, không có Bài nào.\n" });
+  assert.equal(r.chuDe, "Hình học");
   assert.deepEqual(r.rows, []);
   assert.equal(r.source, "none");
 });

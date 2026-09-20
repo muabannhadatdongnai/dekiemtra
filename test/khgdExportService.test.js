@@ -83,3 +83,13 @@ test("buildKhgdDocument chạy được với danh sách bài học rỗng (chư
   const blob = await Packer.toBlob(doc);
   assert.ok(blob.size > 0, "File .docx vẫn phải tạo được (chỉ còn dòng tiêu đề) khi chưa có bài học nào");
 });
+
+// ==================== PHIÊN 48b - bỏ lặp hàng tiêu đề ở mỗi trang (Hoan chốt) ====================
+test("Phiên 48b: cả 2 bảng Word (bài học + kiểm tra định kỳ) KHÔNG lặp hàng tiêu đề ở trang sau (không có <w:tblHeader/>)", async () => {
+  const JSZip = (await import("jszip")).default;
+  const doc = buildKhgdDocument({ lessons: makeLessons(), kiemTraDinhKy: makeKiemTra(), meta: makeMeta() });
+  const zip = await JSZip.loadAsync(await Packer.toBuffer(doc));
+  const xml = await zip.file("word/document.xml").async("string");
+  assert.equal((xml.match(/<w:tbl>/g) || []).length >= 2, true, "phải có đủ bảng bài học + bảng kiểm tra để test có ý nghĩa");
+  assert.ok(!xml.includes("w:tblHeader"), "không được đánh dấu hàng tiêu đề lặp lại");
+});

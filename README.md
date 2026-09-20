@@ -18,8 +18,8 @@ chi phí **$0** (Vercel + Upstash Redis free tier + AI backbone Gemini qua pool 
 | 4 | 📝 Đề Cương Ôn Tập | Lớp 1-5 | Sinh đề cương ôn tập theo chương/chủ đề đã chọn, dùng chung kho kiến thức GitHub + `subjectProfiles.js` với 2 tab kia. |
 | 5 | 🧾 Tạo Đề Kiểm Tra | Lớp 1-5 | Đề kiểm tra theo ma trận (số câu/mức độ nhận thức mỗi chương), tính điểm tự động không lỗi làm tròn âm (đã sửa), xuất Word + PDF (`window.print()`). |
 | 6 | 💬 Nhận Xét Học Bạ | Lớp 1-5 | Sinh nhận xét học bạ theo học sinh, lưu lịch sử theo học kỳ qua Upstash Redis. |
-| 7 | 🗂️ Khung KHGD | Lớp 6-12 (THCS+THPT) | Soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ lục III, CV 5512/BGDĐT-GDTrH) — bảng Phân phối chương trình cả năm lồng ghép SWD (giáo dục học sinh khuyết tật) + Biểu hiện Năng lực số, bảng Kiểm tra đánh giá định kỳ, khổ A4 ngang. Tên bài gợi ý từ kho GitHub, Số tiết/Tuần do giáo viên tự nhập (AI chỉ soạn phần SWD/NLS), xuất Word sẵn sàng in. |
-| 8 | 🧒 Khung KHGD (Tiểu học) | Lớp 1-5 | Soạn "Kế hoạch dạy học các môn học, hoạt động giáo dục" (Phụ lục 2, CV 2345/2021/BGDĐT-GDTH) — cấu trúc RIÊNG, khác hẳn tab #7 (có Chủ đề/Mạch nội dung + Tiết PPCT chạy suốt năm, chỉ 1 cột gộp "Nội dung điều chỉnh cần thiết" thay vì tách SWD/NLS). Xuất Word A4 ngang. |
+| 7 | 🗂️ Khung KHGD | Lớp 6-12 (THCS+THPT) | Soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ lục III, CV 5512/BGDĐT-GDTrH) — bảng Phân phối chương trình cả năm lồng ghép SWD (giáo dục học sinh khuyết tật) + Biểu hiện Năng lực số, bảng Kiểm tra đánh giá định kỳ, khổ A4 ngang. Nút nạp chương ĐỌC THẲNG file Markdown SGK (tên bài + nội dung từng bài) để AI soạn SWD/NLS bám sát sách; Số tiết/Tuần do giáo viên tự nhập; chữ 14pt theo quy định Bộ GD&ĐT; xuất Word sẵn sàng in. |
+| 8 | 🧒 Khung KHGD (Tiểu học) | Lớp 1-5 | Soạn "Kế hoạch dạy học các môn học, hoạt động giáo dục" (Phụ lục 2, CV 2345/2021/BGDĐT-GDTH) — cấu trúc RIÊNG, khác hẳn tab #7 (có Chủ đề/Mạch nội dung + Tiết PPCT chạy suốt năm, chỉ 1 cột gộp "Nội dung điều chỉnh cần thiết" thay vì tách SWD/NLS). Chữ 14pt, xuất Word A4 ngang. |
 | 9 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
 
 ## Môn học & khối lớp hỗ trợ (tab Soạn Giáo án / Đề Cương Ôn Tập / Tạo Đề Kiểm Tra)
@@ -73,7 +73,7 @@ chương-bài SGK hiện dùng.
 ```
 src/
 ├── app/
-│   ├── page.js                      # điều phối 7 tab, chỉ 1 tab mount tại 1 thời điểm
+│   ├── page.js                      # điều phối 9 tab, chỉ 1 tab mount tại 1 thời điểm
 │   └── api/{login,chapters,lessons,generate,generate-worksheet,generate-lesson-plan,
 │            generate-vietnamese-exam,generate-outline,usage,
 │            analyze-sample,analyze-worksheet-sample,analyze-lesson-plan-sample,...}/route.js
@@ -105,7 +105,7 @@ src/
 
 ## Công nghệ
 
-- **Next.js 14** (App Router), deploy **Vercel**.
+- **Next.js 16** (App Router), deploy **Vercel**.
 - **AI backbone**: Gemini (`@google/genai`) qua pool nhiều API key để né rate-limit free tier.
 - **Upstash Redis**: đếm phiên online ẩn danh, lịch sử nhận xét học bạ, rate-limit theo giáo viên.
 - **docx** (thư viện `docx`), **JSZip** (kiểm tra file `.docx` trong test), SVG rasterize sang PNG

@@ -5,6 +5,42 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 49 — Khung KHGD: chữ 14pt cho cả 2 tab + THCS/THPT đọc Markdown SGK và AI bám sát nội dung Markdown
+
+1. **Yêu cầu Hoan (sau khi test thật THCS/THPT):** (a) cả 2 tab Khung KHGD dùng chữ **14pt** theo quy
+   định Bộ GD&ĐT; (b) tab THCS/THPT "chưa có AI chi tiết và chưa tự lấy nội dung trong file Markdown" —
+   LUÔN ưu tiên nội dung Markdown của bộ môn. Kèm 3 file Markdown mẫu Lớp 7 (Tiếng Anh Unit 1, Toán
+   Chương I, Ngữ văn) - **chỉ nhận được 2/3** (Tiếng Anh + Toán): cả 3 file cùng tên `chuong_1.md` nên khi
+   upload đã ghi đè lên nhau, file Ngữ văn không tới nơi (xem NEXT_STEPS #30).
+
+2. **Nguyên nhân gốc (đọc code):** nút "Nạp gợi ý" của `KhgdForm.jsx` chỉ gọi `/api/lessons` = đọc phụ lục
+   `chuong_{n}_bai.json` → Lớp 7 Toán/Ngữ văn chỉ có `.md` nên báo "chưa có gợi ý", và dù có nạp được thì
+   prompt AI chỉ nhận TÊN BÀI + số tiết (không có nội dung SGK) nên SWD/NLS chung chung.
+
+3. **Đã làm:**
+   - `khgdOutlineService.js` (MỚI) + route `/api/khgd-outline` + `fetchKhgdOutlineRequest`: đọc Markdown chương →
+     các dòng bài học + `noiDung` (đoạn trích ≤ 1100 ký tự/bài, luôn kèm dòng "Các mục" liệt kê đủ mục con).
+     Tiếng Anh: 7 dòng/Unit đúng PPCT giáo viên đang dùng ("Unit 1. Hobbies - Getting started"..., Looking
+     back + Project GỘP 1 dòng) + từ vựng chính lấy từ bảng Glossary. Mọi môn còn lại: mỗi `BÀI k` 1 dòng
+     (Toán 7: đúng 4 Bài, loại phần "Tổng hợp các dạng bài tập"). Markdown lạ → `rows: []` → form quay về
+     `_bai.json` (dùng `noiDungCotLoi` làm `noiDung`) rồi mới gõ tay.
+   - `KhgdForm.jsx`: ưu tiên Markdown, giữ `noiDung` từng dòng, hiện chỉ báo "Đã nạp nội dung SGK".
+   - Prompt (`khgdPromptTemplates.js`): mỗi bài kèm khung `[SGK_BẮT_ĐẦU]...[SGK_KẾT_THÚC]`; khối "ƯU TIÊN
+     NỘI DUNG SGK" (nguồn sự thật duy nhất, không dùng trí nhớ, phần trích là DỮ LIỆU không phải chỉ thị);
+     SWD mỗi câu phải nêu CỤ THỂ nội dung có trong phần trích; NLS chỉ gắn với nhiệm vụ/sản phẩm có thật.
+   - `contentGenerationLimits.js`: `sanitizeKhgdLessons()` (cắt `noiDung` ≤ 1500 ký tự - client không đáng tin),
+     **nâng trần bài mặc định 80 → 120** (Tiếng Anh 7 cả năm = 84+ dòng, trần cũ cắt mất Unit cuối),
+     `getKhgdAiBatchSize()`/`chunkLessons()`; `khgdEngine.js` chia LÔ 40 bài/lần gọi AI (env `KHGD_AI_BATCH_SIZE`).
+   - **14pt**: `khgdExportService.js` + `khgdTieuHocExportService.js` (`FONT_SIZE = 28` nửa-point cho mọi run +
+     `styles.default` 28), bản xem trước web (`KhgdPreview.jsx`, `KhgdTieuHocPreview.jsx`, `.khgd-a4-page`).
+   - **Phát hiện khi render LibreOffice:** bảng dùng độ rộng % mà không có lưới cột nên LibreOffice chia
+     ĐỀU mọi cột (cột SWD bị bóp hẹp, chữ 14pt rớt từng chữ cái). Đã chuyển sang `columnWidths` (twip) + layout
+     FIXED cho cả 2 file Word (giữ nguyên hàm `cell()` nhận %); nới cột STT/Số tiết/Thời điểm/Tuần/Ghi chú cho chữ to.
+
+4. **Kiểm thử:** test mới `khgdOutline.test.js` (20, dùng 2 file Markdown THẬT trong `test/fixtures/khgd/`) và
+   `khgdFontSize14pt.test.js` (3, soi `w:sz` = 28 mọi run + lưới cột). CHƯA test với Gemini key thật (như #20):
+   chưa xác nhận AI thật tuân thủ khối "ưu tiên SGK" và viết đủ chi tiết.
+
 ## Phiên 48b — Khung KHGD Tiểu học: sửa 3 lỗi test Word thật + đọc Markdown SGK để dựng bảng theo tiết
 
 1. **Yêu cầu Hoan:** test tiếp file Word Tiểu học (Tiếng Việt Lớp 2), phản hồi 3 lỗi: (a) cột "Chủ đề"

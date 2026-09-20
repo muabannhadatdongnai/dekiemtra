@@ -115,11 +115,18 @@ test("Phiên 48b: KHÔNG đánh dấu hàng tiêu đề lặp lại ở mỗi tr
   assert.ok(!xml.includes("w:tblHeader"), "bảng Tiểu học không được lặp hàng tiêu đề ở trang sau");
 });
 
-test("Phiên 48b: độ rộng 6 cột theo đúng thứ tự mới (Nội dung điều chỉnh rộng 26%, Ghi chú hẹp 8% ở cuối)", async () => {
+test("Phiên 49: độ rộng 6 cột theo đúng thứ tự (Tuần 8 / Chủ đề 13 / Tên bài 33 / Tiết học 10 / Nội dung điều chỉnh 26 / Ghi chú 10 - %)", async () => {
+  // Phiên 49: chuyển từ % sang twip cố định (LibreOffice bỏ qua % khi thiếu lưới cột) + nới cột cho chữ 14pt
+  // (trước đó Phiên 48b: 6/12/40/8/26/8). Đọc lại độ rộng từng ô hàng tiêu đề, quy về % bề rộng bảng.
   const xml = await readDocumentXml(makeLessons());
   const firstTable = xml.match(/<w:tbl>[\s\S]*?<\/w:tbl>/)[0];
   const firstRow = firstTable.match(/<w:tr[ >][\s\S]*?<\/w:tr>/)[0];
-  const widths = [...firstRow.matchAll(/<w:tcW[^>]*w:w="(\d+)%"/g)].map((m) => Number(m[1]));
-  assert.deepEqual(widths, [6, 12, 40, 8, 26, 8]);
-  assert.equal(widths.reduce((a, b) => a + b, 0), 100);
+  const twips = [...firstRow.matchAll(/<w:tcW[^>]*w:w="(\d+)"[^>]*w:type="dxa"|<w:tcW[^>]*w:type="dxa"[^>]*w:w="(\d+)"/g)].map((m) =>
+    Number(m[1] ?? m[2])
+  );
+  assert.equal(twips.length, 6);
+  const total = twips.reduce((a, b) => a + b, 0);
+  const pct = twips.map((t) => Math.round((t / total) * 100));
+  assert.deepEqual(pct, [8, 13, 33, 10, 26, 10]);
+  assert.equal(pct.reduce((a, b) => a + b, 0), 100);
 });
