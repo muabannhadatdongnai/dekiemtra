@@ -404,14 +404,17 @@ export function buildTiengVietRows(parsed, lessonIndex = []) {
     let groupIndex = 0;
 
     /** Thêm 1 hoạt động chiếm `tiet` tiết: 1 tiết → 1 dòng; nhiều tiết → mỗi tiết 1 dòng "… - Tiết k". */
+    // Phiên 50: `soBai`/`blockKey` (mọi tiết của 1 Bài là 1 khối - khi xếp lịch, ôn tập/kiểm tra chỉ chèn GIỮA 2 Bài) và
+    // `tietChot: true` (số tiết đối chiếu bản mẫu giáo viên - không chia lại theo quỹ tiết học kì).
+    const meta = { soBai: bai.soBai, blockKey: groupBase, tietChot: true };
     const pushActivity = (label, tiet) => {
       if (tiet <= 1) {
-        rows.push({ tenBai: label, soTiet: 1, nhomTiet: "" });
+        rows.push({ tenBai: label, soTiet: 1, nhomTiet: "", ...meta });
         return;
       }
       groupIndex += 1;
       const key = `${groupBase}-${groupIndex}`;
-      for (let k = 1; k <= tiet; k++) rows.push({ tenBai: `${label} - Tiết ${k}`, soTiet: 1, nhomTiet: key });
+      for (let k = 1; k <= tiet; k++) rows.push({ tenBai: `${label} - Tiết ${k}`, soTiet: 1, nhomTiet: key, ...meta });
     };
 
     let produced = 0;
@@ -437,7 +440,7 @@ export function buildTiengVietRows(parsed, lessonIndex = []) {
     }
 
     // Bài không nhận ra hoạt động nào → vẫn giữ 1 dòng để giáo viên không mất bài
-    if (produced === 0) rows.push({ tenBai: `Bài ${bai.soBai}: ${tenBai}`, soTiet: 1, nhomTiet: "" });
+    if (produced === 0) rows.push({ tenBai: `Bài ${bai.soBai}: ${tenBai}`, soTiet: 1, nhomTiet: "", ...meta });
   }
   return rows;
 }

@@ -1,4 +1,5 @@
-import { extractChuDe, parseTiengVietChapter, buildTiengVietRows } from "./khgdTieuHocTiengVietParser";
+import { extractChuDe, parseTiengVietChapter, buildTiengVietRows, normalizeTitle } from "./khgdTieuHocTiengVietParser";
+import { applySgkReviewToRows } from "./khgdSgkReview";
 import { parseBaiHeadings, buildBaiRows } from "./khgdTieuHocBaiParser";
 import { parseUnit, buildUnitRows } from "./khgdTieuHocUnitParser";
 
@@ -31,7 +32,7 @@ function buildGenericRows(markdown, lessonIndex) {
 
 /**
  * @param {{ subject: string, markdown: string, lessonIndex?: Array<{soBai?: number|null, tenBai: string}> }} args
- * @returns {{ chuDe: string|null, tuanTu: number|null, tuanDen: number|null, rows: Array<{tenBai: string, soTiet: number, nhomTiet: string}>, source: "markdown"|"none" }}
+ * @returns {{ chuDe: string|null, tuanTu: number|null, tuanDen: number|null, rows: Array<{tenBai: string, soTiet: number, nhomTiet: string, blockKey?: string, soBai?: number|null, tietChot?: boolean, loai?: string, nguon?: string, moc?: string}>, source: "markdown"|"none" }}
  */
 export function buildKhgdTieuHocOutline({ subject, markdown, lessonIndex = [] }) {
   const chuDeInfo = extractChuDe(markdown);
@@ -41,6 +42,8 @@ export function buildKhgdTieuHocOutline({ subject, markdown, lessonIndex = [] })
   if (builder && markdown) {
     try {
       rows = builder(markdown, lessonIndex) || [];
+      // Phiên 50: phần "Ôn tập/Đánh giá giữa/cuối học kì" CÓ TRONG SGK → thành dòng loai:"onTap" (ưu tiên hơn đề xuất tự động)
+      if (rows.length > 0) rows = applySgkReviewToRows(rows, markdown, { normalizeTitle });
     } catch {
       rows = []; // Markdown lạ gây lỗi bóc tách → im lặng quay về luồng cũ, không cản giáo viên
     }

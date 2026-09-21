@@ -40,5 +40,9 @@ export function buildUnitRows(parsed) {
     tenBai: `${parsed.unit} - Lesson ${l.so}`,
     soTiet: l.soTiet && l.soTiet > 0 ? l.soTiet : 1,
     nhomTiet: "",
+    // Phiên 50: cả Unit là 1 khối; số tiết CHỈ coi là đã chốt khi Markdown ghi `(N tiết)` (mặc định 1 tiết/Lesson là giả định)
+    blockKey: "unit",
+    soBai: null,
+    tietChot: !!(l.soTiet && l.soTiet > 0),
   }));
 }

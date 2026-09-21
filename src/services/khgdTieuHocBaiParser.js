@@ -51,5 +51,9 @@ export function buildBaiRows(baiList, lessonIndex = []) {
     tenBai: `Bài ${b.soBai}: ${nameBySoBai.get(b.soBai) || b.tenBai}`,
     soTiet: b.soTiet && b.soTiet > 0 ? b.soTiet : 1,
     nhomTiet: "",
+    // Phiên 50: khối/số Bài để xếp lịch; số tiết chỉ "chốt" khi tiêu đề Markdown ghi `(N tiết)`
+    blockKey: `bai${b.soBai}`,
+    soBai: b.soBai,
+    tietChot: !!(b.soTiet && b.soTiet > 0),
   }));
 }

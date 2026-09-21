@@ -28,6 +28,8 @@
  * KHÔNG lỗi, để form quay về luồng cũ (`_bai.json`) rồi tới gõ tay.
  */
 
+import { applySgkReviewToRows } from "./khgdSgkReview";
+
 /** Trần số ký tự trích cho mỗi bài (đủ để AI thấy các mục + ý chính, không làm phình prompt). */
 export const KHGD_NOI_DUNG_MAX_CHARS = 1100;
 
@@ -272,6 +274,12 @@ function buildEnglishRows(markdown) {
       bodyLines: sec.lines.map(cleanContentLine),
       footer,
     }),
+    // Phiên 50: mỗi dòng Unit = 1 tiết đúng PPCT giáo viên đang dùng → CHỐT số tiết (không chia lại theo quỹ tiết);
+    // cả Unit là 1 khối (ôn tập/kiểm tra chỉ chèn GIỮA 2 Unit).
+    soTiet: 1,
+    tietChot: true,
+    blockKey: "unit",
+    soBai: null,
   }));
 }
 
@@ -327,6 +335,9 @@ function buildBaiRows(markdown, lessonIndex = []) {
   return bai.map((b) => ({
     tenBai: `Bài ${b.soBai}. ${nameBySoBai.get(b.soBai) || b.ten}`,
     noiDung: composeNoiDung({ titles: b.titles, bodyLines: b.body }),
+    // Phiên 50: Markdown KHÔNG ghi số tiết mỗi Bài → để form chia theo quỹ tiết học kì (khgdSchedule.js)
+    blockKey: `bai${b.soBai}`,
+    soBai: b.soBai,
   }));
 }
 
@@ -438,6 +449,7 @@ function buildNguVanRows(markdown) {
 
   const rows = [];
   baiHeads.forEach((b, k) => {
+    const rowsBefore = rows.length;
     const end = k + 1 < baiHeads.length ? baiHeads[k + 1].i : lines.length;
     const prefix = `Bài ${b.soBai}. ${b.ten} - `;
     const sections = splitByLevel(lines.slice(b.i + 1, end), b.level + 1);
@@ -497,6 +509,11 @@ function buildNguVanRows(markdown) {
         }),
       });
     }
+    // Phiên 50: gắn khối/số Bài cho MỌI dòng vừa dựng của Bài này (mọi hoạt động của 1 Bài không bị tách khi chèn ôn tập/kiểm tra)
+    for (let i = rowsBefore; i < rows.length; i++) {
+      rows[i].blockKey = `bai${b.soBai}`;
+      rows[i].soBai = b.soBai;
+    }
   });
   return rows;
 }
@@ -527,6 +544,15 @@ export function buildKhgdOutline({ subject, markdown, lessonIndex = [] }) {
       if (rows.length === 0) rows = buildBaiRows(md, lessonIndex);
     } catch {
       rows = []; // Markdown lạ gây lỗi bóc tách → im lặng quay về luồng cũ, không cản giáo viên
+    }
+  }
+
+  // Phiên 50: phần "Ôn tập/Đánh giá giữa/cuối học kì" CÓ TRONG SGK → dòng loai:"onTap" (ưu tiên hơn đề xuất tự động)
+  if (rows.length > 0) {
+    try {
+      rows = applySgkReviewToRows(rows, md, { normalizeTitle: normalizeHeading });
+    } catch {
+      /* không cản luồng gợi ý */
     }
   }
 
