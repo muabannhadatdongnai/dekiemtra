@@ -1,12 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2, Sparkles, BookOpen } from "lucide-react";
+import { Loader2, Plus, Trash2, Sparkles, BookOpen, CalendarClock } from "lucide-react";
 import { getSubjectsForGrade } from "@/data/config";
 import { getKhgdSubjectDefaults } from "@/data/khgdSubjectDefaults";
 import { buildKhgdBlueprint } from "@/data/khgdBlueprint";
 import { buildKhgdResult } from "@/data/khgdResult";
 import { getEffectiveSession } from "@/services/authService";
+import { planYear, formatScheduleSummary, parseTietPerWeek, normalizeHocKi } from "@/services/khgdSchedule";
+import {
+  buildKhgdSchedulePolicy,
+  getKhgdDefaultTietPerWeek,
+  getKhgdKiemTraMinutes,
+  applyScheduleToKiemTra,
+  KHGD_NHAN_XET_SUBJECTS,
+} from "@/services/khgdSchedulePolicy";
 import {
   fetchChaptersRequest,
   fetchKhgdOutlineRequest,
@@ -20,11 +28,14 @@ import {
  * học cấp THCS + THPT (Lớp 6-12, mở rộng THPT ở Phiên 46 - xem khgdSubjectDefaults.js). KHÔNG áp
  * dụng cho Tiểu học (dùng mẫu khác hẳn theo CV2345/2021).
  *
- * ⚠️ ĐÃ CHỐT VỚI NGƯỜI DÙNG (khác OutlineForm.jsx): "Số tiết" + "Thời điểm" (tuần) của MỖI bài
- * học do GIÁO VIÊN TỰ GÕ TAY, KHÔNG do AI/GitHub tính - vì mỗi trường/giáo viên phân phối chương
- * trình khác nhau. Tên bài CHỈ là GỢI Ý lấy từ kho GitHub (nút "Nạp gợi ý tên bài từ SGK"), giáo
- * viên có thể sửa/xoá/thêm dòng tuỳ ý trước khi bấm "Tạo Khung KHGD" - AI CHỈ soạn thêm 2 cột
- * SWD/NLS cho danh sách bài đã chốt (xem khgdOrchestrator.js), không đụng vào số tiết/tuần.
+ * ⚠️ Phiên 50 ĐỔI QUYẾT ĐỊNH CŨ ("Số tiết/Thời điểm do giáo viên tự gõ hoàn toàn"): sau phản hồi của Hoan ("chưa
+ * thấy tự tính số tiết, chưa có đề xuất ôn tập/kiểm tra giữa kỳ, cuối kỳ") form có nút "Tự tính số tiết & đề xuất
+ * Ôn tập/Kiểm tra" (khgdSchedule.js): quỹ tiết học kì = số tiết/tuần × 18 (HK I) hoặc 17 (HK II) tuần, bài chưa
+ * có số tiết được chia đều phần quỹ còn lại, dòng Ôn tập/Kiểm tra được ĐỀ XUẤT (hoặc lấy từ Markdown SGK nếu có),
+ * bảng "Kiểm tra, đánh giá định kỳ" tự điền Thời điểm/Thời gian/Yêu cầu cần đạt. MỌI con số đều chỉ là gợi ý -
+ * giáo viên vẫn sửa/xoá/thêm dòng tuỳ ý (số tiết đã tự sửa được giữ nguyên khi tính lại). Tên bài là GỢI Ý lấy từ
+ * kho GitHub (nút "Nạp gợi ý tên bài từ SGK"); AI CHỈ soạn thêm 2 cột SWD/NLS cho các dòng BÀI HỌC (không cho dòng
+ * Ôn tập/Kiểm tra), không đụng vào số tiết/tuần.
  *
  * ⚠️ Phiên 49 - LUÔN ƯU TIÊN NỘI DUNG MARKDOWN CỦA BỘ MÔN: nút nạp chương giờ ĐỌC THẲNG file Markdown
  * SGK (/api/khgd-outline → khgdOutlineService.js) để lấy tên bài + `noiDung` (đoạn trích của từng bài,
@@ -37,6 +48,8 @@ const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
 // nên Phụ lục III KHÔNG đổi cấu trúc giữa THCS/THPT, chỉ cần mở dải khối. Tiểu học KHÔNG nằm
 // trong dải này (dùng mẫu khác hẳn theo CV2345/2021, xem khgdSubjectDefaults.js).
 const KHGD_GRADES = [6, 7, 8, 9, 10, 11, 12];
+
+const isReviewRow = (l) => l.loai === "onTap" || l.loai === "kiemTra";
 
 const DEFAULT_KIEM_TRA = [
   { ten: "Giữa Học kỳ 1", thoiGian: "60 phút", thoiDiem: "", yeuCauCanDat: "", hinhThuc: "Viết (giấy)" },
@@ -84,6 +97,14 @@ export default function KhgdForm({ onGenerated }) {
   const [enableSwd, setEnableSwd] = useState(true);
   const [enableNls, setEnableNls] = useState(true);
 
+  // Phiên 50 - xếp lịch: số tiết/tuần (gợi ý sẵn CHỈ cho môn đã có căn cứ, còn lại để trống) + thời gian bài kiểm tra
+  const [tietPerWeek, setTietPerWeek] = useState(() => {
+    const d = getKhgdDefaultTietPerWeek("Tieng_Anh", 7);
+    return d != null ? String(d) : "";
+  });
+  const [kiemTraMinutes, setKiemTraMinutes] = useState(() => String(getKhgdKiemTraMinutes(getKhgdDefaultTietPerWeek("Tieng_Anh", 7), "Tieng_Anh")));
+  const [planInfo, setPlanInfo] = useState(null); // { lines: string[], warnings: string[] }
+
   const [availableChapters, setAvailableChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
   const [chaptersError, setChaptersError] = useState("");
@@ -94,6 +115,14 @@ export default function KhgdForm({ onGenerated }) {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Đổi Môn/Lớp → gợi ý lại số tiết/tuần + thời gian kiểm tra (Thông tư 22/2021: môn ≤ 70 tiết/năm 45 phút, > 70 tiết/năm 60-90 phút)
+  useEffect(() => {
+    const d = getKhgdDefaultTietPerWeek(subject, grade);
+    setTietPerWeek(d != null ? String(d) : "");
+    setKiemTraMinutes(String(getKhgdKiemTraMinutes(d, subject)));
+    setPlanInfo(null);
+  }, [subject, grade]);
 
   // Tải danh sách chương khi Môn/Lớp/Tập đổi - GIỐNG OutlineForm.jsx, nhưng KHÔNG tự xoá bảng
   // bài học đã nhập (khác Outline: giáo viên có thể đã gõ tay nhiều dòng, đổi Tập không nên mất
@@ -132,6 +161,12 @@ export default function KhgdForm({ onGenerated }) {
       thietBi: defaults.device,
       diaDiem: defaults.location,
       noiDung: "", // đoạn trích Markdown SGK của bài (Phiên 49) - rỗng với dòng gõ tay
+      // Phiên 50 - dữ liệu xếp lịch: học kì (theo Tập), chương nguồn, khối Bài, số tiết đã chốt?, loại dòng
+      hocKi: volume,
+      chuongId: "",
+      blockKey: "",
+      tietChot: false,
+      loai: "baiHoc",
       ...overrides,
     };
   }
@@ -145,7 +180,8 @@ export default function KhgdForm({ onGenerated }) {
   }
 
   function updateLessonField(id, field, value) {
-    setLessons((prev) => prev.map((l) => (l.id === id ? { ...l, [field]: value } : l)));
+    // Giáo viên tự sửa "Số tiết" → coi là ĐÃ CHỐT: lần "Tự tính số tiết" sau không chia lại dòng này
+    setLessons((prev) => prev.map((l) => (l.id === id ? { ...l, [field]: value, ...(field === "soTiet" ? { soTietSuaTay: true } : {}) } : l)));
   }
 
   /**
@@ -169,7 +205,22 @@ export default function KhgdForm({ onGenerated }) {
         setError("");
         setLessons((prev) => [
           ...prev,
-          ...outline.rows.map((r) => makeEmptyRow({ tenBai: r.tenBai || "", chuong, noiDung: r.noiDung || "" })),
+          ...outline.rows.map((r) =>
+            makeEmptyRow({
+              tenBai: r.tenBai || "",
+              chuong: r.loai === "onTap" ? "" : chuong,
+              noiDung: r.noiDung || "",
+              soTiet: r.soTiet != null ? r.soTiet : "", // Tiếng Anh: 1 dòng = 1 tiết (đã chốt); môn khác để trống → tự chia theo quỹ tiết
+              chuongId: chapterId,
+              blockKey: r.blockKey ? `${chapterId}:${r.blockKey}` : "",
+              soBai: r.soBai ?? null,
+              tietChot: r.tietChot === true,
+              loai: r.loai || "baiHoc",
+              nguon: r.nguon || undefined,
+              moc: r.moc || undefined,
+              coKiemTra: r.coKiemTra || undefined,
+            })
+          ),
         ]);
         return;
       }
@@ -183,13 +234,58 @@ export default function KhgdForm({ onGenerated }) {
       setError("");
       setLessons((prev) => [
         ...prev,
-        ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuong, noiDung: l.noiDungCotLoi || "" })),
+        ...found.map((l) =>
+          makeEmptyRow({ tenBai: l.tenBai || "", chuong, noiDung: l.noiDungCotLoi || "", chuongId: chapterId, blockKey: `${chapterId}:${l.soBai ?? l.tenBai}` })
+        ),
       ]);
     } catch {
       setError(`Không tải được gợi ý tên bài cho "${chapterLabel}" - vui lòng tự thêm dòng và gõ tay.`);
     } finally {
       setLoadingLessonsFor(null);
     }
+  }
+
+  /**
+   * "Tự tính số tiết & đề xuất Ôn tập/Kiểm tra" (Phiên 50) - xem khgdSchedule.js. Chạy theo TỪNG HỌC KÌ (Tập 1 = HK I,
+   * Tập 2 = HK II); bấm lại nhiều lần cho cùng kết quả; số tiết đã tự sửa được giữ nguyên.
+   */
+  function handleAutoSchedule() {
+    setError("");
+    const tpw = parseTietPerWeek(tietPerWeek);
+    if (!tpw) {
+      setError('Vui lòng nhập "Số tiết/tuần" của môn (theo kế hoạch giáo dục nhà trường) trước khi tự tính số tiết.');
+      return;
+    }
+    const usable = lessons.filter((l) => l.tenBai.trim());
+    if (usable.length === 0) {
+      setError("Chưa có bài học nào trong bảng - hãy bấm 1 chương để nạp gợi ý từ SGK trước.");
+      return;
+    }
+    const minutes = Number(kiemTraMinutes) > 0 ? Number(kiemTraMinutes) : getKhgdKiemTraMinutes(tpw, subject);
+
+    const result = planYear({
+      rows: usable,
+      tietPerWeek: tpw,
+      policyFor: () => buildKhgdSchedulePolicy({ subject, tietPerWeek: tpw, minutes }),
+      makeId: nextRowId,
+    });
+    setLessons(result.rows);
+    setKiemTraDinhKy((prev) => applyScheduleToKiemTra(prev, result.summaries, { minutes, nhanXet: KHGD_NHAN_XET_SUBJECTS.has(subject) }));
+
+    const warnings = [...result.warnings];
+    const inVolume = result.rows.filter((l) => normalizeHocKi(l.hocKi) === normalizeHocKi(volume) && l.chuongId);
+    if (availableChapters.length > 0 && inVolume.length > 0) {
+      const loaded = new Set(inVolume.map((l) => l.chuongId));
+      const missing = availableChapters.filter((c) => !loaded.has(c.chapter));
+      if (missing.length > 0) {
+        warnings.push(
+          `Tập ${volume}: mới nạp ${availableChapters.length - missing.length}/${availableChapters.length} chương (chưa nạp: ${missing
+            .map((c) => c.label || `Chương ${c.chapter}`)
+            .join(", ")}). Nạp đủ chương rồi bấm tính lại để số tiết mỗi bài chính xác.`
+        );
+      }
+    }
+    setPlanInfo({ lines: [1, 2].filter((hk) => result.summaries[hk]).map((hk) => formatScheduleSummary(result.summaries[hk])), warnings });
   }
 
   function updateKiemTraField(index, field, value) {
@@ -214,6 +310,8 @@ export default function KhgdForm({ onGenerated }) {
 
     setLoading(true);
     try {
+      // Dòng Ôn tập/Kiểm tra KHÔNG gửi AI (không cần SWD/NLS, tiết kiệm quota) - vẫn có mặt trong bảng kết quả
+      const aiLessons = validLessons.filter((l) => !isReviewRow(l));
       const blueprint = buildKhgdBlueprint({
         subject,
         grade,
@@ -223,10 +321,10 @@ export default function KhgdForm({ onGenerated }) {
         namHoc,
         enableSwd,
         enableNls,
-        lessons: validLessons,
+        lessons: aiLessons,
         kiemTraDinhKy,
       });
-      const data = await generateKhgdRequest(blueprint);
+      const data = aiLessons.length > 0 ? await generateKhgdRequest(blueprint) : { lessons: [], kiemTraDinhKy, warnings: [] };
 
       const meta = {
         subject,
@@ -341,9 +439,62 @@ export default function KhgdForm({ onGenerated }) {
         <p className="text-xs text-slate-500">
           Bấm 1 chương để nạp tên bài vào bảng bên dưới - hệ thống đọc thẳng file Markdown SGK của môn
           và giữ lại nội dung từng bài để AI soạn SWD/NLS bám sát sách (dòng có biểu tượng sách). Hoặc bấm
-          "+ Thêm dòng" để tự gõ (dòng gõ tay không có nội dung SGK nên AI chỉ dựa vào tên bài). Số
-          tiết/Thời điểm/Thiết bị/Địa điểm LUÔN do giáo viên tự nhập/sửa.
+          &quot;+ Thêm dòng&quot; để tự gõ (dòng gõ tay không có nội dung SGK nên AI chỉ dựa vào tên bài). Nạp ĐỦ các
+          chương của Tập (Tập 1 = Học kì 1, Tập 2 = Học kì 2) rồi bấm nút &quot;Tự tính số tiết&quot; bên dưới; Thiết
+          bị/Địa điểm do bạn nhập/sửa.
         </p>
+
+        <div className="space-y-2 rounded-md border border-amber-200 bg-amber-50 p-3">
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Số tiết/tuần của môn" hint="Theo KHGD nhà trường. Chỉ điền sẵn môn đã có căn cứ (CT GDPT 2018) - môn khác vui lòng tự nhập.">
+              <input
+                type="number"
+                min={0.5}
+                step="any"
+                value={tietPerWeek}
+                onChange={(e) => {
+                  setTietPerWeek(e.target.value);
+                  setKiemTraMinutes(String(getKhgdKiemTraMinutes(e.target.value, subject)));
+                  setPlanInfo(null);
+                }}
+                className={inputClass}
+                placeholder="VD: 4"
+              />
+            </Field>
+            <Field label="Thời gian bài kiểm tra định kì (phút)" hint="Thông tư 22/2021: môn ≤ 70 tiết/năm 45 phút; > 70 tiết/năm 60-90 phút. 45 phút = 1 tiết, 60-90 phút = 2 tiết.">
+              <input type="number" min={15} step={5} value={kiemTraMinutes} onChange={(e) => setKiemTraMinutes(e.target.value)} className={inputClass} />
+            </Field>
+          </div>
+          <button
+            type="button"
+            onClick={handleAutoSchedule}
+            className="flex items-center gap-1 rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100"
+          >
+            <CalendarClock size={14} /> Tự tính số tiết &amp; đề xuất Ôn tập / Kiểm tra giữa kỳ, cuối kỳ
+          </button>
+          <p className="text-xs text-amber-900">
+            Quỹ tiết mỗi học kì = số tiết/tuần × 18 tuần (Học kì 1) hoặc 17 tuần (Học kì 2). Bài chưa có số tiết được
+            chia đều phần quỹ còn lại sau khi trừ ôn tập/kiểm tra. Ôn tập trong SGK được giữ nguyên; nếu SGK không có,
+            hệ thống ĐỀ XUẤT thêm (dòng viền vàng): giữa kì khoảng Tuần 9 (HK1) / Tuần 27 (HK2), cuối kì ở cuối học kì,
+            mỗi mốc có 1 bài kiểm tra định kì theo Thông tư 22/2021; bảng &quot;Kiểm tra, đánh giá định kỳ&quot; bên dưới
+            tự điền Thời điểm/Yêu cầu cần đạt. Mọi con số chỉ là gợi ý - bạn sửa/xoá được; số tiết bạn đã tự sửa được giữ
+            nguyên khi tính lại.
+          </p>
+          {planInfo && (
+            <div className="space-y-1 text-xs">
+              {planInfo.lines.map((line, i) => (
+                <p key={i} className="font-medium text-slate-800">
+                  {line}
+                </p>
+              ))}
+              {planInfo.warnings.map((w, i) => (
+                <p key={`w${i}`} className="text-red-600">
+                  ⚠️ {w}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="w-full min-w-[720px] text-xs">
@@ -359,7 +510,7 @@ export default function KhgdForm({ onGenerated }) {
             </thead>
             <tbody>
               {lessons.map((l) => (
-                <tr key={l.id} className="border-t border-slate-100">
+                <tr key={l.id} className={`border-t border-slate-100 ${l.deXuat ? "bg-amber-50 outline outline-1 -outline-offset-1 outline-amber-300" : ""}`}>
                   <td className="p-1">
                     <input
                       value={l.tenBai}
@@ -367,7 +518,11 @@ export default function KhgdForm({ onGenerated }) {
                       className="w-full rounded border border-slate-200 px-2 py-1"
                       placeholder="Tên bài học"
                     />
-                    {l.noiDung && (
+                    {l.deXuat && (
+                      <p className="mt-1 text-[11px] text-amber-700">Đề xuất theo khung thời gian năm học - sửa hoặc xoá nếu nhà trường bố trí khác</p>
+                    )}
+                    {!l.deXuat && l.nguon === "sgk" && <p className="mt-1 text-[11px] text-emerald-700">Lấy từ SGK (Markdown)</p>}
+                    {l.noiDung && !isReviewRow(l) && (
                       <p
                         className="mt-1 flex items-center gap-1 text-[11px] text-emerald-700"
                         title={l.noiDung.slice(0, 400)}
@@ -426,6 +581,10 @@ export default function KhgdForm({ onGenerated }) {
 
       <div className="space-y-3 border-b border-slate-100 pb-5">
         <p className="text-sm font-semibold text-slate-800">2. Kiểm tra, đánh giá định kỳ</p>
+        <p className="text-xs text-slate-500">
+          Sau khi bấm &quot;Tự tính số tiết&quot;, Thời gian/Thời điểm (Tuần, Tiết PPCT)/Yêu cầu cần đạt (từ bài nào đến bài
+          nào) được điền sẵn theo học kì đã xếp; ô bạn đã tự gõ sẽ được giữ nguyên.
+        </p>
         {kiemTraDinhKy.map((k, i) => (
           <div key={i} className="grid grid-cols-2 gap-2 rounded-md border border-slate-200 p-2">
             <input

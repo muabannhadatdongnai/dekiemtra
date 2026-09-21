@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Trash2, Sparkles } from "lucide-react";
+import { Loader2, Plus, Trash2, Sparkles, CalendarClock } from "lucide-react";
 import { getSubjectsForGrade } from "@/data/config";
 import { buildKhgdTieuHocBlueprint } from "@/data/khgdTieuHocBlueprint";
 import { buildKhgdTieuHocResult } from "@/data/khgdTieuHocResult";
 import { getEffectiveSession } from "@/services/authService";
+import { planYear, formatScheduleSummary, parseTietPerWeek, normalizeHocKi, recomputeTuanTiet } from "@/services/khgdSchedule";
+import { buildTieuHocSchedulePolicy, getTieuHocDefaultTietPerWeek } from "@/services/khgdTieuHocSchedulePolicy";
 import {
   fetchChaptersRequest,
   fetchLessonsRequest,
@@ -42,20 +44,16 @@ function Field({ label, children, hint }) {
   );
 }
 
-/** Tự tính lại "Tuần" + "Ghi chú" (Tiết PPCT, chạy suốt năm) theo "Số tiết" từng dòng + "Số
- * tiết/tuần" giáo viên khai báo - VD 10 tiết/tuần: tiết 1-10 = Tuần 1, tiết 11-20 = Tuần 2...
- * Đây là điểm sửa quan trọng sau phản hồi test thật (Phiên 48): trước đó "Tuần" là ô trống hoàn
- * toàn phải gõ tay từng dòng, dễ bị bỏ sót (đúng lỗi giáo viên gặp phải). Giáo viên vẫn sửa tay
- * được từng ô nếu auto-tính chưa đúng thực tế lớp mình. */
+/** Tự tính lại "Tuần" + "Ghi chú" (Tiết PPCT, chạy suốt năm) theo "Số tiết" từng dòng + "Số tiết/tuần" giáo
+ * viên khai báo. Phiên 50: tính RIÊNG từng học kì (`hocKi` của dòng - Tập 1 = HK I, Tập 2 = HK II): HK II bắt đầu từ
+ * Tuần 19 / tiết 18×tiết/tuần+1 (trước đây Tập 2 cũng bắt đầu từ Tuần 1). Chưa khai báo số tiết/tuần → KHÔNG đoán
+ * (giữ nguyên ô Tuần/Ghi chú) - trước đây mặc định cứng 10 tiết/tuần, sai với mọi môn ngoài Tiếng Việt Lớp 2.
+ * Giáo viên vẫn sửa tay được từng ô nếu auto-tính chưa đúng thực tế lớp mình. */
 function recomputeTietPPCT(rows, tietPerWeek) {
-  let running = 0;
-  const perWeek = Number(tietPerWeek) || 10;
-  return rows.map((r) => {
-    const soTiet = Number(r.soTiet) || 1;
-    running += soTiet;
-    return { ...r, tietPPCT: running, tuan: `Tuần ${Math.ceil(running / perWeek)}` };
-  });
+  return recomputeTuanTiet(rows, tietPerWeek);
 }
+
+const isReviewRow = (l) => l.loai === "onTap" || l.loai === "kiemTra";
 
 export default function KhgdTieuHocForm({ onGenerated }) {
   const [subject, setSubject] = useState("Tieng_Viet");
@@ -75,7 +73,18 @@ export default function KhgdTieuHocForm({ onGenerated }) {
   const [giaoVien, setGiaoVien] = useState("");
   const [namHoc, setNamHoc] = useState("");
   const [enableDieuChinh, setEnableDieuChinh] = useState(true);
-  const [tietPerWeek, setTietPerWeek] = useState(10);
+  const [tietPerWeek, setTietPerWeek] = useState(() => {
+    const d = getTieuHocDefaultTietPerWeek("Tieng_Viet", 2);
+    return d != null ? String(d) : "";
+  });
+  const [planInfo, setPlanInfo] = useState(null); // { lines: string[], warnings: string[] } sau khi bấm "Tự tính số tiết..."
+
+  // Đổi Môn/Lớp → gợi ý số tiết/tuần theo bảng đã có căn cứ; môn/khối chưa có căn cứ → để TRỐNG cho giáo viên tự nhập
+  useEffect(() => {
+    const d = getTieuHocDefaultTietPerWeek(subject, grade);
+    setTietPerWeek(d != null ? String(d) : "");
+    setPlanInfo(null);
+  }, [subject, grade]);
 
   const [availableChapters, setAvailableChapters] = useState([]);
   const [loadingChapters, setLoadingChapters] = useState(false);
@@ -110,7 +119,22 @@ export default function KhgdTieuHocForm({ onGenerated }) {
   }, [grade, subject, volume]);
 
   function makeEmptyRow(overrides = {}) {
-    return { id: nextRowId(), chuDe: "", tenBai: "", tuan: "", soTiet: 1, tietPPCT: "", nhomTiet: "", ...overrides };
+    return {
+      id: nextRowId(),
+      chuDe: "",
+      tenBai: "",
+      tuan: "",
+      soTiet: 1,
+      tietPPCT: "",
+      nhomTiet: "",
+      // Phiên 50 - dữ liệu xếp lịch: học kì (theo Tập), chương nguồn, khối Bài, số tiết đã chốt?, loại dòng
+      hocKi: volume,
+      chuongId: "",
+      blockKey: "",
+      tietChot: false,
+      loai: "baiHoc",
+      ...overrides,
+    };
   }
 
   function addLessonRow() {
@@ -123,7 +147,8 @@ export default function KhgdTieuHocForm({ onGenerated }) {
 
   function updateLessonField(id, field, value) {
     setLessons((prev) => {
-      const next = prev.map((l) => (l.id === id ? { ...l, [field]: value } : l));
+      // Giáo viên tự sửa "Số tiết" → coi là ĐÃ CHỐT: lần "Tự tính số tiết" sau không chia lại dòng này
+      const next = prev.map((l) => (l.id === id ? { ...l, [field]: value, ...(field === "soTiet" ? { soTietSuaTay: true } : {}) } : l));
       return field === "soTiet" ? recomputeTietPPCT(next, tietPerWeek) : next;
     });
   }
@@ -132,6 +157,7 @@ export default function KhgdTieuHocForm({ onGenerated }) {
    * giải thích trong recomputeTietPPCT()). */
   function handleTietPerWeekChange(value) {
     setTietPerWeek(value);
+    setPlanInfo(null);
     setLessons((prev) => recomputeTietPPCT(prev, value));
   }
 
@@ -161,10 +187,19 @@ export default function KhgdTieuHocForm({ onGenerated }) {
               ...outline.rows.map((r) =>
                 makeEmptyRow({
                   tenBai: r.tenBai || "",
-                  chuDe,
+                  // Dòng ôn tập/đánh giá lấy từ SGK không thuộc Chủ đề nào
+                  chuDe: r.loai === "onTap" ? "" : chuDe,
                   soTiet: r.soTiet || 1,
                   // Khoá nhóm phải khác nhau giữa các chương (cùng "b1-1" có thể lặp ở chương khác)
                   nhomTiet: r.nhomTiet ? `${chapterId}:${r.nhomTiet}` : "",
+                  chuongId: chapterId,
+                  blockKey: r.blockKey ? `${chapterId}:${r.blockKey}` : "",
+                  soBai: r.soBai ?? null,
+                  tietChot: r.tietChot === true,
+                  loai: r.loai || "baiHoc",
+                  nguon: r.nguon || undefined,
+                  moc: r.moc || undefined,
+                  coKiemTra: r.coKiemTra || undefined,
                 })
               ),
             ],
@@ -183,7 +218,7 @@ export default function KhgdTieuHocForm({ onGenerated }) {
       setError("");
       setLessons((prev) =>
         recomputeTietPPCT(
-          [...prev, ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuDe }))],
+          [...prev, ...found.map((l) => makeEmptyRow({ tenBai: l.tenBai || "", chuDe, chuongId: chapterId, blockKey: `${chapterId}:${l.soBai ?? l.tenBai}` }))],
           tietPerWeek
         )
       );
@@ -192,6 +227,50 @@ export default function KhgdTieuHocForm({ onGenerated }) {
     } finally {
       setLoadingLessonsFor(null);
     }
+  }
+
+  /**
+   * "Tự tính số tiết & xếp Ôn tập/Kiểm tra định kì" (Phiên 50). Chạy theo TỪNG HỌC KÌ (Tập 1 = HK I, Tập 2 = HK II):
+   * quỹ tiết = số tiết/tuần × 18 (HK I) hoặc 17 (HK II) tuần; bài chưa chốt số tiết được chia đều phần quỹ còn lại;
+   * dòng ôn tập/đánh giá có trong Markdown SGK được giữ, chưa có thì ĐỀ XUẤT thêm (viền vàng, sửa/xoá được). Bấm lại
+   * nhiều lần cho cùng kết quả (đề xuất cũ được thay); số tiết giáo viên tự sửa được giữ nguyên.
+   */
+  function handleAutoSchedule() {
+    setError("");
+    const tpw = parseTietPerWeek(tietPerWeek);
+    if (!tpw) {
+      setError("Vui lòng nhập \"Số tiết/tuần\" của môn (theo kế hoạch giáo dục nhà trường) trước khi tự tính số tiết.");
+      return;
+    }
+    const usable = lessons.filter((l) => l.tenBai.trim());
+    if (usable.length === 0) {
+      setError("Chưa có bài học nào trong bảng - hãy bấm 1 chương để nạp gợi ý từ SGK trước.");
+      return;
+    }
+
+    const result = planYear({
+      rows: usable,
+      tietPerWeek: tpw,
+      policyFor: () => buildTieuHocSchedulePolicy({ subject, grade }),
+      makeId: nextRowId,
+    });
+    setLessons(result.rows);
+
+    // Cảnh báo chưa nạp đủ chương của Tập đang chọn (số tiết mỗi bài sẽ bị phóng đại nếu thiếu chương)
+    const warnings = [...result.warnings];
+    const inVolume = result.rows.filter((l) => normalizeHocKi(l.hocKi) === normalizeHocKi(volume) && l.chuongId);
+    if (availableChapters.length > 0 && inVolume.length > 0) {
+      const loaded = new Set(inVolume.map((l) => l.chuongId));
+      const missing = availableChapters.filter((c) => !loaded.has(c.chapter));
+      if (missing.length > 0) {
+        warnings.push(
+          `Tập ${volume}: mới nạp ${availableChapters.length - missing.length}/${availableChapters.length} chương (chưa nạp: ${missing
+            .map((c) => c.label || `Chương ${c.chapter}`)
+            .join(", ")}). Nạp đủ chương rồi bấm tính lại để số tiết mỗi bài chính xác.`
+        );
+      }
+    }
+    setPlanInfo({ lines: [1, 2].filter((hk) => result.summaries[hk]).map((hk) => formatScheduleSummary(result.summaries[hk])), warnings });
   }
 
   async function handleSubmit(e) {
@@ -222,7 +301,12 @@ export default function KhgdTieuHocForm({ onGenerated }) {
         enableDieuChinh,
         lessons: validLessons,
       });
-      const data = await generateKhgdTieuHocRequest(blueprint);
+      // Dòng Ôn tập/Kiểm tra KHÔNG gửi AI (không cần "Nội dung điều chỉnh", tiết kiệm quota) - vẫn có mặt trong bảng kết quả
+      const aiLessons = validLessons.filter((l) => !isReviewRow(l));
+      const data =
+        aiLessons.length > 0
+          ? await generateKhgdTieuHocRequest({ ...blueprint, lessons: aiLessons })
+          : { lessons: [], warnings: [] };
       const meta = { subject, grade, truong, to, giaoVien, namHoc, enableDieuChinh };
       onGenerated(buildKhgdTieuHocResult(data, meta, validLessons));
     } catch (err) {
@@ -287,13 +371,18 @@ export default function KhgdTieuHocForm({ onGenerated }) {
           <input type="checkbox" checked={enableDieuChinh} onChange={(e) => setEnableDieuChinh(e.target.checked)} />
           Nhờ AI gợi ý "Nội dung điều chỉnh cần thiết" (lồng ghép KNS/GDĐP/BVMT/công dân số...) cho các bài phù hợp
         </label>
-        <Field label="Số tiết/tuần (để tự tính cột Tuần + Ghi chú)" hint="VD: Tiếng Việt Lớp 2 KNTT thường 10 tiết/tuần. Đổi số này sẽ tính lại TOÀN BỘ bảng bên dưới.">
+        <Field
+          label="Số tiết/tuần (để tự tính cột Tuần + Ghi chú + quỹ tiết học kì)"
+          hint="Theo kế hoạch giáo dục nhà trường (VD Tiếng Việt Lớp 2 KNTT: 10 tiết/tuần). Chỉ điền sẵn những môn/khối đã có căn cứ - môn khác vui lòng tự nhập. Đổi số này sẽ tính lại Tuần/Ghi chú cho TOÀN BỘ bảng."
+        >
           <input
             type="number"
-            min={1}
+            min={0.5}
+            step="any"
             value={tietPerWeek}
             onChange={(e) => handleTietPerWeekChange(e.target.value)}
             className={`${inputClass} max-w-[140px]`}
+            placeholder="VD: 5"
           />
         </Field>
       </div>
@@ -324,10 +413,42 @@ export default function KhgdTieuHocForm({ onGenerated }) {
         <p className="text-xs text-slate-500">
           Bấm 1 chương để nạp gợi ý từ sách giáo khoa (Chủ đề lấy đúng tên trong SGK). Môn Tiếng Việt nạp
           sẵn từng tiết (Đọc/Viết/Nói và nghe/Luyện từ và câu...), Tiếng Anh nạp từng Lesson, các môn còn
-          lại nạp từng Bài (mặc định 1 tiết/bài - bạn sửa "Số tiết" theo phân phối chương trình). Hoặc bấm
-          "+ Thêm dòng" để tự gõ. Cột "Tuần" và "Ghi chú" TỰ ĐỘNG tính theo "Số tiết/tuần" đã khai báo ở
-          trên - bạn vẫn sửa tay được nếu cần.
+          lại nạp từng Bài. Nạp ĐỦ các chương của Tập (Tập 1 = Học kì I, Tập 2 = Học kì II) rồi bấm nút
+          &quot;Tự tính số tiết&quot; bên dưới. Hoặc bấm &quot;+ Thêm dòng&quot; để tự gõ. Cột &quot;Tuần&quot; và
+          &quot;Ghi chú&quot; TỰ ĐỘNG tính theo &quot;Số tiết/tuần&quot; - bạn vẫn sửa tay được.
         </p>
+
+        <div className="space-y-2 rounded-md border border-amber-200 bg-amber-50 p-3">
+          <button
+            type="button"
+            onClick={handleAutoSchedule}
+            className="flex items-center gap-1 rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100"
+          >
+            <CalendarClock size={14} /> Tự tính số tiết &amp; xếp Ôn tập / Kiểm tra định kì
+          </button>
+          <p className="text-xs text-amber-900">
+            Quỹ tiết mỗi học kì = số tiết/tuần × 18 tuần (HK I) hoặc 17 tuần (HK II). Bài chưa có số tiết được chia
+            đều phần quỹ còn lại. Ôn tập/Đánh giá có trong SGK được giữ nguyên; nếu SGK không có, hệ thống ĐỀ XUẤT
+            thêm (dòng viền vàng) - giữa kì khoảng Tuần 9 (HK I) / Tuần 27 (HK II), cuối kì ở cuối học kì; bài kiểm
+            tra định kì chỉ thêm cho môn có bài kiểm tra theo Thông tư 27/2020 (Tiếng Việt, Toán, Ngoại ngữ 1, Lịch sử
+            và Địa lí, Khoa học, Tin học và Công nghệ - Lớp 4-5 thêm giữa kì Tiếng Việt và Toán). Số tiết đề xuất chỉ
+            là gợi ý, bạn sửa/xoá được; số tiết bạn đã tự sửa sẽ được giữ nguyên khi tính lại.
+          </p>
+          {planInfo && (
+            <div className="space-y-1 text-xs">
+              {planInfo.lines.map((line, i) => (
+                <p key={i} className="font-medium text-slate-800">
+                  {line}
+                </p>
+              ))}
+              {planInfo.warnings.map((w, i) => (
+                <p key={`w${i}`} className="text-red-600">
+                  ⚠️ {w}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="overflow-x-auto rounded-md border border-slate-200">
           <table className="w-full min-w-[820px] text-xs">
@@ -343,7 +464,7 @@ export default function KhgdTieuHocForm({ onGenerated }) {
             </thead>
             <tbody>
               {lessons.map((l) => (
-                <tr key={l.id} className="border-t border-slate-100">
+                <tr key={l.id} className={`border-t border-slate-100 ${l.deXuat ? "bg-amber-50 outline outline-1 -outline-offset-1 outline-amber-300" : ""}`}>
                   <td className="p-1">
                     <input value={l.tuan} onChange={(e) => updateLessonField(l.id, "tuan", e.target.value)} className="w-full rounded border border-slate-200 px-2 py-1" placeholder="Tuần 1" />
                   </td>
@@ -352,6 +473,8 @@ export default function KhgdTieuHocForm({ onGenerated }) {
                   </td>
                   <td className="p-1">
                     <input value={l.tenBai} onChange={(e) => updateLessonField(l.id, "tenBai", e.target.value)} className="w-full rounded border border-slate-200 px-2 py-1" placeholder="Tên bài học" />
+                    {l.deXuat && <p className="mt-1 text-[11px] text-amber-700">Đề xuất theo khung thời gian năm học - sửa hoặc xoá nếu nhà trường bố trí khác</p>}
+                    {!l.deXuat && l.nguon === "sgk" && <p className="mt-1 text-[11px] text-emerald-700">Lấy từ SGK (Markdown)</p>}
                   </td>
                   <td className="p-1">
                     <input value={l.soTiet} onChange={(e) => updateLessonField(l.id, "soTiet", e.target.value)} className="w-full rounded border border-slate-200 px-2 py-1" />
