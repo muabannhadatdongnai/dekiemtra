@@ -5,6 +5,43 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 50 — Khung KHGD: tự tính số tiết + Ôn tập/Kiểm tra định kì giữa kì, cuối kì (CẢ 2 tab)
+
+1. **Yêu cầu Hoan (sau Phiên 49b):** (a) Tiểu học - bảng dàn bài mới liên tục Tuần 1-16 (tiết 160), thiếu tuần Ôn tập/Kiểm tra
+   định kì (giữa HK I ~Tuần 9, cuối HK I Tuần 17-18; 1 học kì ~18 tuần), rà mọi khối/môn dựa trên kiến thức + Markdown SGK,
+   \"tuyệt đối bám SGK không tự bịa\"; (b) THCS/THPT - chưa tự tính số tiết, chưa đề xuất ôn tập/kiểm tra giữa kì, cuối kì.
+   **Đảo quyết định cũ** \"Số tiết/Thời điểm do giáo viên tự gõ hoàn toàn\" (khgdBlueprint.js/KhgdForm.jsx): nay TỰ TÍNH nhưng vẫn sửa được.
+
+2. **Căn cứ đã tra (không suy diễn):** Khung thời gian năm học Bộ GD&ĐT: 35 tuần = HK I 18 + HK II 17. **Thông tư 27/2020 Điều 7**
+   (Tiểu học): đánh giá định kì 4 mốc (giữa/cuối HK I, giữa/cuối HK II - \"cuối năm học\"); BÀI KIỂM TRA chỉ cuối HK I + cuối năm với
+   Tiếng Việt, Toán, Ngoại ngữ 1, Lịch sử và Địa lí, Khoa học, Tin học và Công nghệ; Lớp 4-5 thêm giữa kì Tiếng Việt + Toán; Đạo đức/TNXH/
+   nghệ thuật... không có bài kiểm tra. **Thông tư 22/2021 Điều 7** (THCS/THPT): mỗi học kì 1 lần giữa kì + 1 lần cuối kì; thời gian bài
+   kiểm tra ≤ 70 tiết/năm = 45 phút, > 70 tiết/năm = 60-90 phút (bản form cũ mặc định 60 phút mọi môn → sai với môn ≤ 70 tiết).
+   Thực tế PPCT: giữa kì Tuần 9 / Tuần 27, cuối kì Tuần 18 / Tuần 34-35. SGK Tiếng Việt 2 KNTT tự có bài \"Ôn tập và đánh giá cuối học kì 1\" (10 tiết).
+
+3. **Đã làm:**
+   - `khgdSchedule.js` (MỚI, thuần, không import React/docx): quỹ tiết = tiết/tuần × 18|17; `planSemester()`/`planYear()` chia đều quỹ
+     còn lại cho bài chưa chốt tiết, chèn dòng Ôn tập/Kiểm tra (giữa kì tại RANH GIỚI BÀI/UNIT gần mốc 8 tuần nhất, cuối kì ở cuối học kì),
+     đánh lại Tuần + Tiết PPCT (HK II bắt đầu Tuần 19/tiết 18×tiết/tuần+1), chạy lại nhiều lần cho cùng kết quả, giữ số tiết giáo viên đã sửa
+     (`soTietSuaTay`), cảnh báo (thiếu tiết/tuần, vượt quỹ, trung bình > 6 tiết/bài = có thể chưa nạp đủ chương). Khi MỌI bài đã chốt tiết
+     (Tiếng Việt L2, Tiếng Anh) phần quỹ còn lại chính là thời lượng ôn tập/dự phòng (Tiếng Việt L2 HK I: 160 + 9 + 10 + 1 = 180, đúng Tuần 9 và Tuần 17-18).
+   - `khgdTieuHocSchedulePolicy.js` + `khgdSchedulePolicy.js` (MỚI, chính sách riêng từng cấp - isolation over DRY): bảng bài kiểm tra theo
+     môn/lớp (TT27), nhãn dòng (\"Ôn tập và đánh giá giữa học kì I\"/\"Kiểm tra định kì cuối năm học\"/THCS \"Kiểm tra giữa Học kỳ 1\"), 45 phút = 1 tiết,
+     60-90 phút = 2 tiết, môn nhận xét (GDTC/Âm nhạc/Mĩ thuật/HĐTN/NDGDĐP) → \"Đánh giá\"; `applyScheduleToKiemTra()` tự điền bảng \"Kiểm tra,
+     đánh giá định kỳ\" (Thời gian, Thời điểm \"Tuần 9, Tiết 34,35\", Yêu cầu cần đạt \"Từ … đến hết …\") - CHỈ ghi đè ô trống/ô máy tự điền lần trước.
+   - `khgdSgkReview.js` (MỚI): nhận diện tiêu đề \"Ôn tập/Đánh giá giữa/cuối học kì\" trong Markdown (có/không số Bài) → dòng `loai:\"onTap\", nguon:\"sgk\"`,
+     ưu tiên hơn đề xuất; \"Ôn tập phép cộng…\"/\"Bài tập cuối chương\" không bị nhận nhầm.
+   - Bộ đọc Markdown (Tiểu học: Tiếng Việt/Tiếng Anh/Bài; THCS: Tiếng Anh/Ngữ văn/Bài) thêm `blockKey`/`soBai`/`tietChot` cho dòng (Tiếng Việt/Tiếng Anh THCS
+     đã chốt tiết; môn khác chờ chia theo quỹ) + gọi `applySgkReviewToRows`.
+   - `KhgdTieuHocForm.jsx`/`KhgdForm.jsx`: nút \"Tự tính số tiết & xếp/đề xuất Ôn tập-Kiểm tra\", ô số tiết/tuần (THCS thêm ô thời gian bài kiểm tra), dòng đề xuất viền vàng,
+     tóm tắt quỹ tiết từng học kì, cảnh báo chưa nạp đủ chương; dòng Ôn tập/Kiểm tra KHÔNG gửi AI. Tuần/Ghi chú Tiểu học nay tính RIÊNG từng học kì
+     (Tập 2 bắt đầu Tuần 19, trước đây bắt đầu Tuần 1) và số tiết/tuần không còn mặc định cứng 10.
+
+4. **Kiểm thử:** `test/khgdSchedule.test.js` (29 test: khung thời gian, Tiếng Việt L2 đủ 180 tiết, SGK có/không có ôn tập, THCS Toán/GDCD/GDTC/Tiếng Anh,
+   idempotent, giữ số tiết tự sửa, HK II, cảnh báo, bảng TT27, nhận diện tiêu đề, bảng Kiểm tra định kỳ, xuất Word THẬT cả 2 tab + `assertValidParagraphNesting`).
+   Toàn bộ `npm test` 550 test pass (trước: 521), `npm run build` sạch, `test:word-compat` 20/20 mở được bằng LibreOffice. CHƯA thử trên trình duyệt thật,
+   CHƯA có Markdown Tiểu học thật để đối chiếu, CHƯA test Gemini thật - xem NEXT_STEPS #33-#36.
+
 ## Phiên 49 — Khung KHGD: chữ 14pt cho cả 2 tab + THCS/THPT đọc Markdown SGK và AI bám sát nội dung Markdown
 
 1. **Yêu cầu Hoan (sau khi test thật THCS/THPT):** (a) cả 2 tab Khung KHGD dùng chữ **14pt** theo quy
