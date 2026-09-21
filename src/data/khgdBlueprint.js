@@ -3,6 +3,9 @@
  * "Bản thiết kế" đầu vào gửi lên /api/generate-khgd - cùng triết lý outlineBlueprint.js: 1 nơi
  * duy nhất định nghĩa input, tránh lệch giữa KhgdForm.jsx (client) và route.js (server).
  *
+ * ⚠️ Phiên 50: form CÓ nút "Tự tính số tiết & đề xuất Ôn tập/Kiểm tra" (khgdSchedule.js) - tính ở CLIENT rồi giáo
+ * viên sửa được; dòng loai:"onTap"/"kiemTra" KHÔNG gửi lên server (chỉ dòng bài học cần SWD/NLS). Server vẫn KHÔNG tính số tiết.
+ *
  * ⚠️ KHÁC outlineBlueprint.js ở 1 điểm quan trọng: "Số tiết" mỗi bài KHÔNG do AI/GitHub tính -
  * giáo viên tự gõ tay (đã chốt với người dùng, xem NEXT_STEPS.md) - vì vậy "lessons" gửi lên đã
  * là danh sách ĐẦY ĐỦ do giáo viên tự biên tập trên KhgdForm.jsx (tên bài GỢI Ý từ kho GitHub,
