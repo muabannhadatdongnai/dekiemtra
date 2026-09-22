@@ -267,6 +267,20 @@ export function getKhgdTieuHocMaxLessons() {
   return envInt("KHGD_TIEU_HOC_MAX_LESSONS", 200);
 }
 
+/**
+ * Số bài gửi AI trong MỖI lần gọi cho tab Tiểu học (Phiên 50 - trước đây gửi HẾT trong 1 lần, không
+ * chia lô). Nguyên nhân: nút "Tự tính số tiết" (khgdSchedule.js) khuyến khích giáo viên nạp ĐỦ các
+ * chương của cả học kì rồi mới bấm tạo 1 lượt - với Tiếng Việt Lớp 2 đó là ~160-170 dòng (1 dòng =
+ * 1 tiết), gửi hết 1 lần dễ khiến JSON trả về (170 phần tử) bị cắt giữa chừng hoặc gọi quá lâu, gây
+ * lỗi khó hiểu ở trình duyệt ("Unexpected token..."/"unexpected character..." khi JSON.parse thất
+ * bại). Payload Tiểu học NHẸ hơn THCS/THPT (không kèm đoạn trích Markdown/từng bài - xem
+ * khgdTieuHocPromptTemplates.js) nên lô có thể lớn hơn `getKhgdAiBatchSize()`. Đổi qua env
+ * `KHGD_TIEU_HOC_AI_BATCH_SIZE`.
+ */
+export function getKhgdTieuHocAiBatchSize() {
+  return Math.max(1, envInt("KHGD_TIEU_HOC_AI_BATCH_SIZE", 60));
+}
+
 export function clampKhgdTieuHocLessons(lessons) {
   const max = getKhgdTieuHocMaxLessons();
   const list = Array.isArray(lessons) ? lessons : [];

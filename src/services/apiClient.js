@@ -17,8 +17,25 @@ function authHeaders() {
   return session?.token ? { Authorization: `Bearer ${session.token}` } : {};
 }
 
+/**
+ * Phiên 50: trước đây `await res.json()` không có try/catch - nếu server trả về thứ KHÔNG PHẢI
+ * JSON hợp lệ (rớt kết nối giữa chừng, lỗi 502/504 của hạ tầng, phản hồi rỗng do lượt tạo quá
+ * lớn/quá lâu), lỗi hiện ra cho giáo viên là thông báo gốc của trình duyệt rất khó hiểu (VD
+ * "JSON.parse: unexpected character at line 1 column 1 of the JSON data" - gặp khi thử "Tạo Khung
+ * KHGD Tiểu học" với danh sách dài, xem khgdTieuHocEngine.js đã thêm chia lô để giảm nguy cơ này).
+ * Nay bắt riêng lỗi parse để đưa ra câu tiếng Việt dễ hiểu hơn, kèm mã trạng thái HTTP để dò lỗi.
+ */
 async function handleResponse(res) {
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(
+      `Máy chủ trả về dữ liệu không hợp lệ (HTTP ${res.status}) - có thể do lượt tạo quá lớn, mất ` +
+        `kết nối giữa chừng, hoặc máy chủ đang quá tải. Vui lòng thử lại; nếu vẫn lỗi, hãy thử giảm ` +
+        `bớt số bài học/nạp ít chương hơn trong 1 lượt.`
+    );
+  }
   if (!res.ok) throw new Error(data.error || "Đã có lỗi xảy ra, vui lòng thử lại.");
   return data;
 }
