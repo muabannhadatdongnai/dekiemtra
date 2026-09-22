@@ -32,6 +32,7 @@ node --test test/xmlEscapeUtils.test.js
 | `khgdOutline.test.js` | ✅ Có (import prompt/limits) | **Phiên 49.** Đọc Markdown SGK THẬT (`test/fixtures/khgd/`: Tiếng Anh 7 Unit 1, Toán 7 Chương I, Ngữ văn 7 Bài 1) → dòng bài học + đoạn trích cho Khung KHGD THCS/THPT; prompt AI luôn ưu tiên nội dung Markdown; `sanitizeKhgdLessons`, trần bài, chia lô AI. |
 | `khgdFontSize14pt.test.js` | ✅ Có (dùng thật `docx`, `jszip`) | **Phiên 49.** Cả 2 file Word Khung KHGD: MỌI run `w:sz`=28 (14pt), `docDefaults` 28, bảng có lưới cột cố định (LibreOffice chia đều cột nếu thiếu lưới). |
 | `khgdSchedule.test.js` | ✅ Có (dùng thật `docx`, `jszip`) | **Phiên 50.** Xếp lịch Khung KHGD (cả 2 tab): quỹ tiết HK I 18 tuần/HK II 17 tuần, chia số tiết cho bài chưa chốt, chèn Ôn tập/Kiểm tra giữa kì (~Tuần 9/27) + cuối kì, ưu tiên phần ôn tập có trong Markdown SGK, chính sách Thông tư 27/2020 (Tiểu học) và 22/2021 (THCS/THPT), tự điền bảng Kiểm tra định kỳ, xuất Word thật + `assertValidParagraphNesting`. |
+| `khgdTieuHocBatching.test.js` | ✅ Có (mock `global.fetch`) | **Phiên 50b - sửa lỗi.** Chia lô gọi AI cho Khung KHGD Tiểu học (trước đó gửi hết ~170 dòng 1 lần → JSON bị cắt/quá lâu), và `apiClient.handleResponse()` báo lỗi tiếng Việt dễ hiểu khi server trả JSON hỏng. |
 
 ## ⚠️ Lưu ý quan trọng khi sửa `exportService.js` / `xmlEscapeUtils.js`
 

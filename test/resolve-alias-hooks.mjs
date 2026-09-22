@@ -29,11 +29,24 @@ export async function resolve(specifier, context, nextResolve) {
   // Thử resolve bình thường trước; nếu thiếu file mới thử lại với ".js" phía sau — cách này
   // không cần biết trước specifier nào có/thiếu đuôi, an toàn với mọi kiểu import trong repo.
   try {
-    return await nextResolve(rewritten, context);
+    return await withJsonAttribute(rewritten, context);
   } catch (err) {
     if (err?.code === "ERR_MODULE_NOT_FOUND" && !/\.[a-zA-Z0-9]+$/.test(rewritten)) {
-      return nextResolve(`${rewritten}.js`, context);
+      return withJsonAttribute(`${rewritten}.js`, context);
     }
     throw err;
+  }
+
+  // Node ESM (từ bản gần đây) BẮT BUỘC import `.json` phải có `with { type: "json" }` ngay tại
+  // chỗ import - nhiều file trong src/ (VD authService.js: `import users from "@/data/users.json"`)
+  // viết theo kiểu cũ không có cú pháp này (Next.js/webpack không cần). Hook resolve() được PHÉP tự
+  // gắn thêm `importAttributes` khi trả kết quả (không cần sửa code nguồn) - làm đúng 1 lần ở đây
+  // thay vì phải sửa lại mọi chỗ import JSON trong src/.
+  async function withJsonAttribute(spec, ctx) {
+    const result = await nextResolve(spec, ctx);
+    if (result.url.endsWith(".json")) {
+      return { ...result, importAttributes: { ...ctx.importAttributes, type: "json" } };
+    }
+    return result;
   }
 }
