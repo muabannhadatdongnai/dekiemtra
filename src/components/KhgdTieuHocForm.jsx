@@ -454,11 +454,11 @@ export default function KhgdTieuHocForm({ onGenerated }) {
           <table className="w-full min-w-[820px] text-xs">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
-                <th className="w-20 p-2 text-left">Tuần</th>
+                <th className="w-28 p-2 text-left">Tuần</th>
                 <th className="w-32 p-2 text-left">Chủ đề</th>
                 <th className="p-2 text-left">Tên bài</th>
                 <th className="w-16 p-2 text-left">Số tiết</th>
-                <th className="w-16 p-2 text-left">Ghi chú</th>
+                <th className="w-24 p-2 text-left">Ghi chú</th>
                 <th className="w-8 p-2"></th>
               </tr>
             </thead>

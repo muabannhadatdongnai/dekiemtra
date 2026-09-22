@@ -502,7 +502,7 @@ export default function KhgdForm({ onGenerated }) {
               <tr>
                 <th className="p-2 text-left">Bài học</th>
                 <th className="w-16 p-2 text-left">Số tiết</th>
-                <th className="w-24 p-2 text-left">Thời điểm</th>
+                <th className="w-28 p-2 text-left">Thời điểm</th>
                 <th className="w-40 p-2 text-left">Thiết bị dạy học</th>
                 <th className="w-32 p-2 text-left">Địa điểm</th>
                 <th className="w-8 p-2"></th>
