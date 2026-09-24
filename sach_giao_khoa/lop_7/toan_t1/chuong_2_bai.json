@@ -1,0 +1,17 @@
+[
+  {
+    "soBai": 5,
+    "tenBai": "Làm quen với số thập phân vô hạn tuần hoàn",
+    "noiDungCotLoi": "Khi chia hai số nguyên, phép chia có thể kéo dài vô hạn với các chữ số thập phân lặp lại theo chu kỳ, gọi là số thập phân vô hạn tuần hoàn, kí hiệu bằng dấu ngoặc quanh chu kỳ (ví dụ 0,2(7); 1,(54)). Số thập phân hữu hạn là số có phần thập phân dừng lại. Làm tròn số thập phân căn cứ vào độ chính xác cho trước d: hàng trăm ứng với d = 50, hàng chục d = 5, đơn vị d = 0,5, phần mười d = 0,05, phần trăm d = 0,005, phần nghìn d = 0,0005."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Số vô tỉ. Căn bậc hai số học",
+    "noiDungCotLoi": "Số vô tỉ là số viết được dưới dạng số thập phân vô hạn không tuần hoàn, kí hiệu tập hợp là I (ví dụ √2, π). Căn bậc hai số học của số a không âm, kí hiệu √a, là số x không âm sao cho x² = a; không tồn tại căn bậc hai số học của số âm. Có thể tính căn bậc hai số học bằng máy tính cầm tay qua phím √, kết quả có thể làm tròn theo độ chính xác cho trước."
+  },
+  {
+    "soBai": 7,
+    "tenBai": "Tập hợp các số thực",
+    "noiDungCotLoi": "Số hữu tỉ và số vô tỉ gọi chung là số thực, kí hiệu R = Q ∪ I. Mỗi số thực có một số đối; các phép toán cộng, trừ, nhân, chia, lũy thừa trên R có tính chất tương tự như trên Q. Mỗi số thực ứng với một điểm trên trục số thực và ngược lại. So sánh hai số thực bằng cách viết dưới dạng số thập phân; với a, b dương, a < b thì √a < √b. Giá trị tuyệt đối |a| là khoảng cách từ điểm a đến gốc 0 trên trục số: |a| = a nếu a > 0, |a| = -a nếu a < 0, |a| = 0 nếu a = 0; |a| ≥ 0 với mọi a, |a| = |-a|. Công thức √(a²) = |a|."
+  }
+]

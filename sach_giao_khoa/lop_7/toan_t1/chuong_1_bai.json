@@ -1,0 +1,22 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Tập hợp các số hữu tỉ",
+    "noiDungCotLoi": "Số hữu tỉ là số viết được dưới dạng phân số a/b với a, b ∈ Z, b ≠ 0; tập hợp số hữu tỉ kí hiệu Q, có quan hệ bao hàm N ⊂ Z ⊂ Q. Mỗi số hữu tỉ có một số đối duy nhất. Biểu diễn số hữu tỉ trên trục số bằng cách chia đơn vị thành b phần bằng nhau. So sánh hai số hữu tỉ bằng cách viết chúng dưới dạng phân số rồi so sánh; số hữu tỉ dương lớn hơn 0, số hữu tỉ âm nhỏ hơn 0."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Cộng, trừ, nhân, chia số hữu tỉ",
+    "noiDungCotLoi": "Cộng, trừ hai số hữu tỉ bằng cách viết dưới dạng phân số có mẫu dương rồi áp dụng quy tắc cộng, trừ phân số; phép cộng có tính giao hoán, kết hợp, cộng với 0, có số đối. Nhân, chia hai số hữu tỉ bằng cách viết dưới dạng phân số rồi áp dụng quy tắc nhân, chia phân số; phép nhân có tính giao hoán, kết hợp, nhân với 1, phân phối với phép cộng, có số nghịch đảo."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Lũy thừa với số mũ tự nhiên của một số hữu tỉ",
+    "noiDungCotLoi": "Lũy thừa bậc n của số hữu tỉ x là tích của n thừa số x (n là số tự nhiên lớn hơn 1); x gọi là cơ số, n gọi là số mũ. Quy ước x^1 = x, x^0 = 1 (x ≠ 0). Công thức (a/b)^n = a^n/b^n. Quy tắc nhân, chia hai lũy thừa cùng cơ số: x^m · x^n = x^(m+n), x^m : x^n = x^(m-n). Lũy thừa của lũy thừa: (x^m)^n = x^(m·n)."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Thứ tự thực hiện các phép tính. Quy tắc chuyển vế",
+    "noiDungCotLoi": "Thứ tự thực hiện phép tính: lũy thừa → nhân, chia → cộng, trừ (không có ngoặc); ngoặc tròn () → ngoặc vuông [] → ngoặc nhọn {} (có ngoặc); nếu chỉ có cộng trừ hoặc chỉ có nhân chia thì thực hiện từ trái sang phải. Đẳng thức A = B có vế trái, vế phải; tính chất: nếu a = b thì b = a và a + c = b + c. Quy tắc chuyển vế: khi chuyển một số hạng từ vế này sang vế kia phải đổi dấu số hạng đó (dấu cộng thành dấu trừ và ngược lại)."
+  }
+]
