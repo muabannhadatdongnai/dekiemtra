@@ -1,0 +1,12 @@
+[
+  {
+    "soBai": 20,
+    "tenBai": "Chủ đề 1: Vẽ hình đơn giản với phần mềm GeoGebra",
+    "noiDungCotLoi": "Hướng dẫn dùng GeoGebra để vẽ hai đường thẳng song song (công cụ Đường thẳng qua 2 điểm, Điểm mới, Đường song song), minh họa Tiên đề Euclid. Vẽ tia phân giác của một góc bằng công cụ Tia đi qua 2 điểm và Đường phân giác. Vẽ đường trung trực của đoạn thẳng bằng công cụ Đường trung trực trực tiếp hoặc theo định nghĩa (Trung điểm rồi Đường vuông góc). Vẽ tam giác biết ba cạnh hoặc biết hai cạnh và góc xen giữa bằng công cụ Đường tròn với tâm và bán kính kết hợp Giao điểm của 2 đối tượng và Góc với độ lớn cho trước."
+  },
+  {
+    "soBai": 21,
+    "tenBai": "Chủ đề 2: Dân số và cơ cấu dân số Việt Nam",
+    "noiDungCotLoi": "Thu thập số liệu dân số Việt Nam năm 2020 (tổng 97,58 triệu người; theo giới tính Nam 49,8%, Nữ 50,2%; theo nơi sinh sống Thành thị 36,8%, Nông thôn 63,2%) và lập bảng thống kê số dân thực tế. Hướng dẫn thực hành vẽ biểu đồ bằng Excel: vẽ biểu đồ hình quạt tròn (Insert → Pie → 2-D Pie, đặt tiêu đề, hiển thị Data Labels) minh họa qua thị phần các hãng điện thoại; vẽ biểu đồ đoạn thẳng (Insert → Line → 2-D Line, đặt tiêu đề và tên trục) minh họa qua chỉ số giá tiêu dùng (CPI) Việt Nam theo thời gian."
+  }
+]

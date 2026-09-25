@@ -1,0 +1,17 @@
+[
+  {
+    "soBai": 17,
+    "tenBai": "Thu thập và phân loại dữ liệu",
+    "noiDungCotLoi": "Thu thập dữ liệu là quá trình thu thập thông tin qua phỏng vấn, quan sát hoặc lập bảng hỏi. Dữ liệu được phân loại thành dữ liệu là số (định lượng) và dữ liệu không là số (định tính); dữ liệu định tính lại chia thành loại không thể sắp xếp thứ tự (quốc tịch, phương tiện đi lại) và loại có thể sắp xếp thứ tự (mức độ đồng ý, học lực). Tính đại diện của dữ liệu: dữ liệu thu thập phải đại diện cho toàn bộ đối tượng quan tâm để đưa ra kết luận hợp lí; mẫu khảo sát bị giới hạn về nhóm, độ tuổi hay phân khúc sẽ không đảm bảo tính đại diện."
+  },
+  {
+    "soBai": 18,
+    "tenBai": "Biểu đồ hình quạt tròn",
+    "noiDungCotLoi": "Biểu đồ hình quạt tròn dùng để so sánh các phần trong toàn bộ dữ liệu; cả hình tròn tương ứng 100%, mỗi hình quạt biểu diễn tỉ lệ phần trăm của một phần. Hình quạt chiếm một nửa hình tròn ứng với 50%, một phần tư ứng với 25%; hai hình quạt bằng nhau biểu diễn cùng tỉ lệ. Khi hình tròn chia đều thành 10 hoặc 20 phần, mỗi phần tương ứng 10% hoặc 5%. Công thức tính số lượng thực tế từ tỉ lệ phần trăm: Số lượng thực tế = Tổng số lượng × Tỉ lệ phần trăm."
+  },
+  {
+    "soBai": 19,
+    "tenBai": "Biểu đồ đoạn thẳng",
+    "noiDungCotLoi": "Biểu đồ đoạn thẳng dùng để biểu diễn sự thay đổi của một đại lượng theo thời gian, gồm trục ngang (thời gian), trục đứng (giá trị đại lượng), các điểm biểu diễn, các đoạn thẳng nối điểm liên tiếp và tiêu đề. Độ dốc của đoạn thẳng thể hiện tốc độ tăng/giảm; có thể vẽ nhiều đường biểu diễn trên cùng biểu đồ để so sánh. Quy trình vẽ gồm 4 bước: vẽ hệ trục tọa độ, đánh dấu điểm biểu diễn, nối các điểm bằng đoạn thẳng, ghi tên trục và tiêu đề. Khi biên độ biến thiên nhỏ, có thể không bắt đầu trục đứng từ 0 để làm rõ xu hướng tăng giảm."
+  }
+]
