@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 12,
+    "tenBai": "Tổng các góc trong một tam giác",
+    "noiDungCotLoi": "Định lí: tổng số đo ba góc trong một tam giác bằng 180°, chứng minh bằng cách kẻ qua một đỉnh đường thẳng song song với cạnh đối diện và dùng cặp góc so le trong. Phân loại tam giác theo góc: tam giác nhọn (ba góc đều nhọn), tam giác vuông (có một góc vuông, cạnh đối diện góc vuông là cạnh huyền, hai cạnh kề góc vuông là cạnh góc vuông, hai góc nhọn phụ nhau), tam giác tù (có một góc tù). Góc ngoài của tam giác là góc kề bù với một góc trong; mỗi góc ngoài có số đo bằng tổng hai góc trong không kề với nó và luôn lớn hơn mỗi góc trong không kề với nó."
+  },
+  {
+    "soBai": 13,
+    "tenBai": "Hai tam giác bằng nhau. Trường hợp bằng nhau thứ nhất của tam giác: cạnh-cạnh-cạnh (c.c.c)",
+    "noiDungCotLoi": "Hai tam giác bằng nhau là hai tam giác có các cạnh tương ứng bằng nhau và các góc tương ứng bằng nhau, kí hiệu ΔABC = ΔA'B'C' với tên đỉnh sắp xếp theo đúng thứ tự tương ứng. Trường hợp bằng nhau cạnh-cạnh-cạnh (c.c.c): nếu ba cạnh của tam giác này bằng ba cạnh của tam giác kia thì hai tam giác đó bằng nhau."
+  },
+  {
+    "soBai": 14,
+    "tenBai": "Trường hợp bằng nhau thứ hai và thứ ba của tam giác",
+    "noiDungCotLoi": "Trường hợp cạnh-góc-cạnh (c.g.c): nếu hai cạnh và góc xen giữa của tam giác này bằng hai cạnh và góc xen giữa của tam giác kia thì hai tam giác đó bằng nhau (góc xen giữa là góc tạo bởi hai cạnh đang xét). Trường hợp góc-cạnh-góc (g.c.g): nếu một cạnh và hai góc kề của tam giác này bằng một cạnh và hai góc kề của tam giác kia thì hai tam giác đó bằng nhau (hai góc kề một cạnh là hai góc có đỉnh là hai đầu mút của cạnh đó)."
+  },
+  {
+    "soBai": 15,
+    "tenBai": "Các trường hợp bằng nhau của tam giác vuông",
+    "noiDungCotLoi": "Bốn trường hợp bằng nhau đặc biệt của tam giác vuông, suy ra từ ba trường hợp bằng nhau cơ bản: (1) Hai cạnh góc vuông tương ứng bằng nhau; (2) Cạnh góc vuông và góc nhọn kề cạnh ấy tương ứng bằng nhau; (3) Cạnh huyền và một góc nhọn tương ứng bằng nhau (hệ quả của g.c.g); (4) Cạnh huyền và một cạnh góc vuông tương ứng bằng nhau."
+  },
+  {
+    "soBai": 16,
+    "tenBai": "Tam giác cân. Đường trung trực của đoạn thẳng",
+    "noiDungCotLoi": "Tam giác cân là tam giác có hai cạnh bằng nhau (cạnh bên, cạnh đáy, góc ở đáy, góc ở đỉnh); trong tam giác cân, hai góc ở đáy bằng nhau, và ngược lại tam giác có hai góc bằng nhau thì cân. Tam giác đều là tam giác có ba cạnh bằng nhau, ba góc bằng nhau và mỗi góc bằng 60°. Đường trung trực của một đoạn thẳng là đường thẳng vuông góc với đoạn thẳng đó tại trung điểm; một điểm nằm trên đường trung trực thì cách đều hai đầu mút của đoạn thẳng, và ngược lại một điểm cách đều hai đầu mút thì nằm trên đường trung trực; tập hợp các điểm cách đều hai đầu mút của đoạn thẳng AB chính là đường trung trực của AB."
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "soBai": 8,
+    "tenBai": "Góc ở vị trí đặc biệt. Tia phân giác của một góc",
+    "noiDungCotLoi": "Hai góc kề bù là hai góc có một cạnh chung, hai cạnh còn lại là hai tia đối nhau, tổng số đo bằng 180°. Hai góc kề nhau có một cạnh chung và hai cạnh còn lại nằm hai phía đường thẳng chứa cạnh chung; hai góc bù nhau có tổng số đo bằng 180°. Hai góc đối đỉnh là hai góc mà mỗi cạnh của góc này là tia đối của một cạnh của góc kia, hai góc đối đỉnh thì bằng nhau. Tia phân giác của một góc là tia nằm giữa hai cạnh của góc và tạo với hai cạnh ấy hai góc bằng nhau; nếu Oz là tia phân giác của góc xOy thì góc xOz = góc zOy = 1/2 góc xOy. Có hai cách vẽ tia phân giác: dùng thước đo góc hoặc dùng compa và thước thẳng."
+  },
+  {
+    "soBai": 9,
+    "tenBai": "Hai đường thẳng song song và dấu hiệu nhận biết",
+    "noiDungCotLoi": "Khi đường thẳng c cắt hai đường thẳng a, b tạo thành các cặp góc so le trong và các cặp góc đồng vị. Nếu có một cặp góc so le trong bằng nhau thì cặp góc so le trong còn lại và các cặp góc đồng vị cũng bằng nhau. Dấu hiệu nhận biết hai đường thẳng song song: nếu đường thẳng c cắt hai đường thẳng phân biệt a, b mà tạo thành một cặp góc so le trong bằng nhau hoặc một cặp góc đồng vị bằng nhau thì a // b."
+  },
+  {
+    "soBai": 10,
+    "tenBai": "Tiên đề Euclid. Tính chất của hai đường thẳng song song",
+    "noiDungCotLoi": "Tiên đề Euclid: qua một điểm ở ngoài một đường thẳng, chỉ có duy nhất một đường thẳng song song với đường thẳng đó. Tính chất của hai đường thẳng song song: nếu một đường thẳng cắt hai đường thẳng song song thì hai góc so le trong bằng nhau và hai góc đồng vị bằng nhau. Quan hệ giữa tính vuông góc và song song: hai đường thẳng phân biệt cùng vuông góc với một đường thẳng thứ ba thì song song với nhau; nếu một đường thẳng vuông góc với một trong hai đường thẳng song song thì cũng vuông góc với đường thẳng còn lại; hai đường thẳng phân biệt cùng song song với một đường thẳng thứ ba thì song song với nhau."
+  },
+  {
+    "soBai": 11,
+    "tenBai": "Định lí và chứng minh định lí",
+    "noiDungCotLoi": "Định lí là một khẳng định được suy ra từ những khẳng định đúng đã biết, thường phát biểu dưới dạng 'Nếu... thì...', gồm giả thiết (GT, phần giữa 'Nếu' và 'thì') và kết luận (KL, phần sau 'thì'). Chứng minh định lí là dùng suy luận để từ giả thiết suy ra kết luận. Ví dụ minh họa: chứng minh hai góc đối đỉnh thì bằng nhau, và hai góc kề bù bằng nhau thì mỗi góc là góc vuông, bằng cách lập luận qua các đẳng thức góc kề bù và quy tắc chuyển vế."
+  }
+]
