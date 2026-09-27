@@ -1,0 +1,32 @@
+[
+  {
+    "soBai": 8,
+    "tenBai": "Mô hình động học phân tử chất khí",
+    "noiDungCotLoi": "Thuyết động học phân tử chất khí: các phân tử khí có kích thước rất nhỏ so với khoảng cách giữa chúng (thể tích phân tử bỏ qua được so với bình chứa); các phân tử chuyển động hỗn loạn không ngừng, nhiệt độ càng cao động năng chuyển động nhiệt càng lớn; va chạm của các phân tử với thành bình tạo nên áp suất khí. Khí lí tưởng coi các phân tử là chất điểm chỉ tương tác khi va chạm (bỏ qua lực hút, đẩy ở xa); khí thực có kích thước phân tử xác định và luôn có lực tương tác; ở nhiệt độ cao, áp suất thấp khí thực gần đúng là khí lí tưởng. Chuyển động Brown trong chất khí là chuyển động hỗn loạn của hạt rắn nhỏ lơ lửng trong khí, gây ra bởi va chạm không cân bằng của các phân tử khí."
+  },
+  {
+    "soBai": 9,
+    "tenBai": "Định luật Boyle - Quá trình đẳng nhiệt",
+    "noiDungCotLoi": "Quá trình đẳng nhiệt là quá trình biến đổi trạng thái khí khi nhiệt độ không đổi. Định luật Boyle: với khối lượng khí xác định ở nhiệt độ không đổi, áp suất tỉ lệ nghịch với thể tích: p·V = hằng số, hay p1·V1 = p2·V2. Trong hệ tọa độ (p, V), đường đẳng nhiệt là một nhánh hyperbol; đường đẳng nhiệt ở nhiệt độ cao hơn nằm xa gốc tọa độ hơn."
+  },
+  {
+    "soBai": 10,
+    "tenBai": "Định luật Charles - Quá trình đẳng áp",
+    "noiDungCotLoi": "Quá trình đẳng áp là quá trình biến đổi trạng thái khí khi áp suất không đổi. Thang nhiệt độ tuyệt đối (Kelvin) lấy mốc 0 tại độ không tuyệt đối (−273,15°C); công thức T(K) = t(°C) + 273,15 (làm tròn T = t + 273). Định luật Charles: với khối lượng khí xác định ở áp suất không đổi, thể tích tỉ lệ thuận với nhiệt độ tuyệt đối: V/T = hằng số, hay V1/T1 = V2/T2 (bắt buộc dùng nhiệt độ Kelvin). Trong hệ tọa độ (V, T), đường đẳng áp là đường thẳng qua gốc tọa độ; đường đẳng áp có áp suất nhỏ hơn nằm dốc hơn (phía trên)."
+  },
+  {
+    "soBai": 11,
+    "tenBai": "Phương trình trạng thái của khí lí tưởng",
+    "noiDungCotLoi": "Phương trình trạng thái khí lí tưởng (Clapeyron) khi cả p, V, T đều thay đổi: pV/T = hằng số, hay p1V1/T1 = p2V2/T2. Phương trình Clapeyron - Mendeleev cho lượng khí bất kỳ: pV = nRT = (m/M)RT, với R ≈ 8,31 J/(mol·K), n là số mol, m khối lượng khí, M khối lượng mol. Hằng số Boltzmann k = R/N_A ≈ 1,38×10^-23 J/K, liên hệ năng lượng nhiệt ở quy mô một phân tử."
+  },
+  {
+    "soBai": 12,
+    "tenBai": "Áp suất khí theo mô hình động học phân tử. Quan hệ giữa động năng phân tử và nhiệt độ",
+    "noiDungCotLoi": "Áp suất khí lí tưởng theo mô hình vi mô: p = (1/3)·μ·m·v̄² = (2/3)·μ·Ēd, với μ = N/V là mật độ phân tử, m khối lượng một phân tử, v̄² trung bình bình phương tốc độ, Ēd = (1/2)mv̄² là động năng tịnh tiến trung bình. Mối quan hệ giữa động năng phân tử và nhiệt độ: Ēd = (3/2)kT, cho thấy động năng tịnh tiến trung bình chỉ phụ thuộc nhiệt độ tuyệt đối, không phụ thuộc bản chất khí; nhiệt độ tuyệt đối là thước đo động năng tịnh tiến trung bình; tại T = 0K động năng trung bình bằng 0."
+  },
+  {
+    "soBai": 13,
+    "tenBai": "Bài tập về khí lí tưởng",
+    "noiDungCotLoi": "Phương pháp giải các dạng bài trọng tâm: (1) áp dụng định luật đẳng quá trình (Boyle khi đẳng nhiệt, Charles khi đẳng áp) — xác định lượng khí cố định, đổi nhiệt độ sang Kelvin; (2) áp dụng phương trình trạng thái khí lí tưởng khi cả 3 thông số thay đổi, hoặc phương trình Clapeyron-Mendeleev khi cần tính khối lượng, khối lượng riêng, số mol (chú ý đổi đơn vị p sang Pa, V sang m³ khi dùng R = 8,31); (3) tính áp suất vi mô, động năng và tốc độ căn quân phương bằng Ēd = (3/2)kT và v_cqp = √(3kT/m) = √(3RT/M). Các ví dụ minh họa: bóng thám không theo định luật Boyle; khí trong xilanh đun nóng đẳng áp theo định luật Charles; khí nén trong động cơ theo phương trình Clapeyron; động năng và tốc độ căn quân phương của phân tử helium ở nhiệt độ phòng."
+  }
+]

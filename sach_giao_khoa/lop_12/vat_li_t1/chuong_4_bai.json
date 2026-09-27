@@ -1,0 +1,27 @@
+[
+  {
+    "soBai": 21,
+    "tenBai": "Cấu trúc hạt nhân",
+    "noiDungCotLoi": "Thí nghiệm tán xạ hạt alpha của Rutherford (1911): bắn hạt alpha vào lá vàng mỏng, hầu hết xuyên thẳng, một số lệch hướng, tỉ lệ rất nhỏ bị bật ngược; kết luận nguyên tử có cấu tạo rỗng, hạt nhân kích thước cực nhỏ tập trung gần như toàn bộ khối lượng và điện tích dương. Hạt nhân cấu tạo từ nucleon gồm proton (điện tích +e, khối lượng ~1,67262×10^-27 kg) và neutron (trung hòa, khối lượng ~1,67493×10^-27 kg); đơn vị khối lượng nguyên tử amu ≈ 1,66054×10^-27 kg. Bán kính hạt nhân R = 1,2×10^-15·A^(1/3) m. Kí hiệu hạt nhân ᴬZX với Z là nguyên tử số (số proton), A là số khối (tổng nucleon), N = A − Z là số neutron. Đồng vị là các hạt nhân cùng số proton Z nhưng khác số neutron N (khác A), cùng tính chất hóa học nhưng khác tính chất vật lý; ví dụ đồng vị Hydrogen (H, D, T) và Carbon (C-12, C-13, C-14)."
+  },
+  {
+    "soBai": 22,
+    "tenBai": "Phản ứng hạt nhân và năng lượng liên kết",
+    "noiDungCotLoi": "Phản ứng hạt nhân là quá trình biến đổi hạt nhân này thành hạt nhân khác, gồm phản ứng tự phát (phóng xạ) và phản ứng kích thích (do tương tác hoặc bắn phá, gồm phân hạch, nhiệt hạch). Định luật bảo toàn số khối A và bảo toàn điện tích Z trong phản ứng hạt nhân (không bảo toàn khối lượng nghỉ hay số neutron riêng lẻ). Độ hụt khối Δm = [Z·mp + (A−Z)·mn] − mX; theo thuyết tương đối Einstein E = mc², năng lượng liên kết Elk = Δm·c², năng lượng liên kết riêng Elkr = Elk/A đặc trưng độ bền vững hạt nhân (hạt nhân có A từ 50-95, như Fe-56, bền vững nhất). Phản ứng phân hạch: hạt nhân nặng hấp thụ neutron chậm rồi vỡ thành hai hạt nhân trung bình, tỏa năng lượng lớn (~200 MeV với U-235) và giải phóng neutron mới; phản ứng dây chuyền với hệ số nhân neutron k: k<1 tắt nhanh, k=1 tự duy trì (lò phản ứng), k>1 mất kiểm soát (bom); khối lượng tới hạn của U-235 tinh khiết khoảng 47 kg. Phản ứng nhiệt hạch: các hạt nhân nhẹ kết hợp thành hạt nhân nặng hơn ở nhiệt độ cực cao (10^7-10^8 K), tỏa năng lượng lớn, cần mật độ và thời gian giữ đủ lớn (tiêu chuẩn Lawson); ưu điểm nhiên liệu dồi dào, sạch, không rác thải phóng xạ."
+  },
+  {
+    "soBai": 23,
+    "tenBai": "Hiện tượng phóng xạ",
+    "noiDungCotLoi": "Phóng xạ là quá trình hạt nhân không bền tự phân rã thành hạt nhân khác kèm phát bức xạ; hạt nhân mẹ và hạt nhân con; quá trình tự phát, không phụ thuộc điều kiện bên ngoài, có tính ngẫu nhiên. Ba dạng phóng xạ: alpha (hạt nhân He, ion hóa mạnh, bị chặn bởi giấy), beta β⁻ (electron) và β⁺ (positron, ion hóa yếu hơn, đâm xuyên mạnh hơn, bị chặn bởi nhôm mỏng), gamma (sóng điện từ bước sóng cực ngắn, không đổi A và Z, đâm xuyên mạnh nhất, bị chặn bởi chì dày). Chu kì bán rã T là thời gian để 50% số hạt nhân phân rã. Định luật phóng xạ: Nt = N0·2^(-t/T) = N0·e^(-λt), với λ = ln2/T là hằng số phóng xạ. Độ phóng xạ H = λ·Nt = H0·2^(-t/T), đơn vị Becơren (Bq) hoặc Curi (Ci, 1Ci = 3,7×10^10 Bq). An toàn phóng xạ: liều hấp thụ hiệu dụng đo bằng Sivơ (Sv); ba nguyên tắc an toàn là giữ khoảng cách, dùng tấm che chắn, giảm thời gian tiếp xúc."
+  },
+  {
+    "soBai": 24,
+    "tenBai": "Công nghiệp hạt nhân",
+    "noiDungCotLoi": "Nhà máy điện hạt nhân dùng nhiệt từ phản ứng phân hạch dây chuyền có kiểm soát (U-235 hoặc Pu-239) trong lò phản ứng để đun nóng chất tải nhiệt, làm quay tuabin phát điện; lò phản ứng gồm thanh nhiên liệu, chất làm chậm neutron (nước nhẹ, than chì), thanh điều khiển (Boron, Cadmium) hấp thụ neutron để kiểm soát hệ số k. Y học hạt nhân: chẩn đoán bằng đồng vị phóng xạ và thiết bị SPECT/PET; điều trị bằng xạ trị ngoài (nguồn phóng xạ như Co-60) hoặc xạ trị áp sát (nguồn đặt trong cơ thể). Ứng dụng trong sinh học và bảo quản thực phẩm: chiếu xạ gây đột biến gene có lợi ở cây trồng; chiếu xạ thực phẩm để diệt khuẩn, nấm mốc, côn trùng, kéo dài bảo quản mà không đổi chất dinh dưỡng."
+  },
+  {
+    "soBai": 25,
+    "tenBai": "Bài tập về Vật lí hạt nhân",
+    "noiDungCotLoi": "Phương pháp viết phương trình phản ứng hạt nhân và áp dụng định luật bảo toàn số khối A và điện tích Z để xác định hạt nhân chưa biết (ví dụ bắn phá N-14 bằng hạt alpha thu được proton và O-17). Phương pháp tính độ hụt khối Δm, năng lượng liên kết Elk = Δm·c² (dùng hệ thức 1amu·c² ≈ 931,5 MeV), năng lượng liên kết riêng Elkr = Elk/A, và năng lượng phản ứng ΔE = (mtrước − msau)·c² hoặc ΔE = Elk,sau − Elk,trước (dương là tỏa năng lượng). Ví dụ: tính năng lượng tỏa ra khi tổng hợp 1 gam Heli từ phản ứng nhiệt hạch D-T. Phương pháp bài tập định luật phóng xạ: Nt = N0·2^(-t/T), tỉ lệ phân rã và còn lại; ví dụ tính độ phóng xạ còn lại sau thời gian t với chu kì bán rã T cho trước."
+  }
+]

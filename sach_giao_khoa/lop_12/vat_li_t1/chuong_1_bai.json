@@ -1,0 +1,37 @@
+[
+  {
+    "soBai": 1,
+    "tenBai": "Cấu trúc của chất. Sự chuyển thể",
+    "noiDungCotLoi": "Mô hình động học phân tử về cấu tạo chất: chất cấu tạo từ các hạt riêng biệt (phân tử), các phân tử chuyển động hỗn loạn không ngừng (nhiệt độ càng cao tốc độ chuyển động trung bình càng lớn, minh chứng bằng chuyển động Brown), giữa các phân tử có lực hút và lực đẩy (lực liên kết phân tử) phụ thuộc khoảng cách. Cấu trúc và tính chất của chất rắn, lỏng, khí khác nhau về khoảng cách phân tử, lực liên kết, chuyển động, hình dạng, thể tích, khả năng nén. Các quá trình chuyển thể: nóng chảy, đông đặc, hóa hơi (bay hơi, sôi), ngưng tụ, thăng hoa, ngưng kết, được giải thích bằng mô hình động học phân tử. Chất rắn kết tinh có nhiệt độ nóng chảy xác định, chất rắn vô định hình thì không; trạng thái plasma xuất hiện ở nhiệt độ cực cao."
+  },
+  {
+    "soBai": 2,
+    "tenBai": "Nội năng. Định luật I của nhiệt động lực học",
+    "noiDungCotLoi": "Nội năng U của một vật là tổng động năng và thế năng của các phân tử cấu tạo nên vật, phụ thuộc nhiệt độ và thể tích: U = f(T, V). Có hai cách làm thay đổi nội năng: thực hiện công (A) và truyền nhiệt (Q). Định luật I nhiệt động lực học: ΔU = A + Q, với quy ước dấu: A > 0 khi hệ nhận công, A < 0 khi hệ thực hiện công; Q > 0 khi hệ nhận nhiệt, Q < 0 khi hệ tỏa nhiệt. Động cơ nhiệt biến đổi nội năng thành cơ năng, gồm nguồn nóng, bộ phận phát động và nguồn lạnh; hiệu suất H = |A|/Q1 = (Q1 − Q2)/Q1 < 1."
+  },
+  {
+    "soBai": 3,
+    "tenBai": "Nhiệt độ. Thang nhiệt độ - Nhiệt kế",
+    "noiDungCotLoi": "Hai vật có nhiệt độ khác nhau tiếp xúc sẽ truyền nhiệt cho đến khi đạt trạng thái cân bằng nhiệt. Thang nhiệt độ Celsius dựa trên mốc 0°C (nước đóng băng) và 100°C (nước sôi), chia thành 100 phần bằng nhau. Thang Kelvin là thang nhiệt độ tuyệt đối, độ không tuyệt đối (0 K) tương ứng −273,15°C; công thức chuyển đổi T(K) = t(°C) + 273,15 (làm tròn 273). Nhiệt kế là thiết bị đo nhiệt độ dựa trên sự thay đổi tính chất vật lí theo nhiệt độ (nở nhiệt, điện trở, hiệu điện thế); các loại phổ biến: nhiệt kế rượu, thủy ngân, hồng ngoại, điện tử."
+  },
+  {
+    "soBai": 4,
+    "tenBai": "Nhiệt dung riêng",
+    "noiDungCotLoi": "Nhiệt dung riêng c của một chất là nhiệt lượng cần cung cấp cho 1 kg chất đó tăng thêm 1°C (hoặc 1K), đơn vị J/(kg·K); chất có nhiệt dung riêng lớn cần nhiều nhiệt để nóng lên nhưng giữ nhiệt tốt hơn. Công thức tính nhiệt lượng: Q = m·c·ΔT = m·c·(T2 − T1). Bảng giá trị nhiệt dung riêng của một số chất phổ biến: nước (4200), nước đá (2100), không khí (1000), thủy tinh (840), đất (800), sắt (440), đồng (380), thủy ngân (140), chì (130) J/(kg·K)."
+  },
+  {
+    "soBai": 5,
+    "tenBai": "Nhiệt nóng chảy riêng",
+    "noiDungCotLoi": "Nhiệt nóng chảy riêng λ của một chất rắn là nhiệt lượng cần thiết để 1 kg chất đó chuyển hoàn toàn từ rắn sang lỏng ở nhiệt độ nóng chảy xác định, đơn vị J/kg, cho biết mức độ liên kết trong mạng tinh thể. Công thức: Q = λ·m. Bảng nhiệt độ nóng chảy và nhiệt nóng chảy riêng của một số chất: nước đá (0°C, 3,34×10^5 J/kg), sắt (1535°C, 2,77×10^5), đồng (1084°C, 1,80×10^5), chì (327°C, 0,25×10^5)."
+  },
+  {
+    "soBai": 6,
+    "tenBai": "Nhiệt hóa hơi riêng",
+    "noiDungCotLoi": "Nhiệt hóa hơi riêng L của một chất lỏng là nhiệt lượng cần thiết để 1 kg chất lỏng đó hóa hơi hoàn toàn ở nhiệt độ sôi xác định dưới áp suất tiêu chuẩn, đơn vị J/kg, cho biết năng lượng cần để thắng lực liên kết phân tử ở thể lỏng. Công thức: Q = L·m. Bảng nhiệt độ sôi và nhiệt hóa hơi riêng của một số chất: nước (100°C, 2,26×10^6 J/kg), rượu ethanol (78°C, 0,857×10^6), thủy ngân (357°C, 0,285×10^6), ether (34,5°C, 0,40×10^6)."
+  },
+  {
+    "soBai": 7,
+    "tenBai": "Bài tập về Vật lí nhiệt",
+    "noiDungCotLoi": "Phương pháp giải bài toán áp dụng Định luật I nhiệt động lực học (ΔU = A + Q): xác định hệ khảo sát, phân tích trao đổi công và nhiệt, áp dụng quy ước dấu, thay vào công thức. Phương pháp giải bài toán truyền nhiệt và cân bằng nhiệt: tổng nhiệt lượng thu vào bằng tổng nhiệt lượng tỏa ra (ΣQthu = ΣQtỏa), cần cộng thêm nhiệt lượng chuyển thể Q = λm hoặc Q = Lm nếu có chuyển thể. Ví dụ minh họa: tính độ biến thiên nội năng khi khí nhận nhiệt và nhận công; tính tổng nhiệt lượng để nước đá từ −10°C nóng chảy hoàn toàn rồi hóa hơi hoàn toàn ở 100°C qua 4 giai đoạn liên tiếp (nâng nhiệt độ nước đá, nóng chảy, nâng nhiệt độ nước, hóa hơi)."
+  }
+]

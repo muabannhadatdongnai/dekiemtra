@@ -1,0 +1,37 @@
+[
+  {
+    "soBai": 14,
+    "tenBai": "Từ trường",
+    "noiDungCotLoi": "Tương tác từ là tương tác giữa nam châm với nam châm, dòng điện với nam châm, hoặc dòng điện với dòng điện; lực tương tác gọi là lực từ (minh chứng qua thí nghiệm Oersted). Từ trường là dạng vật chất tồn tại quanh dòng điện hoặc nam châm, gây ra lực từ tác dụng lên nam châm, dòng điện hay hạt mang điện chuyển động; phát hiện bằng nam châm thử. Vectơ cảm ứng từ B đặc trưng cho từ trường về mặt tác dụng lực, có phương trùng trục nam châm thử, chiều từ cực Nam sang cực Bắc của nam châm thử; từ trường đều có B như nhau tại mọi điểm. Đường sức từ là đường tiếp tuyến trùng phương vectơ B tại mỗi điểm, đi ra từ cực Bắc và vào cực Nam của nam châm vĩnh cửu, là đường cong khép kín, mật độ dày thể hiện từ trường mạnh. Quy tắc nắm tay phải xác định chiều đường sức từ của dòng điện thẳng, dòng điện tròn và ống dây."
+  },
+  {
+    "soBai": 15,
+    "tenBai": "Lực từ tác dụng lên dây dẫn mang dòng điện. Cảm ứng từ",
+    "noiDungCotLoi": "Thí nghiệm treo đoạn dây dẫn mang dòng điện trong từ trường của nam châm chữ U cho thấy dây bị lệch, chứng tỏ có lực từ tác dụng. Lực từ F có điểm đặt tại trung điểm đoạn dây, phương vuông góc với dây dẫn và vectơ cảm ứng từ B, chiều xác định theo quy tắc bàn tay trái. Hệ thức Ampere: F = B·I·L·sinθ, với F (N), B (T), I (A), L (m), θ là góc giữa dây dẫn và B. Định nghĩa và đơn vị cảm ứng từ: B = F/(I·L·sinθ), đơn vị tesla (T), với 1T = 1N/(1A·1m)."
+  },
+  {
+    "soBai": 16,
+    "tenBai": "Từ thông. Hiện tượng cảm ứng điện từ",
+    "noiDungCotLoi": "Từ thông Φ qua diện tích S đặt trong từ trường đều B: Φ = B·S·cosα (α là góc giữa B và pháp tuyến n), đơn vị vebe (Wb), 1Wb = 1T·1m²; Φ đại diện số đường sức từ xuyên qua diện tích, đạt cực đại khi α = 0° và bằng 0 khi α = 90°. Hiện tượng cảm ứng điện từ: khi từ thông qua mạch kín biến thiên thì xuất hiện dòng điện cảm ứng trong mạch, chỉ tồn tại khi từ thông đang biến thiên. Định luật Lenz: dòng điện cảm ứng có chiều sao cho từ trường cảm ứng chống lại sự biến thiên từ thông ban đầu. Định luật Faraday: suất điện động cảm ứng ec = -N·ΔΦ/Δt, độ lớn |ec| = N·|ΔΦ/Δt|, tỉ lệ thuận với tốc độ biến thiên từ thông."
+  },
+  {
+    "soBai": 17,
+    "tenBai": "Máy phát điện xoay chiều",
+    "noiDungCotLoi": "Nguyên tắc tạo suất điện động xoay chiều dựa trên hiện tượng cảm ứng điện từ: khung dây N vòng diện tích S quay đều tốc độ góc ω trong từ trường đều B tạo từ thông Φ = N·B·S·cos(ωt + φ0), sinh ra suất điện động e = E0·cos(ωt + φ) với E0 = N·B·S·ω là suất điện động cực đại. Cấu tạo máy phát điện xoay chiều gồm phần cảm (tạo từ trường) và phần ứng (xuất hiện suất điện động), bộ phận đứng yên là Stato, bộ phận quay là Rôto. Máy phát điện xoay chiều một pha (công suất nhỏ-trung bình, thường Rôto là nam châm quay) và ba pha (tạo ba dòng điện lệch pha nhau 2π/3, Stato gồm ba cuộn dây lệch nhau 120°, Rôto là nam châm điện quay ở tâm)."
+  },
+  {
+    "soBai": 18,
+    "tenBai": "Ứng dụng hiện tượng cảm ứng điện từ",
+    "noiDungCotLoi": "Máy biến áp là thiết bị biến đổi điện áp hiệu dụng xoay chiều mà không đổi tần số, gồm lõi sắt quấn cuộn sơ cấp (N1 vòng, U1) và cuộn thứ cấp (N2 vòng, U2), hoạt động theo cảm ứng điện từ; công thức U1/U2 = N1/N2, N2 > N1 là máy tăng áp, N2 < N1 là máy hạ áp. Dòng điện Foucault (dòng điện xoáy) xuất hiện trong khối vật dẫn chuyển động hoặc đặt trong từ trường biến thiên; có lợi trong bếp từ, phanh điện từ, lò tôi kim loại, nhưng gây hao phí nhiệt trong máy biến áp/động cơ (khắc phục bằng ghép lá thép mỏng cách điện). Sạc điện thoại không dây và đàn ghi ta điện cũng ứng dụng hiện tượng cảm ứng điện từ."
+  },
+  {
+    "soBai": 19,
+    "tenBai": "Điện từ trường. Mô hình sóng điện từ",
+    "noiDungCotLoi": "Thuyết Maxwell: từ trường biến thiên sinh ra điện trường xoáy, điện trường biến thiên sinh ra từ trường; điện trường biến thiên và từ trường biến thiên là hai mặt của điện từ trường thống nhất. Sóng điện từ là điện từ trường lan truyền trong không gian dưới dạng sóng, lan truyền được cả trong chân không với tốc độ cực đại c ≈ 3×10^8 m/s, bước sóng λ = c·T = c/f. Sóng điện từ là sóng ngang, ba vectơ E, B, v vuông góc nhau từng đôi một tạo tam diện thuận; E và B dao động đồng pha; sóng mang năng lượng (tần số càng cao năng lượng càng lớn) và có đầy đủ tính chất sóng cơ học: phản xạ, khúc xạ, giao thoa, nhiễu xạ."
+  },
+  {
+    "soBai": 20,
+    "tenBai": "Bài tập về từ trường",
+    "noiDungCotLoi": "Phương pháp tính lực từ tác dụng lên dây dẫn: áp dụng F = B·I·L·sinθ, đổi đơn vị SI chuẩn, xác định chiều bằng quy tắc bàn tay trái. Phương pháp tính từ thông và suất điện động cảm ứng: Φ = B·S·cosα (đổi diện tích ra m²), suất điện động Faraday ec = -N·ΔΦ/Δt, độ biến thiên từ thông có thể do B, S hoặc góc thay đổi. Phương pháp bài tập máy biến áp: U1/U2 = N1/N2, với máy lý tưởng công suất bảo toàn nên U1/U2 = N1/N2 = I2/I1. Ví dụ minh họa: tính lực từ trên dây dẫn vuông góc từ trường; tính suất điện động cảm ứng khi B giảm đều qua khung dây nhiều vòng; xác định máy tăng/hạ áp và tính điện áp thứ cấp từ tỉ số vòng dây."
+  }
+]
