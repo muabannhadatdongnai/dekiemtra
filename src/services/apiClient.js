@@ -264,6 +264,28 @@ export async function generateKhgdTieuHocRequest(blueprint) {
   return handleResponse(res);
 }
 
+/**
+ * Tab "Soạn từ vựng" (Phiên 51): đọc Markdown 1 chương SGK → { chuong, vocabGroups[], grammarGroups[], supported }.
+ * Từ + nghĩa lấy nguyên văn từ Markdown (không qua AI) - xem vocabEnglishParser.js.
+ */
+export async function fetchVocabOutlineRequest({ grade, subject, volume, chapter }) {
+  const res = await fetch(
+    `/api/vocab-outline?grade=${grade}&subject=${subject}&volume=${volume}&chapter=${encodeURIComponent(chapter)}`,
+    { headers: authHeaders() }
+  );
+  return handleResponse(res);
+}
+
+/** Tab "Soạn từ vựng": nhờ AI bổ sung phiên âm/loại từ CÒN THIẾU - xem vocabEngine.js. */
+export async function enrichVocabRequest({ subject, words }) {
+  const res = await fetch("/api/vocab-enrich", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ subject, words }),
+  });
+  return handleResponse(res);
+}
+
 /** Thống kê mức dùng Gemini API hôm nay - xem UsageWidget.jsx */
 export async function fetchUsageSummaryRequest() {
   const res = await fetch("/api/usage", { headers: authHeaders() });
