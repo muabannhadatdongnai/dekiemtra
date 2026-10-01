@@ -20,7 +20,8 @@ chi phí **$0** (Vercel + Upstash Redis free tier + AI backbone Gemini qua pool 
 | 6 | 💬 Nhận Xét Học Bạ | Lớp 1-5 | Sinh nhận xét học bạ theo học sinh, lưu lịch sử theo học kỳ qua Upstash Redis. |
 | 7 | 🗂️ Khung KHGD | Lớp 6-12 (THCS+THPT) | Soạn "Khung Kế hoạch giáo dục của giáo viên" (Phụ lục III, CV 5512/BGDĐT-GDTrH) — bảng Phân phối chương trình cả năm lồng ghép SWD (giáo dục học sinh khuyết tật) + Biểu hiện Năng lực số, bảng Kiểm tra đánh giá định kỳ, khổ A4 ngang. Nút nạp chương ĐỌC THẲNG file Markdown SGK (tên bài + nội dung từng bài) để AI soạn SWD/NLS bám sát sách; nút "Tự tính số tiết & đề xuất Ôn tập/Kiểm tra" (Phiên 50: quỹ tiết HK I 18 tuần/HK II 17 tuần, kiểm tra giữa kì ~Tuần 9, cuối kì, tự điền bảng Kiểm tra định kỳ theo Thông tư 22/2021; mọi số đều sửa được); chữ 14pt theo quy định Bộ GD&ĐT; xuất Word sẵn sàng in. |
 | 8 | 🧒 Khung KHGD (Tiểu học) | Lớp 1-5 | Soạn "Kế hoạch dạy học các môn học, hoạt động giáo dục" (Phụ lục 2, CV 2345/2021/BGDĐT-GDTH) — cấu trúc RIÊNG, khác hẳn tab #7 (có Chủ đề/Mạch nội dung + Tiết PPCT chạy suốt năm, chỉ 1 cột gộp "Nội dung điều chỉnh cần thiết" thay vì tách SWD/NLS). Phiên 50: nút "Tự tính số tiết & xếp Ôn tập/Kiểm tra định kì" (giữa kì ~Tuần 9, cuối kì; bài kiểm tra theo Thông tư 27/2020; ưu tiên phần ôn tập có trong Markdown SGK). Chữ 14pt, xuất Word A4 ngang. |
-| 9 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
+| 9 | 🔤 Soạn từ vựng | Lớp 1-12 (Tiếng Anh; Trung/Nhật phiên sau) | Soạn bản từ vựng + ngữ pháp CHO TỪNG TIẾT (mẫu Week/Unit/Period, A. Vocabulary, B. Grammar). Chọn Unit → ĐỌC THẲNG Markdown SGK (từ + nghĩa nguyên văn, KHÔNG qua AI; lấy luôn IPA/loại từ nếu Markdown có) → tick nhóm từ/ngữ pháp thuộc tiết → sửa trực tiếp trên bảng. Nút "AI bổ sung phiên âm/loại từ" CHỈ điền ô còn trống (ô AI điền tô vàng để rà lại). Xuất Word A4 dọc; tab không có In/PDF (như Khung KHGD). |
+| 10 | 📚 Hướng dẫn sử dụng | - | Tab tĩnh hướng dẫn thao tác cho giáo viên. |
 
 ## Môn học & khối lớp hỗ trợ (tab Soạn Giáo án / Đề Cương Ôn Tập / Tạo Đề Kiểm Tra)
 
@@ -73,7 +74,7 @@ chương-bài SGK hiện dùng.
 ```
 src/
 ├── app/
-│   ├── page.js                      # điều phối 9 tab, chỉ 1 tab mount tại 1 thời điểm
+│   ├── page.js                      # điều phối 10 tab, chỉ 1 tab mount tại 1 thời điểm
 │   └── api/{login,chapters,lessons,generate,generate-worksheet,generate-lesson-plan,
 │            generate-vietnamese-exam,generate-outline,usage,
 │            analyze-sample,analyze-worksheet-sample,analyze-lesson-plan-sample,...}/route.js
@@ -137,6 +138,8 @@ Upstash Redis, v.v.
   học/Tự nhiên và Xã hội/Lịch sử và Địa lí/Tin học/Công nghệ) phụ thuộc dữ liệu thật trong kho
   GitHub kiến thức — thiếu dữ liệu thì dropdown liên quan rỗng (hành vi an toàn có chủ đích, không
   phải lỗi).
+
+- Tab "Soạn từ vựng" (Phiên 51) mới đọc được Markdown Tiếng Anh (Lớp 1-12, trừ Lớp 5 và một số chương Lớp 1-4 chưa nhận diện được); Tiếng Trung/Tiếng Nhật chưa có bộ đọc. Dòng nào bộ đọc không nhận ra thì BỎ QUA (không đoán) - giáo viên thêm tay trên bảng.
 
 ## Tài liệu liên quan
 

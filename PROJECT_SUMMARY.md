@@ -5,6 +5,16 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 51 — Tab mới "Soạn từ vựng" (Tiếng Anh): bản soạn từ vựng + ngữ pháp từng tiết, đọc thẳng Markdown SGK
+
+**Yêu cầu Hoan:** tab riêng soạn từ vựng cho môn ngoại ngữ (Tiếng Anh, Tiếng Trung...) dựa trên bộ SGK đã Markdown trong repo; mẫu là tờ in giáo viên đang dùng (Week/Unit/Period, A. Vocabulary 4 cột, B. Grammar).
+
+**Quyết định đã chốt với Hoan trước khi code:** (1) từ + nghĩa lấy THẲNG từ Markdown, KHÔNG để AI sinh; (2) AI chỉ bổ sung phiên âm/loại từ còn thiếu, ô AI điền tô vàng để giáo viên rà; (3) mỗi ngôn ngữ 1 bộ đọc + 1 file xuất riêng (isolation); (4) bảng sửa trực tiếp được rồi xuất Word A4 dọc; (5) làm Tiếng Anh trước, sau đó Trung, Nhật.
+
+**Đã làm:** `vocabEnglishParser.js` (bộ đọc dung sai nhiều kiểu: danh sách `**word** (n): nghĩa`, có/không IPA, bảng nhiều cột map theo tiêu đề, dòng backtick, nhãn in đậm Tiểu học; dòng không nhận ra thì BỎ QUA, không đoán), `vocabParserRegistry.js`, `vocabEngine.js` + `vocabPromptTemplates.js` (AI chỉ điền ô TRỐNG, `mergeEnrichment` không tin AI trả ô đã có, kiểm tra định dạng IPA), 2 route `/api/vocab-outline` (GET, không AI) và `/api/vocab-enrich` (POST, có giới hạn 300 từ/lượt + rate limit giáo viên), `vocabResult.js`, `vocabExportService.js` (Word A4 dọc, bảng độ rộng cố định), 3 component `VocabForm/VocabPreview/VocabExportActions`, nối vào `page.js` (mode `vocab`, KHÔNG dùng `id="print-area"`), 2 hàm mới ở `apiClient.js`.
+
+**Kiểm thử:** 14 test mới (`test/vocabEnglish.test.js`), `npm test` 570/570, `npm run build` sạch, `npm run test:word-compat` 21/21 (thêm kịch bản `soan-tu-vung-tieng-anh`), đã render file Word ra ảnh bằng LibreOffice và đối chiếu bố cục với mẫu. Khảo sát bộ đọc trên toàn bộ 134 file Tiếng Anh thật: 1.873 mục từ, 76% có IPA, 68% có loại từ. CHƯA: trình duyệt thật, Word thật, Gemini thật - xem NEXT_STEPS #39-#41.
+
 ## Phiên 50b — Sửa lỗi Hoan báo: cột Tuần/Ghi chú bị cắt chữ + "JSON.parse: unexpected character..." khi Tạo Khung KHGD Tiểu học
 
 1. **Ảnh chụp Hoan gửi:** sau khi bấm "Tự tính số tiết" (Tiếng Việt Lớp 2), cột "Tuần" hiện "Tuần 17-1" (thiếu số 8),

@@ -46,6 +46,7 @@ import { exportLessonPlanToWord } from "../src/services/lessonPlanExportService.
 import { exportVietnameseExamToWord } from "../src/services/vietnameseExamExportService.js";
 import { buildOutlineDocxBlob } from "../src/services/outlineExportService.js";
 import { buildKhgdDocument } from "../src/services/khgdExportService.js";
+import { buildVocabDocument } from "../src/services/vocabExportService.js";
 import { buildKhgdTieuHocDocument } from "../src/services/khgdTieuHocExportService.js";
 import { Packer } from "docx";
 import { exportReportCommentsToWord } from "../src/services/reportCommentExportService.js";
@@ -164,6 +165,23 @@ function makeOutlineScenario() {
     nganHangBaiTap: [{ cauHoi: "Tính 2/3 + 1/6", dapAn: "5/6" }],
   };
   return buildOutlineDocxBlob({ outline, meta: { tenDeCuong: outline.tenDeCuong }, showAnswers: true });
+}
+
+// Phiên 51 - tab "Soạn từ vựng" (Tiếng Anh): bảng từ vựng 4 cột + bảng ngữ pháp, A4 dọc, có IPA.
+async function makeVocabScenario() {
+  const doc = buildVocabDocument({
+    header: { tuan: "Week 3", unit: "Unit 2: My house", tiet: "Period 8", baiHoc: "Getting started", trang: "16, 17" },
+    words: [
+      { id: "1", word: "air conditioner", ipa: "/ˈeə(r) kənˈdɪʃ.ən.ər/", type: "n", meaning: "điều hoà nhiệt độ" },
+      { id: "2", word: "apartment = flat", ipa: "/əˈpɑːt.mənt/ /flæt/", type: "n", meaning: "căn hộ" },
+      { id: "3", word: "inside", ipa: "/ɪnˈsaɪd/", type: "prep/adv", meaning: "bên trong, ở trong" },
+    ],
+    grammar: [
+      { id: "g1", left: "There is a/an/one + danh từ số ít", right: "có | Ví dụ: There is a lamp in my room." },
+      { id: "g2", left: "Is there ...?", right: "Yes, there is. / No, there isn't." },
+    ],
+  });
+  return Packer.toBlob(doc);
 }
 
 async function makeKhgdScenario() {
@@ -466,6 +484,7 @@ const SCENARIOS = [
   { name: "de-cuong-on-tap", build: makeOutlineScenario },
   { name: "khung-khgd-phu-luc-3", build: makeKhgdScenario },
   { name: "khung-khgd-tieu-hoc-phu-luc-2", build: makeKhgdTieuHocScenario },
+  { name: "soan-tu-vung-tieng-anh", build: makeVocabScenario },
   { name: "nhan-xet-hoc-ba", build: makeReportCommentScenario },
   { name: "giao-an-tieng-anh-nhieu-tiet", build: makeEnglishLessonPlanScenario },
   { name: "de-cuong-tieng-anh", build: makeEnglishOutlineScenario },
