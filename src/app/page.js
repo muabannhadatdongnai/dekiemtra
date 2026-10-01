@@ -27,6 +27,9 @@ import KhgdExportActions from "@/components/KhgdExportActions";
 import KhgdTieuHocForm from "@/components/KhgdTieuHocForm";
 import KhgdTieuHocPreview from "@/components/KhgdTieuHocPreview";
 import KhgdTieuHocExportActions from "@/components/KhgdTieuHocExportActions";
+import VocabForm from "@/components/VocabForm";
+import VocabPreview from "@/components/VocabPreview";
+import VocabExportActions from "@/components/VocabExportActions";
 import HelpGuideView from "@/components/HelpGuideView";
 import { getSession, clearSession, DISABLE_LOGIN, TEST_SESSION as TEST_USER } from "@/services/authService";
 import { EMPTY_EXAM_RESULT } from "@/data/examResult";
@@ -35,6 +38,7 @@ import { EMPTY_VIETNAMESE_EXAM_RESULT } from "@/data/vietnameseExamResult";
 import { EMPTY_OUTLINE_RESULT } from "@/data/outlineResult";
 import { EMPTY_KHGD_RESULT } from "@/data/khgdResult";
 import { EMPTY_KHGD_TIEU_HOC_RESULT } from "@/data/khgdTieuHocResult";
+import { EMPTY_VOCAB_RESULT } from "@/data/vocabResult";
 
 // A2/A3/Giai đoạn 2/Bước 2 (Nhóm B): 6 chế độ làm việc "tạo nội dung" - "lessonPlan" (Soạn giáo
 // án, Mầm non - Lớp 5), "worksheet" (Phiếu bài tập, Mầm non - Lớp 2), "vietnameseExam" (Đề Tiếng
@@ -70,6 +74,10 @@ const MODES = {
   // Tách tab riêng đúng nguyên tắc "mỗi cấp 1 router riêng" đã thống nhất từ đầu, KHÔNG nhét
   // chung vào tab "khgd" dù cùng chủ đề "Khung KHGD".
   KHGD_TIEU_HOC: "khgdTieuHoc",
+  // "vocab" (MỚI, Phiên 51): tab "Soạn từ vựng" - bản soạn từ vựng + ngữ pháp 1 tiết cho môn ngoại ngữ
+  // (Tiếng Anh trước; Tiếng Trung/Nhật phiên sau). Từ + nghĩa đọc THẲNG từ Markdown SGK (không AI); AI chỉ bổ
+  // sung phiên âm/loại từ còn thiếu theo yêu cầu. Giống "khgd": KHÔNG dùng id="print-area", chỉ xuất Word.
+  VOCAB: "vocab",
   HELP: "help",
 };
 
@@ -119,6 +127,7 @@ export default function HomePage() {
   const [outlineResult, setOutlineResult] = useState(EMPTY_OUTLINE_RESULT);
   const [khgdResult, setKhgdResult] = useState(EMPTY_KHGD_RESULT);
   const [khgdTieuHocResult, setKhgdTieuHocResult] = useState(EMPTY_KHGD_TIEU_HOC_RESULT);
+  const [vocabResult, setVocabResult] = useState(EMPTY_VOCAB_RESULT);
 
   // Khôi phục session từ localStorage khi tải lại trang
   useEffect(() => {
@@ -139,6 +148,7 @@ export default function HomePage() {
     setOutlineResult(EMPTY_OUTLINE_RESULT);
     setKhgdResult(EMPTY_KHGD_RESULT);
     setKhgdTieuHocResult(EMPTY_KHGD_TIEU_HOC_RESULT);
+    setVocabResult(EMPTY_VOCAB_RESULT);
     setMode(MODES.LESSON_PLAN);
   }
 
@@ -179,6 +189,10 @@ export default function HomePage() {
 
   function handleKhgdTieuHocGenerated(result) {
     setKhgdTieuHocResult(result);
+  }
+
+  function handleVocabGenerated(result) {
+    setVocabResult(result);
   }
 
   const { questions, teacherRubric, chaptersInfo, typeByLevel, warnings, meta } = examResult;
@@ -291,6 +305,17 @@ export default function HomePage() {
           </button>
           <button
             type="button"
+            onClick={() => setMode(MODES.VOCAB)}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition ${
+              mode === MODES.VOCAB
+                ? "bg-brand-600 text-white"
+                : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+            }`}
+          >
+            🔤 Soạn từ vựng
+          </button>
+          <button
+            type="button"
             onClick={() => setMode(MODES.HELP)}
             className={`rounded-md px-4 py-2 text-sm font-medium transition ${
               mode === MODES.HELP
@@ -316,6 +341,7 @@ export default function HomePage() {
             {mode === MODES.OUTLINE && <OutlineForm onGenerated={handleOutlineGenerated} />}
             {mode === MODES.KHGD && <KhgdForm onGenerated={handleKhgdGenerated} />}
             {mode === MODES.KHGD_TIEU_HOC && <KhgdTieuHocForm onGenerated={handleKhgdTieuHocGenerated} />}
+            {mode === MODES.VOCAB && <VocabForm onGenerated={handleVocabGenerated} />}
             {mode === MODES.REPORT_COMMENT && <ReportCommentForm onGenerated={handleReportCommentGenerated} />}
           </aside>
 
@@ -463,6 +489,13 @@ export default function HomePage() {
               <KhgdTieuHocExportActions lessons={khgdTieuHocResult.lessons} meta={khgdTieuHocResult.meta} />
               <div className="overflow-auto rounded-xl bg-slate-100 p-4">
                 <KhgdTieuHocPreview lessons={khgdTieuHocResult.lessons} meta={khgdTieuHocResult.meta} />
+              </div>
+            </section>
+          ) : mode === MODES.VOCAB ? (
+            <section className="space-y-4">
+              <VocabExportActions result={vocabResult} onResultChange={setVocabResult} />
+              <div className="overflow-auto rounded-xl bg-slate-100 p-4">
+                <VocabPreview result={vocabResult} onResultChange={setVocabResult} />
               </div>
             </section>
           ) : (
