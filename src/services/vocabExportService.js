@@ -49,8 +49,8 @@ const pageProperties = {
 const TABLE_WIDTH_TWIP = convertMillimetersToTwip(PAGE_A4_MM.width - PAGE_MARGIN_MM.left - PAGE_MARGIN_MM.right);
 const pctToTwip = (pct) => Math.round((TABLE_WIDTH_TWIP * pct) / 100);
 
-const VOCAB_COLUMNS = [27, 25, 11, 37]; // New words | Transcription | loại từ | Meaning
-const GRAMMAR_COLUMNS = [38, 62];
+const VOCAB_COLUMNS = [6, 25, 24, 10, 35]; // No. | New words | Transcription | loại từ | Meaning (Phiên 51b: số thứ tự tách cột riêng)
+const GRAMMAR_COLUMNS = [38, 62]; // Structure / Content | Explanation / Example
 
 function run(text, opts = {}) {
   return new TextRun({ text: String(text ?? ""), font: FONT, size: FONT_SIZE, ...opts });
@@ -86,10 +86,11 @@ export function buildVocabularyTable(words = []) {
   const header = new TableRow({
     tableHeader: true,
     children: [
-      cell("New words", VOCAB_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("Transcription", VOCAB_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("", VOCAB_COLUMNS[2], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("Meaning", VOCAB_COLUMNS[3], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("No.", VOCAB_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("New words", VOCAB_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("Transcription", VOCAB_COLUMNS[2], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("", VOCAB_COLUMNS[3], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("Meaning", VOCAB_COLUMNS[4], { bold: true, align: AlignmentType.CENTER, shade: true }),
     ],
   });
   const rows = words.map(
@@ -97,10 +98,11 @@ export function buildVocabularyTable(words = []) {
       new TableRow({
         cantSplit: true,
         children: [
-          cell(`${i + 1}. ${w.word ?? ""}`, VOCAB_COLUMNS[0]),
-          cell(w.ipa ?? "", VOCAB_COLUMNS[1], { align: AlignmentType.CENTER }),
-          cell(formatType(w.type), VOCAB_COLUMNS[2], { align: AlignmentType.CENTER }),
-          cell(w.meaning ?? "", VOCAB_COLUMNS[3]),
+          cell(String(i + 1), VOCAB_COLUMNS[0], { align: AlignmentType.CENTER }),
+          cell(w.word ?? "", VOCAB_COLUMNS[1], { bold: true }),
+          cell(w.ipa ?? "", VOCAB_COLUMNS[2], { align: AlignmentType.CENTER }),
+          cell(formatType(w.type), VOCAB_COLUMNS[3], { align: AlignmentType.CENTER }),
+          cell(w.meaning ?? "", VOCAB_COLUMNS[4]),
         ],
       })
   );
@@ -111,8 +113,8 @@ export function buildGrammarTable(grammar = []) {
   const header = new TableRow({
     tableHeader: true,
     children: [
-      cell("Cấu trúc / Nội dung", GRAMMAR_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("Giải thích / Ví dụ", GRAMMAR_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("Structure / Content", GRAMMAR_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("Explanation / Example", GRAMMAR_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
     ],
   });
   const rows = grammar.map(

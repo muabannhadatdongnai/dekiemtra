@@ -49,11 +49,40 @@ export function normalizeWordType(raw) {
   return "";
 }
 
-/** Làm sạch 1 chuỗi Markdown inline: bỏ trích dẫn [14], **, *, `, dấu chấm cuối. */
-function clean(text) {
+/**
+ * Bỏ ký hiệu LaTeX còn sót trong Markdown SGK ("$S + V(s/es)$", "V(nguyên\\ thể)", "$\\rightarrow$"...) - bản in KHÔNG
+ * có trình dựng công thức nên giáo viên chỉ thấy "$" và "\\" thừa (Phiên 51b, Hoan góp ý). Chỉ xử lý các lệnh thực
+ * sự có trong kho SGK (đã khảo sát): mũi tên, \\text/\\textbf/\\mathbf, "\\ " (dấu cách), \\quad, \\dots; ký tự "$" còn lại bị bỏ.
+ */
+export function stripLatex(text) {
   return String(text ?? "")
+    .replace(/\\(?:text|textbf|textit|mathbf|mathrm|mathit|underline|boldsymbol)\s*\{([^{}]*)\}/g, "$1")
+    .replace(/\\(?:long)?rightarrow|\\to(?![a-z])/g, "→")
+    .replace(/\\leftrightarrow/g, "↔")
+    .replace(/\\nearrow/g, "↗")
+    .replace(/\\searrow/g, "↘")
+    .replace(/\\(?:dots|ldots|cdots)/g, "…")
+    .replace(/\\(?:quad|qquad)/g, " ")
+    .replace(/\\[ ,;!]/g, " ")
+    .replace(/\\(["'_%&#{}])/g, "$1") // \\" ... cũng là dấu thoát thừa (VD \\"who\\")
+    .replace(/\\n(?=[A-ZÀ-Ỹ])/g, " ") // "\\n" gõ nhầm thay cho xuống dòng trong vài chương
+    .replace(/\$+/g, "");
+}
+
+/**
+ * Nhãn "Ví dụ:"/"VD:" → "Ex:" (Hoan: ghi Example hoặc viết tắt). Chỉ đổi NHÃN ở đầu đoạn/sau dấu "|", không đụng
+ * chữ "ví dụ" nằm giữa câu giải thích.
+ */
+export function normalizeExampleLabel(text) {
+  return String(text ?? "")
+    .replace(/(^|\|\s*|\(\s*)(?:ví dụ(?: minh họa)?|vd|e\.g\.?|eg)\s*(\d*)\s*:/gi, (m, pre, n) => `${pre}Ex${n ? ` ${n}` : ""}:`)
+    .replace(/^(?:ví dụ(?: minh họa)?|vd)\s*(\d*)$/i, (m, n) => `Ex${n ? ` ${n}` : ""}`);
+}
+
+/** Làm sạch 1 chuỗi Markdown inline: bỏ LaTeX, trích dẫn [14], **, *, `, khoảng trắng thừa. */
+function clean(text) {
+  return stripLatex(String(text ?? ""))
     .replace(CITATION, "")
-    .replace(/\$\\?\\?rightarrow\$/g, "→")
     .replace(/[`*]+/g, "")
     .replace(/\s+/g, " ")
     .trim();
@@ -221,8 +250,10 @@ function splitGrammarLine(text) {
   const t = clean(text);
   // "Cấu trúc: giải thích" - tách ở dấu : đầu tiên nếu vế trái ngắn
   const idx = t.indexOf(":");
-  if (idx > 0 && idx <= 60) return { left: t.slice(0, idx).trim(), right: t.slice(idx + 1).trim() };
-  return { left: t, right: "" };
+  if (idx > 0 && idx <= 60) {
+    return { left: normalizeExampleLabel(t.slice(0, idx).trim()), right: normalizeExampleLabel(t.slice(idx + 1).trim()) };
+  }
+  return { left: normalizeExampleLabel(t), right: "" };
 }
 
 // ---------- Hàm chính ----------
@@ -367,14 +398,14 @@ export function parseEnglishVocabulary(markdown) {
       const body = bm[2];
       curGrammar = curGrammar || openGrammarGroup();
       if (indent >= 2 && lastGrammarRow) {
-        const extra = clean(body);
+        const extra = normalizeExampleLabel(clean(body));
         if (extra) lastGrammarRow.right = lastGrammarRow.right ? `${lastGrammarRow.right} | ${extra}` : extra;
       } else {
         const row = splitGrammarLine(body);
         if (row.left) { curGrammar.rows.push(row); lastGrammarRow = row; }
       }
     } else if (curGrammar && lastGrammarRow && trimmed.startsWith("*")) {
-      lastGrammarRow.right = (lastGrammarRow.right + " " + clean(trimmed)).trim();
+      lastGrammarRow.right = (lastGrammarRow.right + " " + normalizeExampleLabel(clean(trimmed))).trim();
     }
   }
 
