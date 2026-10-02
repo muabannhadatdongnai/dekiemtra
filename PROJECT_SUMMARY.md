@@ -5,6 +5,15 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 51b — Soạn từ vựng: sửa theo mẫu giáo viên khác (4 góp ý của Hoan)
+
+1. **AI tự điền phiên âm/loại từ ngay khi bấm "Tạo bản soạn"** (`vocabEnrichClient.js`): bảng hiện NGAY từ Markdown, AI điền ô thiếu ở nền. Kết quả AI gộp vào bảng HIỆN TẠI theo id, chỉ ô còn trống (giáo viên đã gõ/xoá trong lúc chờ thì giữ nguyên), bỏ qua nếu đã tạo bản soạn khác (`sheetId`). Nút còn lại đổi thành "Bổ sung lại" (dự phòng khi AI lỗi/hết lượt). Vẫn sửa/xoá/thêm tự do.
+2. **Số thứ tự thành cột "No." riêng** (Word + bản xem trước); từ in đậm, không còn dính "1. ".
+3. **Bỏ `$` thừa:** `stripLatex()` trong bộ đọc làm sạch `$S + V(s/es)$`, `V(nguyên\\ thể)`, `\\rightarrow`, `\\text{}`, `\\"`... Quét lại 134 file Tiếng Anh: 0 ký tự `$`/`\\` còn sót trong 1.873 từ + 592 dòng ngữ pháp.
+4. **"Ví dụ" → "Ex":** `normalizeExampleLabel()` đổi nhãn đầu đoạn/sau `|`/sau `(`; tiêu đề bảng ngữ pháp đổi thành "Structure / Content" và "Explanation / Example". (Dễ đổi sang "Example" đầy đủ nếu Hoan thích - 1 chỗ trong `normalizeExampleLabel`.)
+
+**Kiểm thử:** thêm 6 test (tổng 20 test tab này), `npm test` 576/576, build sạch, word-compat 21/21, đã render Word kiểm tra bố cục.
+
 ## Phiên 51 — Tab mới "Soạn từ vựng" (Tiếng Anh): bản soạn từ vựng + ngữ pháp từng tiết, đọc thẳng Markdown SGK
 
 **Yêu cầu Hoan:** tab riêng soạn từ vựng cho môn ngoại ngữ (Tiếng Anh, Tiếng Trung...) dựa trên bộ SGK đã Markdown trong repo; mẫu là tờ in giáo viên đang dùng (Week/Unit/Period, A. Vocabulary 4 cột, B. Grammar).

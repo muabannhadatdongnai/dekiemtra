@@ -6,7 +6,10 @@ import {
   parseEnglishVocabulary,
   parseVocabLine,
   normalizeWordType,
+  stripLatex,
+  normalizeExampleLabel,
 } from "../src/services/vocabEnglishParser.js";
+import { mergeAiIntoWords, countMissing, runVocabEnrich } from "../src/services/vocabEnrichClient.js";
 import { sanitizeIpa, mergeEnrichment } from "../src/services/vocabEngine.js";
 import { buildVocabResult, buildVocabTitleLines } from "../src/data/vocabResult.js";
 import { buildVocabDocument } from "../src/services/vocabExportService.js";
@@ -203,4 +206,84 @@ test("buildVocabDocument: không có ngữ pháp thì không in mục B", async 
   const zip = await JSZip.loadAsync(await Packer.toBuffer(doc));
   const xml = await zip.file("word/document.xml").async("string");
   assert.doesNotMatch(xml, /B\. Grammar/);
+});
+
+// ---------------- Phiên 51b: góp ý của Hoan sau khi xem mẫu của giáo viên khác ----------------
+
+test("stripLatex: bỏ $ và \\ thừa (S + V(s/es), V(nguyên\\ thể), mũi tên) - bản in không có trình dựng công thức", () => {
+  assert.equal(stripLatex("$S + V(s/es)$"), "S + V(s/es)");
+  assert.equal(stripLatex("$S + do/does + not + V(nguyên\\ thể)$"), "S + do/does + not + V(nguyên thể)");
+  assert.equal(stripLatex("$$\\mathbf{S + must / mustn’t + V(nguyên\\ thể)}$$"), "S + must / mustn’t + V(nguyên thể)");
+  assert.equal(stripLatex("responsible (adj) $\\rightarrow$ duty"), "responsible (adj) → duty");
+  assert.equal(stripLatex("\\text{Cấu trúc}"), "Cấu trúc");
+  assert.equal(stripLatex("giá 5$ thôi"), "giá 5 thôi");
+  assert.equal(stripLatex(String.raw`Dùng \"who\" cho người`), 'Dùng "who" cho người');
+});
+
+test("normalizeExampleLabel: 'Ví dụ:' thành 'Ex:' ở đầu đoạn/sau '|'/sau '(' - không đụng chữ giữa câu", () => {
+  assert.equal(normalizeExampleLabel("Ví dụ: She is a nurse."), "Ex: She is a nurse.");
+  assert.equal(normalizeExampleLabel("Cách dùng: ... | Ví dụ: I go jogging."), "Cách dùng: ... | Ex: I go jogging.");
+  assert.equal(normalizeExampleLabel("Đứng trước động từ (Ví dụ: We always look smart)."), "Đứng trước động từ (Ex: We always look smart).");
+  assert.equal(normalizeExampleLabel("VD1: He is late."), "Ex 1: He is late.");
+  assert.equal(normalizeExampleLabel("Xem ví dụ bên dưới để hiểu rõ"), "Xem ví dụ bên dưới để hiểu rõ");
+});
+
+test("parseEnglishVocabulary: ngữ pháp dạng công thức $...$ ra chữ sạch, nhãn Ex", () => {
+  const md = `# UNIT 1
+
+### 4. Ngữ pháp (Grammar)
+#### A. Thì Hiện tại đơn
+* **Khẳng định:** $S + V(s/es)$
+  * Ví dụ: Duy cycles to school every day.
+* **Phủ định:** $S + do/does + not + V(nguyên\\ thể)$
+`;
+  const r = parseEnglishVocabulary(md);
+  const rows = r.grammarGroups[0].rows;
+  assert.equal(rows[0].left, "Khẳng định");
+  assert.equal(rows[0].right, "S + V(s/es) | Ex: Duy cycles to school every day.");
+  assert.equal(rows[1].right, "S + do/does + not + V(nguyên thể)");
+  assert.ok(rows.every((x) => !/[$\\]/.test(x.left + x.right)), "không còn $ hoặc \\ thừa");
+});
+
+test("mergeAiIntoWords: gộp theo id vào bảng HIỆN TẠI, chỉ ô trống, bỏ qua dòng giáo viên đã xoá", () => {
+  const current = [
+    { id: "a", word: "kitchen", ipa: "/giáo viên gõ/", type: "", meaning: "bếp" }, // giáo viên đã gõ IPA trong lúc chờ AI
+    { id: "b", word: "hall", ipa: "", type: "", meaning: "sảnh" },
+  ];
+  const ai = [
+    { id: "a", ipa: "/ˈkɪtʃ.ən/", type: "n" },
+    { id: "b", ipa: "/hɔːl/", type: "n" },
+    { id: "deleted", ipa: "/x/", type: "n" },
+  ];
+  const out = mergeAiIntoWords(current, ai);
+  assert.equal(out.length, 2);
+  assert.equal(out[0].ipa, "/giáo viên gõ/", "không ghi đè ô giáo viên đã gõ");
+  assert.equal(out[0].type, "n");
+  assert.equal(out[1].ipa, "/hɔːl/");
+  assert.equal(out[1].aiIpa, true);
+  assert.equal(countMissing(out), 0);
+});
+
+test("runVocabEnrich: bỏ qua nếu không thiếu gì; không gọi mạng khi mọi ô đã đủ", async () => {
+  let called = 0;
+  const setResult = () => { called += 1; };
+  await runVocabEnrich({ sheetId: "s1", subject: "Tieng_Anh", words: [{ id: "1", word: "a", ipa: "/ə/", type: "n", meaning: "một" }], setResult });
+  assert.equal(called, 0);
+});
+
+test("buildVocabDocument: số thứ tự là CỘT RIÊNG (No.), từ không còn dính '1. ', tiêu đề ngữ pháp bằng tiếng Anh", async () => {
+  const doc = buildVocabDocument({
+    header: { unit: "Unit 2" },
+    words: [{ id: "1", word: "kitchen", ipa: "/ˈkɪtʃ.ən/", type: "n", meaning: "phòng bếp" }],
+    grammar: [{ id: "g", left: "Khẳng định", right: "S + V(s/es) | Ex: Duy cycles." }],
+  });
+  const zip = await JSZip.loadAsync(await Packer.toBuffer(doc));
+  const xml = await zip.file("word/document.xml").async("string");
+  assert.match(xml, />No\.</);
+  assert.doesNotMatch(xml, />1\. kitchen</);
+  assert.match(xml, />kitchen</);
+  assert.match(xml, /<w:gridCol[^>]*\/>(?:<w:gridCol[^>]*\/>){4}<\/w:tblGrid>/, "bảng từ vựng có 5 cột");
+  assert.match(xml, /Explanation \/ Example/);
+  assert.doesNotMatch(xml, /Ví dụ/);
+  assert.doesNotMatch(xml, /\$/);
 });
