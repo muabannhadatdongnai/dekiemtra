@@ -73,9 +73,10 @@ export default function VocabPreview({ result, onResultChange }) {
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className={th} style={{ width: "28%" }}>New words</th>
-              <th className={th} style={{ width: "26%" }}>Transcription</th>
-              <th className={th} style={{ width: "9%" }}></th>
+              <th className={th} style={{ width: "6%" }}>No.</th>
+              <th className={th} style={{ width: "25%" }}>New words</th>
+              <th className={th} style={{ width: "24%" }}>Transcription</th>
+              <th className={th} style={{ width: "10%" }}></th>
               <th className={th}>Meaning</th>
               <th className="no-print w-20 border-0"></th>
             </tr>
@@ -83,7 +84,8 @@ export default function VocabPreview({ result, onResultChange }) {
           <tbody>
             {words.map((w, i) => (
               <tr key={w.id}>
-                <td className={td}><input value={w.word} onChange={(e) => setWord(i, { word: e.target.value })} className={cellInput} /></td>
+                <td className={`${td} bg-slate-50 px-1 text-center text-sm text-slate-600`}>{i + 1}</td>
+                <td className={td}><input value={w.word} onChange={(e) => setWord(i, { word: e.target.value })} className={`${cellInput} font-semibold`} /></td>
                 <td className={`${td} ${w.aiIpa ? "bg-amber-100" : ""}`}>
                   <input value={w.ipa} onChange={(e) => setWord(i, { ipa: e.target.value, aiIpa: false })} className={`${cellInput} text-center`} title={w.aiIpa ? "AI điền - vui lòng rà lại" : ""} />
                 </td>
@@ -118,8 +120,8 @@ export default function VocabPreview({ result, onResultChange }) {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className={th} style={{ width: "38%" }}>Cấu trúc / Nội dung</th>
-                <th className={th}>Giải thích / Ví dụ</th>
+                <th className={th} style={{ width: "38%" }}>Structure / Content</th>
+                <th className={th}>Explanation / Example</th>
                 <th className="no-print w-20 border-0"></th>
               </tr>
             </thead>

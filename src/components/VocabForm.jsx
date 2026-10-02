@@ -6,6 +6,7 @@ import { getSubjectsForGrade, getSubjectLabel } from "@/data/config";
 import { hasVocabParser } from "@/services/vocabParserRegistry";
 import { buildVocabResult, EMPTY_VOCAB_RESULT, nextVocabId } from "@/data/vocabResult";
 import { fetchChaptersRequest, fetchVocabOutlineRequest } from "@/services/apiClient";
+import { runVocabEnrich } from "@/services/vocabEnrichClient";
 
 /**
  * VocabForm.jsx (Phiên 51 - tab "Soạn từ vựng")
@@ -33,7 +34,7 @@ function stripVietnameseParen(text) {
   return String(text || "").replace(/\s*\([^)]*[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ][^)]*\)\s*$/i, "").trim();
 }
 
-export default function VocabForm({ onGenerated }) {
+export default function VocabForm({ onGenerated, onPatchResult }) {
   const [grade, setGrade] = useState(6);
   const [volume, setVolume] = useState(1);
   const availableSubjects = getSubjectsForGrade(grade).filter((s) => hasVocabParser(s.value));
@@ -125,19 +126,21 @@ export default function VocabForm({ onGenerated }) {
     }
     const firstTitle = vocabGroups[0]?.title || "";
     const firstPage = vocabGroups[0]?.page || grammarGroups[0]?.page || "";
-    onGenerated(
-      buildVocabResult({
-        header: { tuan, unit, tiet, baiHoc: baiHoc || firstTitle, trang: trang || firstPage },
-        vocabGroups,
-        grammarGroups,
-        meta: buildMeta(),
-      })
-    );
+    const result = buildVocabResult({
+      header: { tuan, unit, tiet, baiHoc: baiHoc || firstTitle, trang: trang || firstPage },
+      vocabGroups,
+      grammarGroups,
+      meta: buildMeta(),
+    });
+    onGenerated(result); // hiện bảng NGAY (từ + nghĩa đọc từ Markdown), phiên âm/loại từ thiếu được AI điền ở bước sau
+    // Phiên 51b (Hoan góp ý): tự động bổ sung phiên âm/loại từ ngay khi tạo, không bắt bấm nút lần 2.
+    runVocabEnrich({ sheetId: result.sheetId, subject, words: result.words, setResult: onPatchResult });
   }
 
   function handleBlank() {
     onGenerated({
       ...EMPTY_VOCAB_RESULT,
+      sheetId: nextVocabId("s"),
       header: { tuan, unit, tiet, baiHoc, trang },
       words: [{ id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "" }],
       meta: buildMeta(),

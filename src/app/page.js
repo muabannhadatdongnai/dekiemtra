@@ -341,7 +341,7 @@ export default function HomePage() {
             {mode === MODES.OUTLINE && <OutlineForm onGenerated={handleOutlineGenerated} />}
             {mode === MODES.KHGD && <KhgdForm onGenerated={handleKhgdGenerated} />}
             {mode === MODES.KHGD_TIEU_HOC && <KhgdTieuHocForm onGenerated={handleKhgdTieuHocGenerated} />}
-            {mode === MODES.VOCAB && <VocabForm onGenerated={handleVocabGenerated} />}
+            {mode === MODES.VOCAB && <VocabForm onGenerated={handleVocabGenerated} onPatchResult={setVocabResult} />}
             {mode === MODES.REPORT_COMMENT && <ReportCommentForm onGenerated={handleReportCommentGenerated} />}
           </aside>
 
