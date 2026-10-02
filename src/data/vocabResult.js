@@ -6,6 +6,10 @@
  */
 
 export const EMPTY_VOCAB_RESULT = {
+  // sheetId: định danh bản soạn hiện tại - để kết quả AI về trễ KHÔNG ghi nhầm vào bản soạn mới hơn
+  sheetId: "",
+  // enrich: trạng thái bước AI bổ sung phiên âm/loại từ { loading, message, error } (xem vocabEnrichClient.js)
+  enrich: { loading: false, message: "", error: "" },
   header: {
     tuan: "", // "WEEK 3"
     unit: "", // "UNIT 2: MY HOUSE"
@@ -57,5 +61,5 @@ export function buildVocabResult({ header, vocabGroups = [], grammarGroups = [],
   for (const g of grammarGroups) {
     for (const r of g.rows || []) grammar.push({ id: nextVocabId("g"), left: r.left || "", right: r.right || "" });
   }
-  return { ...EMPTY_VOCAB_RESULT, header: { ...EMPTY_VOCAB_RESULT.header, ...header }, words, grammar, warnings, meta: { ...EMPTY_VOCAB_RESULT.meta, ...meta } };
+  return { ...EMPTY_VOCAB_RESULT, sheetId: nextVocabId("s"), header: { ...EMPTY_VOCAB_RESULT.header, ...header }, words, grammar, warnings, meta: { ...EMPTY_VOCAB_RESULT.meta, ...meta } };
 }
