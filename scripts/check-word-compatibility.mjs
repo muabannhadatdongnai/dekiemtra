@@ -177,8 +177,12 @@ async function makeVocabScenario() {
       { id: "3", word: "inside", ipa: "/ɪnˈsaɪd/", type: "prep/adv", meaning: "bên trong, ở trong" },
     ],
     grammar: [
-      { id: "g1", left: "There is a/an/one + danh từ số ít", right: "có | Ví dụ: There is a lamp in my room." },
-      { id: "g2", left: "Is there ...?", right: "Yes, there is. / No, there isn't." },
+      { id: "t1", heading: "Cấu trúc There is / There are (There is/are)", title: "", headers: ["Content", "Explanation", "Example"], rows: [
+        { id: "g1", left: "There is a/an/one + danh từ số ít", right: "có", example: "There is a lamp in my room." },
+      ] },
+      { id: "t2", heading: "", title: "Câu hỏi", headers: ["Sentence type", "Structure", "Example"], rows: [
+        { id: "g2", left: "Yes/No", right: "Is there ...?", example: "Yes, there is. / No, there isn't." },
+      ] },
     ],
   });
   return Packer.toBlob(doc);

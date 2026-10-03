@@ -5,6 +5,16 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 51c — Soạn từ vựng: ngữ pháp thành bảng 3 cột có tiêu đề chủ điểm, cột IPA
+
+Theo mẫu bảng văn phạm Hoan gửi (chia rõ ràng, có ghi chú):
+1. **Tiêu đề chủ điểm/thì** đánh số trước mỗi cụm bảng ("1. Thì Hiện tại đơn (The Present Simple)", "2. Trạng từ chỉ tần suất (Adverbs of Frequency)"), lấy từ tiêu đề nhóm trong Markdown (`cleanTopicTitle` bỏ "A." đầu, nhãn chung "Ngữ pháp" thành rỗng). Số thứ tự gắn lúc hiển thị/xuất nên chọn nhóm nào cũng đánh số lại từ 1.
+2. **Bảng 3 cột** [Content | Explanation | Example] (`src/services/vocabGrammarLayout.js`): ví dụ tách khỏi giải thích (cả dạng "Ex:" và "(Ex: ...)" trong ngoặc); dòng có Khẳng định/Phủ định/Nghi vấn tách thành **bảng con "Cấu trúc"** [Sentence type | Structure | Example]. Tiêu đề cột sửa được trên bản xem trước.
+3. Mô hình `result.grammar` đổi từ danh sách dòng phẳng thành **danh sách bảng** `{ id, heading, title, headers[3], rows[{ id, left, right, example }] }`. Bản xem trước: sửa tiêu đề chủ điểm/tên bảng/tiêu đề cột/ô, thêm-xoá-đổi chỗ dòng và cả bảng, "Thêm bảng ngữ pháp".
+4. Cột phiên âm đổi tên **"IPA"** (trước là "Transcription").
+
+Quét 134 file Tiếng Anh: 171 nhóm ngữ pháp → 174 bảng, 158 nhóm có tiêu đề chủ điểm. Test 24 (tab này), `npm test` 580/580, build sạch, word-compat 21/21, đã render Word kiểm tra.
+
 ## Phiên 51b — Soạn từ vựng: sửa theo mẫu giáo viên khác (4 góp ý của Hoan)
 
 1. **AI tự điền phiên âm/loại từ ngay khi bấm "Tạo bản soạn"** (`vocabEnrichClient.js`): bảng hiện NGAY từ Markdown, AI điền ô thiếu ở nền. Kết quả AI gộp vào bảng HIỆN TẠI theo id, chỉ ô còn trống (giáo viên đã gõ/xoá trong lúc chờ thì giữ nguyên), bỏ qua nếu đã tạo bản soạn khác (`sheetId`). Nút còn lại đổi thành "Bổ sung lại" (dự phòng khi AI lỗi/hết lượt). Vẫn sửa/xoá/thêm tự do.
