@@ -29,6 +29,11 @@ export function cleanTopicTitle(title) {
   return GENERIC_TOPIC.test(t) ? "" : t;
 }
 
+export const USAGE_LABEL = "Cách dùng (Usage)";
+const USAGE_LEFT = /^(?:cách dùng|usage|use|uses)(?:\s*\(\s*usage\s*\))?\s*:?$/i;
+// Câu mô tả cách dùng đứng một mình (VD "Dùng để diễn tả mức độ thường xuyên của hành động.")
+const USAGE_SENTENCE = /^(?:dùng để|được dùng|dùng khi|dùng cho|diễn tả|used to|we use)/i;
+
 function splitSegments(text) {
   return String(text ?? "").split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean);
 }
@@ -94,6 +99,38 @@ function splitRow(row) {
   return { rows: [newRow(left, explanation.join("\n"), examples.join("\n"))], structured: false };
 }
 
+/**
+ * Phiên 51d: gộp câu mô tả cách dùng vào CÙNG MỘT HÀNG với nhãn "Cách dùng (Usage)".
+ *  - nhãn "Cách dùng"/"Usage" → chuẩn hoá thành "Cách dùng (Usage)";
+ *  - dòng ĐẦU bảng chỉ có câu mô tả ("Dùng để diễn tả...") mà cột trái trống → gắn nhãn "Cách dùng (Usage)";
+ *  - nhiều dòng "Cách dùng (Usage)" trong cùng bảng → gộp thành 1 hàng (nội dung nối bằng xuống dòng).
+ */
+export function mergeUsageRows(rows) {
+  const out = [];
+  let usageIdx = -1;
+  rows.forEach((r, i) => {
+    let row = r;
+    if (USAGE_LEFT.test(String(row.left ?? "").trim())) row = { ...row, left: USAGE_LABEL };
+    else if (i === 0 && !String(row.left ?? "").trim() && String(row.right ?? "").trim() && !String(row.example ?? "").trim() && USAGE_SENTENCE.test(row.right.trim())) {
+      row = { ...row, left: USAGE_LABEL };
+    }
+    if (row.left === USAGE_LABEL) {
+      if (usageIdx >= 0) {
+        const prev = out[usageIdx];
+        out[usageIdx] = {
+          ...prev,
+          right: [prev.right, row.right].filter((x) => String(x ?? "").trim()).join("\n"),
+          example: [prev.example, row.example].filter((x) => String(x ?? "").trim()).join("\n"),
+        };
+        return;
+      }
+      usageIdx = out.length;
+    }
+    out.push(row);
+  });
+  return out;
+}
+
 function headersFor(rows) {
   if (!rows.length) return [...HEADERS_PLAIN];
   const sentenceTypeRows = rows.filter((r) => SENTENCE_TYPE_LEFT.test(r.left)).length;
@@ -118,7 +155,7 @@ export function buildGrammarTables(group) {
 
   const flushPlain = () => {
     if (!plain.length) return;
-    tables.push(makeTable({ heading, rows: plain }));
+    tables.push(makeTable({ heading, rows: mergeUsageRows(plain) }));
     heading = "";
     plain = [];
   };

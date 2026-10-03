@@ -19,6 +19,7 @@
  * Ví dụ: sach_giao_khoa/lop_5/toan_nang_cao.md
  */
 
+import { normalizePages, extractPagesFromName } from "@/services/vocabLessonSuggest";
 import { ADVANCED_BOOK_MARKER } from "@/data/constants";
 
 const REPO = process.env.GITHUB_KNOWLEDGE_REPO; // "owner/repo" - THAY TẠI .env.local
@@ -184,6 +185,9 @@ function buildLessonIndexPath({ grade, subject, volume, chapter }) {
  * Tải phụ lục bài học (mảng { soBai, tenBai, noiDungCotLoi }) của 1 chương, dùng để gợi ý khi
  * giáo viên chọn Lớp + Môn + Chương rồi gõ "Bài ..." trong LessonPlanForm.jsx.
  *
+ * Phiên 51d: mỗi bài có thể kèm "trang" (tuỳ chọn, VD "8, 9") - tab "Soạn từ vựng" dùng để gợi ý ô "Trang SGK".
+ * Không ghi trang thì trả trang "" (không đoán). Trang ghi trong tên bài "(trang 8-9)" cũng được đọc.
+ *
  * Ví dụ nội dung file (đặt tại sach_giao_khoa/lop_5/toan_t1/chuong_1_bai.json):
  * [
  *   { "soBai": 1, "tenBai": "Ôn tập các số đến 100 000", "noiDungCotLoi": "Ôn đọc, viết, so sánh và
@@ -213,6 +217,7 @@ export async function fetchLessonIndex({ grade, subject, volume, chapter }) {
         soBai: l.soBai ?? null,
         tenBai: l.tenBai.trim(),
         noiDungCotLoi: typeof l.noiDungCotLoi === "string" ? l.noiDungCotLoi.trim() : "",
+        trang: normalizePages(l.trang ?? l.soTrang ?? l.trangSGK) || extractPagesFromName(l.tenBai).trang,
       }));
   } catch {
     return [];

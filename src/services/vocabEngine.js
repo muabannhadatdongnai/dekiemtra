@@ -4,7 +4,7 @@ import { normalizeWordType } from "./vocabEnglishParser";
 
 /**
  * vocabEngine.js (Phiên 51)
- * Lớp gọi AI DUY NHẤT của tab "Soạn từ vựng": bổ sung IPA + loại từ còn thiếu. Khuôn giống
+ * Lớp gọi AI DUY NHẤT của tab "Soạn từ vựng": bổ sung IPA + loại từ + câu ví dụ còn thiếu. Khuôn giống
  * khgdEngine.js: chia lô, thử lại khi JSON hỏng, hết quota/quá tải thì báo lỗi rõ ràng.
  * AI CHỈ được điền trường đang trống - mọi giá trị đã có từ Markdown SGK được giữ NGUYÊN
  * (xem mergeEnrichment bên dưới, KHÔNG tin AI trả về trường đã có).
@@ -36,9 +36,17 @@ export function sanitizeIpa(raw) {
   return s;
 }
 
+/** Câu ví dụ hợp lệ: tiếng Anh (không dấu tiếng Việt), 2-160 ký tự, bỏ ngoặc kép/markdown bao quanh. Không hợp lệ → "". */
+export function sanitizeExample(raw) {
+  const s = String(raw ?? "").replace(/[*_`]/g, "").replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, "").replace(/\s+/g, " ").trim();
+  if (s.length < 2 || s.length > 160) return "";
+  if (/[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i.test(s)) return "";
+  return s;
+}
+
 /**
  * Gộp kết quả AI vào danh sách từ gốc theo id. Chỉ điền trường còn TRỐNG và đã qua kiểm tra định dạng;
- * đánh dấu aiIpa/aiType để giao diện tô vàng cho giáo viên rà lại.
+ * đánh dấu aiIpa/aiType/aiExample để giao diện tô vàng cho giáo viên rà lại.
  */
 export function mergeEnrichment(words, aiItems) {
   const byId = new Map((aiItems || []).map((it) => [String(it.id), it]));
@@ -54,18 +62,22 @@ export function mergeEnrichment(words, aiItems) {
       const type = normalizeWordType(ai.type);
       if (type) { next.type = type; next.aiType = true; }
     }
+    if (!w.example) {
+      const example = sanitizeExample(ai.example);
+      if (example) { next.example = example; next.aiExample = true; }
+    }
     return next;
   });
 }
 
-async function enrichBatch({ items, maxRetries }) {
+async function enrichBatch({ items, grade, maxRetries }) {
   let attempt = 0;
   let lastError = null;
   while (attempt <= maxRetries) {
     try {
       const result = await generateContentWithFailover({
         model: VOCAB_MODEL,
-        contents: buildVocabEnrichPrompt({ items }),
+        contents: buildVocabEnrichPrompt({ items, grade }),
         config: { temperature: 0.2, responseMimeType: "application/json" },
       });
       const parsed = JSON.parse(result.text);
@@ -88,19 +100,19 @@ async function enrichBatch({ items, maxRetries }) {
 }
 
 /**
- * enrichEnglishVocab(words) → { words, quotaExhausted, serverOverloaded, filledIpa, filledType }
- * words: [{ id, word, ipa, type, meaning }]. Chỉ gọi AI cho dòng THIẾU ipa hoặc type.
+ * enrichEnglishVocab(words) → { words, quotaExhausted, serverOverloaded, filledIpa, filledType, filledExample }
+ * words: [{ id, word, ipa, type, meaning, example }]. Chỉ gọi AI cho dòng THIẾU ipa, type hoặc example.
  */
-export async function enrichEnglishVocab({ words, maxRetries = 2 }) {
+export async function enrichEnglishVocab({ words, grade = null, maxRetries = 2 }) {
   const needing = words
-    .filter((w) => !w.ipa || !w.type)
-    .map((w) => ({ id: w.id, word: w.word, meaning: w.meaning, needIpa: !w.ipa, needType: !w.type }));
-  if (!needing.length) return { words, filledIpa: 0, filledType: 0 };
+    .filter((w) => !w.ipa || !w.type || !w.example)
+    .map((w) => ({ id: w.id, word: w.word, meaning: w.meaning, needIpa: !w.ipa, needType: !w.type, needExample: !w.example }));
+  if (!needing.length) return { words, filledIpa: 0, filledType: 0, filledExample: 0 };
 
   const aiItems = [];
   for (const batch of chunk(needing, VOCAB_AI_BATCH_SIZE)) {
-    const res = await enrichBatch({ items: batch, maxRetries });
-    if (!res.items) return { words, quotaExhausted: Boolean(res.quotaExhausted), serverOverloaded: Boolean(res.serverOverloaded), filledIpa: 0, filledType: 0 };
+    const res = await enrichBatch({ items: batch, grade, maxRetries });
+    if (!res.items) return { words, quotaExhausted: Boolean(res.quotaExhausted), serverOverloaded: Boolean(res.serverOverloaded), filledIpa: 0, filledType: 0, filledExample: 0 };
     aiItems.push(...res.items);
   }
   const merged = mergeEnrichment(words, aiItems);
@@ -108,5 +120,6 @@ export async function enrichEnglishVocab({ words, maxRetries = 2 }) {
     words: merged,
     filledIpa: merged.filter((w, i) => w.aiIpa && !words[i].aiIpa).length,
     filledType: merged.filter((w, i) => w.aiType && !words[i].aiType).length,
+    filledExample: merged.filter((w, i) => w.aiExample && !words[i].aiExample).length,
   };
 }

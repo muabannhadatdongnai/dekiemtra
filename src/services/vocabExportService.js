@@ -21,8 +21,9 @@ import { buildVocabTitleLines } from "@/data/vocabResult";
 /**
  * vocabExportService.js (Phiên 51 - tab "Soạn từ vựng")
  * Xuất Word (.docx) A4 DỌC cho bản soạn từ vựng + ngữ pháp, đúng bố cục mẫu giáo viên đang dùng:
- * dòng tiêu đề (WEEK / UNIT / PERIOD) → "A. Vocabulary" (5 cột: No. | New words | IPA | loại từ | Meaning)
- * → "B. Grammar" (bảng 2 cột tự do). ĐỘC LẬP với mọi module export khác (Isolation over DRY).
+ * dòng tiêu đề (WEEK / UNIT / PERIOD) → "I. Vocabulary" (6 cột: No. | New words | IPA | Từ loại (P.O.S) | Meaning |
+ * Ví dụ (Example)) → "II. Grammar" (các bảng 3 cột). Phiên 51d: đổi A./B. thành I./II. để không trùng chữ "A." của
+ * nhóm từ vựng trong tên bài học, thêm tiêu đề cột loại từ + cột Ví dụ. ĐỘC LẬP với mọi module export khác (Isolation over DRY).
  * Tiếng Trung/Nhật dùng file export riêng ở phiên sau (cột khác: Hán tự | Pinyin | ...), KHÔNG rẽ nhánh ở đây.
  *
  * Độ rộng bảng tính bằng TWIP cố định + layout FIXED (cùng bài học Phiên 49 ở khgdExportService.js:
@@ -49,7 +50,7 @@ const pageProperties = {
 const TABLE_WIDTH_TWIP = convertMillimetersToTwip(PAGE_A4_MM.width - PAGE_MARGIN_MM.left - PAGE_MARGIN_MM.right);
 const pctToTwip = (pct) => Math.round((TABLE_WIDTH_TWIP * pct) / 100);
 
-const VOCAB_COLUMNS = [6, 25, 24, 10, 35]; // No. | New words | IPA | loại từ | Meaning (Phiên 51b: số thứ tự tách cột riêng)
+const VOCAB_COLUMNS = [6, 19, 17, 11, 22, 25]; // No. | New words | IPA | Từ loại (P.O.S) | Meaning | Ví dụ (Example) (Phiên 51d)
 const GRAMMAR_COLUMNS = [24, 46, 30]; // cột 1 (Nội dung/Dạng câu) | cột 2 (Giải thích/Cấu trúc) | Example (Phiên 51c: bảng 3 cột như mẫu)
 
 function run(text, opts = {}) {
@@ -89,8 +90,9 @@ export function buildVocabularyTable(words = []) {
       cell("No.", VOCAB_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
       cell("New words", VOCAB_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
       cell("IPA", VOCAB_COLUMNS[2], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("", VOCAB_COLUMNS[3], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("Từ loại (P.O.S)", VOCAB_COLUMNS[3], { bold: true, align: AlignmentType.CENTER, shade: true }),
       cell("Meaning", VOCAB_COLUMNS[4], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("Ví dụ (Example)", VOCAB_COLUMNS[5], { bold: true, align: AlignmentType.CENTER, shade: true }),
     ],
   });
   const rows = words.map(
@@ -103,6 +105,7 @@ export function buildVocabularyTable(words = []) {
           cell(w.ipa ?? "", VOCAB_COLUMNS[2], { align: AlignmentType.CENTER }),
           cell(formatType(w.type), VOCAB_COLUMNS[3], { align: AlignmentType.CENTER }),
           cell(w.meaning ?? "", VOCAB_COLUMNS[4]),
+          cell(w.example ?? "", VOCAB_COLUMNS[5]),
         ],
       })
   );
@@ -130,7 +133,7 @@ export function buildGrammarTable(table) {
   return fixedTable([header, ...rows], GRAMMAR_COLUMNS);
 }
 
-/** Danh sách đoạn văn + bảng của mục B. Grammar: tiêu đề chủ điểm đánh số 1., 2. → tên bảng con → bảng. */
+/** Danh sách đoạn văn + bảng của mục II. Grammar: tiêu đề chủ điểm đánh số 1., 2. → tên bảng con → bảng. */
 export function buildGrammarSection(tables = []) {
   const out = [];
   let topicNo = 0;
@@ -159,13 +162,13 @@ export function buildVocabDocument({ header, words, grammar }) {
           children: [run(line, { bold: true, size: i === 0 ? 26 : 28 })],
         })
     ),
-    new Paragraph({ spacing: { before: 60, after: 80 }, children: [run("A. Vocabulary", { bold: true })] }),
+    new Paragraph({ spacing: { before: 60, after: 80 }, children: [run("I. Vocabulary", { bold: true })] }),
     buildVocabularyTable(words || []),
   ];
 
   if (grammar?.length) {
     children.push(
-      new Paragraph({ spacing: { before: 240, after: 40 }, keepNext: true, children: [run("B. Grammar", { bold: true })] }),
+      new Paragraph({ spacing: { before: 240, after: 40 }, keepNext: true, children: [run("II. Grammar", { bold: true })] }),
       ...buildGrammarSection(grammar)
     );
   }

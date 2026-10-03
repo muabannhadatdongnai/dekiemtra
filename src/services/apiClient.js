@@ -276,12 +276,12 @@ export async function fetchVocabOutlineRequest({ grade, subject, volume, chapter
   return handleResponse(res);
 }
 
-/** Tab "Soạn từ vựng": nhờ AI bổ sung phiên âm/loại từ CÒN THIẾU - xem vocabEngine.js. */
-export async function enrichVocabRequest({ subject, words }) {
+/** Tab "Soạn từ vựng": nhờ AI bổ sung phiên âm/loại từ/câu ví dụ CÒN THIẾU - xem vocabEngine.js. */
+export async function enrichVocabRequest({ subject, words, grade = null }) {
   const res = await fetch("/api/vocab-enrich", {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({ subject, words }),
+    body: JSON.stringify({ subject, words, grade }),
   });
   return handleResponse(res);
 }

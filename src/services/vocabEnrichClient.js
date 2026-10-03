@@ -2,7 +2,7 @@ import { enrichVocabRequest } from "@/services/apiClient";
 
 /**
  * vocabEnrichClient.js (Phiên 51b - tab "Soạn từ vựng", phía TRÌNH DUYỆT)
- * Chạy bước AI bổ sung phiên âm/loại từ và gộp kết quả vào bản soạn đang hiển thị. Dùng chung cho 2 nơi:
+ * Chạy bước AI bổ sung phiên âm/loại từ/câu ví dụ và gộp kết quả vào bản soạn đang hiển thị. Dùng chung cho 2 nơi:
  *  - TỰ ĐỘNG ngay khi giáo viên bấm "Tạo bản soạn" (VocabForm.jsx) - Hoan góp ý: không phải bấm lần 2;
  *  - nút "Bổ sung lại" ở VocabExportActions.jsx (khi AI lỗi/hết lượt, hoặc sau khi giáo viên thêm từ mới).
  * An toàn khi giáo viên đang sửa: kết quả AI nhập vào qua setResult(prev => ...) NÊN dựa trên bảng HIỆN TẠI,
@@ -11,7 +11,7 @@ import { enrichVocabRequest } from "@/services/apiClient";
  */
 
 export function countMissing(words = []) {
-  return words.filter((w) => w.word?.trim() && (!w.ipa?.trim() || !w.type?.trim())).length;
+  return words.filter((w) => w.word?.trim() && (!w.ipa?.trim() || !w.type?.trim() || !w.example?.trim())).length;
 }
 
 export function mergeAiIntoWords(words, aiWords) {
@@ -22,12 +22,13 @@ export function mergeAiIntoWords(words, aiWords) {
     const next = { ...w };
     if (!w.ipa?.trim() && ai.ipa) { next.ipa = ai.ipa; next.aiIpa = true; }
     if (!w.type?.trim() && ai.type) { next.type = ai.type; next.aiType = true; }
+    if (!w.example?.trim() && ai.example) { next.example = ai.example; next.aiExample = true; }
     return next;
   });
 }
 
-export async function runVocabEnrich({ sheetId, subject, words, setResult }) {
-  const needing = words.filter((w) => w.word?.trim() && (!w.ipa?.trim() || !w.type?.trim()));
+export async function runVocabEnrich({ sheetId, subject, words, grade = null, setResult }) {
+  const needing = words.filter((w) => w.word?.trim() && (!w.ipa?.trim() || !w.type?.trim() || !w.example?.trim()));
   if (!needing.length) return;
 
   const patch = (fn) => setResult((prev) => (prev.sheetId === sheetId ? fn(prev) : prev));
@@ -35,7 +36,8 @@ export async function runVocabEnrich({ sheetId, subject, words, setResult }) {
   try {
     const data = await enrichVocabRequest({
       subject,
-      words: needing.map(({ id, word, ipa, type, meaning }) => ({ id, word, ipa, type, meaning })),
+      grade,
+      words: needing.map(({ id, word, ipa, type, meaning, example }) => ({ id, word, ipa, type, meaning, example })),
     });
     patch((prev) => ({
       ...prev,
@@ -43,13 +45,13 @@ export async function runVocabEnrich({ sheetId, subject, words, setResult }) {
       enrich: {
         loading: false,
         error: "",
-        message: `AI đã điền ${data.filledIpa || 0} phiên âm và ${data.filledType || 0} loại từ (ô tô vàng) - vui lòng rà lại trước khi in.`,
+        message: `AI đã điền ${data.filledIpa || 0} phiên âm, ${data.filledType || 0} loại từ và ${data.filledExample || 0} câu ví dụ (ô tô vàng) - vui lòng rà lại trước khi in.`,
       },
     }));
   } catch (err) {
     patch((prev) => ({
       ...prev,
-      enrich: { loading: false, message: "", error: `${err.message} Bạn vẫn có thể tự gõ phiên âm/loại từ trên bảng.` },
+      enrich: { loading: false, message: "", error: `${err.message} Bạn vẫn có thể tự gõ phiên âm/loại từ/ví dụ trên bảng.` },
     }));
   }
 }
