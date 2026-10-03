@@ -5,6 +5,14 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 51d — Soạn từ vựng: gợi ý tên bài/trang, cột Ví dụ, I./II., gộp "Cách dùng (Usage)"
+
+- **Tên bài học + Trang SGK:** `VocabForm.jsx` đọc `chuong_{n}_bai.json` (qua `/api/lessons`, im lặng nếu thiếu file) → nút gợi ý (`vocabLessonSuggest.js`): "Unit 1. Hobbies - Getting started" → Bài học "Getting started". `fetchLessonIndex` nay trả thêm `trang` (khoá `trang`/`soTrang`/`trangSGK`, hoặc ghi "(trang 8-9)" trong tên bài). **KHÔNG có trang trong dữ liệu thì để trống, không đoán.** Lưu ý: 6 file `chuong_N_bai.json` của Tiếng Anh Lớp 6 hiện chỉ có `tenChuong`/`tomTat` (chưa có danh sách bài) nên chưa có gợi ý cho Lớp 6 cho tới khi Hoan thêm dữ liệu.
+- **Bảng từ vựng 6 cột:** No. | New words | IPA | **Từ loại (P.O.S)** | Meaning | **Ví dụ (Example)**. Ví dụ lấy từ Markdown nếu có, thiếu thì AI viết (cùng lượt với IPA/loại từ, `aiExample` tô vàng, lọc câu có dấu tiếng Việt/quá dài bằng `sanitizeExample`).
+- **Mục lục:** `I. Vocabulary` / `II. Grammar` (bỏ A./B.); `stripSectionLetter()` bỏ "A." đầu tên nhóm từ vựng nên không còn lặp "A. ĐỒ DÙNG..." + "A. Vocabulary".
+- **Ngữ pháp:** `mergeUsageRows()` — câu "Dùng để diễn tả..." đứng riêng được gộp CÙNG HÀNG với nhãn "Cách dùng (Usage)".
+- Kiểm chứng: `npm test` 587/587, `next build` sạch, đã render Word thật bằng LibreOffice (Tiếng Anh Lớp 6 Unit 1). CHƯA chạy `/api/vocab-enrich` với Gemini key thật để xem chất lượng câu ví dụ.
+
 ## Phiên 51c — Soạn từ vựng: ngữ pháp thành bảng 3 cột có tiêu đề chủ điểm, cột IPA
 
 Theo mẫu bảng văn phạm Hoan gửi (chia rõ ràng, có ghi chú):
