@@ -5,6 +5,8 @@
  * Giống khgdResult.js: gộp thành 1 object DUY NHẤT để page.js chỉ giữ 1 useState.
  */
 
+import { buildGrammarTables } from "@/services/vocabGrammarLayout";
+
 export const EMPTY_VOCAB_RESULT = {
   // sheetId: định danh bản soạn hiện tại - để kết quả AI về trễ KHÔNG ghi nhầm vào bản soạn mới hơn
   sheetId: "",
@@ -19,7 +21,8 @@ export const EMPTY_VOCAB_RESULT = {
   },
   // [{ id, word, ipa, type, meaning, aiIpa?, aiType? }] - aiIpa/aiType = true khi do AI bổ sung (cần rà lại)
   words: [],
-  // [{ id, left, right }] - bảng ngữ pháp dạng tự do (Cấu trúc | Giải thích/Ví dụ)
+  // Phiên 51c: danh sách BẢNG ngữ pháp 3 cột - [{ id, heading, title, headers:[3], rows:[{ id, left, right, example }] }]
+  // (xem vocabGrammarLayout.js). heading = tiêu đề chủ điểm/thì, title = tên bảng con (VD "Cấu trúc").
   grammar: [],
   warnings: [],
   meta: { subject: "Tieng_Anh", subjectLabel: "Tiếng Anh", languageCode: "en", grade: null },
@@ -57,9 +60,6 @@ export function buildVocabResult({ header, vocabGroups = [], grammarGroups = [],
       words.push({ id: nextVocabId("w"), word: w.word, ipa: w.ipa || "", type: w.type || "", meaning: w.meaning || "" });
     }
   }
-  const grammar = [];
-  for (const g of grammarGroups) {
-    for (const r of g.rows || []) grammar.push({ id: nextVocabId("g"), left: r.left || "", right: r.right || "" });
-  }
+  const grammar = grammarGroups.flatMap((g) => buildGrammarTables(g));
   return { ...EMPTY_VOCAB_RESULT, sheetId: nextVocabId("s"), header: { ...EMPTY_VOCAB_RESULT.header, ...header }, words, grammar, warnings, meta: { ...EMPTY_VOCAB_RESULT.meta, ...meta } };
 }
