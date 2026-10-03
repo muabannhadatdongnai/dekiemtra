@@ -21,7 +21,7 @@ import { buildVocabTitleLines } from "@/data/vocabResult";
 /**
  * vocabExportService.js (Phiên 51 - tab "Soạn từ vựng")
  * Xuất Word (.docx) A4 DỌC cho bản soạn từ vựng + ngữ pháp, đúng bố cục mẫu giáo viên đang dùng:
- * dòng tiêu đề (WEEK / UNIT / PERIOD) → "A. Vocabulary" (4 cột: New words | Transcription | loại từ | Meaning)
+ * dòng tiêu đề (WEEK / UNIT / PERIOD) → "A. Vocabulary" (5 cột: No. | New words | IPA | loại từ | Meaning)
  * → "B. Grammar" (bảng 2 cột tự do). ĐỘC LẬP với mọi module export khác (Isolation over DRY).
  * Tiếng Trung/Nhật dùng file export riêng ở phiên sau (cột khác: Hán tự | Pinyin | ...), KHÔNG rẽ nhánh ở đây.
  *
@@ -49,8 +49,8 @@ const pageProperties = {
 const TABLE_WIDTH_TWIP = convertMillimetersToTwip(PAGE_A4_MM.width - PAGE_MARGIN_MM.left - PAGE_MARGIN_MM.right);
 const pctToTwip = (pct) => Math.round((TABLE_WIDTH_TWIP * pct) / 100);
 
-const VOCAB_COLUMNS = [6, 25, 24, 10, 35]; // No. | New words | Transcription | loại từ | Meaning (Phiên 51b: số thứ tự tách cột riêng)
-const GRAMMAR_COLUMNS = [38, 62]; // Structure / Content | Explanation / Example
+const VOCAB_COLUMNS = [6, 25, 24, 10, 35]; // No. | New words | IPA | loại từ | Meaning (Phiên 51b: số thứ tự tách cột riêng)
+const GRAMMAR_COLUMNS = [24, 46, 30]; // cột 1 (Nội dung/Dạng câu) | cột 2 (Giải thích/Cấu trúc) | Example (Phiên 51c: bảng 3 cột như mẫu)
 
 function run(text, opts = {}) {
   return new TextRun({ text: String(text ?? ""), font: FONT, size: FONT_SIZE, ...opts });
@@ -88,7 +88,7 @@ export function buildVocabularyTable(words = []) {
     children: [
       cell("No.", VOCAB_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
       cell("New words", VOCAB_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("Transcription", VOCAB_COLUMNS[2], { bold: true, align: AlignmentType.CENTER, shade: true }),
+      cell("IPA", VOCAB_COLUMNS[2], { bold: true, align: AlignmentType.CENTER, shade: true }),
       cell("", VOCAB_COLUMNS[3], { bold: true, align: AlignmentType.CENTER, shade: true }),
       cell("Meaning", VOCAB_COLUMNS[4], { bold: true, align: AlignmentType.CENTER, shade: true }),
     ],
@@ -109,22 +109,43 @@ export function buildVocabularyTable(words = []) {
   return fixedTable([header, ...rows], VOCAB_COLUMNS);
 }
 
-export function buildGrammarTable(grammar = []) {
+/** 1 bảng ngữ pháp 3 cột; tiêu đề cột lấy từ table.headers (giáo viên sửa được ở bản xem trước). */
+export function buildGrammarTable(table) {
+  const headers = table?.headers?.length === 3 ? table.headers : ["Content", "Explanation", "Example"];
   const header = new TableRow({
     tableHeader: true,
-    children: [
-      cell("Structure / Content", GRAMMAR_COLUMNS[0], { bold: true, align: AlignmentType.CENTER, shade: true }),
-      cell("Explanation / Example", GRAMMAR_COLUMNS[1], { bold: true, align: AlignmentType.CENTER, shade: true }),
-    ],
+    children: headers.map((h, i) => cell(h, GRAMMAR_COLUMNS[i], { bold: true, align: AlignmentType.CENTER, shade: true })),
   });
-  const rows = grammar.map(
+  const rows = (table?.rows || []).map(
     (g) =>
       new TableRow({
         cantSplit: true,
-        children: [cell(g.left ?? "", GRAMMAR_COLUMNS[0], { bold: true }), cell(String(g.right ?? "").replace(/\s*\|\s*/g, "\n"), GRAMMAR_COLUMNS[1])],
+        children: [
+          cell(g.left ?? "", GRAMMAR_COLUMNS[0], { bold: true }),
+          cell(g.right ?? "", GRAMMAR_COLUMNS[1]),
+          cell(g.example ?? "", GRAMMAR_COLUMNS[2]),
+        ],
       })
   );
   return fixedTable([header, ...rows], GRAMMAR_COLUMNS);
+}
+
+/** Danh sách đoạn văn + bảng của mục B. Grammar: tiêu đề chủ điểm đánh số 1., 2. → tên bảng con → bảng. */
+export function buildGrammarSection(tables = []) {
+  const out = [];
+  let topicNo = 0;
+  for (const t of tables) {
+    if (t.heading?.trim()) {
+      topicNo += 1;
+      out.push(new Paragraph({ spacing: { before: 200, after: 60 }, keepNext: true, children: [run(`${topicNo}. ${t.heading.trim()}`, { bold: true })] }));
+    }
+    if (t.title?.trim()) {
+      out.push(new Paragraph({ spacing: { before: t.heading?.trim() ? 0 : 160, after: 60 }, keepNext: true, children: [run(t.title.trim(), { bold: true, italics: true })] }));
+    }
+    out.push(buildGrammarTable(t));
+    out.push(new Paragraph({ spacing: { after: 60 }, children: [] }));
+  }
+  return out;
 }
 
 export function buildVocabDocument({ header, words, grammar }) {
@@ -144,8 +165,8 @@ export function buildVocabDocument({ header, words, grammar }) {
 
   if (grammar?.length) {
     children.push(
-      new Paragraph({ spacing: { before: 240, after: 80 }, children: [run("B. Grammar", { bold: true })] }),
-      buildGrammarTable(grammar)
+      new Paragraph({ spacing: { before: 240, after: 40 }, keepNext: true, children: [run("B. Grammar", { bold: true })] }),
+      ...buildGrammarSection(grammar)
     );
   }
 
