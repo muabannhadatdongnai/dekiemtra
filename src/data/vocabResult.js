@@ -19,7 +19,8 @@ export const EMPTY_VOCAB_RESULT = {
     baiHoc: "", // "GETTING STARTED"
     trang: "", // "16, 17"
   },
-  // [{ id, word, ipa, type, meaning, aiIpa?, aiType? }] - aiIpa/aiType = true khi do AI bổ sung (cần rà lại)
+  // [{ id, word, ipa, type, meaning, example, aiIpa?, aiType?, aiExample? }] - aiXxx = true khi do AI bổ sung (cần rà lại)
+  // example (Phiên 51d): câu ví dụ trong cột "Ví dụ (Example)"; lấy từ Markdown nếu có, thiếu thì AI viết (tô vàng).
   words: [],
   // Phiên 51c: danh sách BẢNG ngữ pháp 3 cột - [{ id, heading, title, headers:[3], rows:[{ id, left, right, example }] }]
   // (xem vocabGrammarLayout.js). heading = tiêu đề chủ điểm/thì, title = tên bảng con (VD "Cấu trúc").
@@ -34,6 +35,15 @@ export function nextVocabId(prefix = "w") {
   return `${prefix}-${Date.now().toString(36)}-${idCounter}`;
 }
 
+/**
+ * Bỏ chữ cái/số La Mã đánh mục ở đầu nhãn: "A. ĐỒ DÙNG HỌC TẬP" → "ĐỒ DÙNG HỌC TẬP" (Phiên 51d). Nhãn nhóm từ vựng
+ * trong SGK có "A." riêng, nếu giữ nguyên thì bản soạn in "A. ĐỒ DÙNG..." rồi lại "A. Vocabulary" - bị lặp mục A.
+ * Chỉ bỏ khi có dấu "." hoặc ")" ngay sau chữ cái đơn ("A closer look 1" không bị đụng).
+ */
+export function stripSectionLetter(text) {
+  return String(text ?? "").trim().replace(/^(?:[A-Z]|[IVX]+|\d+)[.)]\s+/, "").trim();
+}
+
 /** "WEEK 3" / "UNIT 2: MY HOUSE" / "PERIOD 8: GETTING STARTED (PAGE 16, 17)" - dòng tiêu đề in trên cùng. */
 export function buildVocabTitleLines(header = {}) {
   const lines = [];
@@ -41,7 +51,7 @@ export function buildVocabTitleLines(header = {}) {
   if (header.unit?.trim()) lines.push(header.unit.trim().toUpperCase());
   const periodParts = [];
   if (header.tiet?.trim()) periodParts.push(header.tiet.trim().toUpperCase());
-  if (header.baiHoc?.trim()) periodParts.push(header.baiHoc.trim().toUpperCase());
+  if (stripSectionLetter(header.baiHoc)) periodParts.push(stripSectionLetter(header.baiHoc).toUpperCase());
   let periodLine = periodParts.join(": ");
   if (header.trang?.trim()) periodLine += `${periodLine ? " " : ""}(PAGE ${header.trang.trim()})`;
   if (periodLine) lines.push(periodLine);
@@ -57,7 +67,7 @@ export function buildVocabResult({ header, vocabGroups = [], grammarGroups = [],
       const key = String(w.word || "").trim().toLowerCase();
       if (!key || seen.has(key)) continue; // cùng từ xuất hiện ở nhiều nhóm → chỉ giữ 1 dòng
       seen.add(key);
-      words.push({ id: nextVocabId("w"), word: w.word, ipa: w.ipa || "", type: w.type || "", meaning: w.meaning || "" });
+      words.push({ id: nextVocabId("w"), word: w.word, ipa: w.ipa || "", type: w.type || "", meaning: w.meaning || "", example: w.example || "" });
     }
   }
   const grammar = grammarGroups.flatMap((g) => buildGrammarTables(g));
