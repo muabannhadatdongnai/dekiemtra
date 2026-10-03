@@ -70,15 +70,16 @@ export default function VocabPreview({ result, onResultChange }) {
       </div>
 
       <div>
-        <p className="mb-1 font-bold">A. Vocabulary</p>
+        <p className="mb-1 font-bold">I. Vocabulary</p>
         <table className="w-full border-collapse">
           <thead>
             <tr>
               <th className={th} style={{ width: "6%" }}>No.</th>
-              <th className={th} style={{ width: "25%" }}>New words</th>
-              <th className={th} style={{ width: "24%" }}>IPA</th>
-              <th className={th} style={{ width: "10%" }}></th>
-              <th className={th}>Meaning</th>
+              <th className={th} style={{ width: "19%" }}>New words</th>
+              <th className={th} style={{ width: "17%" }}>IPA</th>
+              <th className={th} style={{ width: "11%" }}>Từ loại (P.O.S)</th>
+              <th className={th} style={{ width: "22%" }}>Meaning</th>
+              <th className={th} style={{ width: "25%" }}>Ví dụ (Example)</th>
               <th className="no-print w-20 border-0"></th>
             </tr>
           </thead>
@@ -94,6 +95,9 @@ export default function VocabPreview({ result, onResultChange }) {
                   <input value={w.type} onChange={(e) => setWord(i, { type: e.target.value, aiType: false })} className={`${cellInput} text-center`} title={w.aiType ? "AI điền - vui lòng rà lại" : ""} />
                 </td>
                 <td className={td}><input value={w.meaning} onChange={(e) => setWord(i, { meaning: e.target.value })} className={cellInput} /></td>
+                <td className={`${td} ${w.aiExample ? "bg-amber-100" : ""}`}>
+                  <input value={w.example || ""} onChange={(e) => setWord(i, { example: e.target.value, aiExample: false })} className={cellInput} title={w.aiExample ? "AI viết - vui lòng rà lại" : ""} />
+                </td>
                 <td className="no-print whitespace-nowrap border-0 pl-1">
                   <button type="button" onClick={() => update({ words: moveItem(words, i, -1) })} className="text-slate-400 hover:text-slate-700" title="Lên"><ChevronUp size={14} /></button>
                   <button type="button" onClick={() => update({ words: moveItem(words, i, 1) })} className="text-slate-400 hover:text-slate-700" title="Xuống"><ChevronDown size={14} /></button>
@@ -105,18 +109,18 @@ export default function VocabPreview({ result, onResultChange }) {
         </table>
         <button
           type="button"
-          onClick={() => update({ words: [...words, { id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "" }] })}
+          onClick={() => update({ words: [...words, { id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "", example: "" }] })}
           className="no-print mt-2 flex items-center gap-1 text-xs text-brand-700 hover:underline"
         >
           <Plus size={13} /> Thêm từ
         </button>
-        {words.some((w) => w.aiIpa || w.aiType) && (
+        {words.some((w) => w.aiIpa || w.aiType || w.aiExample) && (
           <p className="no-print mt-1 text-xs text-amber-700">Ô tô vàng do AI bổ sung - vui lòng rà lại trước khi in.</p>
         )}
       </div>
 
       <div>
-        <p className="mb-1 font-bold">B. Grammar</p>
+        <p className="mb-1 font-bold">II. Grammar</p>
         {grammar.map((t, ti) => {
           const topicNo = grammar.slice(0, ti + 1).filter((x) => x.heading?.trim()).length;
           const setTable = (patch) => update({ grammar: grammar.map((x, idx) => (idx === ti ? { ...x, ...patch } : x)) });

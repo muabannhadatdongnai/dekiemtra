@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { Loader2, BookOpen, FilePlus2 } from "lucide-react";
 import { getSubjectsForGrade, getSubjectLabel } from "@/data/config";
 import { hasVocabParser } from "@/services/vocabParserRegistry";
-import { buildVocabResult, EMPTY_VOCAB_RESULT, nextVocabId } from "@/data/vocabResult";
-import { fetchChaptersRequest, fetchVocabOutlineRequest } from "@/services/apiClient";
+import { buildVocabResult, EMPTY_VOCAB_RESULT, nextVocabId, stripSectionLetter } from "@/data/vocabResult";
+import { buildLessonSuggestions } from "@/services/vocabLessonSuggest";
+import { fetchChaptersRequest, fetchLessonsRequest, fetchVocabOutlineRequest } from "@/services/apiClient";
 import { runVocabEnrich } from "@/services/vocabEnrichClient";
 
 /**
  * VocabForm.jsx (Phiên 51 - tab "Soạn từ vựng")
  * Luồng: chọn Môn/Lớp/Tập → bấm chương SGK (đọc Markdown, KHÔNG gọi AI) → tick nhóm từ vựng/ngữ pháp của
  * tiết đang soạn → điền Tuần/Tiết/Trang → "Tạo bản soạn". Từ + nghĩa lấy nguyên văn từ Markdown; phiên
- * âm/loại từ thiếu do giáo viên bấm nút "AI bổ sung" ở khung kết quả (xem VocabExportActions.jsx).
+ * âm/loại từ/ví dụ thiếu do AI điền. Phiên 51d: tên bài học + số trang gợi ý từ `chuong_{n}_bai.json` (nút gợi ý).
  * Hiện chỉ Tiếng Anh có bộ đọc (vocabParserRegistry.js) - Tiếng Trung/Nhật làm ở phiên sau.
  */
 
@@ -54,6 +55,8 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
   const [outlineError, setOutlineError] = useState("");
   const [pickedVocab, setPickedVocab] = useState([]);
   const [pickedGrammar, setPickedGrammar] = useState([]);
+  const [lessonSuggestions, setLessonSuggestions] = useState([]); // gợi ý Bài học + Trang từ chuong_{n}_bai.json
+  const [lessonIndexChecked, setLessonIndexChecked] = useState(false);
 
   const [tuan, setTuan] = useState("");
   const [unit, setUnit] = useState("");
@@ -89,6 +92,13 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
     setOutlineError("");
     setError("");
     setLoadingOutlineFor(chapter);
+    setLessonSuggestions([]);
+    setLessonIndexChecked(false);
+    // Phụ lục bài học là tính năng PHỤ: lỗi/thiếu file chỉ làm mất gợi ý, không chặn việc đọc từ vựng.
+    fetchLessonsRequest({ grade, subject, volume, chapter })
+      .then((d) => setLessonSuggestions(buildLessonSuggestions(d?.lessons)))
+      .catch(() => setLessonSuggestions([]))
+      .finally(() => setLessonIndexChecked(true));
     try {
       const data = await fetchVocabOutlineRequest({ grade, subject, volume, chapter });
       setOutline(data);
@@ -127,14 +137,14 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
     const firstTitle = vocabGroups[0]?.title || "";
     const firstPage = vocabGroups[0]?.page || grammarGroups[0]?.page || "";
     const result = buildVocabResult({
-      header: { tuan, unit, tiet, baiHoc: baiHoc || firstTitle, trang: trang || firstPage },
+      header: { tuan, unit, tiet, baiHoc: baiHoc || stripSectionLetter(firstTitle), trang: trang || firstPage },
       vocabGroups,
       grammarGroups,
       meta: buildMeta(),
     });
     onGenerated(result); // hiện bảng NGAY (từ + nghĩa đọc từ Markdown), phiên âm/loại từ thiếu được AI điền ở bước sau
     // Phiên 51b (Hoan góp ý): tự động bổ sung phiên âm/loại từ ngay khi tạo, không bắt bấm nút lần 2.
-    runVocabEnrich({ sheetId: result.sheetId, subject, words: result.words, setResult: onPatchResult });
+    runVocabEnrich({ sheetId: result.sheetId, subject, grade, words: result.words, setResult: onPatchResult });
   }
 
   function handleBlank() {
@@ -142,7 +152,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
       ...EMPTY_VOCAB_RESULT,
       sheetId: nextVocabId("s"),
       header: { tuan, unit, tiet, baiHoc, trang },
-      words: [{ id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "" }],
+      words: [{ id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "", example: "" }],
       meta: buildMeta(),
     });
   }
@@ -250,6 +260,36 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
           <Field label="Tiết"><input value={tiet} onChange={(e) => setTiet(e.target.value)} className={inputClass} placeholder="VD: Period 8" /></Field>
         </div>
         <Field label="Unit"><input value={unit} onChange={(e) => setUnit(e.target.value)} className={inputClass} placeholder="VD: Unit 2: My house" /></Field>
+        {lessonSuggestions.length > 0 && (
+          <div>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Gợi ý Bài học &amp; Trang (từ phụ lục SGK)</p>
+            <div className="flex flex-wrap gap-2">
+              {lessonSuggestions.map((l) => {
+                const active = baiHoc === l.baiHoc && (!l.trang || trang === l.trang);
+                return (
+                  <button
+                    key={l.key}
+                    type="button"
+                    onClick={() => {
+                      setBaiHoc(l.baiHoc);
+                      if (l.trang) setTrang(l.trang);
+                    }}
+                    className={`rounded-full border px-3 py-1 text-xs transition ${active ? "border-brand-600 bg-brand-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"}`}
+                    title={l.trang ? `Điền Bài học "${l.baiHoc}" và Trang ${l.trang}` : `Điền Bài học "${l.baiHoc}" (phụ lục chưa ghi số trang)`}
+                  >
+                    {l.label}{l.trang ? ` · tr. ${l.trang}` : ""}
+                  </button>
+                );
+              })}
+            </div>
+            {lessonSuggestions.some((l) => !l.trang) && (
+              <p className="mt-1 text-xs text-slate-500">Bài nào chưa có số trang trong phụ lục thì ô Trang SGK để bạn tự nhập.</p>
+            )}
+          </div>
+        )}
+        {outline && lessonIndexChecked && lessonSuggestions.length === 0 && (
+          <p className="text-xs text-slate-500">Chương này chưa có phụ lục bài học (chuong_N_bai.json) nên chưa có gợi ý tên bài/trang - bạn gõ tay bên dưới.</p>
+        )}
         <div className="grid grid-cols-2 gap-3">
           <Field label="Bài học"><input value={baiHoc} onChange={(e) => setBaiHoc(e.target.value)} className={inputClass} placeholder="VD: Getting started" /></Field>
           <Field label="Trang SGK"><input value={trang} onChange={(e) => setTrang(e.target.value)} className={inputClass} placeholder="VD: 16, 17" /></Field>

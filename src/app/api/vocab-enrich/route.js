@@ -4,8 +4,8 @@ import { enrichEnglishVocab, VOCAB_MAX_WORDS_PER_REQUEST } from "@/services/voca
 
 /**
  * POST /api/vocab-enrich  (Phiên 51 - tab "Soạn từ vựng")
- * body: { subject: "Tieng_Anh", words: [{ id, word, ipa, type, meaning }] }
- * AI CHỈ bổ sung IPA/loại từ còn TRỐNG, giữ nguyên từ/nghĩa/giá trị đã có. Client không đáng tin →
+ * body: { subject: "Tieng_Anh", grade?, words: [{ id, word, ipa, type, meaning, example }] }
+ * AI CHỈ bổ sung IPA/loại từ/câu ví dụ còn TRỐNG, giữ nguyên từ/nghĩa/giá trị đã có. Client không đáng tin →
  * ép kiểu + cắt độ dài + giới hạn số từ/lượt ở đây (cùng nguyên tắc contentGenerationLimits.js).
  */
 export async function POST(request) {
@@ -18,6 +18,8 @@ export async function POST(request) {
 
     const body = await request.json();
     const { subject = "Tieng_Anh", words = [] } = body;
+    const gradeNum = Number(body.grade);
+    const grade = Number.isInteger(gradeNum) && gradeNum >= 1 && gradeNum <= 12 ? gradeNum : null;
     if (subject !== "Tieng_Anh") {
       return NextResponse.json({ error: "Hiện chỉ hỗ trợ bổ sung phiên âm cho Tiếng Anh." }, { status: 400 });
     }
@@ -34,13 +36,14 @@ export async function POST(request) {
         ipa: typeof w.ipa === "string" ? w.ipa.trim().slice(0, 80) : "",
         type: typeof w.type === "string" ? w.type.trim().slice(0, 20) : "",
         meaning: typeof w.meaning === "string" ? w.meaning.trim().slice(0, 200) : "",
+        example: typeof w.example === "string" ? w.example.trim().slice(0, 200) : "",
       }));
     if (safeWords.length > VOCAB_MAX_WORDS_PER_REQUEST) {
       safeWords = safeWords.slice(0, VOCAB_MAX_WORDS_PER_REQUEST);
       warnings.push(`Chỉ xử lý ${VOCAB_MAX_WORDS_PER_REQUEST} từ đầu tiên trong 1 lượt, vui lòng bổ sung thêm lượt khác cho các từ còn lại.`);
     }
 
-    const result = await enrichEnglishVocab({ words: safeWords });
+    const result = await enrichEnglishVocab({ words: safeWords, grade });
     if (result.quotaExhausted) {
       return NextResponse.json({ error: "Đã hết lượt gọi AI trong ngày. Bạn vẫn có thể tự gõ phiên âm/loại từ trên bảng." }, { status: 429 });
     }
@@ -53,6 +56,7 @@ export async function POST(request) {
       words: result.words,
       filledIpa: result.filledIpa,
       filledType: result.filledType,
+      filledExample: result.filledExample || 0,
       warnings,
     });
   } catch (err) {

@@ -23,6 +23,7 @@ export default function VocabExportActions({ result, onResultChange }) {
       sheetId: result.sheetId,
       subject: result.meta?.subject || "Tieng_Anh",
       words,
+      grade: result.meta?.grade ?? null,
       setResult: onResultChange,
     });
   }
@@ -36,7 +37,7 @@ export default function VocabExportActions({ result, onResultChange }) {
           className="flex items-center gap-2 rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50 disabled:opacity-50"
         >
           {loading ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
-          {loading ? "AI đang điền phiên âm/loại từ..." : missing > 0 ? `Bổ sung lại phiên âm/loại từ (${missing} ô thiếu)` : "Phiên âm/loại từ đã đủ"}
+          {loading ? "AI đang điền phiên âm/loại từ/ví dụ..." : missing > 0 ? `Bổ sung lại phiên âm/loại từ/ví dụ (${missing} từ thiếu)` : "Phiên âm/loại từ/ví dụ đã đủ"}
         </button>
         <button
           onClick={() => exportVocabToWord({ header: result.header, words, grammar: result.grammar, meta: result.meta })}
