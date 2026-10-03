@@ -2,6 +2,7 @@
 
 import { Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { nextVocabId, buildVocabTitleLines } from "@/data/vocabResult";
+import { buildBlankGrammarTable } from "@/services/vocabGrammarLayout";
 
 /**
  * VocabPreview.jsx (Phiên 51 - tab "Soạn từ vựng")
@@ -75,7 +76,7 @@ export default function VocabPreview({ result, onResultChange }) {
             <tr>
               <th className={th} style={{ width: "6%" }}>No.</th>
               <th className={th} style={{ width: "25%" }}>New words</th>
-              <th className={th} style={{ width: "24%" }}>Transcription</th>
+              <th className={th} style={{ width: "24%" }}>IPA</th>
               <th className={th} style={{ width: "10%" }}></th>
               <th className={th}>Meaning</th>
               <th className="no-print w-20 border-0"></th>
@@ -116,36 +117,77 @@ export default function VocabPreview({ result, onResultChange }) {
 
       <div>
         <p className="mb-1 font-bold">B. Grammar</p>
-        {grammar.length > 0 && (
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className={th} style={{ width: "38%" }}>Structure / Content</th>
-                <th className={th}>Explanation / Example</th>
-                <th className="no-print w-20 border-0"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {grammar.map((g, i) => (
-                <tr key={g.id}>
-                  <td className={td}><textarea rows={2} value={g.left} onChange={(e) => setGrammar(i, { left: e.target.value })} className={`${cellInput} resize-y font-semibold`} /></td>
-                  <td className={td}><textarea rows={2} value={String(g.right || "").replace(/\s*\|\s*/g, "\n")} onChange={(e) => setGrammar(i, { right: e.target.value })} className={`${cellInput} resize-y`} /></td>
-                  <td className="no-print whitespace-nowrap border-0 pl-1">
-                    <button type="button" onClick={() => update({ grammar: moveItem(grammar, i, -1) })} className="text-slate-400 hover:text-slate-700" title="Lên"><ChevronUp size={14} /></button>
-                    <button type="button" onClick={() => update({ grammar: moveItem(grammar, i, 1) })} className="text-slate-400 hover:text-slate-700" title="Xuống"><ChevronDown size={14} /></button>
-                    <button type="button" onClick={() => update({ grammar: grammar.filter((_, idx) => idx !== i) })} className="text-slate-400 hover:text-red-600" title="Xoá dòng"><Trash2 size={14} /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        {grammar.map((t, ti) => {
+          const topicNo = grammar.slice(0, ti + 1).filter((x) => x.heading?.trim()).length;
+          const setTable = (patch) => update({ grammar: grammar.map((x, idx) => (idx === ti ? { ...x, ...patch } : x)) });
+          const setRow = (ri, patch) => setTable({ rows: t.rows.map((r, idx) => (idx === ri ? { ...r, ...patch } : r)) });
+          return (
+            <div key={t.id} className="mb-5 rounded border border-transparent hover:border-slate-200">
+              <div className="no-print flex flex-wrap items-center gap-2 pb-1">
+                <input
+                  value={t.heading || ""}
+                  onChange={(e) => setTable({ heading: e.target.value })}
+                  placeholder="Tiêu đề chủ điểm / thì (VD: Thì Hiện tại đơn (The Present Simple))"
+                  className="min-w-[14rem] flex-1 rounded border border-slate-300 px-2 py-1 text-sm font-semibold"
+                />
+                <input
+                  value={t.title || ""}
+                  onChange={(e) => setTable({ title: e.target.value })}
+                  placeholder="Tên bảng (VD: Cấu trúc)"
+                  className="w-44 rounded border border-slate-300 px-2 py-1 text-sm"
+                />
+                <button type="button" onClick={() => update({ grammar: moveItem(grammar, ti, -1) })} className="text-slate-400 hover:text-slate-700" title="Đưa bảng lên"><ChevronUp size={15} /></button>
+                <button type="button" onClick={() => update({ grammar: moveItem(grammar, ti, 1) })} className="text-slate-400 hover:text-slate-700" title="Đưa bảng xuống"><ChevronDown size={15} /></button>
+                <button type="button" onClick={() => update({ grammar: grammar.filter((_, idx) => idx !== ti) })} className="text-slate-400 hover:text-red-600" title="Xoá cả bảng"><Trash2 size={15} /></button>
+              </div>
+              {t.heading?.trim() && <p className="mt-1 font-bold">{topicNo}. {t.heading.trim()}</p>}
+              {t.title?.trim() && <p className="mb-1 font-bold italic">{t.title.trim()}</p>}
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr>
+                    {t.headers.map((h, hi) => (
+                      <th key={hi} className={th} style={{ width: hi === 0 ? "24%" : hi === 1 ? "46%" : "30%" }}>
+                        <input
+                          value={h}
+                          onChange={(e) => setTable({ headers: t.headers.map((x, idx) => (idx === hi ? e.target.value : x)) })}
+                          className={`${cellInput} text-center font-semibold`}
+                        />
+                      </th>
+                    ))}
+                    <th className="no-print w-20 border-0"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {t.rows.map((r, ri) => (
+                    <tr key={r.id}>
+                      <td className={td}><textarea rows={2} value={r.left} onChange={(e) => setRow(ri, { left: e.target.value })} className={`${cellInput} resize-y font-semibold`} /></td>
+                      <td className={td}><textarea rows={2} value={r.right} onChange={(e) => setRow(ri, { right: e.target.value })} className={`${cellInput} resize-y`} /></td>
+                      <td className={td}><textarea rows={2} value={r.example} onChange={(e) => setRow(ri, { example: e.target.value })} className={`${cellInput} resize-y`} /></td>
+                      <td className="no-print whitespace-nowrap border-0 pl-1">
+                        <button type="button" onClick={() => setTable({ rows: moveItem(t.rows, ri, -1) })} className="text-slate-400 hover:text-slate-700" title="Lên"><ChevronUp size={14} /></button>
+                        <button type="button" onClick={() => setTable({ rows: moveItem(t.rows, ri, 1) })} className="text-slate-400 hover:text-slate-700" title="Xuống"><ChevronDown size={14} /></button>
+                        <button type="button" onClick={() => setTable({ rows: t.rows.filter((_, idx) => idx !== ri) })} className="text-slate-400 hover:text-red-600" title="Xoá dòng"><Trash2 size={14} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button
+                type="button"
+                onClick={() => setTable({ rows: [...t.rows, { id: nextVocabId("g"), left: "", right: "", example: "" }] })}
+                className="no-print mt-1 flex items-center gap-1 text-xs text-brand-700 hover:underline"
+              >
+                <Plus size={13} /> Thêm dòng
+              </button>
+            </div>
+          );
+        })}
         <button
           type="button"
-          onClick={() => update({ grammar: [...grammar, { id: nextVocabId("g"), left: "", right: "" }] })}
-          className="no-print mt-2 flex items-center gap-1 text-xs text-brand-700 hover:underline"
+          onClick={() => update({ grammar: [...grammar, buildBlankGrammarTable()] })}
+          className="no-print mt-1 flex items-center gap-1 text-xs text-brand-700 hover:underline"
         >
-          <Plus size={13} /> Thêm dòng ngữ pháp
+          <Plus size={13} /> Thêm bảng ngữ pháp
         </button>
       </div>
     </div>
