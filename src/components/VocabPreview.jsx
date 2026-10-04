@@ -2,18 +2,36 @@
 
 import { Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { nextVocabId, buildVocabTitleLines } from "@/data/vocabResult";
+import { buildChineseTitleLines, blankChineseWord } from "@/data/vocabChineseResult";
 import { buildBlankGrammarTable } from "@/services/vocabGrammarLayout";
 
 /**
  * VocabPreview.jsx (Phiên 51 - tab "Soạn từ vựng")
  * Bản xem trước DẠNG BẢNG SỬA ĐƯỢC TRỰC TIẾP (khác các tab khác chỉ xem): giáo viên chỉnh từ/phiên âm/
  * loại từ/nghĩa, thêm-xoá-đổi chỗ dòng, rồi mới xuất Word. Ô do AI bổ sung (aiIpa/aiType) tô vàng cho tới
- * khi giáo viên sửa ô đó. Tab này KHÔNG dùng id="print-area" (chỉ xuất Word, giống tab Khung KHGD).
+ * khi giáo viên sửa ô đó. Phiên 52: Tiếng Trung (meta.languageCode === "zh") dùng bộ cột riêng (ZH_COLUMNS) và dòng tiêu đề tiếng Việt. Tab này KHÔNG dùng id="print-area" (chỉ xuất Word, giống tab Khung KHGD).
  */
 
 const cellInput = "w-full bg-transparent px-2 py-1 text-sm outline-none focus:bg-brand-50";
 const th = "border border-slate-400 bg-slate-100 px-2 py-1 text-center text-sm font-semibold";
 const td = "border border-slate-400 p-0 align-middle";
+
+// Bộ cột bảng từ vựng theo ngôn ngữ: key = trường của từ, ai = cờ "AI điền" (tô vàng), w = độ rộng %, mono = in đậm
+const EN_COLUMNS = [
+  { key: "word", header: "New words", w: 19, bold: true },
+  { key: "ipa", header: "IPA", w: 17, center: true, ai: "aiIpa" },
+  { key: "type", header: "Từ loại (P.O.S)", w: 11, center: true, ai: "aiType" },
+  { key: "meaning", header: "Meaning", w: 22 },
+  { key: "example", header: "Ví dụ (Example)", w: 25, ai: "aiExample" },
+];
+const ZH_COLUMNS = [
+  { key: "word", header: "Chữ Hán", w: 14, bold: true, center: true },
+  { key: "pinyin", header: "Pinyin", w: 15, center: true, ai: "aiPinyin" },
+  { key: "hanViet", header: "Âm Hán Việt", w: 11, center: true, ai: "aiHanViet" },
+  { key: "type", header: "Từ loại", w: 10, center: true, ai: "aiType" },
+  { key: "meaning", header: "Nghĩa", w: 20 },
+  { key: "example", header: "Ví dụ (例句)", w: 24, ai: "aiExample" },
+];
 
 function moveItem(list, index, delta) {
   const target = index + delta;
@@ -40,10 +58,14 @@ export default function VocabPreview({ result, onResultChange }) {
   const update = (patch) => onResultChange({ ...result, ...patch });
   const setWord = (i, patch) => update({ words: words.map((w, idx) => (idx === i ? { ...w, ...patch } : w)) });
   const setGrammar = (i, patch) => update({ grammar: grammar.map((g, idx) => (idx === i ? { ...g, ...patch } : g)) });
-  const titleLines = buildVocabTitleLines(header);
+  const isZh = result?.meta?.languageCode === "zh";
+  const columns = isZh ? ZH_COLUMNS : EN_COLUMNS;
+  const titleLines = isZh ? buildChineseTitleLines(header) : buildVocabTitleLines(header);
+  const blankWord = () => (isZh ? blankChineseWord() : { id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "", example: "" });
+  const aiFlags = columns.map((c) => c.ai).filter(Boolean);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4 rounded-md bg-white p-6 shadow-sm" style={{ fontFamily: '"Times New Roman", serif' }}>
+    <div className="mx-auto max-w-3xl space-y-4 rounded-md bg-white p-6 shadow-sm" style={{ fontFamily: isZh ? '"SimSun", "Microsoft YaHei", "PingFang SC", "Times New Roman", serif' : '"Times New Roman", serif' }}>
       <div className="no-print grid grid-cols-2 gap-2 sm:grid-cols-5">
         {[
           ["tuan", "Tuần"],
@@ -70,16 +92,14 @@ export default function VocabPreview({ result, onResultChange }) {
       </div>
 
       <div>
-        <p className="mb-1 font-bold">I. Vocabulary</p>
+        <p className="mb-1 font-bold">{isZh ? "I. Từ vựng (生词)" : "I. Vocabulary"}</p>
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className={th} style={{ width: "6%" }}>No.</th>
-              <th className={th} style={{ width: "19%" }}>New words</th>
-              <th className={th} style={{ width: "17%" }}>IPA</th>
-              <th className={th} style={{ width: "11%" }}>Từ loại (P.O.S)</th>
-              <th className={th} style={{ width: "22%" }}>Meaning</th>
-              <th className={th} style={{ width: "25%" }}>Ví dụ (Example)</th>
+              <th className={th} style={{ width: isZh ? "6%" : "6%" }}>No.</th>
+              {columns.map((c) => (
+                <th key={c.key} className={th} style={{ width: `${c.w}%` }}>{c.header}</th>
+              ))}
               <th className="no-print w-20 border-0"></th>
             </tr>
           </thead>
@@ -87,17 +107,19 @@ export default function VocabPreview({ result, onResultChange }) {
             {words.map((w, i) => (
               <tr key={w.id}>
                 <td className={`${td} bg-slate-50 px-1 text-center text-sm text-slate-600`}>{i + 1}</td>
-                <td className={td}><input value={w.word} onChange={(e) => setWord(i, { word: e.target.value })} className={`${cellInput} font-semibold`} /></td>
-                <td className={`${td} ${w.aiIpa ? "bg-amber-100" : ""}`}>
-                  <input value={w.ipa} onChange={(e) => setWord(i, { ipa: e.target.value, aiIpa: false })} className={`${cellInput} text-center`} title={w.aiIpa ? "AI điền - vui lòng rà lại" : ""} />
-                </td>
-                <td className={`${td} ${w.aiType ? "bg-amber-100" : ""}`}>
-                  <input value={w.type} onChange={(e) => setWord(i, { type: e.target.value, aiType: false })} className={`${cellInput} text-center`} title={w.aiType ? "AI điền - vui lòng rà lại" : ""} />
-                </td>
-                <td className={td}><input value={w.meaning} onChange={(e) => setWord(i, { meaning: e.target.value })} className={cellInput} /></td>
-                <td className={`${td} ${w.aiExample ? "bg-amber-100" : ""}`}>
-                  <input value={w.example || ""} onChange={(e) => setWord(i, { example: e.target.value, aiExample: false })} className={cellInput} title={w.aiExample ? "AI viết - vui lòng rà lại" : ""} />
-                </td>
+                {columns.map((c) => {
+                  const aiOn = c.ai && w[c.ai];
+                  return (
+                    <td key={c.key} className={`${td} ${aiOn ? "bg-amber-100" : ""}`}>
+                      <input
+                        value={w[c.key] || ""}
+                        onChange={(e) => setWord(i, { [c.key]: e.target.value, ...(c.ai ? { [c.ai]: false } : {}) })}
+                        className={`${cellInput} ${c.bold ? "font-semibold" : ""} ${c.center ? "text-center" : ""}`}
+                        title={aiOn ? "AI điền - vui lòng rà lại" : ""}
+                      />
+                    </td>
+                  );
+                })}
                 <td className="no-print whitespace-nowrap border-0 pl-1">
                   <button type="button" onClick={() => update({ words: moveItem(words, i, -1) })} className="text-slate-400 hover:text-slate-700" title="Lên"><ChevronUp size={14} /></button>
                   <button type="button" onClick={() => update({ words: moveItem(words, i, 1) })} className="text-slate-400 hover:text-slate-700" title="Xuống"><ChevronDown size={14} /></button>
@@ -109,18 +131,18 @@ export default function VocabPreview({ result, onResultChange }) {
         </table>
         <button
           type="button"
-          onClick={() => update({ words: [...words, { id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "", example: "" }] })}
+          onClick={() => update({ words: [...words, blankWord()] })}
           className="no-print mt-2 flex items-center gap-1 text-xs text-brand-700 hover:underline"
         >
           <Plus size={13} /> Thêm từ
         </button>
-        {words.some((w) => w.aiIpa || w.aiType || w.aiExample) && (
+        {words.some((w) => aiFlags.some((f) => w[f])) && (
           <p className="no-print mt-1 text-xs text-amber-700">Ô tô vàng do AI bổ sung - vui lòng rà lại trước khi in.</p>
         )}
       </div>
 
       <div>
-        <p className="mb-1 font-bold">II. Grammar</p>
+        <p className="mb-1 font-bold">{isZh ? "II. Ngữ pháp (语言点)" : "II. Grammar"}</p>
         {grammar.map((t, ti) => {
           const topicNo = grammar.slice(0, ti + 1).filter((x) => x.heading?.trim()).length;
           const setTable = (patch) => update({ grammar: grammar.map((x, idx) => (idx === ti ? { ...x, ...patch } : x)) });

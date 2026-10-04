@@ -8,13 +8,17 @@ import { buildVocabResult, EMPTY_VOCAB_RESULT, nextVocabId, stripSectionLetter }
 import { buildLessonSuggestions } from "@/services/vocabLessonSuggest";
 import { fetchChaptersRequest, fetchLessonsRequest, fetchVocabOutlineRequest } from "@/services/apiClient";
 import { runVocabEnrich } from "@/services/vocabEnrichClient";
+import { buildChineseVocabResult, blankChineseWord } from "@/data/vocabChineseResult";
+import { runChineseVocabEnrich } from "@/services/vocabChineseEnrichClient";
+import { baiTitleForHeader } from "@/services/vocabChineseParser";
 
 /**
  * VocabForm.jsx (Phiên 51 - tab "Soạn từ vựng")
  * Luồng: chọn Môn/Lớp/Tập → bấm chương SGK (đọc Markdown, KHÔNG gọi AI) → tick nhóm từ vựng/ngữ pháp của
  * tiết đang soạn → điền Tuần/Tiết/Trang → "Tạo bản soạn". Từ + nghĩa lấy nguyên văn từ Markdown; phiên
  * âm/loại từ/ví dụ thiếu do AI điền. Phiên 51d: tên bài học + số trang gợi ý từ `chuong_{n}_bai.json` (nút gợi ý).
- * Hiện chỉ Tiếng Anh có bộ đọc (vocabParserRegistry.js) - Tiếng Trung/Nhật làm ở phiên sau.
+ * Hiện Tiếng Anh + Tiếng Trung (Phiên 52) có bộ đọc (vocabParserRegistry.js); mỗi môn đi nhánh dựng kết quả/AI RIÊNG
+ * (data/vocabResult.js + vocabEnrichClient.js cho Anh; data/vocabChineseResult.js + vocabChineseEnrichClient.js cho Trung). Tiếng Nhật: phiên sau.
  */
 
 const inputClass = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm";
@@ -31,8 +35,9 @@ function Field({ label, children, hint }) {
 }
 
 // "UNIT 2: MY HOUSE (NGÔI NHÀ CỦA TÔI)" → bỏ phần chú thích tiếng Việt trong ngoặc cuối dòng
+// ("CHỦ ĐỀ 1: ... (第一单元: ...)" → bỏ phần chú thích chữ Hán ở cuối, Phiên 52)
 function stripVietnameseParen(text) {
-  return String(text || "").replace(/\s*\([^)]*[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ][^)]*\)\s*$/i, "").trim();
+  return baiTitleForHeader(String(text || "")).replace(/\s*\([^)]*[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ][^)]*\)\s*$/i, "").trim();
 }
 
 export default function VocabForm({ onGenerated, onPatchResult }) {
@@ -64,6 +69,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
   const [baiHoc, setBaiHoc] = useState("");
   const [trang, setTrang] = useState("");
   const [error, setError] = useState("");
+  const isZh = subject === "Tieng_Trung";
 
   useEffect(() => {
     let cancelled = false;
@@ -122,7 +128,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
   }
 
   function buildMeta() {
-    return { subject, subjectLabel: getSubjectLabel(subject), languageCode: "en", grade };
+    return { subject, subjectLabel: getSubjectLabel(subject), languageCode: isZh ? "zh" : "en", grade };
   }
 
   function handleSubmit(e) {
@@ -136,6 +142,19 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
     }
     const firstTitle = vocabGroups[0]?.title || "";
     const firstPage = vocabGroups[0]?.page || grammarGroups[0]?.page || "";
+    if (isZh) {
+      // Tiếng Trung: tên bài lấy từ "Bài n: ..." của nhóm đầu tiên (bỏ chú thích chữ Hán/pinyin ở cuối)
+      const firstBai = baiTitleForHeader(vocabGroups[0]?.bai || grammarGroups[0]?.bai || "");
+      const result = buildChineseVocabResult({
+        header: { tuan, unit, tiet, baiHoc: baiHoc || firstBai, trang },
+        vocabGroups,
+        grammarGroups,
+        meta: buildMeta(),
+      });
+      onGenerated(result);
+      runChineseVocabEnrich({ sheetId: result.sheetId, grade, words: result.words, setResult: onPatchResult });
+      return;
+    }
     const result = buildVocabResult({
       header: { tuan, unit, tiet, baiHoc: baiHoc || stripSectionLetter(firstTitle), trang: trang || firstPage },
       vocabGroups,
@@ -152,7 +171,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
       ...EMPTY_VOCAB_RESULT,
       sheetId: nextVocabId("s"),
       header: { tuan, unit, tiet, baiHoc, trang },
-      words: [{ id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "", example: "" }],
+      words: [isZh ? blankChineseWord() : { id: nextVocabId("w"), word: "", ipa: "", type: "", meaning: "", example: "" }],
       meta: buildMeta(),
     });
   }
@@ -183,12 +202,12 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
             </select>
           </Field>
         </div>
-        <p className="text-xs text-slate-500">Hiện hỗ trợ Tiếng Anh. Tiếng Trung, Tiếng Nhật sẽ bổ sung ở phiên sau.</p>
+        <p className="text-xs text-slate-500">Hiện hỗ trợ Tiếng Anh và Tiếng Trung. Tiếng Nhật sẽ bổ sung ở phiên sau.</p>
       </div>
 
       <div className="space-y-2 border-b border-slate-100 pb-5">
         <p className="flex items-center gap-1 text-sm font-semibold text-slate-800">
-          <BookOpen size={15} /> Chọn Unit/Chương trong SGK
+          <BookOpen size={15} /> {isZh ? "Chọn Chủ đề/Chương trong SGK" : "Chọn Unit/Chương trong SGK"}
         </p>
         {loadingChapters && <p className="text-xs text-slate-500">Đang tải danh sách chương...</p>}
         {chaptersError && <p className="text-xs text-red-600">{chaptersError}</p>}
@@ -256,10 +275,10 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
       <div className="space-y-3 border-b border-slate-100 pb-5">
         <p className="text-sm font-semibold text-slate-800">Phần đầu bản soạn</p>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Tuần"><input value={tuan} onChange={(e) => setTuan(e.target.value)} className={inputClass} placeholder="VD: Week 3" /></Field>
-          <Field label="Tiết"><input value={tiet} onChange={(e) => setTiet(e.target.value)} className={inputClass} placeholder="VD: Period 8" /></Field>
+          <Field label="Tuần"><input value={tuan} onChange={(e) => setTuan(e.target.value)} className={inputClass} placeholder={isZh ? "VD: Tuần 3" : "VD: Week 3"} /></Field>
+          <Field label="Tiết"><input value={tiet} onChange={(e) => setTiet(e.target.value)} className={inputClass} placeholder={isZh ? "VD: Tiết 8" : "VD: Period 8"} /></Field>
         </div>
-        <Field label="Unit"><input value={unit} onChange={(e) => setUnit(e.target.value)} className={inputClass} placeholder="VD: Unit 2: My house" /></Field>
+        <Field label={isZh ? "Chủ đề" : "Unit"}><input value={unit} onChange={(e) => setUnit(e.target.value)} className={inputClass} placeholder={isZh ? "VD: Chủ đề 1: Cộng đồng của chúng ta" : "VD: Unit 2: My house"} /></Field>
         {lessonSuggestions.length > 0 && (
           <div>
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Gợi ý Bài học &amp; Trang (từ phụ lục SGK)</p>
@@ -291,7 +310,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
           <p className="text-xs text-slate-500">Chương này chưa có phụ lục bài học (chuong_N_bai.json) nên chưa có gợi ý tên bài/trang - bạn gõ tay bên dưới.</p>
         )}
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Bài học"><input value={baiHoc} onChange={(e) => setBaiHoc(e.target.value)} className={inputClass} placeholder="VD: Getting started" /></Field>
+          <Field label="Bài học"><input value={baiHoc} onChange={(e) => setBaiHoc(e.target.value)} className={inputClass} placeholder={isZh ? "VD: Bài 1: Trước tòa nhà học..." : "VD: Getting started"} /></Field>
           <Field label="Trang SGK"><input value={trang} onChange={(e) => setTrang(e.target.value)} className={inputClass} placeholder="VD: 16, 17" /></Field>
         </div>
       </div>

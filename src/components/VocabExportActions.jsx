@@ -3,6 +3,8 @@
 import { FileDown, Loader2, Sparkles } from "lucide-react";
 import { exportVocabToWord } from "@/services/vocabExportService";
 import { runVocabEnrich, countMissing } from "@/services/vocabEnrichClient";
+import { exportChineseVocabToWord } from "@/services/vocabChineseExportService";
+import { runChineseVocabEnrich, countMissingChinese } from "@/services/vocabChineseEnrichClient";
 
 /**
  * VocabExportActions.jsx (Phiên 51b - tab "Soạn từ vựng")
@@ -13,12 +15,17 @@ import { runVocabEnrich, countMissing } from "@/services/vocabEnrichClient";
  */
 export default function VocabExportActions({ result, onResultChange }) {
   const words = result?.words || [];
-  const missing = countMissing(words);
+  const isZh = result?.meta?.languageCode === "zh";
+  const missing = isZh ? countMissingChinese(words) : countMissing(words);
   const enrich = result?.enrich || {};
   const loading = Boolean(enrich.loading);
   const disabled = !words.length;
 
   function handleEnrich() {
+    if (isZh) {
+      runChineseVocabEnrich({ sheetId: result.sheetId, grade: result.meta?.grade ?? null, words, setResult: onResultChange });
+      return;
+    }
     runVocabEnrich({
       sheetId: result.sheetId,
       subject: result.meta?.subject || "Tieng_Anh",
@@ -36,11 +43,14 @@ export default function VocabExportActions({ result, onResultChange }) {
           disabled={disabled || loading || missing === 0}
           className="flex items-center gap-2 rounded-md border border-brand-600 bg-white px-3 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50 disabled:opacity-50"
         >
-          {loading ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
-          {loading ? "AI đang điền phiên âm/loại từ/ví dụ..." : missing > 0 ? `Bổ sung lại phiên âm/loại từ/ví dụ (${missing} từ thiếu)` : "Phiên âm/loại từ/ví dụ đã đủ"}
+          {loading
+            ? (isZh ? "AI đang điền pinyin/Hán Việt/loại từ/ví dụ..." : "AI đang điền phiên âm/loại từ/ví dụ...")
+            : missing > 0
+              ? `Bổ sung lại ${isZh ? "pinyin/Hán Việt/loại từ/ví dụ" : "phiên âm/loại từ/ví dụ"} (${missing} từ thiếu)`
+              : `${isZh ? "Pinyin/Hán Việt/loại từ/ví dụ" : "Phiên âm/loại từ/ví dụ"} đã đủ`}
         </button>
         <button
-          onClick={() => exportVocabToWord({ header: result.header, words, grammar: result.grammar, meta: result.meta })}
+          onClick={() => (isZh ? exportChineseVocabToWord : exportVocabToWord)({ header: result.header, words, grammar: result.grammar, meta: result.meta })}
           disabled={disabled}
           className="flex items-center gap-2 rounded-md bg-brand-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
