@@ -5,6 +5,15 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 52 — Soạn từ vựng: mở rộng sang TIẾNG TRUNG
+
+- **Bộ đọc riêng** `vocabChineseParser.js` (đăng ký ở `vocabParserRegistry.js`): đọc đủ 48 file chương Lớp 6-12 (~hơn 1.500 từ). Hiểu bảng 4-6 cột (Chữ Hán/Hán tự | Pinyin | Âm Hán Việt | Từ loại/Phân loại | Nghĩa | Ví dụ), từ vựng dạng gạch đầu dòng, từ loại viết tắt ("*động*" → "Động từ"). **1 file chương = 1 Chủ đề nhiều Bài** nên nhóm mang tên Bài ("Bài 1 - Từ vựng (生词)"). Ngữ pháp: mỗi chủ điểm 1 bảng 3 cột (Nội dung | Giải thích | Ví dụ), nhãn "Cách dùng/Công thức/Cấu trúc..." thành hàng, ví dụ (Hán + pinyin + dịch) gắn vào hàng liền trước. Chặn Bài khóa/Hội thoại/Luyện tập; dòng bảng thiếu 1 ô Pinyin được chèn ô trống để không lệch cột.
+- **Khuôn dữ liệu** `data/vocabChineseResult.js`: từ có `word` (Chữ Hán), `pinyin`, `hanViet`, `type`, `meaning`, `example` + cờ `aiPinyin/aiHanViet/aiType/aiExample`; dòng tiêu đề tiếng Việt "TUẦN / CHỦ ĐỀ / TIẾT n: BÀI ... (TRANG ...)". `meta.languageCode === "zh"` là công tắc cho preview/xuất.
+- **Xuất Word riêng** `vocabChineseExportService.js` (đúng ghi chú Phiên 51: KHÔNG rẽ nhánh trong file Tiếng Anh): 7 cột No. | Chữ Hán | Pinyin | Âm Hán Việt | Từ loại | Nghĩa | Ví dụ (例句); mục "I. Từ vựng (生词)" / "II. Ngữ pháp (语言点)"; font `eastAsia: "SimSun"` (shape `{ascii,hAnsi,cs,eastAsia}`). Đã render bằng LibreOffice (Lớp 6, Lớp 10, Lớp 12) - chữ Hán hiển thị đúng.
+- **AI riêng** `vocabChineseEngine.js` + `vocabChinesePromptTemplates.js` + `vocabChineseEnrichClient.js`; `/api/vocab-enrich` rẽ nhánh theo `subject`. AI chỉ điền ô TRỐNG: pinyin, âm Hán Việt, từ loại (danh sách cố định), câu ví dụ (+ pinyin câu); mỗi giá trị qua bộ lọc (`sanitizePinyin/HanViet/ChineseExample`, ví dụ phải chứa chữ Hán của từ), ô AI điền tô vàng.
+- **Giao diện:** `VocabForm` chọn Tiếng Trung → nhãn "Chủ đề", gợi ý Bài/Trang từ `chuong_N_bai.json` (Lớp 12 đã có `tenBai`); `VocabPreview` dùng bộ cột `ZH_COLUMNS`; `VocabExportActions` gọi xuất/AI tương ứng.
+- Kiểm chứng: 22 test mới (`test/vocabChinese.test.js`, gồm 1 test đọc toàn bộ SGK Tiếng Trung thật), `npm test` 609/609, `next build` sạch, `test:word-compat` có kịch bản `soan-tu-vung-tieng-trung`. CHƯA chạy AI với Gemini key thật và chưa bấm thử trên trình duyệt.
+
 ## Phiên 51d — Soạn từ vựng: gợi ý tên bài/trang, cột Ví dụ, I./II., gộp "Cách dùng (Usage)"
 
 - **Tên bài học + Trang SGK:** `VocabForm.jsx` đọc `chuong_{n}_bai.json` (qua `/api/lessons`, im lặng nếu thiếu file) → nút gợi ý (`vocabLessonSuggest.js`): "Unit 1. Hobbies - Getting started" → Bài học "Getting started". `fetchLessonIndex` nay trả thêm `trang` (khoá `trang`/`soTrang`/`trangSGK`, hoặc ghi "(trang 8-9)" trong tên bài). **KHÔNG có trang trong dữ liệu thì để trống, không đoán.** Lưu ý: 6 file `chuong_N_bai.json` của Tiếng Anh Lớp 6 hiện chỉ có `tenChuong`/`tomTat` (chưa có danh sách bài) nên chưa có gợi ý cho Lớp 6 cho tới khi Hoan thêm dữ liệu.

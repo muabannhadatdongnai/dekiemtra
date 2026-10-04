@@ -47,6 +47,7 @@ import { exportVietnameseExamToWord } from "../src/services/vietnameseExamExport
 import { buildOutlineDocxBlob } from "../src/services/outlineExportService.js";
 import { buildKhgdDocument } from "../src/services/khgdExportService.js";
 import { buildVocabDocument } from "../src/services/vocabExportService.js";
+import { buildChineseVocabDocument } from "../src/services/vocabChineseExportService.js";
 import { buildKhgdTieuHocDocument } from "../src/services/khgdTieuHocExportService.js";
 import { Packer } from "docx";
 import { exportReportCommentsToWord } from "../src/services/reportCommentExportService.js";
@@ -182,6 +183,22 @@ async function makeVocabScenario() {
       ] },
       { id: "t2", heading: "", title: "Câu hỏi", headers: ["Sentence type", "Structure", "Example"], rows: [
         { id: "g2", left: "Yes/No", right: "Is there ...?", example: "Yes, there is. / No, there isn't." },
+      ] },
+    ],
+  });
+  return Packer.toBlob(doc);
+}
+
+async function makeChineseVocabScenario() {
+  const doc = buildChineseVocabDocument({
+    header: { tuan: "Tuần 1", unit: "Chủ đề 1: Cộng đồng của chúng ta", tiet: "Tiết 1", baiHoc: "BÀI 1: TRƯỚC TÒA NHÀ HỌC CÓ MỘT KHU VƯỜN NHỎ", trang: "8, 9" },
+    words: [
+      { id: "1", word: "办公楼", pinyin: "bàngōnglóu", hanViet: "biện công lâu", type: "Danh từ", meaning: "Tòa nhà văn phòng", example: "我在办公楼工作。\nWǒ zài bàngōnglóu gōngzuò." },
+      { id: "2", word: "里 / 里面", pinyin: "lǐ / lǐmian", hanViet: "", type: "Phương vị từ", meaning: "Phía trong, bên trong", example: "" },
+    ],
+    grammar: [
+      { id: "t1", heading: "Cấu trúc chỉ sự tồn tại: [Phương vị từ] + 有 + [Danh từ]", title: "", headers: ["Nội dung", "Giải thích", "Ví dụ (例句)"], rows: [
+        { id: "g1", left: "Cách dùng", right: "Biểu thị tại một vị trí có một sự vật tồn tại.", example: "墙上有一张地图。\n(Qiáng shang yǒu yī zhāng dìtú.)" },
       ] },
     ],
   });
@@ -489,6 +506,7 @@ const SCENARIOS = [
   { name: "khung-khgd-phu-luc-3", build: makeKhgdScenario },
   { name: "khung-khgd-tieu-hoc-phu-luc-2", build: makeKhgdTieuHocScenario },
   { name: "soan-tu-vung-tieng-anh", build: makeVocabScenario },
+  { name: "soan-tu-vung-tieng-trung", build: makeChineseVocabScenario },
   { name: "nhan-xet-hoc-ba", build: makeReportCommentScenario },
   { name: "giao-an-tieng-anh-nhieu-tiet", build: makeEnglishLessonPlanScenario },
   { name: "de-cuong-tieng-anh", build: makeEnglishOutlineScenario },
