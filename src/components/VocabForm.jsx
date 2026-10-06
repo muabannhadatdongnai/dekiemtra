@@ -109,7 +109,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
       const data = await fetchVocabOutlineRequest({ grade, subject, volume, chapter });
       setOutline(data);
       setPickedVocab((data.vocabGroups || []).map((g) => g.id));
-      setPickedGrammar((data.grammarGroups || []).map((g) => g.id));
+      setPickedGrammar((data.grammarGroups || []).filter((g) => !g.coveredBySummary).map((g) => g.id));
       setUnit(stripVietnameseParen(data.chuong) || label || "");
       if (!data.supported) setOutlineError("Môn này chưa có bộ đọc từ vựng - bạn vẫn có thể tạo bản soạn trống và tự gõ.");
       else if (!data.vocabGroups?.length && !data.grammarGroups?.length) {
@@ -261,7 +261,7 @@ export default function VocabForm({ onGenerated, onPatchResult }) {
                     <label className="flex cursor-pointer items-start gap-2 text-sm text-slate-700">
                       <input type="checkbox" className="mt-1" checked={pickedGrammar.includes(g.id)} onChange={() => toggle(pickedGrammar, setPickedGrammar, g.id)} />
                       <span>
-                        {g.title} <span className="text-xs text-slate-500">({g.rows.length} dòng)</span>
+                        {g.title} <span className="text-xs text-slate-500">({g.rows.length} dòng{g.coveredBySummary ? " - đã gộp trong phần tóm tắt, chỉ tick nếu cần bảng riêng" : ""})</span>
                       </span>
                     </label>
                   </li>
