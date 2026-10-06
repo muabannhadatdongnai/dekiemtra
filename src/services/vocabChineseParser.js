@@ -18,6 +18,9 @@ const GRAMMAR_HEADING = /(ngữ pháp|语言点|语法|điểm ngôn ngữ|ngữ
 // Mục KHÔNG phải từ vựng/ngữ pháp - chặn để bài tập/bài đọc không lọt vào nhóm
 const STOP_HEADING = /(luyện tập|练习|bài khóa|课文|bài đọc|hội thoại|đọc thêm.*(?:bài|văn)|mục tiêu|trọng tâm học|tự trắc|ôn tập|复习)/i;
 const BAI_HEADING = /^(?:bài|课|第)/i;
+// Mục "Tóm tắt các điểm ngữ pháp chính (语言点总结)" ở bài Ôn tập: đã GỘP các chủ điểm lẻ của từng Bài
+// thành vài phần cốt lõi nên các chủ điểm lẻ trùng ý bị đánh dấu `coveredBySummary` (xem cuối parseChineseVocabulary).
+const SUMMARY_HEADING = /(tóm tắt.*ngữ pháp|语言点总结)/i;
 
 function clean(text) {
   return String(text ?? "")
@@ -319,7 +322,7 @@ export function parseChineseVocabulary(markdown) {
     if (!grammarBuf) return;
     const rows = [...grammarBuf.rows, ...buildRowsFromLines(grammarBuf.lines)];
     if (rows.length) {
-      grammarGroups.push({ id: `g${grammarGroups.length + 1}`, title: `${baiPrefix()}${grammarBuf.title}`, bai: grammarBuf.bai, page: "", rows });
+      grammarGroups.push({ id: `g${grammarGroups.length + 1}`, title: `${baiPrefix()}${grammarBuf.title}`, bai: grammarBuf.bai, page: "", rows, ...(grammarBuf.summary ? { summary: true } : {}) });
     }
     grammarBuf = null;
   }
@@ -327,7 +330,7 @@ export function parseChineseVocabulary(markdown) {
   function openGrammar() {
     flushGrammar();
     const deepest = stack[stack.length - 1];
-    grammarBuf = { title: headingText(deepest?.text || "Ngữ pháp"), bai, lines: [], rows: [] };
+    grammarBuf = { title: headingText(deepest?.text || "Ngữ pháp"), bai, lines: [], rows: [], summary: inScope(SUMMARY_HEADING) };
   }
 
   for (const rawLine of lines) {
@@ -391,6 +394,11 @@ export function parseChineseVocabulary(markdown) {
     }
   }
   flushGrammar();
+
+  // Chương có mục tóm tắt ngữ pháp → chủ điểm lẻ từng Bài chỉ còn là bản chi tiết trùng lặp (form bỏ tick mặc định, vẫn cho tick lại).
+  if (grammarGroups.some((g) => g.summary)) {
+    grammarGroups.forEach((g) => { if (!g.summary) g.coveredBySummary = true; });
+  }
 
   return {
     chuong,
