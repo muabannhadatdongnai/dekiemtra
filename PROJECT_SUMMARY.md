@@ -5,6 +5,14 @@
 > không lặp lại ở đây. Bản đầy đủ 3141 dòng trước khi rút gọn vẫn còn trong lịch sử Git nếu cần
 > tra cứu chi tiết kỹ thuật (cách sửa từng dòng, số liệu debug đầy đủ).
 
+## Phiên 53 — Soạn từ vựng Tiếng Trung: tinh gọn bảng Ngữ pháp (Lớp 6, Chủ đề 1) còn 4 phần cốt lõi
+
+Hoan test file Word Lớp 6 BÀI 1: bảng ngữ pháp có 10 mục, nhiều mục trùng ý (3 ý Phương vị từ, 3 ý Bổ ngữ kết quả, 2 ý trợ từ 吧) và 1 lỗi chữ "she" lẫn trong ví dụ.
+- **Dữ liệu** `sach_giao_khoa/lop_6/tieng_trung_t1/chuong_1.md` (mục "Tóm tắt các điểm ngữ pháp chính" ở Bài 4): gộp thành 4 chủ điểm - Cấu trúc với Phương vị từ (gồm 3 cấu trúc có/在/hành động tại vị trí), Bổ ngữ kết quả (完/到 và 上), Trợ động từ 要, Trợ từ ngữ khí 吧. Giữ đủ ví dụ, bỏ 2 ví dụ gần như lặp (你们做完作业了没有？/ 我们想送上一份爱心). Sửa `she` → `她` và thêm pinyin cho ví dụ đó. **Hoan cần chép file này vào kho GitHub kiến thức** (bản trong zip chỉ là bản mẫu).
+- **Bộ đọc** `vocabChineseParser.js`: nhận diện mục "Tóm tắt các điểm ngữ pháp chính / 语言点总结" (`summary: true`); khi chương có mục này thì các chủ điểm lẻ từng Bài được đánh dấu `coveredBySummary` (KHÔNG xoá - các tab khác vẫn đọc nguyên Markdown). Hiện chỉ Lớp 6 chuong_1 có tiêu đề này; các chương khác không đổi hành vi.
+- **Form** `VocabForm.jsx`: nhóm `coveredBySummary` mặc định KHÔNG tick (vẫn hiện, ghi chú "đã gộp trong phần tóm tắt", tick lại được nếu cần bảng riêng cho 1 Bài).
+- Kiểm chứng: 2 test mới (`test/vocabChinese.test.js`, gồm 1 test đọc file SGK thật), `npm test` 611/611, đã render Word thật bằng LibreOffice (4 bảng, chữ Hán đúng). CHƯA chạy `next build`, CHƯA bấm thử trên trình duyệt.
+
 ## Phiên 52 — Soạn từ vựng: mở rộng sang TIẾNG TRUNG
 
 - **Bộ đọc riêng** `vocabChineseParser.js` (đăng ký ở `vocabParserRegistry.js`): đọc đủ 48 file chương Lớp 6-12 (~hơn 1.500 từ). Hiểu bảng 4-6 cột (Chữ Hán/Hán tự | Pinyin | Âm Hán Việt | Từ loại/Phân loại | Nghĩa | Ví dụ), từ vựng dạng gạch đầu dòng, từ loại viết tắt ("*động*" → "Động từ"). **1 file chương = 1 Chủ đề nhiều Bài** nên nhóm mang tên Bài ("Bài 1 - Từ vựng (生词)"). Ngữ pháp: mỗi chủ điểm 1 bảng 3 cột (Nội dung | Giải thích | Ví dụ), nhãn "Cách dùng/Công thức/Cấu trúc..." thành hàng, ví dụ (Hán + pinyin + dịch) gắn vào hàng liền trước. Chặn Bài khóa/Hội thoại/Luyện tập; dòng bảng thiếu 1 ô Pinyin được chèn ô trống để không lệch cột.
